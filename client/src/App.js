@@ -13,6 +13,8 @@ import Home from './component/User/Home';
 import RegForm from './component/Academy/RegForm';
 import Signup from './component/Academy/Signup';
 import Inquiry from './component/SuperAdmin/Inquiry'
+import AcademyDashboard from './component/Academy/AcademyDashboard';
+import AcademyLogin from './component/Academy/Login'
 
 
 function App() { 
@@ -26,6 +28,8 @@ function App() {
           <Route exact path='/superadmin/dashboard' element={<Inquiry/>}/>
           <Route exact path='/academyregform' element={<RegForm/>}></Route>
           <Route exact path='/academysignup' element={<Signup/>}></Route>
+          <Route exact path='/admin/dashboard' element={<AcademyDashboard/>}></Route>
+          <Route exact path='/admin/login' element={<AcademyLogin/>}></Route>
         </Routes>
       </Router>
     </div>

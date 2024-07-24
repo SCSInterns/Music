@@ -30,58 +30,56 @@ function Dashboard() {
       ...prev,
       [name]: value,
     }));
-  }; 
+  };
 
-  const setcredentials = async (id) => 
-  {
-     const url = `http://localhost:5000/api/superadmin/academycredentials/${id}` ; 
-    
-     const token = Token();
-     const response = await fetch (url , {
-      method:'PUT' , 
-      headers: {
-        Authorization: `${token}`,
-        "Content-Type": "application/json",
-      }, 
-      body : JSON.stringify({ username : academycred.username , password : academycred.password})
-     }) 
+  const setcredentials = async (id) => {
+    const url = `http://localhost:5000/api/superadmin/academycredentials/${id}`;
 
-     if(response.ok)
-     {
-       toast.success(" Credentails set successfully ") ; 
-       await handlePreview(id, details.academy_name); 
-     }
-     else
-     {
-      toast.error(" Credentails not setted ") ; 
-     }
-  }
-
-  const handlesharecred = async(email , id) => 
-  {
-     const url = `http://localhost:5000/api/auth/sendcred` ; 
-     const token = Token(); 
-     const response = await fetch(url,{
-      method:'POST' , 
+    const token = Token();
+    const response = await fetch(url, {
+      method: "PUT",
       headers: {
         Authorization: `${token}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ email:email , username : academycred.username , password : academycred.password }),
-     })
+      body: JSON.stringify({
+        username: academycred.username,
+        password: academycred.password,
+      }),
+    });
 
-     if(response.ok)
-     { 
-        const res = await setcredentials(id) ; 
-        toast.success(" Credentails send successfully ")
-        await handlePreview(id, details.academy_name);
-     }
-     else
-     {
-        toast.error(" Fail to send credentials")
-     }
+    if (response.ok) {
+      toast.success(" Credentails set successfully ");
+      await handlePreview(id, details.academy_name);
+    } else {
+      toast.error(" Credentails not setted ");
+    }
+  };
 
-  }
+  const handlesharecred = async (email, id) => {
+    const url = `http://localhost:5000/api/auth/sendcred`;
+    const token = Token();
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        Authorization: `${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email: email,
+        username: academycred.username,
+        password: academycred.password,
+      }),
+    });
+
+    if (response.ok) {
+      const res = await setcredentials(id);
+      toast.success(" Credentails send successfully ");
+      await handlePreview(id, details.academy_name);
+    } else {
+      toast.error(" Fail to send credentials");
+    }
+  };
 
   const handlestatus = async (id, status) => {
     try {
@@ -99,7 +97,18 @@ function Dashboard() {
       if (response.ok) {
         const data = await response.json();
         toast.success(" Status Updated Successfully");
-        await handlePreview(id, details.academy_name); 
+
+        if (details.academy_name) {
+          console.log(
+            "Handling preview with ID:",
+            id,
+            "and Academy Name:",
+            details.academy_name
+          ); // Debug log
+          await fetchadmindetailsbyid(id);
+        } else {
+          console.error("Academy name is not available in details"); // Debug log
+        }
       } else {
         toast.error(" Status not updated ");
       }
@@ -107,6 +116,31 @@ function Dashboard() {
       console.error("Error fetching academy details:", error);
     }
   };
+
+
+  const fetchadmindetailsbyid = async(id) => 
+  {
+      try {
+
+        const url = `http://localhost:5000/api/auth/preview/${id}`
+        const token = Token() ; 
+        const response = await fetch(url,{
+          method:'GET' , 
+          headers: {
+            Authorization: `${token}`,
+            "Content-Type": "application/json",
+          },
+        })
+
+        if(response.ok) 
+        {
+          setAdmin(response)
+        }
+        
+      } catch (error) {
+        console.error("Error fetching academy details:", error);
+      }
+  }
 
   useEffect(() => {
     if (!superadminemail) return;
@@ -140,6 +174,7 @@ function Dashboard() {
   }, [superadminemail]);
 
   const handlePreview = async (id, academyName) => {
+    console.log(id);
     try {
       const token = Token();
 
@@ -435,9 +470,15 @@ function Dashboard() {
             </div>
 
             <div>
-                 <Button variant="contained" sx={{margin:'40px'}} onClick={()=> handlesharecred(admin[0].academy_email , admin[0]._id)}>
-                     Send email
-                 </Button>
+              <Button
+                variant="contained"
+                sx={{ margin: "40px" }}
+                onClick={() =>
+                  handlesharecred(admin[0].academy_email, admin[0]._id)
+                }
+              >
+                Send email
+              </Button>
             </div>
           </Box>
           <Button onClick={handleClose} color="error" sx={{ mt: 2 }}>

@@ -23,7 +23,7 @@ const academy_signup = async (req, res) => {
 
 // Academy Login Controller
 const academy_login = async (req, res) => {
-    const {   academy_email, academy_password } = req.body;
+    const {   academy_email, academy_password , academy_username} = req.body;
     const user = await Admin.findOne({ academy_email });
 
     if (user) {
@@ -33,7 +33,7 @@ const academy_login = async (req, res) => {
             const refreshtoken = jwt.sign(user.toJSON(), process.env.REFRESH_KEY);
             const newToken = new Token({ token: refreshtoken });
             await newToken.save();
-            return res.status(200).json({ accesstoken, name: user.name, refreshtoken });
+            return res.status(200).json({ accesstoken, academyname: user.academy_name, refreshtoken });
         } else {
             res.status(404).json({ message: "Invalid Credentials" });
         }

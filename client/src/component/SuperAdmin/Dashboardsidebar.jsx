@@ -60,6 +60,7 @@ export default function ResponsiveDrawer() {
   );
 
   return (
+    <div style={{backgroundColor:"#0f1b27"}}>
     <Box sx={{ display: 'flex' }} className="bg-gray-700">
       <Hidden smDown>
         <Drawer
@@ -105,5 +106,6 @@ export default function ResponsiveDrawer() {
         {/* Main content goes here */}
       </Box>
     </Box>
+    </div>
   );
 }
