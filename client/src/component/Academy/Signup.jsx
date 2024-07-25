@@ -2,7 +2,10 @@ import React, { useState } from "react";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import LooksOneOutlinedIcon from "@mui/icons-material/LooksOneOutlined";
-import LooksTwoIcon from "@mui/icons-material/LooksTwo";
+import LooksTwoOutlinedIcon from "@mui/icons-material/LooksTwoOutlined";
+import Looks3OutlinedIcon from '@mui/icons-material/Looks3Outlined';
+import Looks4Icon from '@mui/icons-material/Looks4';
+
 
 function Signup() {
   const [signup, setsignup] = useState({
@@ -135,7 +138,21 @@ function Signup() {
                 href="#"
                 className="text-xs text-center text-gray-500 uppercase"
               >
-                <LooksTwoIcon fontSize="large" />
+                <LooksTwoOutlinedIcon fontSize="large" />
+              </a>
+              <span className="border-b w-1/5 lg:w-1/4"></span>
+              <a
+                href="#"
+                className="text-xs text-center text-gray-500 uppercase"
+              >
+                <Looks3OutlinedIcon fontSize="large" />
+              </a>
+              <span className="border-b w-1/5 lg:w-1/4"></span>
+              <a
+                href="#"
+                className="text-xs text-center text-gray-500 uppercase"
+              >
+                <Looks4Icon fontSize="large" />
               </a>
               <span className="border-b w-1/5 lg:w-1/4"></span>
             </div>

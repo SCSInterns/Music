@@ -14,6 +14,7 @@ function Dashboard() {
   const [admin, setAdmin] = useState([]);
   const [details, setDetails] = useState([]);
   const [open, setOpen] = useState(false);
+
   const navigate = useNavigate();
 
   const handleOpen = () => setOpen(true);
@@ -49,10 +50,10 @@ function Dashboard() {
     });
 
     if (response.ok) {
-      toast.success(" Credentails set successfully ");
-      await handlePreview(id, details.academy_name);
+      toast.success("Credentials set successfully");
+      await fetchadmindetailsbyid(id); // Fetch updated admin details
     } else {
-      toast.error(" Credentails not setted ");
+      toast.error("Credentials not set");
     }
   };
 
@@ -73,11 +74,11 @@ function Dashboard() {
     });
 
     if (response.ok) {
-      const res = await setcredentials(id);
-      toast.success(" Credentails send successfully ");
-      await handlePreview(id, details.academy_name);
+      await setcredentials(id); // Set credentials and update admin details
+      toast.success("Credentials sent successfully");
+      await handlePreview(id, details.academy_name); // Update preview with new details
     } else {
-      toast.error(" Fail to send credentials");
+      toast.error("Failed to send credentials");
     }
   };
 
@@ -95,51 +96,42 @@ function Dashboard() {
       });
 
       if (response.ok) {
-        const data = await response.json();
-        toast.success(" Status Updated Successfully");
-
+        toast.success("Status Updated Successfully");
+        await fetchadmindetailsbyid(id); // Fetch updated admin details
         if (details.academy_name) {
-          console.log(
-            "Handling preview with ID:",
-            id,
-            "and Academy Name:",
-            details.academy_name
-          ); // Debug log
-          await fetchadmindetailsbyid(id);
+          await handlePreview(id, details.academy_name); // Update preview with new details
         } else {
-          console.error("Academy name is not available in details"); // Debug log
+          console.error("Academy name is not available in details"); 
         }
       } else {
-        toast.error(" Status not updated ");
+        toast.error("Status not updated");
       }
     } catch (error) {
-      console.error("Error fetching academy details:", error);
+      console.error("Error updating status:", error);
     }
   };
 
+  const fetchadmindetailsbyid = async(id) => {
+    try {
+      const url = `http://localhost:5000/api/superadmin/detailsofadminbyid/${id}`;
+      const token = Token();
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          Authorization: `${token}`,
+          "Content-Type": "application/json",
+        },
+      });
 
-  const fetchadmindetailsbyid = async(id) => 
-  {
-      try {
-
-        const url = `http://localhost:5000/api/auth/preview/${id}`
-        const token = Token() ; 
-        const response = await fetch(url,{
-          method:'GET' , 
-          headers: {
-            Authorization: `${token}`,
-            "Content-Type": "application/json",
-          },
-        })
-
-        if(response.ok) 
-        {
-          setAdmin(response)
-        }
-        
-      } catch (error) {
-        console.error("Error fetching academy details:", error);
+      if (response.ok) {
+        const data = await response.json();
+        setAdmin(data); // Update admin details
+      } else {
+        console.error("Failed to fetch admin details");
       }
+    } catch (error) {
+      console.error("Error fetching admin details:", error);
+    }
   }
 
   useEffect(() => {
@@ -163,8 +155,7 @@ function Dashboard() {
         }
 
         const data = await response.json();
-        console.log("Academy details fetched:", data);
-        setAcademy(data);
+        setAcademy(data); // Update academy details
       } catch (error) {
         console.error("Error fetching academy details:", error);
       }
@@ -174,7 +165,6 @@ function Dashboard() {
   }, [superadminemail]);
 
   const handlePreview = async (id, academyName) => {
-    console.log(id);
     try {
       const token = Token();
 
@@ -193,8 +183,7 @@ function Dashboard() {
       }
 
       const previewData = await response.json();
-      console.log("Preview details fetched:", previewData);
-      setDetails(previewData);
+      setDetails(previewData); // Update details
 
       // Fetch academy details by name
       url = `http://localhost:5000/api/auth/academybyname`;
@@ -212,8 +201,7 @@ function Dashboard() {
       }
 
       const academyData = await response.json();
-      console.log("Academy details by name fetched:", academyData);
-      setAdmin(academyData);
+      setAdmin(academyData); // Update admin details
 
       // Set modal data and open modal
       setOpen(true);
@@ -392,6 +380,9 @@ function Dashboard() {
                       value={admin[0].academy_username || ""}
                       fullWidth
                       margin="normal"
+                      InputProps={{
+                        readOnly: true,
+                      }}
                     />
                     <TextField
                       label="Password"
@@ -447,8 +438,7 @@ function Dashboard() {
             </Grid>
 
             <Typography style={{ marginTop: "30px" }}>
-              {" "}
-              Set Academy Credentials :{" "}
+              Set Academy Credentials:
             </Typography>
             <div
               style={{
@@ -459,12 +449,12 @@ function Dashboard() {
             >
               <TextField
                 name="username"
-                label="Academy username  "
+                label="Academy username"
                 onChange={inputChange}
               />
               <TextField
                 name="password"
-                label="Academy password  "
+                label="Academy password"
                 onChange={inputChange}
               />
             </div>

@@ -1,57 +1,52 @@
 import React from "react";
 import { useState } from "react";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
-import LooksOneIcon from "@mui/icons-material/LooksOne";
+import { useNavigate, useParams } from "react-router-dom";
+import LooksOneOutlinedIcon from "@mui/icons-material/LooksOneOutlined";
 import LooksTwoOutlinedIcon from "@mui/icons-material/LooksTwoOutlined";
-import Looks3OutlinedIcon from '@mui/icons-material/Looks3Outlined';
+import Looks3Icon from '@mui/icons-material/Looks3';
 import Looks4OutlinedIcon from '@mui/icons-material/Looks4Outlined';
 
 function Signup() {
-  const [academydetails, setacademydetails] = useState({
-    academy_name: "",
-    academy_address: "",
-    academy_city: "",
-    academy_state: "",
-    academy_pincode: "",
-    academy_contactno: "",
+  const { id } = useParams();
+  const [personaldetails, setpersonaldetails] = useState({
+    name: " ",
+    address: " ",
+    contactno: " ",
   });
   const navigate = useNavigate();
   const [msg, setmsg] = useState("");
 
   const inputChange = (e) => {
     const { name, value } = e.target;
-    setacademydetails((prev) => ({
+    setpersonaldetails((prev) => ({
       ...prev,
       [name]: value,
     }));
   };
 
-  const url = "http://localhost:5000/api/auth/academyreg";
+  const url = `http://localhost:5000/api/auth/addpersonaldetail/${id}`;
 
   const handlesubmit = async (e) => {
     e.preventDefault();
     const response = await fetch(url, {
-      method: "POST",
+      method: "PUT",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        academy_name: academydetails.academy_name,
-        academy_address: academydetails.academy_address,
-        academy_city: academydetails.academy_city,
-        academy_state: academydetails.academy_state,
-        academy_pincode: academydetails.academy_pincode,
-        academy_contactno: academydetails.academy_contactno,
+        name: personaldetails.name,
+        address: personaldetails.address,
+        contactno: personaldetails.contactno,
       }),
     });
 
     const data = await response.json();
 
     if (response.ok) {
-      setmsg(" Reg Succesfull ");
-      toast.success('Registration successfully');
-      navigate(`/franchiseform/${data._id}`);
+      setmsg(" Personal Details Add Succesfull ");
+      toast.success("Personal Details Added successfully");
+      navigate("/academysignup");
     } else {
       setmsg(" Reg Fail  ");
     }
@@ -73,7 +68,7 @@ function Signup() {
               Music Academy
             </h2>
             <p className="text-xl text-gray-600 text-center">
-              Academy Registration
+              Personal Details
             </p>
             <div className="mt-4 flex items-center justify-between">
               <span className="border-b w-1/5 lg:w-1/4"></span>
@@ -81,7 +76,7 @@ function Signup() {
                 href="#"
                 className="text-xs text-center text-gray-500 uppercase"
               >
-                <LooksOneIcon fontSize="large" />
+                <LooksOneOutlinedIcon fontSize="large" />
               </a>
               <span className="border-b w-1/5 lg:w-1/4"></span>
               <a
@@ -95,7 +90,7 @@ function Signup() {
                 href="#"
                 className="text-xs text-center text-gray-500 uppercase"
               >
-                <Looks3OutlinedIcon fontSize="large" />
+                <Looks3Icon fontSize="large" />
               </a>
               <span className="border-b w-1/5 lg:w-1/4"></span>
               <a
@@ -106,75 +101,34 @@ function Signup() {
               </a>
               <span className="border-b w-1/5 lg:w-1/4"></span>
             </div>
+
+            <div className="mt-4">
+              <div className="flex justify-between">
+                <label className="block text-gray-700 text-sm font-bold mb-2">
+                  Full Name
+                </label>
+              </div>
+              <input
+                className="bg-gray-200 text-gray-700 focus:outline-none focus:shadow-outline border border-gray-300 rounded py-2 px-4 block w-full appearance-none"
+                type="text"
+                name="name"
+                onChange={inputChange}
+              />
+            </div>
             <div className="mt-4">
               <label
                 className="block text-gray-700 text-sm font-bold mb-2"
                 style={{ textAlign: "left" }}
               >
-                Academy Name
+                Address
               </label>
               <input
                 className="bg-gray-200 text-gray-700 focus:outline-none focus:shadow-outline border border-gray-300 rounded py-2 px-4 block w-full appearance-none"
                 type="text"
-                name="academy_name"
+                name="address"
                 onChange={inputChange}
               />
             </div>
-            <div className="mt-4">
-              <div className="flex justify-between">
-                <label className="block text-gray-700 text-sm font-bold mb-2">
-                  Address
-                </label>
-              </div>
-              <input
-                className="bg-gray-200 text-gray-700 focus:outline-none focus:shadow-outline border border-gray-300 rounded py-2 px-4 block w-full appearance-none"
-                type="text"
-                name="academy_address"
-                onChange={inputChange}
-              />
-            </div>
-            <div className="mt-4">
-              <div className="flex justify-between">
-                <label className="block text-gray-700 text-sm font-bold mb-2">
-                  City
-                </label>
-              </div>
-              <input
-                className="bg-gray-200 text-gray-700 focus:outline-none focus:shadow-outline border border-gray-300 rounded py-2 px-4 block w-full appearance-none"
-                type="text"
-                name="academy_city"
-                onChange={inputChange}
-              />
-            </div>
-
-            <div className="mt-4">
-              <div className="flex justify-between">
-                <label className="block text-gray-700 text-sm font-bold mb-2">
-                  State
-                </label>
-              </div>
-              <input
-                className="bg-gray-200 text-gray-700 focus:outline-none focus:shadow-outline border border-gray-300 rounded py-2 px-4 block w-full appearance-none"
-                type="text"
-                name="academy_state"
-                onChange={inputChange}
-              />
-            </div>
-
-            <div className="mt-4">
-              <div className="flex justify-between">
-                <label className="block text-gray-700 text-sm font-bold mb-2">
-                  Pincode
-                </label>
-              </div>
-              <input
-                className="bg-gray-200 text-gray-700 focus:outline-none focus:shadow-outline border border-gray-300 rounded py-2 px-4 block w-full appearance-none"
-                type="text"
-                name="academy_pincode"
-                onChange={inputChange}
-              />
-            </div>
-
             <div className="mt-4">
               <div className="flex justify-between">
                 <label className="block text-gray-700 text-sm font-bold mb-2">
@@ -184,7 +138,7 @@ function Signup() {
               <input
                 className="bg-gray-200 text-gray-700 focus:outline-none focus:shadow-outline border border-gray-300 rounded py-2 px-4 block w-full appearance-none"
                 type="text"
-                name="academy_contactno"
+                name="contactno"
                 onChange={inputChange}
               />
             </div>

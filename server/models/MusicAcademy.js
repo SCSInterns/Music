@@ -25,7 +25,44 @@ const adminschema = new Schema({
     academy_contactno: {
         type: String,
         required: true
+    } , 
+    Franchise: 
+    {
+        type : Number , 
+        required : true , 
+        default : 0 
+    } , 
+    Franchise_Name : 
+    {
+        type: String,
+        required: true , 
+        default: ' to be update ' 
+    } , 
+    Franchise_Address : 
+    {
+        type: String,
+        required: true , 
+        default: 'to be update ' 
+    } , 
+    name : 
+    {
+        type:String , 
+        required : true , 
+        default : "to be update  "
+    } , 
+    address : 
+    {
+        type:String , 
+        required : true , 
+        default : "to be update "
+    } , 
+    contactno : 
+    {
+        type:String , 
+        required : true , 
+        default : " to be update "
     }
+    
 });
 
 module.exports = mongoose.model('MusicAcademyDetails', adminschema);
