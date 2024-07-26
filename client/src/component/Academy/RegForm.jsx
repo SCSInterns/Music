@@ -4,8 +4,7 @@ import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import LooksOneIcon from "@mui/icons-material/LooksOne";
 import LooksTwoOutlinedIcon from "@mui/icons-material/LooksTwoOutlined";
-import Looks3OutlinedIcon from '@mui/icons-material/Looks3Outlined';
-import Looks4OutlinedIcon from '@mui/icons-material/Looks4Outlined';
+import Looks3OutlinedIcon from "@mui/icons-material/Looks3Outlined";
 
 function Signup() {
   const [academydetails, setacademydetails] = useState({
@@ -31,6 +30,32 @@ function Signup() {
 
   const handlesubmit = async (e) => {
     e.preventDefault();
+
+    // Validation checks
+    if (academydetails.academy_name.trim().length < 3) {
+      setmsg("Academy Name should be at least 3 characters long.");
+      toast.error("Academy Name should be at least 3 characters long.");
+      return;
+    }
+
+    if (academydetails.academy_address.trim().length < 10) {
+      setmsg("Address should be at least 10 characters long.");
+      toast.error("Address should be at least 10 characters long.");
+      return;
+    }
+
+    if (!/^\d{10}$/.test(academydetails.academy_contactno)) {
+      setmsg("Contact Number should be exactly 10 digits.");
+      toast.error("Contact Number should be exactly 10 digits.");
+      return;
+    }
+
+    if (!/^\d{6}$/.test(academydetails.academy_pincode)) {
+      setmsg("Pincode should be exactly 6 digits.");
+      toast.error("Pincode should be exactly 6 digits.");
+      return;
+    }
+
     const response = await fetch(url, {
       method: "POST",
       headers: {
@@ -50,8 +75,8 @@ function Signup() {
 
     if (response.ok) {
       setmsg(" Reg Succesfull ");
-      toast.success('Registration successfully');
-      navigate(`/franchiseform/${data._id}`);
+      toast.success("Registration successfully");
+      navigate(`/personaldetails/${data._id}`);
     } else {
       setmsg(" Reg Fail  ");
     }
@@ -96,13 +121,6 @@ function Signup() {
                 className="text-xs text-center text-gray-500 uppercase"
               >
                 <Looks3OutlinedIcon fontSize="large" />
-              </a>
-              <span className="border-b w-1/5 lg:w-1/4"></span>
-              <a
-                href="#"
-                className="text-xs text-center text-gray-500 uppercase"
-              >
-                <Looks4OutlinedIcon fontSize="large" />
               </a>
               <span className="border-b w-1/5 lg:w-1/4"></span>
             </div>

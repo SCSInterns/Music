@@ -3,10 +3,10 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
 function Signup() {
-  const [login, setLogin] = useState({ username: '' , email: '', password: '' });
-  const [msg, setMsg] = useState('');
+  const [login, setLogin] = useState({ username: "", email: "", password: "" });
+  const [msg, setMsg] = useState("");
   const [otpSent, setOtpSent] = useState(false);
-  const [otp, setOtp] = useState('');
+  const [otp, setOtp] = useState("");
   const navigate = useNavigate();
 
   const inputChange = (e) => {
@@ -17,8 +17,21 @@ function Signup() {
     }));
   };
 
+  const validateEmail = (email) => {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(email);
+  };
+
   const handleSendOtp = async (e) => {
     e.preventDefault();
+
+    // Validate email before making the API call
+    if (!validateEmail(login.email)) {
+      setMsg("Please enter a valid email address.");
+      toast.error("Please enter a valid email address.");
+      return;
+    }
+
     const url = "http://localhost:5000/api/auth/send-otp";
     const response = await fetch(url, {
       method: "POST",
@@ -33,7 +46,7 @@ function Signup() {
     if (response.status === 200) {
       setMsg("OTP sent successfully");
       setOtpSent(true);
-      toast.success('OTP sent successfully');
+      toast.success("OTP sent successfully");
     } else {
       const errorText = await response.text();
       setMsg(`Error sending OTP: ${errorText}`);
@@ -57,11 +70,11 @@ function Signup() {
 
     if (response.status === 200) {
       setMsg("OTP verified successfully");
-      toast.success('OTP verified successfully');
+      toast.success("OTP verified successfully");
       await handleLogin(e);
     } else {
       setMsg("Invalid OTP");
-      toast.error('Invalid OTP');
+      toast.error("Invalid OTP");
     }
   };
 
@@ -74,7 +87,7 @@ function Signup() {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        academy_username : login.username , 
+        academy_username: login.username,
         academy_password: login.password,
         academy_email: login.email,
       }),
@@ -84,14 +97,14 @@ function Signup() {
 
     if (response.ok) {
       setMsg("Login Successful");
-      toast.success('Login successfully');
+      toast.success("Login successfully");
       sessionStorage.setItem("accesstoken", `${data.accesstoken}`);
       sessionStorage.setItem("refreshtoken", `${data.refreshtoken}`);
       sessionStorage.setItem("academyname", `${data.academyname}`);
-      navigate('/admin/dashboard');
+      navigate("/admin/dashboard");
     } else {
-      setMsg("Invalid credentials");
-      toast.error('Invalid credentials');
+      setMsg("Contact SuperAdmin");
+      toast.error("Access Denied");
     }
   };
 
@@ -188,7 +201,7 @@ function Signup() {
                   className="bg-gray-700 text-white font-bold py-2 px-4 w-full rounded hover:bg-gray-600"
                   type="submit"
                 >
-                  {otpSent ? 'Verify OTP' : 'Send OTP'}
+                  {otpSent ? "Verify OTP" : "Send OTP"}
                 </button>
               </div>
               <div className="mt-4 flex items-center justify-between"></div>

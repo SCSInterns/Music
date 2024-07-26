@@ -19,6 +19,14 @@ function Signup() {
 
   const handleSendOtp = async (e) => {
     e.preventDefault();
+
+      // Email validation
+      if (!/\S+@\S+\.\S+/.test(login.email)) {
+        setMsg("Please enter a valid email address.");
+        toast.error("Please enter a valid email address.");
+        return;
+      }
+      
     const url = "http://localhost:5000/api/auth/send-otp";
     const response = await fetch(url, {
       method: "POST",

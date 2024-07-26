@@ -1,11 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import LooksOneOutlinedIcon from "@mui/icons-material/LooksOneOutlined";
 import LooksTwoOutlinedIcon from "@mui/icons-material/LooksTwoOutlined";
-import Looks3OutlinedIcon from '@mui/icons-material/Looks3Outlined';
-import Looks4Icon from '@mui/icons-material/Looks4';
-
+import Looks3Icon from "@mui/icons-material/Looks3";
 
 function Signup() {
   const [signup, setsignup] = useState({
@@ -17,7 +15,7 @@ function Signup() {
   const [otpVerified, setOtpVerified] = useState(false);
   const [msg, setmsg] = useState("");
   const navigate = useNavigate();
-
+  const { id } = useParams();
   const inputChange = (e) => {
     const { name, value } = e.target;
     setsignup((prev) => ({
@@ -26,8 +24,34 @@ function Signup() {
     }));
   };
 
+  const setacademyname = async () => {
+    const url = `http://localhost:5000/api/auth/preview/${id}`;
+
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    const data = await response.json();
+    setsignup({ academy_name: data.academy_name });
+  };
+
+  useEffect(() => {
+    setacademyname();
+  }, [id]);
+
   const handleSignup = async (e) => {
     e.preventDefault();
+
+    // Validation checks
+    if (!/\S+@\S+\.\S+/.test(signup.academy_email)) {
+      setmsg("Please enter a valid email address.");
+      toast.error("Please enter a valid email address.");
+      return;
+    }
+
     try {
       if (!otpSent) {
         // Send OTP to the provided email
@@ -90,7 +114,7 @@ function Signup() {
 
           if (signupResponse.ok) {
             toast.success("Signup Successful");
-            navigate("/");
+            navigate("/admin/login");
           } else {
             setmsg("Signup failed.");
             toast.error("Signup failed.");
@@ -145,14 +169,7 @@ function Signup() {
                 href="#"
                 className="text-xs text-center text-gray-500 uppercase"
               >
-                <Looks3OutlinedIcon fontSize="large" />
-              </a>
-              <span className="border-b w-1/5 lg:w-1/4"></span>
-              <a
-                href="#"
-                className="text-xs text-center text-gray-500 uppercase"
-              >
-                <Looks4Icon fontSize="large" />
+                <Looks3Icon fontSize="large" />
               </a>
               <span className="border-b w-1/5 lg:w-1/4"></span>
             </div>
@@ -172,6 +189,9 @@ function Signup() {
                     name="academy_name"
                     value={signup.academy_name}
                     onChange={inputChange}
+                    InputProps={{
+                      readOnly: true,
+                    }}
                   />
                 </div>
                 <div className="mt-4">

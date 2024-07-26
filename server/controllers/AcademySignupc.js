@@ -28,7 +28,7 @@ const academy_login = async (req, res) => {
 
     if (user) {
         const validPassword = await bcrypt.compare(academy_password,user.academy_password);
-        if (validPassword) {
+        if (validPassword && (academy_username===user.academy_username) && (user.academy_access==="Accept")) {
             const accesstoken = jwt.sign(user.toJSON(), process.env.SECRET_KEY, { expiresIn: '4h' });
             const refreshtoken = jwt.sign(user.toJSON(), process.env.REFRESH_KEY);
             const newToken = new Token({ token: refreshtoken });

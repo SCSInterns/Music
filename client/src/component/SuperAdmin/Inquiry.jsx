@@ -51,7 +51,7 @@ function Dashboard() {
 
     if (response.ok) {
       toast.success("Credentials set successfully");
-      await fetchadmindetailsbyid(id); // Fetch updated admin details
+      await fetchadmindetailsbyid(id); 
     } else {
       toast.error("Credentials not set");
     }
@@ -74,9 +74,9 @@ function Dashboard() {
     });
 
     if (response.ok) {
-      await setcredentials(id); // Set credentials and update admin details
+      await setcredentials(id);
       toast.success("Credentials sent successfully");
-      await handlePreview(id, details.academy_name); // Update preview with new details
+      await handlePreview(details._id, details.academy_name); 
     } else {
       toast.error("Failed to send credentials");
     }
@@ -97,9 +97,9 @@ function Dashboard() {
 
       if (response.ok) {
         toast.success("Status Updated Successfully");
-        await fetchadmindetailsbyid(id); // Fetch updated admin details
+        await fetchadmindetailsbyid(id); 
         if (details.academy_name) {
-          await handlePreview(id, details.academy_name); // Update preview with new details
+          await handlePreview(details._id, details.academy_name); 
         } else {
           console.error("Academy name is not available in details"); 
         }
