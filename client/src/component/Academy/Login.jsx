@@ -101,6 +101,7 @@ function Signup() {
       sessionStorage.setItem("accesstoken", `${data.accesstoken}`);
       sessionStorage.setItem("refreshtoken", `${data.refreshtoken}`);
       sessionStorage.setItem("academyname", `${data.academyname}`);
+      sessionStorage.setItem("role","Admin")
       navigate("/admin/dashboard");
     } else {
       setMsg("Contact SuperAdmin");

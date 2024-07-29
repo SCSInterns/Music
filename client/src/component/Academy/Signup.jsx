@@ -192,6 +192,7 @@ function Signup() {
                     InputProps={{
                       readOnly: true,
                     }}
+                    readOnly
                   />
                 </div>
                 <div className="mt-4">

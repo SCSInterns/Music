@@ -14,6 +14,16 @@ function Dashboard() {
   const [admin, setAdmin] = useState([]);
   const [details, setDetails] = useState([]);
   const [open, setOpen] = useState(false);
+  const [credsend, setcredsend] = useState(false);
+
+  useEffect(() => {
+    if (admin.academy_access === "Accept") {
+      setcredsend(true);
+    }
+    if (admin.academy_access === "Reject") {
+      setcredsend(false);
+    }
+  }, [admin.academy_access]);
 
   const navigate = useNavigate();
 
@@ -51,7 +61,7 @@ function Dashboard() {
 
     if (response.ok) {
       toast.success("Credentials set successfully");
-      await fetchadmindetailsbyid(id); 
+      await fetchadmindetailsbyid(id);
     } else {
       toast.error("Credentials not set");
     }
@@ -76,7 +86,7 @@ function Dashboard() {
     if (response.ok) {
       await setcredentials(id);
       toast.success("Credentials sent successfully");
-      await handlePreview(details._id, details.academy_name); 
+      await handlePreview(details._id, details.academy_name);
     } else {
       toast.error("Failed to send credentials");
     }
@@ -97,11 +107,11 @@ function Dashboard() {
 
       if (response.ok) {
         toast.success("Status Updated Successfully");
-        await fetchadmindetailsbyid(id); 
+        await fetchadmindetailsbyid(id);
         if (details.academy_name) {
-          await handlePreview(details._id, details.academy_name); 
+          await handlePreview(details._id, details.academy_name);
         } else {
-          console.error("Academy name is not available in details"); 
+          console.error("Academy name is not available in details");
         }
       } else {
         toast.error("Status not updated");
@@ -111,12 +121,12 @@ function Dashboard() {
     }
   };
 
-  const fetchadmindetailsbyid = async(id) => {
+  const fetchadmindetailsbyid = async (id) => {
     try {
       const url = `http://localhost:5000/api/superadmin/detailsofadminbyid/${id}`;
       const token = Token();
       const response = await fetch(url, {
-        method: 'GET',
+        method: "GET",
         headers: {
           Authorization: `${token}`,
           "Content-Type": "application/json",
@@ -132,7 +142,7 @@ function Dashboard() {
     } catch (error) {
       console.error("Error fetching admin details:", error);
     }
-  }
+  };
 
   useEffect(() => {
     if (!superadminemail) return;
@@ -362,8 +372,40 @@ function Dashboard() {
                   }}
                 />
               </Grid>
+
               <Grid item xs={12} sm={6}>
-                <Typography variant="h6">Access Data:</Typography>
+                <Typography variant="h6">Personal Data:</Typography>
+                <TextField
+                  label="Name"
+                  value={details.name || ""}
+                  fullWidth
+                  margin="normal"
+                  InputProps={{
+                    readOnly: true,
+                  }}
+                />
+                <TextField
+                  label="Address"
+                  value={details.address || ""}
+                  fullWidth
+                  margin="normal"
+                  InputProps={{
+                    readOnly: true,
+                  }}
+                />
+                <TextField
+                  label="Contact no. "
+                  value={details.contactno || ""}
+                  fullWidth
+                  margin="normal"
+                  InputProps={{
+                    readOnly: true,
+                  }}
+                />
+                <Divider sx={{ marginTop: "10px" }} />
+                <Typography variant="h6" marginTop={2}>
+                  Access Data:
+                </Typography>
                 {admin.length > 0 && (
                   <>
                     <TextField
@@ -437,39 +479,45 @@ function Dashboard() {
               </Grid>
             </Grid>
 
-            <Typography style={{ marginTop: "30px" }}>
-              Set Academy Credentials:
-            </Typography>
-            <div
-              style={{
-                display: "flex",
-                marginTop: "20px",
-                justifyContent: "space-evenly",
-              }}
-            >
-              <TextField
-                name="username"
-                label="Academy username"
-                onChange={inputChange}
-              />
-              <TextField
-                name="password"
-                label="Academy password"
-                onChange={inputChange}
-              />
-            </div>
-
-            <div>
-              <Button
-                variant="contained"
-                sx={{ margin: "40px" }}
-                onClick={() =>
-                  handlesharecred(admin[0].academy_email, admin[0]._id)
-                }
-              >
-                Send email
-              </Button>
-            </div>
+            {credsend ? (
+              <>
+                {" "}
+                <Typography style={{ marginTop: "30px" }}>
+                  Set Academy Credentials:
+                </Typography>
+                <div
+                  style={{
+                    display: "flex",
+                    marginTop: "20px",
+                    justifyContent: "space-evenly",
+                  }}
+                >
+                  <TextField
+                    name="username"
+                    label="Academy username"
+                    onChange={inputChange}
+                  />
+                  <TextField
+                    name="password"
+                    label="Academy password"
+                    onChange={inputChange}
+                  />
+                </div>
+                <div>
+                  <Button
+                    variant="contained"
+                    sx={{ margin: "40px" }}
+                    onClick={() =>
+                      handlesharecred(admin[0].academy_email, admin[0]._id)
+                    }
+                  >
+                    Send email
+                  </Button>
+                </div>
+              </>
+            ) : (
+              <div></div>
+            )}
           </Box>
           <Button onClick={handleClose} color="error" sx={{ mt: 2 }}>
             Close

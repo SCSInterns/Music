@@ -10,5 +10,6 @@ router.post('/academydetails', authenticate.authenticatetoken,superadminauthc.ge
 router.post('/superadmindetails', authenticate.authenticatetoken,superadminauthc.getsuperinfo)
 router.put('/academycredentials/:id',authenticate.authenticatetoken,superadminauthc.credsetup)
 router.get('/detailsofadminbyid/:id',authenticate.authenticatetoken,superadminauthc.admindetailsbyid)
+router.post('/filterforaccess',authenticate.authenticatetoken,superadminauthc.statusFilter)
 
 module.exports = router;

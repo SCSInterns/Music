@@ -116,6 +116,28 @@ const academy_access = async (req, res) => {
 }
 
 
+// filter for seeing accepted and denied application 
+
+const statusFilter = async (req, res) => {
+
+    try {
+        const { status } = req.body;
+
+        const response = await Academy.find({ academy_access: status })
+
+        if (response) {
+          
+            res.status(200).json(response)
+        }
+        else {
+            res.status(404).json({ msg: " No Accademy found " })
+        }
+    } catch (error) {
+        res.status(500).json({ message: 'Server not supported', error });
+    }
+
+}
+
 // credentials setup by superadmin 
 
 const credsetup = async (req, res) => {
@@ -127,7 +149,7 @@ const credsetup = async (req, res) => {
 
         if (!finddetails) {
             res.status(404).json({ msg: 'Academy doesnt exist ' })
-        } 
+        }
 
         const salt = await bcrypt.genSalt();
         const hashedpwd = await bcrypt.hash(password, salt);
@@ -150,18 +172,16 @@ const credsetup = async (req, res) => {
 }
 
 // get the details of admin model by id 
- 
-const admindetailsbyid = async (req,res) => 
-{
+
+const admindetailsbyid = async (req, res) => {
     try {
-            const response = await Academy.findById(req.params.id)
-            if(response) 
-            {
-                res.status(200).json(response)
-            }else{
-                res.status(404).json({msg : " No details found "})
-            }
-    
+        const response = await Academy.findById(req.params.id)
+        if (response) {
+            res.status(200).json(response)
+        } else {
+            res.status(404).json({ msg: " No details found " })
+        }
+
     } catch (error) {
         res.status(500).json({ message: 'Server not supported', error });
     }
@@ -173,6 +193,7 @@ module.exports = {
     academy_access,
     getallacademydetails,
     getsuperinfo,
-    credsetup , 
+    credsetup,
+    statusFilter,
     admindetailsbyid
 };

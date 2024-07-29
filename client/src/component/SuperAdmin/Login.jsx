@@ -95,6 +95,7 @@ function Signup() {
       sessionStorage.setItem("accesstoken", `${data.accesstoken}`);
       sessionStorage.setItem("refreshtoken", `${data.refreshtoken}`);
       sessionStorage.setItem("name", `${data.name}`);
+      sessionStorage.setItem("role","Superadmin")
       navigate('/superadmin/dashboard');
     } else {
       setMsg("Invalid credentials");
