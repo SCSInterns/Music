@@ -5,6 +5,7 @@ const MusicAcademy = require('../controllers/MusicAcademyc');
 
 router.post('/academyreg', MusicAcademy.academy_details);
 router.get('/preview/:id',MusicAcademy.preview)
-router.put('/addpersonaldetail/:id', MusicAcademy.personaldetailsupdation)
+router.put('/addpersonaldetail/:id', MusicAcademy.personaldetailsupdation) 
+router.post('/checkurl' , MusicAcademy.handleurl)
 
 module.exports = router;

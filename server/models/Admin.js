@@ -31,6 +31,10 @@ const adminschema = new Schema({
     {
         type:String , 
         default: 'none' 
+    } , 
+    academy_url:{
+        type : String , 
+        default : 'none' 
     }
 });
 

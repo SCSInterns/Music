@@ -1,4 +1,5 @@
 const MusicAcademy = require('../models/MusicAcademy');
+const Admin = require('../models/Admin')
 const Token = require('../models/Token');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
@@ -24,37 +25,35 @@ const academy_details = async (req, res) => {
 
 // put api for academy details - personal details upadtion 
 
-const personaldetailsupdation = async(req,res) => 
-    {
-        try {
-            const {name , address , contactno } = req.body ; 
-    
-            const response = await MusicAcademy.findById(req.params.id) ; 
-             
-            if(response) 
-            {
-                 
+const personaldetailsupdation = async (req, res) => {
+    try {
+        const { name, address, contactno } = req.body;
+
+        const response = await MusicAcademy.findById(req.params.id);
+
+        if (response) {
+
             const updatedApplication = await MusicAcademy.findByIdAndUpdate(
                 req.params.id,
-                { $set: { name: name, address: address , contactno:contactno  } },
+                { $set: { name: name, address: address, contactno: contactno } },
                 { new: true }
             )
-    
-            console.log(" Updated Application " , updatedApplication)
-    
-            
+
+            console.log(" Updated Application ", updatedApplication)
+
+
             if (!updatedApplication) {
                 return res.status(404).json({ msg: 'Application not found' });
             }
-    
+
             return res.status(200).json({ msg: "Application updated successfully", updatedApplication });
         }
-    
-    
-        } catch (error) {
-            res.status(500).json({ message: 'Server not supported', error });
-        }
+
+
+    } catch (error) {
+        res.status(500).json({ message: 'Server not supported', error });
     }
+}
 
 
 // academy details by id  
@@ -74,9 +73,27 @@ const preview = async (req, res) => {
     }
 }
 
+// check the academy access 
+const handleurl = async (req, res) => {
+    const {requestedurl} = req.body
+    try {
+        const response = await Admin.find({academy_url: requestedurl });
+        if (response.length > 0 && response[0].academy_access === "Accept") {
+            res.status(200).json(response);
+        } else {
+            res.status(404).json({ msg: 'Academy does not have access' });
+        }
+
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ message: 'Internal Server Error', error });
+    }
+}
+
 
 module.exports = {
     academy_details,
-    preview , 
-    personaldetailsupdation , 
+    preview,
+    personaldetailsupdation,
+    handleurl
 };

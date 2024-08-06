@@ -142,7 +142,7 @@ const statusFilter = async (req, res) => {
 
 const credsetup = async (req, res) => {
     try {
-        const { username, password } = req.body
+        const { username, password , url  } = req.body
 
         const finddetails = await Academy.findById(req.params.id);
 
@@ -156,7 +156,7 @@ const credsetup = async (req, res) => {
 
         const updatedApplication = await Academy.findByIdAndUpdate(
             req.params.id,
-            { $set: { academy_username: username, academy_password: hashedpwd } },
+            { $set: { academy_username: username, academy_password: hashedpwd , academy_url : url} },
             { new: true }
         );
         console.log("Updated application:", updatedApplication);

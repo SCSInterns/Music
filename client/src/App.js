@@ -7,7 +7,8 @@ import {
   Routes,
   Outlet,
   Navigate,
-  useNavigate
+  useNavigate,
+  useParams
 } from "react-router-dom";
 import Home from './component/User/Home';
 import RegForm from './component/Academy/RegForm';
@@ -17,11 +18,14 @@ import AcademyDashboard from './component/Academy/AcademyDashboard';
 import AcademyLogin from './component/Academy/Login'
 import PersonalDetails from './component/Academy/PersonalDetails'
 import AcceptedApplication from './component/SuperAdmin/AcceptedApplication'
+import { toast } from 'react-toastify';
+import { useEffect } from 'react';
 
 
 function App() {
   const verified = sessionStorage.getItem("accesstoken");
   const role = sessionStorage.getItem("role")
+
 
   return (
     <div className="App">
@@ -56,7 +60,9 @@ function App() {
 
 
           {/* public routes  */}
-          <Route exact path='/' element={<Home />}></Route>
+        
+          <Route exact path='/:academyname' element={<Home />} />
+
         </Routes>
       </Router>
     </div>
