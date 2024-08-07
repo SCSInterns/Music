@@ -37,6 +37,9 @@ app.use('/api/auth', academysign);
 const otpservice = require('./routes/Emailr')
 app.use('/api/auth',otpservice)
 
+const academyform = require('./routes/Formroute')
+app.use('/api/auth',academyform)
+
 app.get('/', (req, res) => {
     res.send("Hello World");
 });
