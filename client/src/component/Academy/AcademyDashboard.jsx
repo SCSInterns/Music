@@ -2,6 +2,8 @@ import * as React from "react";
 import Divider from "@mui/material/Divider";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
+import { useNavigate } from "react-router-dom";
+import Token from "../Token/Token";
 import {
   Button,
   Typography,
@@ -14,10 +16,11 @@ import {
   Paper,
 } from "@mui/material";
 import { useState } from "react";
+import { toast } from "react-toastify";
 
 function AcademyDashboard() {
   const academyname = sessionStorage.getItem("academyname");
-
+  const navigate = useNavigate() ; 
   const datatypes = [
     {
       value: "String",
@@ -43,14 +46,45 @@ function AcademyDashboard() {
 
   const [label, setLabel] = useState("");
   const [value, setValue] = useState("");
-
   const [entries, setEntries] = useState([]);
 
   const handleAddition = () => {
-    setEntries([...entries, { LabelName: label, ValueType: value }]);
+    if (label && value) {
+      setEntries([...entries, { LabelName: label, ValueType: value }]);
+      setLabel("");
+      setValue("");
+    } else {
+      toast.error("Both label and value type are required.");
+    }
+  };
 
-    setLabel("");
-    setValue("");
+  const handleSubmit = async () => {
+    const additionalFields = entries.reduce((acc, entry) => {
+      acc[entry.LabelName] = entry.ValueType;
+      return acc;
+    }, {});
+
+    let url = `http://localhost:5000/api/auth/academyregform`;
+    const token = Token();
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        Authorization: `${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        academyname: academyname,
+        additionalFields: additionalFields,
+      }),
+    });
+
+    if (response.ok) {
+      toast.success("Form Created Successfully");
+      navigate('/admin/regform')
+      
+    } else {
+      toast.error("Form Creation Failed");
+    }
   };
 
   return (
@@ -66,10 +100,7 @@ function AcademyDashboard() {
         }}
       >
         <h1 style={{ fontSize: "20px" }}>Welcome {academyname} Academy</h1>
-
         <p style={{ fontSize: "15px", marginTop: "10px" }}>Admin Dashboard</p>
-
-        <h4></h4>
       </div>
 
       <div style={{ display: "flex", height: "100vh" }}>
@@ -82,7 +113,7 @@ function AcademyDashboard() {
             color: "white",
           }}
         >
-          <h4 style={{ margin: "10px" }}> Registration form </h4>
+          <h4 style={{ margin: "10px" }}>Registration form</h4>
           <Divider />
         </div>
         <div
@@ -106,7 +137,7 @@ function AcademyDashboard() {
               noValidate
               autoComplete="off"
             >
-              <Typography> Enter Label Name Here : </Typography>
+              <Typography>Enter Label Name Here:</Typography>
               <TextField
                 id="outlined-basic"
                 label="Label"
@@ -128,7 +159,7 @@ function AcademyDashboard() {
               noValidate
               autoComplete="off"
             >
-              <Typography> Enter Label Type Here : </Typography>
+              <Typography>Enter Label Type Here:</Typography>
               <TextField
                 id="outlined-select-currency-native"
                 select
@@ -139,10 +170,10 @@ function AcademyDashboard() {
                 style={{
                   width: "50%",
                 }}
-                helperText="Please select your data type for defined label here "
+                helperText="Please select your data type for defined label here"
                 onChange={(e) => setValue(e.target.value)}
               >
-                <option selected>Select Option</option>
+                <option value="" disabled>Select Option</option>
                 {datatypes.map((option) => (
                   <option key={option.label} value={option.value}>
                     {option.label}
@@ -161,12 +192,11 @@ function AcademyDashboard() {
               }}
               onClick={handleAddition}
             >
-              {" "}
-              Add{" "}
+              Add
             </Button>
           </div>
 
-          {/* Table  */}
+          {/* Table */}
           <div style={{ padding: "10px" }}>
             <Typography variant="h6" gutterBottom>
               Added Data
@@ -190,6 +220,18 @@ function AcademyDashboard() {
               </Table>
             </TableContainer>
           </div>
+
+          <Button
+            variant="contained"
+            sx={{
+              backgroundColor: "#283255",
+              margin: "30px",
+              float: "right",
+            }}
+            onClick={handleSubmit}
+          >
+            Submit
+          </Button>
         </div>
       </div>
     </>

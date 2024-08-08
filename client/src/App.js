@@ -20,6 +20,7 @@ import PersonalDetails from './component/Academy/PersonalDetails'
 import AcceptedApplication from './component/SuperAdmin/AcceptedApplication'
 import { toast } from 'react-toastify';
 import { useEffect } from 'react';
+import AcademyRegistration from './component/Academy/AcademyRegistration';
 
 
 function App() {
@@ -49,6 +50,8 @@ function App() {
           {verified && (role === "Admin") ?
             <>
               <Route exact path='/admin/dashboard' element={<AcademyDashboard />}></Route>
+              <Route exact path='/admin/regform' element={<AcademyRegistration />}></Route>
+
             </> :
             <>
               <Route exact path='/academyregform' element={<RegForm />}></Route>
