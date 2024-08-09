@@ -9,6 +9,8 @@ function AcademyRegistration() {
   const [formdata, setformdata] = useState({});
   const academyname = sessionStorage.getItem("academyname");
 
+  const role = sessionStorage.getItem("role")
+
   const fetchform = async () => {
     let url = "http://localhost:5000/api/auth/getform";
 
@@ -63,6 +65,7 @@ function AcademyRegistration() {
       },
       body: JSON.stringify({
         academyname: academyname,
+        role:role , 
         userdetails: formdata,
       }),
     });

@@ -48,6 +48,8 @@ function AcademyDashboard() {
   const [value, setValue] = useState("");
   const [entries, setEntries] = useState([]);
 
+  const role = sessionStorage.getItem('role')
+
   const handleAddition = () => {
     if (label && value) {
       setEntries([...entries, { LabelName: label, ValueType: value }]);
@@ -74,13 +76,14 @@ function AcademyDashboard() {
       },
       body: JSON.stringify({
         academyname: academyname,
+        role:role, 
         additionalFields: additionalFields,
       }),
     });
 
     if (response.ok) {
       toast.success("Form Created Successfully");
-      navigate('/admin/regform')
+      navigate(`/${academyname}/admin/regform`)
       
     } else {
       toast.error("Form Creation Failed");
@@ -113,7 +116,12 @@ function AcademyDashboard() {
             color: "white",
           }}
         >
-          <h4 style={{ margin: "10px" }}>Registration form</h4>
+          <Button style={{ margin: "10px" , width : '200px'}} variant="contained" onClick={() => (navigate(`/${academyname}/admin/regform`))}>Registration form</Button>
+   
+          <Divider />
+          <Button variant="contained" style={{ margin: "10px" , width : '200px'}}>
+             Applicants Data
+          </Button>
           <Divider />
         </div>
         <div
