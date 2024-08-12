@@ -46,7 +46,7 @@ const savedata = async (req, res) => {
 
   const newform = await new Form({
     academy_name: academyname,
-    role: role, 
+    role: role,
     additionalFields: userdetails
   })
 
@@ -66,26 +66,24 @@ const savedata = async (req, res) => {
 const handleapplicantdata = async (req, res) => {
   const { academyname, role } = req.body;
 
-  if (role === "Admin") {
+  if (role == "Admin") {
     const response = await Form.find({
       academy_name: academyname,
-      // role: 'User'
+      role: 'User'
     })
 
-    if (response) 
-    {
-       res.status(200).json(response)
+
+    if (response) {
+      res.status(200).json(response)
     }
-    else
-    {
-      res.status(304).json({msg : "No data found"})
+    else {
+      res.status(304).json({ msg: "No data found" })
     }
   }
 
-  else
-  {
-     res.status(404).json({msg : 'Invalid request'})
+  else {
+    res.status(404).json({ msg: 'Invalid request' })
   }
 }
 
-module.exports = { handledynamicform, getform, savedata , handleapplicantdata}
+module.exports = { handledynamicform, getform, savedata, handleapplicantdata }

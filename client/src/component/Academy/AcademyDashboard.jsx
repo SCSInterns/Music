@@ -20,35 +20,23 @@ import { toast } from "react-toastify";
 
 function AcademyDashboard() {
   const academyname = sessionStorage.getItem("academyname");
-  const navigate = useNavigate() ; 
+
+  const [toggleapplicants, settoggleapplicants] = useState(false);
+  const [appdata, setappdata] = useState([]);
+  const navigate = useNavigate();
   const datatypes = [
-    {
-      value: "String",
-      label: "String",
-    },
-    {
-      value: "Number",
-      label: "Number",
-    },
-    {
-      value: "Object",
-      label: "Selection Box",
-    },
-    {
-      value: "Object",
-      label: "Radio Button",
-    },
-    {
-      value: "Email",
-      label: "Email Id",
-    },
+    { value: "String", label: "String" },
+    { value: "Number", label: "Number" },
+    { value: "Object", label: "Selection Box" },
+    { value: "Object", label: "Radio Button" },
+    { value: "Email", label: "Email Id" },
   ];
 
   const [label, setLabel] = useState("");
   const [value, setValue] = useState("");
   const [entries, setEntries] = useState([]);
 
-  const role = sessionStorage.getItem('role')
+  const role = sessionStorage.getItem("role");
 
   const handleAddition = () => {
     if (label && value) {
@@ -58,6 +46,43 @@ function AcademyDashboard() {
     } else {
       toast.error("Both label and value type are required.");
     }
+  };
+
+  const handleapplicants = async () => {
+    settoggleapplicants(true);
+
+    let url = "http://localhost:5000/api/auth/getdata";
+    const token = Token();
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        Authorization: `${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        academyname: academyname,
+        role: role,
+      }),
+    });
+
+    const data = await response.json();
+
+    if (Array.isArray(data)) {
+      setappdata(data);
+      toast.success("Details Fetch Success");
+    } else {
+      toast.error("Error fetching details");
+    }
+  };
+
+  const getDynamicHeaders = () => {
+    if (appdata.length > 0) {
+      const firstApplicant = appdata[0];
+      return Object.keys(firstApplicant).filter(
+        (key) => key !== "_id" && key !== "__v" && key !== "academy_name" && key !== "role"
+      );
+    }
+    return [];
   };
 
   const handleSubmit = async () => {
@@ -76,15 +101,14 @@ function AcademyDashboard() {
       },
       body: JSON.stringify({
         academyname: academyname,
-        role:role, 
+        role: role,
         additionalFields: additionalFields,
       }),
     });
 
     if (response.ok) {
       toast.success("Form Created Successfully");
-      navigate(`/${academyname}/admin/regform`)
-      
+      navigate(`/${academyname}/admin/regform`);
     } else {
       toast.error("Form Creation Failed");
     }
@@ -116,11 +140,21 @@ function AcademyDashboard() {
             color: "white",
           }}
         >
-          <Button style={{ margin: "10px" , width : '200px'}} variant="contained" onClick={() => (navigate(`/${academyname}/admin/regform`))}>Registration form</Button>
-   
+          <Button
+            style={{ margin: "10px", width: "200px" }}
+            variant="contained"
+            onClick={() => navigate(`/${academyname}/admin/regform`)}
+          >
+            Registration form
+          </Button>
+
           <Divider />
-          <Button variant="contained" style={{ margin: "10px" , width : '200px'}}>
-             Applicants Data
+          <Button
+            variant="contained"
+            style={{ margin: "10px", width: "200px" }}
+            onClick={handleapplicants}
+          >
+            Applicants Data
           </Button>
           <Divider />
         </div>
@@ -131,115 +165,147 @@ function AcademyDashboard() {
             backgroundColor: "#f3f3f5",
           }}
         >
-          <p style={{ padding: "10px", fontFamily: "sans-serif" }}>
-            Create Academy Registration Form Here
-          </p>
+          {toggleapplicants === false ? (
+            <>
+              <p style={{ padding: "10px", fontFamily: "sans-serif" }}>
+                Create Academy Registration Form Here
+              </p>
 
-          <Divider />
-          <div>
-            <Box
-              component="form"
-              sx={{
-                "& > :not(style)": { m: 1, width: "25ch" },
-              }}
-              noValidate
-              autoComplete="off"
-            >
-              <Typography>Enter Label Name Here:</Typography>
-              <TextField
-                id="outlined-basic"
-                label="Label"
-                variant="outlined"
-                value={label}
-                onChange={(e) => setLabel(e.target.value)}
-                style={{
-                  width: "50%",
-                }}
-              />
-            </Box>
-            <Divider sx={{ marginTop: "20px" }} />
+              <Divider />
+              <div>
+                <Box
+                  component="form"
+                  sx={{
+                    "& > :not(style)": { m: 1, width: "25ch" },
+                  }}
+                  noValidate
+                  autoComplete="off"
+                >
+                  <Typography>Enter Label Name Here:</Typography>
+                  <TextField
+                    id="outlined-basic"
+                    label="Label"
+                    variant="outlined"
+                    value={label}
+                    onChange={(e) => setLabel(e.target.value)}
+                    style={{ width: "50%" }}
+                  />
+                </Box>
+                <Divider sx={{ marginTop: "20px" }} />
 
-            <Box
-              component="form"
-              sx={{
-                "& > :not(style)": { m: 1, width: "25ch" },
-              }}
-              noValidate
-              autoComplete="off"
-            >
-              <Typography>Enter Label Type Here:</Typography>
-              <TextField
-                id="outlined-select-currency-native"
-                select
-                value={value}
-                SelectProps={{
-                  native: true,
+                <Box
+                  component="form"
+                  sx={{
+                    "& > :not(style)": { m: 1, width: "25ch" },
+                  }}
+                  noValidate
+                  autoComplete="off"
+                >
+                  <Typography>Enter Label Type Here:</Typography>
+                  <TextField
+                    id="outlined-select-currency-native"
+                    select
+                    value={value}
+                    SelectProps={{ native: true }}
+                    style={{ width: "50%" }}
+                    helperText="Please select your data type for defined label here"
+                    onChange={(e) => setValue(e.target.value)}
+                  >
+                    <option value="" disabled>
+                      Select Option
+                    </option>
+                    {datatypes.map((option) => (
+                      <option key={option.label} value={option.value}>
+                        {option.label}
+                      </option>
+                    ))}
+                  </TextField>
+                </Box>
+                <Divider sx={{ marginTop: "10px" }} />
+
+                <Button
+                  variant="contained"
+                  sx={{
+                    backgroundColor: "#283255",
+                    margin: "30px",
+                    float: "right",
+                  }}
+                  onClick={handleAddition}
+                >
+                  Add
+                </Button>
+              </div>
+
+              {/* Table */}
+              <div style={{ padding: "10px" }}>
+                <Typography variant="h6" gutterBottom>
+                  Added Data
+                </Typography>
+                <TableContainer component={Paper}>
+                  <Table>
+                    <TableHead>
+                      <TableRow>
+                        <TableCell>Label Name</TableCell>
+                        <TableCell>Value Type</TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {entries.map((entry, index) => (
+                        <TableRow key={index}>
+                          <TableCell>{entry.LabelName}</TableCell>
+                          <TableCell>{entry.ValueType}</TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+              </div>
+
+              <Button
+                variant="contained"
+                sx={{
+                  backgroundColor: "#283255",
+                  margin: "30px",
+                  float: "right",
                 }}
-                style={{
-                  width: "50%",
-                }}
-                helperText="Please select your data type for defined label here"
-                onChange={(e) => setValue(e.target.value)}
+                onClick={handleSubmit}
               >
-                <option value="" disabled>Select Option</option>
-                {datatypes.map((option) => (
-                  <option key={option.label} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </TextField>
-            </Box>
-            <Divider sx={{ marginTop: "10px" }} />
-
-            <Button
-              variant="contained"
-              sx={{
-                backgroundColor: "#283255",
-                margin: "30px",
-                float: "right",
-              }}
-              onClick={handleAddition}
-            >
-              Add
-            </Button>
-          </div>
-
-          {/* Table */}
-          <div style={{ padding: "10px" }}>
-            <Typography variant="h6" gutterBottom>
-              Added Data
-            </Typography>
-            <TableContainer component={Paper}>
-              <Table>
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Label Name</TableCell>
-                    <TableCell>Value Type</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {entries.map((entry, index) => (
-                    <TableRow key={index}>
-                      <TableCell>{entry.LabelName}</TableCell>
-                      <TableCell>{entry.ValueType}</TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          </div>
-
-          <Button
-            variant="contained"
-            sx={{
-              backgroundColor: "#283255",
-              margin: "30px",
-              float: "right",
-            }}
-            onClick={handleSubmit}
-          >
-            Submit
-          </Button>
+                Submit
+              </Button>
+            </>
+          ) : (
+            <>
+              <div style={{ padding: "10px" }}>
+                <Typography variant="h6" gutterBottom>
+                  {academyname} Applicants Data
+                </Typography>
+                <TableContainer component={Paper}>
+                  <Table>
+                    <TableHead>
+                      <TableRow>
+                        {getDynamicHeaders().map((header, index) => (
+                          <TableCell key={index}>{header}</TableCell>
+                        ))}
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {appdata.map((applicant, index) => (
+                        <TableRow key={index}>
+                          {getDynamicHeaders().map((header, i) => (
+                            <TableCell key={i}>
+                              {typeof applicant[header] === "object"
+                                ? JSON.stringify(applicant[header])
+                                : applicant[header]}
+                            </TableCell>
+                          ))}
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+              </div>
+            </>
+          )}
         </div>
       </div>
     </>
