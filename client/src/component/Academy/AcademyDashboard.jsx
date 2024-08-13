@@ -27,7 +27,7 @@ function AcademyDashboard() {
   const datatypes = [
     { value: "String", label: "String" },
     { value: "Number", label: "Number" },
-    { value: "Object", label: "Selection Box" },
+    { value: "Object", label: "Dropdown List" },
     { value: "Object", label: "Radio Button" },
     { value: "Email", label: "Email Id" },
   ];
@@ -35,17 +35,51 @@ function AcademyDashboard() {
   const [label, setLabel] = useState("");
   const [value, setValue] = useState("");
   const [entries, setEntries] = useState([]);
+  const [dropdown, setdropdown] = useState(false);
+  const [option, setoption] = useState("");
+  const [dynamicOptions, setDynamicOptions] = useState([]);
 
   const role = sessionStorage.getItem("role");
 
-  const handleAddition = () => {
+  const handleAddition = async () => {
+    if (value === "Dropdown List") {
+      setdropdown(true);
+    }
+
     if (label && value) {
+
+      console.log(label)
+      console.log(value)
       setEntries([...entries, { LabelName: label, ValueType: value }]);
       setLabel("");
       setValue("");
     } else {
       toast.error("Both label and value type are required.");
     }
+  };
+
+  const handledynamicoption = async () => {
+    const numberOfOptions = parseInt(option, 10);
+
+    if (isNaN(numberOfOptions) || numberOfOptions <= 0) {
+      toast.error("Please enter a valid number of options.");
+      return;
+    }
+
+   
+    const newOptions = Array(numberOfOptions).fill("");
+    setDynamicOptions(newOptions);
+  };
+
+  const handleoptionsubmition = async () => {
+    const optionvalue = dynamicOptions;
+
+    console.log(optionvalue);
+
+    setLabel("Options") 
+    setValue(optionvalue) 
+    setEntries([...entries, { LabelName: label, ValueType: value }]);
+
   };
 
   const handleapplicants = async () => {
@@ -79,7 +113,11 @@ function AcademyDashboard() {
     if (appdata.length > 0) {
       const firstApplicant = appdata[0];
       return Object.keys(firstApplicant).filter(
-        (key) => key !== "_id" && key !== "__v" && key !== "academy_name" && key !== "role"
+        (key) =>
+          key !== "_id" &&
+          key !== "__v" &&
+          key !== "academy_name" &&
+          key !== "role"
       );
     }
     return [];
@@ -215,7 +253,7 @@ function AcademyDashboard() {
                       Select Option
                     </option>
                     {datatypes.map((option) => (
-                      <option key={option.label} value={option.value}>
+                      <option key={option.label} value={option.label}>
                         {option.label}
                       </option>
                     ))}
@@ -235,6 +273,73 @@ function AcademyDashboard() {
                   Add
                 </Button>
               </div>
+
+              {dropdown ? (
+                <>
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <Box
+                      component="form"
+                      sx={{
+                        "& > :not(style)": { m: 1, width: "25ch" },
+                      }}
+                      noValidate
+                      autoComplete="off"
+                    >
+                      <TextField
+                        id="outlined-basic"
+                        label="Enter no of options"
+                        variant="outlined"
+                        onChange={(e) => setoption(e.target.value)}
+                      />
+
+                      <Button variant="contained" onClick={handledynamicoption}>
+                        {" "}
+                        Generate Option{" "}
+                      </Button>
+                    </Box>
+                  </div>
+
+                  {/* Render dynamic TextFields */}
+                  <div
+                    style={{ padding: "10px", margin: "10px", display: "flex" , flexWrap:'wrap'}}
+                  >
+                    {dynamicOptions.map((_, index) => (
+                      <Box
+                        component="form"
+                        sx={{
+                          "& > :not(style)": { m: 1, width: "25ch" },
+                        }}
+                        noValidate
+                        autoComplete="off"
+                        key={index}
+                      >
+                        <TextField
+                          id={`option-${index}`}
+                          label={`Option ${index + 1}`}
+                          variant="outlined"
+                          onChange={(e) => {
+                            const newOptions = [...dynamicOptions];
+                            newOptions[index] = e.target.value;
+                            setDynamicOptions(newOptions);
+                          }}
+                        />
+                      </Box>
+                    ))}
+
+                    <Button variant="contained" onClick={handleoptionsubmition} sx={{width:'100px' , height :'50px'}}>
+                      Submit
+                    </Button>
+                  </div>
+                </>
+              ) : (
+                <></>
+              )}
 
               {/* Table */}
               <div style={{ padding: "10px" }}>
