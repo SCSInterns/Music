@@ -37,19 +37,22 @@ function AcademyDashboard() {
   const [entries, setEntries] = useState([]);
   const [dropdown, setdropdown] = useState(false);
   const [option, setoption] = useState("");
+  const [labeloption, setlabeloption] = useState([]) ; 
+  const [valueoption, setvalueoption] = useState([])
   const [dynamicOptions, setDynamicOptions] = useState([]);
 
   const role = sessionStorage.getItem("role");
-
+  console.log(dynamicOptions);
+  console.log(labeloption)
+  console.log(valueoption)
   const handleAddition = async () => {
     if (value === "Dropdown List") {
       setdropdown(true);
     }
 
     if (label && value) {
-
-      console.log(label)
-      console.log(value)
+      console.log(label);
+      console.log(value);
       setEntries([...entries, { LabelName: label, ValueType: value }]);
       setLabel("");
       setValue("");
@@ -66,20 +69,19 @@ function AcademyDashboard() {
       return;
     }
 
-   
-    const newOptions = Array(numberOfOptions).fill("");
+    const newOptions = Array(numberOfOptions).fill({label: "", value: ""});
     setDynamicOptions(newOptions);
   };
 
-  const handleoptionsubmition = async () => {
-    const optionvalue = dynamicOptions;
+  const handleoptionsubmition = async () => {  
+    
+   setDynamicOptions({
+    label : labeloption , 
+    value : valueoption
+    
+   })
 
-    console.log(optionvalue);
-
-    setLabel("Options") 
-    setValue(optionvalue) 
-    setEntries([...entries, { LabelName: label, ValueType: value }]);
-
+   console.log(dynamicOptions)
   };
 
   const handleapplicants = async () => {
@@ -129,6 +131,15 @@ function AcademyDashboard() {
       return acc;
     }, {});
 
+    // Assuming dynamicOptions includes the courses data
+    const courses = dynamicOptions.reduce((acc, option) => {
+      const [courseName, courseFee] = option.split(":"); // Assuming format is "courseName:courseFee"
+      if (courseName && courseFee) {
+        acc[courseName] = courseFee;
+      }
+      return acc;
+    }, {});
+
     let url = `http://localhost:5000/api/auth/academyregform`;
     const token = Token();
     const response = await fetch(url, {
@@ -141,6 +152,7 @@ function AcademyDashboard() {
         academyname: academyname,
         role: role,
         additionalFields: additionalFields,
+        courses: courses,
       }),
     });
 
@@ -307,7 +319,12 @@ function AcademyDashboard() {
 
                   {/* Render dynamic TextFields */}
                   <div
-                    style={{ padding: "10px", margin: "10px", display: "flex" , flexWrap:'wrap'}}
+                    style={{
+                      padding: "10px",
+                      margin: "10px",
+                      display: "flex",
+                      flexWrap: "wrap",
+                    }}
                   >
                     {dynamicOptions.map((_, index) => (
                       <Box
@@ -326,13 +343,27 @@ function AcademyDashboard() {
                           onChange={(e) => {
                             const newOptions = [...dynamicOptions];
                             newOptions[index] = e.target.value;
-                            setDynamicOptions(newOptions);
+                            setlabeloption(newOptions);
+                          }}
+                        />
+                        <TextField
+                          id={`optionvalue-${index}`}
+                          label={`Fees ${index + 1}`}
+                          variant="outlined"
+                          onChange={(e) => {
+                            const newOptions = [...dynamicOptions];
+                            newOptions[index] = e.target.value;
+                            setvalueoption(newOptions);
                           }}
                         />
                       </Box>
                     ))}
 
-                    <Button variant="contained" onClick={handleoptionsubmition} sx={{width:'100px' , height :'50px'}}>
+                    <Button
+                      variant="contained"
+                      onClick={handleoptionsubmition}
+                      sx={{ width: "100px", height: "50px" }}
+                    >
                       Submit
                     </Button>
                   </div>

@@ -7,6 +7,10 @@ const formSchema = new Schema({
   role: { type: String, required: true },
   // dynamic fields 
   additionalFields: { type: Map, of: Schema.Types.Mixed },
+  courses: { type: Map, of: Schema.Types.Mixed },
+
+  
+   
 });
 
 const Academy = mongoose.model('Registration Form', formSchema);

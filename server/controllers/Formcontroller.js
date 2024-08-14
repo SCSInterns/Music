@@ -4,11 +4,12 @@ const Token = require('../models/Token');
 // form addition 
 const handledynamicform = async (req, res) => {
   try {
-    const { academyname, role, additionalFields } = req.body;
+    const { academyname, role, additionalFields , courses } = req.body;
     const academy = new Form({
       academy_name: academyname,
       role: role,
-      additionalFields
+      additionalFields , 
+      courses
     });
 
     await academy.save();
