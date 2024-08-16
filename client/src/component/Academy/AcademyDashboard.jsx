@@ -20,10 +20,18 @@ import { toast } from "react-toastify";
 
 function AcademyDashboard() {
   const academyname = sessionStorage.getItem("academyname");
-
+  const role = sessionStorage.getItem("role");
   const [toggleapplicants, settoggleapplicants] = useState(false);
   const [appdata, setappdata] = useState([]);
-  const navigate = useNavigate();
+  const [label, setLabel] = useState("");
+  const [value, setValue] = useState("");
+  const [entries, setEntries] = useState([]);
+  const [dropdown, setDropdown] = useState(false);
+  const [option, setOption] = useState("");
+  const [dynamicOptions, setDynamicOptions] = useState([]);
+
+
+
   const datatypes = [
     { value: "String", label: "String" },
     { value: "Number", label: "Number" },
@@ -32,27 +40,14 @@ function AcademyDashboard() {
     { value: "Email", label: "Email Id" },
   ];
 
-  const [label, setLabel] = useState("");
-  const [value, setValue] = useState("");
-  const [entries, setEntries] = useState([]);
-  const [dropdown, setdropdown] = useState(false);
-  const [option, setoption] = useState("");
-  const [labeloption, setlabeloption] = useState([]) ; 
-  const [valueoption, setvalueoption] = useState([])
-  const [dynamicOptions, setDynamicOptions] = useState([]);
+  const navigate = useNavigate();
 
-  const role = sessionStorage.getItem("role");
-  console.log(dynamicOptions);
-  console.log(labeloption)
-  console.log(valueoption)
-  const handleAddition = async () => {
-    if (value === "Dropdown List") {
-      setdropdown(true);
-    }
-
+  const handleAddition = () => {
     if (label && value) {
-      console.log(label);
-      console.log(value);
+      if (value === "Dropdown List") {
+        setDropdown(true);
+      }
+  
       setEntries([...entries, { LabelName: label, ValueType: value }]);
       setLabel("");
       setValue("");
@@ -61,7 +56,13 @@ function AcademyDashboard() {
     }
   };
 
-  const handledynamicoption = async () => {
+  const handleOptionChange = (index, type, value) => {
+    const newOptions = [...dynamicOptions];
+    newOptions[index] = { ...newOptions[index], [type]: value };
+    setDynamicOptions(newOptions);
+  };
+
+  const handleDynamicOption = () => {
     const numberOfOptions = parseInt(option, 10);
 
     if (isNaN(numberOfOptions) || numberOfOptions <= 0) {
@@ -69,22 +70,31 @@ function AcademyDashboard() {
       return;
     }
 
-    const newOptions = Array(numberOfOptions).fill({label: "", value: ""});
-    setDynamicOptions(newOptions);
+    setDynamicOptions(Array(numberOfOptions).fill({ label: "", value: "" }));
   };
 
-  const handleoptionsubmition = async () => {  
-    
-   setDynamicOptions({
-    label : labeloption , 
-    value : valueoption
-    
-   })
-
-   console.log(dynamicOptions)
+  const handleOptionSubmission = () => {
+    const formattedOptions = dynamicOptions.reduce((acc, { label, value }) => {
+      if (label && value) {
+        acc.push({ label, value });
+      }
+      return acc;
+    }, []);
+    setEntries([
+      ...entries,
+      {
+        LabelName: "Courses-Type",
+        ValueType: "Values",
+        Options: formattedOptions,
+      },
+    ]);
+    setDropdown(false);
+    setOption("");
+    setDynamicOptions([]);
   };
-
-  const handleapplicants = async () => {
+ 
+ 
+  const handleApplicants = async () => {
     settoggleapplicants(true);
 
     let url = "http://localhost:5000/api/auth/getdata";
@@ -128,14 +138,8 @@ function AcademyDashboard() {
   const handleSubmit = async () => {
     const additionalFields = entries.reduce((acc, entry) => {
       acc[entry.LabelName] = entry.ValueType;
-      return acc;
-    }, {});
-
-    // Assuming dynamicOptions includes the courses data
-    const courses = dynamicOptions.reduce((acc, option) => {
-      const [courseName, courseFee] = option.split(":"); // Assuming format is "courseName:courseFee"
-      if (courseName && courseFee) {
-        acc[courseName] = courseFee;
+      if (entry.Options) {
+        acc[`${entry.LabelName}_Options`] = entry.Options;
       }
       return acc;
     }, {});
@@ -152,7 +156,6 @@ function AcademyDashboard() {
         academyname: academyname,
         role: role,
         additionalFields: additionalFields,
-        courses: courses,
       }),
     });
 
@@ -202,7 +205,7 @@ function AcademyDashboard() {
           <Button
             variant="contained"
             style={{ margin: "10px", width: "200px" }}
-            onClick={handleapplicants}
+            onClick={handleApplicants}
           >
             Applicants Data
           </Button>
@@ -265,7 +268,7 @@ function AcademyDashboard() {
                       Select Option
                     </option>
                     {datatypes.map((option) => (
-                      <option key={option.label} value={option.label}>
+                      <option key={option.value} value={option.label}>
                         {option.label}
                       </option>
                     ))}
@@ -286,7 +289,7 @@ function AcademyDashboard() {
                 </Button>
               </div>
 
-              {dropdown ? (
+              {dropdown && (
                 <>
                   <div
                     style={{
@@ -307,12 +310,12 @@ function AcademyDashboard() {
                         id="outlined-basic"
                         label="Enter no of options"
                         variant="outlined"
-                        onChange={(e) => setoption(e.target.value)}
+                        value={option}
+                        onChange={(e) => setOption(e.target.value)}
                       />
 
-                      <Button variant="contained" onClick={handledynamicoption}>
-                        {" "}
-                        Generate Option{" "}
+                      <Button variant="contained" onClick={handleDynamicOption}>
+                        Generate Options
                       </Button>
                     </Box>
                   </div>
@@ -324,65 +327,56 @@ function AcademyDashboard() {
                       margin: "10px",
                       display: "flex",
                       flexWrap: "wrap",
+                      gap: "10px",
                     }}
                   >
-                    {dynamicOptions.map((_, index) => (
+                    {dynamicOptions.map((opt, index) => (
                       <Box
-                        component="form"
+                        key={index}
                         sx={{
                           "& > :not(style)": { m: 1, width: "25ch" },
                         }}
-                        noValidate
-                        autoComplete="off"
-                        key={index}
                       >
                         <TextField
-                          id={`option-${index}`}
-                          label={`Option ${index + 1}`}
+                          id={`option-label-${index}`}
+                          label="Course Label"
                           variant="outlined"
-                          onChange={(e) => {
-                            const newOptions = [...dynamicOptions];
-                            newOptions[index] = e.target.value;
-                            setlabeloption(newOptions);
-                          }}
+                          value={opt.label}
+                          onChange={(e) =>
+                            handleOptionChange(index, "label", e.target.value)
+                          }
                         />
                         <TextField
-                          id={`optionvalue-${index}`}
-                          label={`Fees ${index + 1}`}
+                          id={`option-value-${index}`}
+                          label="Fees"
                           variant="outlined"
-                          onChange={(e) => {
-                            const newOptions = [...dynamicOptions];
-                            newOptions[index] = e.target.value;
-                            setvalueoption(newOptions);
-                          }}
+                          value={opt.value}
+                          onChange={(e) =>
+                            handleOptionChange(index, "value", e.target.value)
+                          }
                         />
                       </Box>
                     ))}
-
-                    <Button
-                      variant="contained"
-                      onClick={handleoptionsubmition}
-                      sx={{ width: "100px", height: "50px" }}
-                    >
-                      Submit
-                    </Button>
                   </div>
+                  <Button variant="contained" onClick={handleOptionSubmission}>
+                    Submit Options
+                  </Button>
                 </>
-              ) : (
-                <></>
               )}
 
-              {/* Table */}
-              <div style={{ padding: "10px" }}>
-                <Typography variant="h6" gutterBottom>
-                  Added Data
-                </Typography>
+
+              <Divider sx={{ marginTop: "30px" }} />
+
+              {/* Preview Table */}
+              <div style={{ padding: "10px", margin: "10px" }}>
+                <Typography variant="h6">Preview of Submitted Data</Typography>
                 <TableContainer component={Paper}>
                   <Table>
                     <TableHead>
                       <TableRow>
-                        <TableCell>Label Name</TableCell>
-                        <TableCell>Value Type</TableCell>
+                        <TableCell>Label</TableCell>
+                        <TableCell>Type</TableCell>
+                        <TableCell>Options</TableCell>
                       </TableRow>
                     </TableHead>
                     <TableBody>
@@ -390,6 +384,15 @@ function AcademyDashboard() {
                         <TableRow key={index}>
                           <TableCell>{entry.LabelName}</TableCell>
                           <TableCell>{entry.ValueType}</TableCell>
+                          <TableCell>
+                            {entry.Options
+                              ? entry.Options.map((opt, idx) => (
+                                  <div key={idx}>
+                                    {opt.label}: {opt.value}
+                                  </div>
+                                ))
+                              : "N/A"}
+                          </TableCell>
                         </TableRow>
                       ))}
                     </TableBody>
@@ -399,11 +402,7 @@ function AcademyDashboard() {
 
               <Button
                 variant="contained"
-                sx={{
-                  backgroundColor: "#283255",
-                  margin: "30px",
-                  float: "right",
-                }}
+                sx={{ backgroundColor: "#283255", margin: "30px" }}
                 onClick={handleSubmit}
               >
                 Submit
@@ -411,35 +410,38 @@ function AcademyDashboard() {
             </>
           ) : (
             <>
-              <div style={{ padding: "10px" }}>
-                <Typography variant="h6" gutterBottom>
-                  {academyname} Applicants Data
-                </Typography>
-                <TableContainer component={Paper}>
-                  <Table>
-                    <TableHead>
-                      <TableRow>
-                        {getDynamicHeaders().map((header, index) => (
-                          <TableCell key={index}>{header}</TableCell>
-                        ))}
-                      </TableRow>
-                    </TableHead>
-                    <TableBody>
-                      {appdata.map((applicant, index) => (
-                        <TableRow key={index}>
-                          {getDynamicHeaders().map((header, i) => (
-                            <TableCell key={i}>
-                              {typeof applicant[header] === "object"
-                                ? JSON.stringify(applicant[header])
-                                : applicant[header]}
-                            </TableCell>
-                          ))}
-                        </TableRow>
+              <Typography variant="h6" gutterBottom>
+                Applicants Data
+              </Typography>
+
+              <TableContainer component={Paper}>
+                <Table>
+                  <TableHead>
+                    <TableRow>
+                      {getDynamicHeaders().map((header) => (
+                        <TableCell key={header}>{header}</TableCell>
                       ))}
-                    </TableBody>
-                  </Table>
-                </TableContainer>
-              </div>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {appdata.map((applicant) => (
+                      <TableRow key={applicant._id}>
+                        {getDynamicHeaders().map((header) => {
+                          const cellValue = applicant[header];
+                          return (
+                            <TableCell key={header}>
+                              {typeof cellValue === "object" &&
+                              cellValue !== null
+                                ? JSON.stringify(cellValue)
+                                : cellValue}
+                            </TableCell>
+                          );
+                        })}
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
             </>
           )}
         </div>

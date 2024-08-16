@@ -33,7 +33,6 @@ function App() {
   const adminRegFormPath = `/${academyname}/admin/regform`;
 
 
-
   return (
     <div className="App">
       <Router>
