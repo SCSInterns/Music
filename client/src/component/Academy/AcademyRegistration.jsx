@@ -9,17 +9,43 @@ import {
   FormControl,
   InputLabel,
   Typography,
+  Radio,
+  RadioGroup,
+  FormControlLabel
 } from "@mui/material";
 
 function AcademyRegistration() {
   const [formFields, setFormFields] = useState({});
   const [dropdownOptions, setDropdownOptions] = useState([]);
-  const [formdata, setformdata] = useState({});
-  const [courseFee, setCourseFee] = useState(""); // State to store the selected course fee
+  const [radio, setRadio] = useState([]);
+  const [formdata, setFormdata] = useState({});
+  const [courseFee, setCourseFee] = useState(""); 
   const academyname = sessionStorage.getItem("academyname");
-  const role = sessionStorage.getItem("role");
+  const role = sessionStorage.getItem("role"); 
 
-  const fetchform = async () => {
+
+ 
+
+  function validateForm(formdata) {
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const mobilePattern = /^\d{10}$/;
+    const minLengthPattern = /^.{5,}$/;
+    const notBlankPattern = /^(?!\s*$).+/;
+
+    return {
+        nameValid: minLengthPattern.test(formdata.Name),
+        addressValid: minLengthPattern.test(formdata.Address),
+        mobileValid: mobilePattern.test(formdata.MobileNo),
+        emailValid: emailPattern.test(formdata.Email),
+        genderValid: notBlankPattern.test(formdata.Gender),
+        coursesValid: notBlankPattern.test(formdata.Courses),
+        feesValid: notBlankPattern.test(courseFee) 
+    };
+}
+
+
+
+  const fetchForm = async () => {
     let url = "http://localhost:5000/api/auth/getform";
 
     try {
@@ -39,6 +65,7 @@ function AcademyRegistration() {
           const additionalFields = data[0].additionalFields || {};
           setFormFields(additionalFields);
           setDropdownOptions(additionalFields["Courses-Type_Options"] || []);
+          setRadio(additionalFields["Radio-Type_Options"] || []);
           toast.success("Form Fetch Success");
         } else {
           toast.error("No form data available");
@@ -52,12 +79,12 @@ function AcademyRegistration() {
   };
 
   useEffect(() => {
-    fetchform();
-  }, [academyname]);
+    fetchForm();
+  }, [academyname]); 
 
   const handleChange = (event) => {
     const { name, value } = event.target;
-    setformdata({
+    setFormdata({
       ...formdata,
       [name]: value,
     });
@@ -70,10 +97,20 @@ function AcademyRegistration() {
         setCourseFee(selectedOption.value); 
       }
     }
-  };
+  }; 
 
-  const handleformsubmition = async (e) => {
+  console.log(formdata)
+
+  const handleFormSubmission = async (e) => {
     e.preventDefault();
+    
+    const validationResult = validateForm(formdata); 
+
+    if (!Object.values(validationResult).every(valid => valid)) {
+      toast.error("Please Fill Correct Details ")
+      return 
+  }
+
     let url = `http://localhost:5000/api/auth/savedata`;
 
     const response = await fetch(url, {
@@ -84,13 +121,15 @@ function AcademyRegistration() {
       body: JSON.stringify({
         academyname: academyname,
         role: role,
-        userdetails: formdata,
+        userdetails: { formdata,
+          fees : courseFee
+        }
       }),
     });
 
     if (response.ok) {
       toast.success("Form Submitted Successfully");
-      setformdata({});
+      setFormdata({});
       setCourseFee(""); 
     } else {
       toast.error("Error Submitting Form");
@@ -115,17 +154,13 @@ function AcademyRegistration() {
               autoComplete="off"
             >
               <FormControl fullWidth>
+
                 <Select
                   value={formdata[label] || ""}
                   name={label}
                   onChange={handleChange}
                   displayEmpty
                   required
-                  renderValue={
-                    formdata[label] !== ""
-                      ? undefined
-                      : () => "Please select your option"
-                  }
                 >
                   <MenuItem disabled value="">
                     Please select your option
@@ -139,37 +174,73 @@ function AcademyRegistration() {
                 </Select> 
               </FormControl>
           
-             {courseFee  
-             ?  
-             <>
-                 <TextField
-                label="Course Fee"
-                variant="outlined"
-                value={courseFee || "Please select course "}
-                InputProps={{
-                  readOnly: true,
-                }}
-                sx={{ mt: 2 }}
-              />
-             </>: 
-             <>
-             </>
-      }          
+              {courseFee && (
+                <TextField
+                  label="Course Fee"
+                  variant="outlined"
+                  value={courseFee || "Please select course "}
+                  InputProps={{
+                    readOnly: true,
+                  }}
+                  sx={{ mt: 2 }}
+                />
+              )}
             </Box>
           </div>
         );
-      } else {
+      } 
+      else if (label === "Gender" && type === "Radio Button") {
+        return (
+          <div key={label} className="mb-4">
+            <label htmlFor={label} className="block text-gray-700 font-bold">
+              {label}:
+            </label>
+
+            <Box
+              component="form"
+              sx={{
+                "& > :not(style)": { m: 1, width: "100%" },
+              }}
+              noValidate
+              autoComplete="off"
+            >
+              <FormControl component="fieldset" fullWidth>
+                <RadioGroup
+                  value={formdata[label] || ""}
+                  name={label}
+                  onChange={handleChange}
+                  aria-label={label}
+                >
+                  {radio.length === 0 ? (
+                    <FormControlLabel
+                      value=""
+                      control={<Radio />}
+                      label="Please select your option"
+                      disabled
+                    />
+                  ) : (
+                    radio.map((option) => (
+                      <FormControlLabel
+                        key={option}
+                        value={option}
+                        control={<Radio />}
+                        label={option}
+                      />
+                    ))
+                  )}
+                </RadioGroup>
+              </FormControl>
+            </Box>
+          </div>
+        );
+      }
+      else {
         return (
           <>
-            {(label === "Courses-Type" && type === "Values") ||
-            label === "Courses-Type_Options" ? (
-              <></>
-            ) : (
+            {(label === "Courses-Type" && type === "Values") || (label === "Radio-Type" && type === "Radio") || (label === "Radio-Type_Options") ||
+            label === "Courses-Type_Options" ? null : (
               <div key={label} className="mb-4">
-                <label
-                  htmlFor={label}
-                  className="block text-gray-700 font-bold"
-                >
+                <label htmlFor={label} className="block text-gray-700 font-bold">
                   {label}:
                 </label>
                 <Box
@@ -184,7 +255,6 @@ function AcademyRegistration() {
                     label={label}
                     variant="outlined"
                     type={
-                      typeof type === "string" &&
                       type.toLowerCase() === "email id"
                         ? "email"
                         : "text"
@@ -229,7 +299,7 @@ function AcademyRegistration() {
         </h1>
 
         <Divider />
-        <form style={{ marginTop: "20px" }} onSubmit={handleformsubmition}>
+        <form style={{ marginTop: "20px" }} onSubmit={handleFormSubmission}>
           {renderInputFields()}
           <button
             type="submit"

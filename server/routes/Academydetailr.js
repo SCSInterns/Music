@@ -7,5 +7,6 @@ router.post('/academyreg', MusicAcademy.academy_details);
 router.get('/preview/:id',MusicAcademy.preview)
 router.put('/addpersonaldetail/:id', MusicAcademy.personaldetailsupdation) 
 router.post('/checkurl' , MusicAcademy.handleurl)
+router.post('/verifyurl',authenticate.authenticatetoken , MusicAcademy.verifyurl)
 
 module.exports = router;

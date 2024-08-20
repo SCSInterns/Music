@@ -104,7 +104,14 @@ function Signup() {
 
       const academyname = await sessionStorage.getItem("academyname")
       sessionStorage.setItem("role","Admin")
-      navigate(`/${academyname}/admin/dashboard`);
+
+      if(academyname)
+      {
+        navigate(`/${academyname}/admin/dashboard`, { replace: true });
+        window.location.reload(); 
+        
+      }
+   
     } else {
       setMsg("Contact SuperAdmin");
       toast.error("Access Denied");

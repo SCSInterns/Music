@@ -2,7 +2,8 @@ import * as React from "react";
 import Divider from "@mui/material/Divider";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { useEffect } from "react";
 import Token from "../Token/Token";
 import {
   Button,
@@ -29,8 +30,8 @@ function AcademyDashboard() {
   const [dropdown, setDropdown] = useState(false);
   const [option, setOption] = useState("");
   const [dynamicOptions, setDynamicOptions] = useState([]);
-
-
+  const [radio, setradio] = useState(false);
+  const [radiovalue, setradiovalue] = useState([]);
 
   const datatypes = [
     { value: "String", label: "String" },
@@ -40,6 +41,29 @@ function AcademyDashboard() {
     { value: "Email", label: "Email Id" },
   ];
 
+  const verifyurl = async () => {
+    const url = `http://localhost:5000/api/auth/verifyurl`;
+    const token = Token();
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        Authorization: `${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        role: role,
+      }),
+    });
+
+    if (!response.ok) {
+      toast.error("Failed");
+    }
+  };
+
+  useEffect(() => {
+    verifyurl();
+  }, [academyname]);
+
   const navigate = useNavigate();
 
   const handleAddition = () => {
@@ -47,7 +71,9 @@ function AcademyDashboard() {
       if (value === "Dropdown List") {
         setDropdown(true);
       }
-  
+      if (value === "Radio Button") {
+        setradio(true);
+      }
       setEntries([...entries, { LabelName: label, ValueType: value }]);
       setLabel("");
       setValue("");
@@ -92,8 +118,34 @@ function AcademyDashboard() {
     setOption("");
     setDynamicOptions([]);
   };
- 
- 
+
+  const handleradiochange = (index, value) => {
+    const newRadioOptions = [...radiovalue];
+    newRadioOptions[index] = value;
+    setradiovalue(newRadioOptions);
+  };
+
+  useEffect(() => {
+    console.log("Updated entries:", entries);
+  }, [entries]);
+
+  const handleradiobutton = () => {
+    const formattedRadioOptions = radiovalue.filter((value) => value);
+
+    console.log(formattedRadioOptions);
+    setEntries([
+      ...entries,
+      {
+        LabelName: "Radio-Type",
+        ValueType: "Radio",
+        Options: formattedRadioOptions,
+      },
+    ]);
+    setradio(false);
+    setOption("");
+    setradiovalue([]);
+  };
+
   const handleApplicants = async () => {
     settoggleapplicants(true);
 
@@ -364,6 +416,69 @@ function AcademyDashboard() {
                 </>
               )}
 
+              {radio && (
+                <>
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <Box
+                      component="form"
+                      sx={{
+                        "& > :not(style)": { m: 1, width: "25ch" },
+                      }}
+                      noValidate
+                      autoComplete="off"
+                    >
+                      <TextField
+                        id="outlined-basic"
+                        label="Enter no of options"
+                        variant="outlined"
+                        value={option}
+                        onChange={(e) => setOption(e.target.value)}
+                      />
+                      <Button variant="contained" onClick={handleDynamicOption}>
+                        Generate Options
+                      </Button>
+                    </Box>
+                  </div>
+
+                  <div
+                    style={{
+                      padding: "10px",
+                      margin: "10px",
+                      display: "flex",
+                      flexWrap: "wrap",
+                      gap: "10px",
+                    }}
+                  >
+                    {dynamicOptions.map((opt, index) => (
+                      <Box
+                        key={index}
+                        sx={{
+                          "& > :not(style)": { m: 1, width: "25ch" },
+                        }}
+                      >
+                        <TextField
+                          id={`option-label-${index}`}
+                          label={`Option ${index + 1}`}
+                          variant="outlined"
+                          value={radiovalue[index] || ""}
+                          onChange={(e) =>
+                            handleradiochange(index, e.target.value)
+                          }
+                        />
+                      </Box>
+                    ))}
+                  </div>
+                  <Button variant="contained" onClick={handleradiobutton}>
+                    Submit Options
+                  </Button>
+                </>
+              )}
 
               <Divider sx={{ marginTop: "30px" }} />
 
@@ -386,11 +501,19 @@ function AcademyDashboard() {
                           <TableCell>{entry.ValueType}</TableCell>
                           <TableCell>
                             {entry.Options
-                              ? entry.Options.map((opt, idx) => (
-                                  <div key={idx}>
-                                    {opt.label}: {opt.value}
-                                  </div>
-                                ))
+                              ? // Handle different formats for options
+                                Array.isArray(entry.Options)
+                                ? entry.Options.map((opt, idx) =>
+                                    // Handle radio options or dropdown options
+                                    typeof opt === "string" ? (
+                                      <div key={idx}>{opt}</div>
+                                    ) : (
+                                      <div key={idx}>
+                                        {opt.label}: {opt.value}
+                                      </div>
+                                    )
+                                  )
+                                : "N/A"
                               : "N/A"}
                           </TableCell>
                         </TableRow>

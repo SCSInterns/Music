@@ -75,9 +75,9 @@ const preview = async (req, res) => {
 
 // check the academy access 
 const handleurl = async (req, res) => {
-    const {requestedurl} = req.body
+    const { requestedurl } = req.body
     try {
-        const response = await Admin.find({academy_url: requestedurl });
+        const response = await Admin.find({ academy_url: requestedurl });
         if (response.length > 0 && response[0].academy_access === "Accept") {
             res.status(200).json(response);
         } else {
@@ -91,9 +91,24 @@ const handleurl = async (req, res) => {
 }
 
 
+// check the url for admin verification 
+
+const verifyurl = async (req, res) => {
+    const { role } = req.body
+
+    if (role === "Admin") {
+        res.status(200).json({ msg: "Authorized" })
+    }
+    else {
+        res.status(404).json({ msg: "UnAuthorized" })
+    }
+}
+
+
 module.exports = {
     academy_details,
     preview,
     personaldetailsupdation,
-    handleurl
+    handleurl , 
+    verifyurl
 };
