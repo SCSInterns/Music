@@ -4,6 +4,8 @@ import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useEffect } from "react";
+
+
 import Token from "../Token/Token";
 import {
   Button,
@@ -18,6 +20,9 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 import { toast } from "react-toastify";
+import IconButton from "@mui/material/IconButton";
+import Modal from "@mui/material/Modal";
+import ApplicantsTable from "./AppliacantsTable";
 
 function AcademyDashboard() {
   const academyname = sessionStorage.getItem("academyname");
@@ -31,7 +36,11 @@ function AcademyDashboard() {
   const [option, setOption] = useState("");
   const [dynamicOptions, setDynamicOptions] = useState([]);
   const [radio, setradio] = useState(false);
+
   const [radiovalue, setradiovalue] = useState([]);
+  const [open, setOpen] = useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
 
   const datatypes = [
     { value: "String", label: "String" },
@@ -144,6 +153,7 @@ function AcademyDashboard() {
     setradio(false);
     setOption("");
     setradiovalue([]);
+    setDynamicOptions([]);
   };
 
   const handleApplicants = async () => {
@@ -533,38 +543,10 @@ function AcademyDashboard() {
             </>
           ) : (
             <>
-              <Typography variant="h6" gutterBottom>
+              <Typography variant="h6" sx={{marginTop:'20px'}} gutterBottom>
                 Applicants Data
               </Typography>
-
-              <TableContainer component={Paper}>
-                <Table>
-                  <TableHead>
-                    <TableRow>
-                      {getDynamicHeaders().map((header) => (
-                        <TableCell key={header}>{header}</TableCell>
-                      ))}
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {appdata.map((applicant) => (
-                      <TableRow key={applicant._id}>
-                        {getDynamicHeaders().map((header) => {
-                          const cellValue = applicant[header];
-                          return (
-                            <TableCell key={header}>
-                              {typeof cellValue === "object" &&
-                              cellValue !== null
-                                ? JSON.stringify(cellValue)
-                                : cellValue}
-                            </TableCell>
-                          );
-                        })}
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
+              <ApplicantsTable users={appdata} />
             </>
           )}
         </div>

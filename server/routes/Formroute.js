@@ -7,4 +7,5 @@ router.post('/academyregform', authenticate.authenticatetoken, formcontroller.ha
 router.post('/getform',formcontroller.getform) 
 router.post('/savedata' , formcontroller.savedata)
 router.post('/getdata', authenticate.authenticatetoken , formcontroller.handleapplicantdata)
+router.post('/getdatabyid/:id', authenticate.authenticatetoken , formcontroller.finddatabyid)
 module.exports = router 

@@ -4,11 +4,11 @@ const Token = require('../models/Token');
 // form addition 
 const handledynamicform = async (req, res) => {
   try {
-    const { academyname, role, additionalFields , courses } = req.body;
+    const { academyname, role, additionalFields, courses } = req.body;
     const academy = new Form({
       academy_name: academyname,
       role: role,
-      additionalFields , 
+      additionalFields,
       courses
     });
 
@@ -87,4 +87,29 @@ const handleapplicantdata = async (req, res) => {
   }
 }
 
-module.exports = { handledynamicform, getform, savedata, handleapplicantdata }
+
+// getting the particular form data 
+
+const finddatabyid = async (req, res) => {
+  try {
+    const { role } = req.body
+    const user = await Form.findById(req.params.id)
+
+    if (user) {
+
+      if (role === "Admin") {
+        res.status(200).json(user)
+      } else {
+        res.status(401).json({ msg: "Unauthorized" })
+      }
+
+    } else {
+      res.status(404).json({ msg: "No user found with gien id " })
+    }
+
+  } catch (error) {
+    res.status(500).json({ message: 'Server not supported', error });
+  }
+}
+
+module.exports = { handledynamicform, getform, savedata, handleapplicantdata , finddatabyid }
