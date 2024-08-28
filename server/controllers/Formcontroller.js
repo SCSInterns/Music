@@ -112,4 +112,55 @@ const finddatabyid = async (req, res) => {
   }
 }
 
-module.exports = { handledynamicform, getform, savedata, handleapplicantdata , finddatabyid }
+// setting up the status 
+
+const handlestatus = async (req, res) => {
+
+  try {
+    const { status } = req.body
+    const user = await Form.findById(req.params.id)
+
+    const updateduser = {
+      ...req.body,
+      status: status
+    };
+    if (user) {
+      const updatedinfo = await Form.findByIdAndUpdate(req.params.id, { $set: updateduser })
+
+      res.status(200).json({ msg: "Status updated successfully ", updatedinfo })
+    }
+    else {
+      res.status(404).json({ msg: "User not found" })
+    }
+
+  } catch (error) {
+    res.status(500).json({ message: 'Server not supported', error });
+  }
+
+}
+
+const handleinstallment = async (req, res) => {
+  try {
+    const { date } = req.body
+
+    const user = await Form.findById(req.params.id)
+    const updateduser = {
+      ...req.body,
+      installementDate: date
+    };
+    if (user && user.status === "Accept") {
+      const updatedinfo = await Form.findByIdAndUpdate(req.params.id, { $set: updateduser })
+
+      res.status(200).json({ msg: "Installement updated successfully ", updatedinfo })
+    }
+    else {
+      res.status(404).json({ msg: "User not found" })
+    }
+  } catch (error) {
+    res.status(500).json({ message: 'Server not supported', error });
+  }
+}
+
+
+
+module.exports = { handledynamicform, getform, savedata, handleapplicantdata, finddatabyid, handlestatus , handleinstallment }

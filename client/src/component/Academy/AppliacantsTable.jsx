@@ -9,6 +9,8 @@ import {
   Paper,
   Typography,
   Button,
+  Divider,
+  TextField,
 } from "@mui/material";
 import PreviewIcon from "@mui/icons-material/Preview";
 import { toast } from "react-toastify";
@@ -22,10 +24,8 @@ import Token from "../Token/Token";
 const ApplicantsTable = ({ users }) => {
   const [data, setData] = useState();
   const [toggle, setToggle] = useState(false);
-
+  const [toggleinstallment, settoggleinstallment] = useState(false);
   const hasUsers = users && users.length > 0;
-
-
 
   const handlePreview = async (id) => {
     const url = `http://localhost:5000/api/auth/getdatabyid/${id}`;
@@ -44,9 +44,14 @@ const ApplicantsTable = ({ users }) => {
 
       if (response.ok) {
         const responseData = await response.json();
-        setData(responseData);
+        setData(responseData);        
         toast.success("Details Fetch Success");
         setToggle(true);
+        if (responseData.status === "Accept") {
+          settoggleinstallment(true);
+        } else {
+          settoggleinstallment(false);
+        }
       } else {
         toast.error("Error fetching info");
       }
@@ -58,6 +63,55 @@ const ApplicantsTable = ({ users }) => {
   const handleClose = () => {
     setToggle(false);
     setData(null);
+  };
+
+  const handleinstallment = async (id) => {
+    const url = `http://localhost:5000/api/auth/updateinstallment/${id}`;
+    const token = Token();
+    const currentDate = new Date();
+    const formattedDate = `${String(currentDate.getDate()).padStart(2, '0')}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${currentDate.getFullYear()}`;
+
+    const response = await fetch(url, {
+      method: "PUT",
+      headers: {
+        Authorization: `${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ date: formattedDate  }),
+    });
+
+    if (response.ok) {
+      toast.success("Installment Date Updated Success");
+    } else {
+      toast.error("Installment Date Updation Failed");
+    }
+  };
+
+  const handleclick = async (status, id) => {
+    const url = `http://localhost:5000/api/auth/updatestatus/${id}`;
+    const token = Token();
+    const response = await fetch(url, {
+      method: "PUT",
+      headers: {
+        Authorization: `${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ status: status }),
+    });
+
+    if (response.ok) {
+      toast.success("Status updated successfully");
+      await handleinstallment(id);
+      handlePreview(id);
+    } else {
+      toast.error("Status updation failed ");
+    }
+
+    if (response.status === "Accept") {
+      settoggleinstallment(true);
+    } else {
+      settoggleinstallment(false);
+    }
   };
 
   return (
@@ -105,15 +159,17 @@ const ApplicantsTable = ({ users }) => {
         aria-labelledby="preview-dialog-title"
         aria-describedby="preview-dialog-description"
         maxWidth="md"
-        sx={{ 
-          '& .MuiDialog-paper': { 
-            width: '600px',   
-            height: '400px'  
-          } , 
-          margin:'auto'
+        sx={{
+          "& .MuiDialog-paper": {
+            width: "600px",
+            height: "400px",
+          },
+          margin: "auto",
         }}
       >
-        <DialogTitle id="preview-dialog-title">Detailed Information</DialogTitle>
+        <DialogTitle id="preview-dialog-title">
+          Detailed Information
+        </DialogTitle>
         <DialogContent>
           <DialogContentText id="preview-dialog-description">
             {data ? (
@@ -137,6 +193,61 @@ const ApplicantsTable = ({ users }) => {
                 <Typography>
                   Gender : {data.additionalFields.formdata?.Gender}
                 </Typography>
+                <Divider sx={{ marginTop: "30px", marginBottom: "20px" }} />
+
+                <Typography>Status : {data.status}</Typography>
+                <div
+                  style={{
+                    padding: "10px",
+                    margin: "10px",
+                    display: "flex",
+                    justifyContent: "space-around",
+                  }}
+                >
+                  <Button
+                    variant="contained"
+                    onClick={() => handleclick("Accept", data._id)}
+                  >
+                    Accept
+                  </Button>
+                  <Button
+                    variant="contained"
+                    onClick={() => handleclick("Reject", data._id)}
+                  >
+                    Reject
+                  </Button>
+                  <Button
+                    variant="contained"
+                    onClick={() => handleclick("Hold", data._id)}
+                  >
+                    Hold
+                  </Button>
+                </div>
+
+                <Divider sx={{ marginTop: "30px", marginBottom: "30px" }} />
+
+                {toggleinstallment ? (
+                  <>
+                    <h1 style={{ fontWeight: "Bold", marginBottom: "20px" }}>
+                      Installment Info Here :{" "}
+                    </h1>
+
+                    <Typography>
+                      Installment Date : {data.installementDate}
+                      
+                    </Typography>
+                    <Typography>
+                      Installment Amount : {data.additionalFields.fees}
+                    </Typography>
+                    <Typography>
+                      Payment Date :
+                      <input type="date" id="datePicker" 
+                      name="datePicker"></input>
+                    </Typography>
+                  </>
+                ) : (
+                  <></>
+                )}
               </>
             ) : (
               <Typography>No information available.</Typography>

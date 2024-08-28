@@ -8,9 +8,9 @@ const formSchema = new Schema({
   // dynamic fields 
   additionalFields: { type: Map, of: Schema.Types.Mixed },
   courses: { type: Map, of: Schema.Types.Mixed },
+  status: { type: String, required: true, default: "To be updated" } , 
+  installementDate :{ type : String , required : true , default : "Yet to set"}
 
-  
-   
 });
 
 const Academy = mongoose.model('Registration Form', formSchema);
