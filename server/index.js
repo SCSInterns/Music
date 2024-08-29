@@ -25,20 +25,23 @@ mongoose.connect(path)
         console.log("Error connecting to MongoDB", error);
     });
 
-const superadminauth= require('./routes/SuperAdminr');
-app.use('/api/superadmin', superadminauth); 
+const superadminauth = require('./routes/SuperAdminr');
+app.use('/api/superadmin', superadminauth);
 
-const academyreg= require('./routes/Academydetailr');
-app.use('/api/auth', academyreg); 
+const academyreg = require('./routes/Academydetailr');
+app.use('/api/auth', academyreg);
 
-const academysign= require('./routes/Academysignupr');
-app.use('/api/auth', academysign); 
- 
+const academysign = require('./routes/Academysignupr');
+app.use('/api/auth', academysign);
+
 const otpservice = require('./routes/Emailr')
-app.use('/api/auth',otpservice)
+app.use('/api/auth', otpservice)
 
 const academyform = require('./routes/Formroute')
-app.use('/api/auth',academyform)
+app.use('/api/auth', academyform)
+
+const installment = require('./routes/Installmentroute')
+app.use('/api/auth', installment)
 
 app.get('/', (req, res) => {
     res.send("Hello World");
