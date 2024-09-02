@@ -5,7 +5,7 @@ const Installment = require('../controllers/Installmentcontroller')
 
 
 router.post('/addpaymentdetails/:studentId',authenticate.authenticatetoken,Installment.handlenextinstallmentdate)
-
+router.post('/getinfoinstallment' , authenticate.authenticatetoken , Installment.getinfoofinstallment)
 
 
 

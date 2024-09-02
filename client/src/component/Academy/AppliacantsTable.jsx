@@ -25,6 +25,7 @@ import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import Token from "../Token/Token";
+import PaymentDetails from "./PaymentDetails";
 
 const ApplicantsTable = ({ users }) => {
   const [data, setData] = useState();
@@ -35,6 +36,10 @@ const ApplicantsTable = ({ users }) => {
   const role = sessionStorage.getItem("role");
   const [paymentmode, setpaymentmode] = useState("");
   const [paymentdate, setpaymentdate] = useState("");
+  const [installmentstate, setinstallmentstate] = useState({
+    studentid: "",
+    username: "",
+  });
   const [paymentdetails, setpaymentdetails] = useState({
     academyname: `${academyname}`,
     course: "",
@@ -44,7 +49,6 @@ const ApplicantsTable = ({ users }) => {
     enrollmentDate: "",
     paymentmode: "",
   });
-
 
   useEffect(() => {
     if (data) {
@@ -76,17 +80,17 @@ const ApplicantsTable = ({ users }) => {
   };
 
   const convertDateFormat = (dateStr) => {
-    const [year, month, day] = dateStr.split('-');
+    const [year, month, day] = dateStr.split("-");
     const dateObj = new Date(year, month - 1, day);
-    
+
     const formattedDate = [
-        String(dateObj.getDate()).padStart(2, '0'),
-        String(dateObj.getMonth() + 1).padStart(2, '0'),
-        dateObj.getFullYear()
-    ].join('-');
-    
+      String(dateObj.getDate()).padStart(2, "0"),
+      String(dateObj.getMonth() + 1).padStart(2, "0"),
+      dateObj.getFullYear(),
+    ].join("-");
+
     return formattedDate;
-};
+  };
 
   const handleinstallmentsubmition = async (id) => {
     const url = `http://localhost:5000/api/auth/addpaymentdetails/${id}`;
@@ -112,8 +116,12 @@ const ApplicantsTable = ({ users }) => {
 
       if (response.ok) {
         toast.success("Payment Data Added Successfully ");
-        setpaymentdate("")
-        setpaymentmode("")
+        setinstallmentstate({
+          studentid: data._id,
+          username: data.additionalFields.formdata?.Name,
+        });
+        setpaymentdate("");
+        setpaymentmode("");
       } else {
         toast.error("Payment Details Updation Failed ");
       }
@@ -140,6 +148,10 @@ const ApplicantsTable = ({ users }) => {
       if (response.ok) {
         const responseData = await response.json();
         setData(responseData);
+        setinstallmentstate({
+          studentid: responseData._id,
+          username: responseData.additionalFields.formdata?.Name,
+        });
         toast.success("Details Fetch Success");
         setToggle(true);
         if (responseData.status === "Accept") {
@@ -419,6 +431,12 @@ const ApplicantsTable = ({ users }) => {
                     </Button>
 
                     <Divider sx={{ marginTop: "20px", marginBottom: "20px" }} />
+
+                    <Typography sx={{ fontWeight: "Bold" }}>
+                      Payment Info :
+                    </Typography>
+
+                    <PaymentDetails data={installmentstate} />
                   </>
                 ) : (
                   <></>

@@ -26,13 +26,13 @@ const handlenextinstallmentdate = async (req, res) => {
     try {
         const { studentId } = req.params;
         const { academyname, course, amount, role, studentname, enrollmentDate, paymentmode } = req.body
-    
-    
+
+
         const dateStr = enrollmentDate;
         const monthsToAdd = 1;
-    
+
         const nextPaymentDate = convertAndAddMonths(dateStr, monthsToAdd);
-    
+
         if (role === "Admin") {
             const Newuser = await new Installement({
                 studentId: studentId,
@@ -45,7 +45,7 @@ const handlenextinstallmentdate = async (req, res) => {
                 paymentmode: paymentmode
             })
             const response = await Newuser.save()
-    
+
             if (response) {
                 res.status(200).json({ msg: "Details added successfully", Newuser })
             }
@@ -54,7 +54,7 @@ const handlenextinstallmentdate = async (req, res) => {
             }
         } else {
             res.status(401).json({ msg: "Unauthorised Access" })
-        }     
+        }
     } catch (error) {
         res.status(500).json({ message: 'Server not supported', error });
     }
@@ -62,4 +62,28 @@ const handlenextinstallmentdate = async (req, res) => {
 
 }
 
-module.exports = { handlenextinstallmentdate }
+// get the data for installment for dashboard acc to customer name 
+
+const getinfoofinstallment = async (req, res) => {
+    try {
+        const { academyname, role, username, studentid } = req.body
+
+        const response = await Installement.find({ studentId: studentid, studentname: username, academyname: academyname })
+
+        if (response) {
+            if (role === "Admin") {
+                res.status(200).json(response)
+            }
+            else {
+                res.status(401).json({ msg: "Unauthorized Access" })
+            }
+        }
+        else {
+            res.status(404).json({ msg: "No Data Found " })
+        }
+    } catch (error) {
+        res.status(500).json({ message: 'Server not supported', error });
+    }
+}
+
+module.exports = { handlenextinstallmentdate, getinfoofinstallment }
