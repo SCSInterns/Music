@@ -21,6 +21,7 @@ import AcceptedApplication from './component/SuperAdmin/AcceptedApplication'
 import { toast } from 'react-toastify';
 import { useEffect } from 'react';
 import AcademyRegistration from './component/Academy/AcademyRegistration';
+import PaymentDetails from './component/Academy/PaymentDetails';
 
 
 function App() {
@@ -38,12 +39,12 @@ function App() {
           {/* Superadmin routes  */}
           {verified && (role === "Superadmin") ?
             <>
-              <Route exact path='/superadmin/dashboard' element={<Inquiry />} />
-              <Route exact path='/superadmin/accepotedapplication' element={<AcceptedApplication />} />
+              <Route path='/superadmin/dashboard' element={<Inquiry />} />
+              <Route path='/superadmin/accepotedapplication' element={<AcceptedApplication />} />
             </> :
             <>
-              <Route exact path='/superadmin/login' element={<Login />}></Route>
-              <Route exact path='/superadmin/dashboard' element={<Navigate to='/superadmin/login' />} />
+              <Route path='/superadmin/login' element={<Login />}></Route>
+              <Route path='/superadmin/dashboard' element={<Navigate to='/superadmin/login' />} />
             </>}
 
 
@@ -51,23 +52,23 @@ function App() {
 
           {verified && (role === "Admin") ?
             <>
-              <Route exact path={'/:academyname/admin/dashboard'} element={<AcademyDashboard />}></Route>
-              <Route exact path={'/:academyname/admin/regform'} element={<AcademyRegistration />}></Route>
-
+              <Route path={'/:academyname/admin/dashboard'} element={<AcademyDashboard />}></Route>
+              <Route path={'/:academyname/admin/regform'} element={<AcademyRegistration />}></Route>
+              <Route path={'/:academyname/admin/feesdetails'} element={<PaymentDetails />}></Route>
             </> :
             <>
-              <Route exact path='/academyregform' element={<RegForm />}></Route>
-              <Route exact path='/academysignup/:id' element={<Signup />}></Route>
-              <Route exact path='/admin/login' element={<AcademyLogin />}></Route>
-              <Route exact path='/personaldetails/:id' element={<PersonalDetails />} ></Route>
-              <Route exact path='/admin/dashboard' element={<Navigate to='/admin/login' />}></Route>
+              <Route path='/academyregform' element={<RegForm />}></Route>
+              <Route path='/academysignup/:id' element={<Signup />}></Route>
+              <Route path='/admin/login' element={<AcademyLogin />}></Route>
+              <Route path='/personaldetails/:id' element={<PersonalDetails />} ></Route>
+              <Route path='/admin/dashboard' element={<Navigate to='/admin/login' />}></Route>
             </>}
-       
+
           {/* path='' */}
 
           {/* public routes  */}
 
-          <Route exact path='/:academyname' element={<Home />} />
+          <Route path='/:academyname' element={<Home />} />
 
         </Routes>
       </Router>

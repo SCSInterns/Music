@@ -5,7 +5,6 @@ import TextField from "@mui/material/TextField";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useEffect } from "react";
 
-
 import Token from "../Token/Token";
 import {
   Button,
@@ -23,6 +22,7 @@ import { toast } from "react-toastify";
 import IconButton from "@mui/material/IconButton";
 import Modal from "@mui/material/Modal";
 import ApplicantsTable from "./AppliacantsTable";
+import PendingFeesTable from "./PendingFeesTable";
 
 function AcademyDashboard() {
   const academyname = sessionStorage.getItem("academyname");
@@ -36,7 +36,7 @@ function AcademyDashboard() {
   const [option, setOption] = useState("");
   const [dynamicOptions, setDynamicOptions] = useState([]);
   const [radio, setradio] = useState(false);
-
+  const [togglepaymentdue, settogglepaymentdue] = useState(false);
   const [radiovalue, setradiovalue] = useState([]);
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
@@ -183,6 +183,31 @@ function AcademyDashboard() {
     }
   };
 
+  const handleFees = async () => {
+    settogglepaymentdue(true);
+
+    const url = "http://localhost:5000/api/auth/getpaymnetdue";
+    const token = Token();
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        Authorization: `${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        academyname: academyname,
+        role: role,
+        currentdate: "02-10-2024",
+      }),
+    });
+
+    if (response.ok) {
+      const data = response.json();
+      console.log(data);
+      toast.success("Payment Details Fetch Success");
+    }
+  };
+
   const getDynamicHeaders = () => {
     if (appdata.length > 0) {
       const firstApplicant = appdata[0];
@@ -271,6 +296,16 @@ function AcademyDashboard() {
           >
             Applicants Data
           </Button>
+          <Divider />
+
+          <Button
+            variant="contained"
+            style={{ margin: "10px", width: "200px" }}
+            onClick={handleFees}
+          >
+            Pending Fees
+          </Button>
+
           <Divider />
         </div>
         <div
@@ -543,7 +578,7 @@ function AcademyDashboard() {
             </>
           ) : (
             <>
-              <Typography variant="h6" sx={{marginTop:'20px'}} gutterBottom>
+              <Typography variant="h6" sx={{ marginTop: "20px" }} gutterBottom>
                 Applicants Data
               </Typography>
               <ApplicantsTable users={appdata} />
@@ -551,6 +586,14 @@ function AcademyDashboard() {
           )}
         </div>
       </div>
+
+      {togglepaymentdue ? (
+        <>
+          <PendingFeesTable />
+        </>
+      ) : (
+        <></>
+      )}
     </>
   );
 }

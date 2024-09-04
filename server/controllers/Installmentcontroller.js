@@ -86,4 +86,25 @@ const getinfoofinstallment = async (req, res) => {
     }
 }
 
-module.exports = { handlenextinstallmentdate, getinfoofinstallment }
+// get all the candinates with current date and next payment date same for cron job 
+
+const getinfoofpendingpayments = async (req, res) => {
+    const { academyname, role, currentdate } = req.body
+
+    const Users = await Installement.find({ nextPaymentDate: currentdate, academyname: academyname })
+
+    if (Users) {
+        if (role === "Admin") {
+            res.status(200).json(Users)
+        }
+        else {
+            res.status(401).json({ msg: "Unauthorized Access" })
+        }
+    }
+    else {
+        res.status(404).json({ msg: "No users found " })
+    }
+
+}
+
+module.exports = { handlenextinstallmentdate, getinfoofinstallment, getinfoofpendingpayments }
