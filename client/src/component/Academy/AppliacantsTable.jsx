@@ -48,6 +48,7 @@ const ApplicantsTable = ({ users }) => {
     studentname: "",
     enrollmentDate: "",
     paymentmode: "",
+    studentemail: ""
   });
 
   useEffect(() => {
@@ -57,6 +58,7 @@ const ApplicantsTable = ({ users }) => {
         course: data.additionalFields?.formdata?.Courses,
         amount: data.additionalFields?.fees,
         studentname: data.additionalFields?.formdata?.Name,
+        studentemail:data.additionalFields.formdata?.Email
       });
     }
   }, [data]);
@@ -111,6 +113,7 @@ const ApplicantsTable = ({ users }) => {
           studentname: paymentdetails.studentname,
           enrollmentDate: paymentdetails.enrollmentDate,
           paymentmode: paymentdetails.paymentmode,
+          studentemail : paymentdetails.studentemail
         }),
       });
 

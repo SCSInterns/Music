@@ -15,25 +15,29 @@ const InstallmentSchema = new Schema(
             type: String,
             required: true
         },
-        course : {
-            type : String , 
-            required : true
-        } ,
-        amount : { 
-            type : String , 
-            required :true
-        } ,
+        studentemail: {
+            type: String,
+            required: true
+        },
+        course: {
+            type: String,
+            required: true
+        },
+        amount: {
+            type: String,
+            required: true
+        },
         enrollmentDate:
         {
             type: String,
-            required : true
+            required: true
         },
-        paymentmode : {
-            type: String , 
-            required : true
-        } , 
+        paymentmode: {
+            type: String,
+            required: true
+        },
         nextPaymentDate: {
-            type: String ,
+            type: String,
             required: true
         }
 

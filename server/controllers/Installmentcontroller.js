@@ -25,7 +25,7 @@ const convertAndAddMonths = (dateStr, monthsToAdd) => {
 const handlenextinstallmentdate = async (req, res) => {
     try {
         const { studentId } = req.params;
-        const { academyname, course, amount, role, studentname, enrollmentDate, paymentmode } = req.body
+        const { academyname, course, amount, role, studentname, enrollmentDate, paymentmode , studentemail} = req.body
 
 
         const dateStr = enrollmentDate;
@@ -42,7 +42,8 @@ const handlenextinstallmentdate = async (req, res) => {
                 amount: amount,
                 enrollmentDate: enrollmentDate,
                 nextPaymentDate: nextPaymentDate,
-                paymentmode: paymentmode
+                paymentmode: paymentmode , 
+                studentemail : studentemail
             })
             const response = await Newuser.save()
 

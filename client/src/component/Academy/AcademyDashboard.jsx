@@ -39,6 +39,7 @@ function AcademyDashboard() {
   const [togglepaymentdue, settogglepaymentdue] = useState(false);
   const [radiovalue, setradiovalue] = useState([]);
   const [open, setOpen] = useState(false);
+  const [passpaymentdetails, setpasspaymentdetails] = useState([]);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
@@ -183,9 +184,23 @@ function AcademyDashboard() {
     }
   };
 
+  const scrollToSection = (id) => {
+    const section = document.getElementById(id);
+    section?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  function getCurrentDate() {
+    const today = new Date();
+    const day = String(today.getDate()).padStart(2, "0");
+    const month = String(today.getMonth() + 1).padStart(2, "0");
+    const year = today.getFullYear();
+
+    return `${day}-${month}-${year}`;
+  }
+
   const handleFees = async () => {
     settogglepaymentdue(true);
-
+    const todaydate = getCurrentDate();
     const url = "http://localhost:5000/api/auth/getpaymnetdue";
     const token = Token();
     const response = await fetch(url, {
@@ -197,13 +212,13 @@ function AcademyDashboard() {
       body: JSON.stringify({
         academyname: academyname,
         role: role,
-        currentdate: "02-10-2024",
+        currentdate: todaydate,
       }),
     });
 
     if (response.ok) {
-      const data = response.json();
-      console.log(data);
+      const data = await response.json();
+      setpasspaymentdetails(data);
       toast.success("Payment Details Fetch Success");
     }
   };
@@ -301,10 +316,15 @@ function AcademyDashboard() {
           <Button
             variant="contained"
             style={{ margin: "10px", width: "200px" }}
-            onClick={handleFees}
+            onClick={() => {
+              handleFees();
+              scrollToSection("fees");
+            }}
           >
             Pending Fees
           </Button>
+
+          <Divider />
 
           <Divider />
         </div>
@@ -588,8 +608,11 @@ function AcademyDashboard() {
       </div>
 
       {togglepaymentdue ? (
-        <>
-          <PendingFeesTable />
+         <> 
+         <h1 style={{marginTop:'30px' , fontSize:'20px',  fontWeight:'bold'}}>Payment Due Details </h1>
+        <div id="fees" style={{ margin:'60px'}}>
+          <PendingFeesTable data={passpaymentdetails} />
+        </div>
         </>
       ) : (
         <></>

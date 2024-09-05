@@ -1,4 +1,5 @@
 const Installment = require("../models/Installment");
+const Email = require("../controllers/emailc")
 const cron = require('node-cron');
 const moment = require('moment');
 
@@ -28,8 +29,12 @@ const calculatePaymentDueDates = async () => {
                 studentname: user.studentname,
                 course: user.course,
                 amount: user.amount,
+                email: user.studentemail,
                 nextPaymentDate: user.nextPaymentDate
-            }));
+            },
+                Email.sendpaymentmail(user.studentemail, user.amount, user.studentname, user.academyname)
+            ),
+            );
 
             console.log('Payment reminders found:', userNames);
         } else {
