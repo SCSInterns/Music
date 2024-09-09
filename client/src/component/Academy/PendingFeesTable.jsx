@@ -12,6 +12,7 @@ import {
 } from "@mui/material";
 import Token from "../Token/Token";
 import { toast } from "react-toastify";
+import MailOutlineIcon from "@mui/icons-material/MailOutline";
 
 function PendingFeesTable({ data }) {
   const [date, setdate] = useState("");
@@ -55,6 +56,33 @@ function PendingFeesTable({ data }) {
     }
   };
 
+  const handlereminder = async (email, amount, name) => {
+    const url = "http://localhost:5000/api/auth/sendpaymentreminder";
+    const token = Token();
+
+    let response = await fetch(url, {
+      method: "POST",
+      headers: {
+        Authorization: `${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        academyname: academyname,
+        email: email,
+        amount: amount,
+        name: name,
+        role: role,
+        currentdate: date,
+      }),
+    });
+
+    if (response.ok) {
+      toast.success(" Email send successfully ");
+    } else {
+      toast.error(" Error sending email ");
+    }
+  };
+
   return (
     <>
       <div>
@@ -66,13 +94,16 @@ function PendingFeesTable({ data }) {
             display: "flex",
           }}
         >
-          Payment Date :
+          Payment Date : 
+
+          <div style={{marginLeft:'10px'}}>
           <input
             type="date"
             id="datePicker"
             name="datePicker"
             onChange={(e) => setdate(e.target.value)}
           ></input>
+          </div>
           <Button
             variant="contained"
             sx={{ marginLeft: "50px" }}
@@ -99,6 +130,7 @@ function PendingFeesTable({ data }) {
                 <TableCell>Payment Mode</TableCell>
                 <TableCell>Enrollment Date</TableCell>
                 <TableCell>Next Payment Date</TableCell>
+                <TableCell>Send Reminder </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -111,7 +143,23 @@ function PendingFeesTable({ data }) {
                     <TableCell>{row.amount}</TableCell>
                     <TableCell>{row.paymentmode}</TableCell>
                     <TableCell>{row.enrollmentDate}</TableCell>
-                    <TableCell sx={{fontWeight:'bold'}}>{row.nextPaymentDate}</TableCell>
+                    <TableCell sx={{ fontWeight: "bold" }}>
+                      {row.nextPaymentDate}
+                    </TableCell>
+                    <TableCell>
+                      <Button
+                        variant="contained"
+                        onClick={() => {
+                          handlereminder(
+                            row.studentemail,
+                            row.amount,
+                            row.studentname
+                          );
+                        }}
+                      >
+                        <MailOutlineIcon />
+                      </Button>
+                    </TableCell>
                   </TableRow>
                 ))
               ) : (

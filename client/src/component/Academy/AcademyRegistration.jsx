@@ -11,7 +11,7 @@ import {
   Typography,
   Radio,
   RadioGroup,
-  FormControlLabel
+  FormControlLabel,
 } from "@mui/material";
 
 function AcademyRegistration() {
@@ -19,31 +19,80 @@ function AcademyRegistration() {
   const [dropdownOptions, setDropdownOptions] = useState([]);
   const [radio, setRadio] = useState([]);
   const [formdata, setFormdata] = useState({});
-  const [courseFee, setCourseFee] = useState(""); 
+  const [courseFee, setCourseFee] = useState("");
   const academyname = sessionStorage.getItem("academyname");
-  const role = sessionStorage.getItem("role"); 
+  const role = sessionStorage.getItem("role");
 
-
- 
-
-  function validateForm(formdata) {
+  function validateForm(formdata, formFields) {
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const mobilePattern = /^\d{10}$/;
     const minLengthPattern = /^.{5,}$/;
     const notBlankPattern = /^(?!\s*$).+/;
 
-    return {
-        nameValid: minLengthPattern.test(formdata.Name),
-        addressValid: minLengthPattern.test(formdata.Address),
-        mobileValid: mobilePattern.test(formdata.MobileNo),
-        emailValid: emailPattern.test(formdata.Email),
-        genderValid: notBlankPattern.test(formdata.Gender),
-        coursesValid: notBlankPattern.test(formdata.Courses),
-        feesValid: notBlankPattern.test(courseFee) 
+    let validationResults = {
+      isValid: true,
+      errors: {},
     };
-}
+ 
+    console.log(formFields)
+    Object.keys(formFields).forEach((field) => {
+      if (
+        field === "Courses-Type" ||
+        field === "Radio-Type" ||
+        field === "Radio-Type_Options" ||
+        field === "Courses-Type_Options"
+      ) {
+        return;
+      }
+      switch (field) {
+        case "Email":
+          if (!emailPattern.test(formdata[field] || "")) {
+            validationResults.errors.email = "Invalid email format";
+            validationResults.isValid = false;
+          }
+          break;
+        case "MobileNo":
+          if (!mobilePattern.test(formdata[field] || "")) {
+            validationResults.errors.mobile = "Mobile number must be 10 digits";
+            validationResults.isValid = false;
+          }
+          break;
+        case "Name":
+          if (!notBlankPattern.test(formdata[field] || "")) {
+            validationResults.errors.name = "Name cannot be blank ";
+            validationResults.isValid = false;
+          }
+          break;
+        case "Address":
+          if (!minLengthPattern.test(formdata[field] || "")) {
+            validationResults.errors.address =
+              "Address must be at least 5 characters long";
+            validationResults.isValid = false;
+          }
+          break;
+        case "Gender":
+          if (!notBlankPattern.test(formdata[field] || "")) {
+            validationResults.errors.gender = "Gender cannot be blank";
+            validationResults.isValid = false;
+          }
+          break;
+        case "Courses":
+          if (!notBlankPattern.test(formdata[field] || "")) {
+            validationResults.errors.courses = "Courses cannot be blank";
+            validationResults.isValid = false;
+          }
+          break;
+        default:
+          if (!notBlankPattern.test(formdata[field] || "")) {
+            validationResults.errors[field] = `${field} cannot be blank`;
+            validationResults.isValid = false;
+          }
+          break;
+      }
+    });
 
-
+    return validationResults;
+  }
 
   const fetchForm = async () => {
     let url = "http://localhost:5000/api/auth/getform";
@@ -60,7 +109,7 @@ function AcademyRegistration() {
       });
 
       if (response.ok) {
-        const data = await response.json(); 
+        const data = await response.json();
         if (Array.isArray(data) && data.length > 0) {
           const additionalFields = data[0].additionalFields || {};
           setFormFields(additionalFields);
@@ -80,7 +129,7 @@ function AcademyRegistration() {
 
   useEffect(() => {
     fetchForm();
-  }, [academyname]); 
+  }, [academyname]);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -94,22 +143,24 @@ function AcademyRegistration() {
         (option) => option.label === value
       );
       if (selectedOption) {
-        setCourseFee(selectedOption.value); 
+        setCourseFee(selectedOption.value);
       }
     }
-  }; 
+  };
 
-  console.log(formdata)
+  console.log(formdata);
 
   const handleFormSubmission = async (e) => {
     e.preventDefault();
-    
-    const validationResult = validateForm(formdata); 
 
-    if (!Object.values(validationResult).every(valid => valid)) {
-      toast.error("Please Fill Correct Details ")
-      return 
-  }
+    const validationResult = validateForm(formdata, formFields);
+
+    if (!validationResult.isValid) {
+      Object.values(validationResult.errors).forEach((errorMessage) => {
+        toast.error(errorMessage);
+      });
+      return;
+    }
 
     let url = `http://localhost:5000/api/auth/savedata`;
 
@@ -121,16 +172,14 @@ function AcademyRegistration() {
       body: JSON.stringify({
         academyname: academyname,
         role: role,
-        userdetails: { formdata,
-          fees : courseFee
-        }
+        userdetails: { formdata, fees: courseFee },
       }),
     });
 
     if (response.ok) {
       toast.success("Form Submitted Successfully");
       setFormdata({});
-      setCourseFee(""); 
+      setCourseFee("");
     } else {
       toast.error("Error Submitting Form");
     }
@@ -154,7 +203,6 @@ function AcademyRegistration() {
               autoComplete="off"
             >
               <FormControl fullWidth>
-
                 <Select
                   value={formdata[label] || ""}
                   name={label}
@@ -171,9 +219,9 @@ function AcademyRegistration() {
                         {option.label}
                       </MenuItem>
                     ))}
-                </Select> 
+                </Select>
               </FormControl>
-          
+
               {courseFee && (
                 <TextField
                   label="Course Fee"
@@ -188,8 +236,7 @@ function AcademyRegistration() {
             </Box>
           </div>
         );
-      } 
-      else if (label === "Gender" && type === "Radio Button") {
+      } else if (label === "Gender" && type === "Radio Button") {
         return (
           <div key={label} className="mb-4">
             <label htmlFor={label} className="block text-gray-700 font-bold">
@@ -233,14 +280,18 @@ function AcademyRegistration() {
             </Box>
           </div>
         );
-      }
-      else {
+      } else {
         return (
           <>
-            {(label === "Courses-Type" && type === "Values") || (label === "Radio-Type" && type === "Radio") || (label === "Radio-Type_Options") ||
+            {(label === "Courses-Type" && type === "Values") ||
+            (label === "Radio-Type" && type === "Radio") ||
+            label === "Radio-Type_Options" ||
             label === "Courses-Type_Options" ? null : (
               <div key={label} className="mb-4">
-                <label htmlFor={label} className="block text-gray-700 font-bold">
+                <label
+                  htmlFor={label}
+                  className="block text-gray-700 font-bold"
+                >
                   {label}:
                 </label>
                 <Box
@@ -254,11 +305,7 @@ function AcademyRegistration() {
                   <TextField
                     label={label}
                     variant="outlined"
-                    type={
-                      type.toLowerCase() === "email id"
-                        ? "email"
-                        : "text"
-                    }
+                    type={type.toLowerCase() === "email id" ? "email" : "text"}
                     onChange={handleChange}
                     id={label}
                     name={label}

@@ -48,7 +48,7 @@ const ApplicantsTable = ({ users }) => {
     studentname: "",
     enrollmentDate: "",
     paymentmode: "",
-    studentemail: ""
+    studentemail: "",
   });
 
   useEffect(() => {
@@ -58,7 +58,7 @@ const ApplicantsTable = ({ users }) => {
         course: data.additionalFields?.formdata?.Courses,
         amount: data.additionalFields?.fees,
         studentname: data.additionalFields?.formdata?.Name,
-        studentemail:data.additionalFields.formdata?.Email
+        studentemail: data.additionalFields.formdata?.Email,
       });
     }
   }, [data]);
@@ -113,7 +113,7 @@ const ApplicantsTable = ({ users }) => {
           studentname: paymentdetails.studentname,
           enrollmentDate: paymentdetails.enrollmentDate,
           paymentmode: paymentdetails.paymentmode,
-          studentemail : paymentdetails.studentemail
+          studentemail: paymentdetails.studentemail,
         }),
       });
 
@@ -290,28 +290,26 @@ const ApplicantsTable = ({ users }) => {
           <DialogContentText id="preview-dialog-description">
             {data ? (
               <>
+                {/* Render fields dynamically */}
+                {Object.entries(data.additionalFields.formdata).map(
+                  ([label, value]) => (
+                    <Typography key={label}>
+                      {label} : {value || "N/A"} {/* Handle missing data */}
+                    </Typography>
+                  )
+                )}
+
+                {/* Fees */}
                 <Typography>
-                  Name : {data.additionalFields.formdata?.Name}
+                  Fees : {data.additionalFields.fees || "N/A"}
                 </Typography>
-                <Typography>
-                  Email : {data.additionalFields.formdata?.Email}
-                </Typography>
-                <Typography>
-                  Mobile No : {data.additionalFields.formdata?.MobileNo}
-                </Typography>
-                <Typography>
-                  Course : {data.additionalFields.formdata?.Courses}
-                </Typography>
-                <Typography>Fees : {data.additionalFields.fees}</Typography>
-                <Typography>
-                  Age : {data.additionalFields.formdata?.Age}
-                </Typography>
-                <Typography>
-                  Gender : {data.additionalFields.formdata?.Gender}
-                </Typography>
+
                 <Divider sx={{ marginTop: "30px", marginBottom: "20px" }} />
 
+                {/* Status */}
                 <Typography>Status : {data.status}</Typography>
+
+                {/* Action buttons */}
                 <div
                   style={{
                     padding: "10px",
@@ -320,45 +318,34 @@ const ApplicantsTable = ({ users }) => {
                     justifyContent: "space-around",
                   }}
                 >
-                  {data.status === "Accept" ? (
-                    <></>
-                  ) : (
-                    <>
-                      {" "}
-                      <Button
-                        variant="contained"
-                        onClick={() => handleclick("Accept", data._id)}
-                      >
-                        Accept
-                      </Button>
-                    </>
+                  {/* Accept button */}
+                  {data.status !== "Accept" && (
+                    <Button
+                      variant="contained"
+                      onClick={() => handleclick("Accept", data._id)}
+                    >
+                      Accept
+                    </Button>
                   )}
 
-                  {data.status === "Reject" ? (
-                    <></>
-                  ) : (
-                    <>
-                      {" "}
-                      <Button
-                        variant="contained"
-                        onClick={() => handleclick("Reject", data._id)}
-                      >
-                        Reject
-                      </Button>
-                    </>
+                  {/* Reject button */}
+                  {data.status !== "Reject" && (
+                    <Button
+                      variant="contained"
+                      onClick={() => handleclick("Reject", data._id)}
+                    >
+                      Reject
+                    </Button>
                   )}
 
-                  {data.status === "Hold" ? (
-                    <></>
-                  ) : (
-                    <>
-                      <Button
-                        variant="contained"
-                        onClick={() => handleclick("Hold", data._id)}
-                      >
-                        Hold
-                      </Button>
-                    </>
+                  {/* Hold button */}
+                  {data.status !== "Hold" && (
+                    <Button
+                      variant="contained"
+                      onClick={() => handleclick("Hold", data._id)}
+                    >
+                      Hold
+                    </Button>
                   )}
                 </div>
 
