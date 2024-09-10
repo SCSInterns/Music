@@ -1,5 +1,6 @@
 const MusicAcademy = require('../models/MusicAcademy');
 const Admin = require('../models/Admin')
+const Form = require('../models/Form')
 const Token = require('../models/Token');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
@@ -104,11 +105,35 @@ const verifyurl = async (req, res) => {
     }
 }
 
+// get the details of applicants with rejected applicants  
+
+const rejectedapplicants = async (req, res) => {
+    try {
+
+        const { academyname, role } = req.body
+        if (role === "Admin") {
+            const response = await Form.find({ status: "Reject", academy_name: academyname })
+
+            if (response) {
+                res.status(200).json(response)
+            }
+        }
+        else {
+            res.status(401).json({ msg: "Unauthorized Access" })
+        }
+
+
+    } catch (error) {
+        res.status(500).json({ message: 'Internal Server Error', error });
+    }
+}
+
 
 module.exports = {
     academy_details,
     preview,
     personaldetailsupdation,
-    handleurl , 
-    verifyurl
+    handleurl,
+    verifyurl , 
+    rejectedapplicants
 };

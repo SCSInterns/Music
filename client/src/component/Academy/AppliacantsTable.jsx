@@ -234,7 +234,7 @@ const ApplicantsTable = ({ users }) => {
     <>
       <TableContainer
         component={Paper}
-        sx={{ width: "70%", margin: "auto", marginTop: "50px" }}
+        sx={{ width: "70%", margin: "auto", marginTop: "70px" }}
       >
         {hasUsers ? (
           <Table>
@@ -277,166 +277,181 @@ const ApplicantsTable = ({ users }) => {
         maxWidth="md"
         sx={{
           "& .MuiDialog-paper": {
-            width: "600px",
-            height: "400px",
+            width: "900px",
+            height: "900px",
           },
           margin: "auto",
         }}
       >
-        <DialogTitle id="preview-dialog-title">
+        <DialogTitle id="preview-dialog-title" sx={{ fontWeight: "bold" }}>
           Detailed Information
         </DialogTitle>
-        <DialogContent>
-          <DialogContentText id="preview-dialog-description">
-            {data ? (
-              <>
-                {/* Render fields dynamically */}
-                {Object.entries(data.additionalFields.formdata).map(
-                  ([label, value]) => (
-                    <Typography key={label}>
-                      {label} : {value || "N/A"} {/* Handle missing data */}
-                    </Typography>
-                  )
-                )}
 
-                {/* Fees */}
-                <Typography>
-                  Fees : {data.additionalFields.fees || "N/A"}
-                </Typography>
+        <div style={{display : "flex" , justifyContent : 'space-between'}}>
+          <DialogContent>
+            <DialogContentText id="preview-dialog-description">
+              {data ? (
+                <> 
 
-                <Divider sx={{ marginTop: "30px", marginBottom: "20px" }} />
+                <div style={{display:'flex'}}> 
 
-                {/* Status */}
-                <Typography>Status : {data.status}</Typography>
-
-                {/* Action buttons */}
-                <div
-                  style={{
-                    padding: "10px",
-                    margin: "10px",
-                    display: "flex",
-                    justifyContent: "space-around",
-                  }}
-                >
-                  {/* Accept button */}
-                  {data.status !== "Accept" && (
-                    <Button
-                      variant="contained"
-                      onClick={() => handleclick("Accept", data._id)}
-                    >
-                      Accept
-                    </Button>
+                  <div>
+                  {/* Render fields dynamically */}
+                  {Object.entries(data.additionalFields.formdata).map(
+                    ([label, value]) => (
+                      <Typography key={label}>
+                        {label} : {value || "N/A"} {/* Handle missing data */}
+                      </Typography>
+                    )
                   )}
 
-                  {/* Reject button */}
-                  {data.status !== "Reject" && (
-                    <Button
-                      variant="contained"
-                      onClick={() => handleclick("Reject", data._id)}
-                    >
-                      Reject
-                    </Button>
-                  )}
+                  {/* Fees */}
+                  <Typography>
+                    Fees : {data.additionalFields.fees || "N/A"}
+                  </Typography>
 
-                  {/* Hold button */}
-                  {data.status !== "Hold" && (
-                    <Button
-                      variant="contained"
-                      onClick={() => handleclick("Hold", data._id)}
-                    >
-                      Hold
-                    </Button>
-                  )}
-                </div>
+                  {/* <Divider sx={{ marginTop: "30px", marginBottom: "20px" }} /> */}
+ 
+                  </div>
 
-                <Divider sx={{ marginTop: "30px", marginBottom: "30px" }} />
+                  <div style={{display:'flex' , flexDirection:'column'}}>
+                  {/* Status */}
+                  <Typography>Status : {data.status}</Typography>
 
-                {toggleinstallment ? (
-                  <>
-                    <h1 style={{ fontWeight: "Bold", marginBottom: "20px" }}>
-                      Installment Info Here :{" "}
-                    </h1>
-
-                    <Typography>
-                      Student Name : {data.additionalFields.formdata?.Name}
-                    </Typography>
-
-                    <Typography>
-                      Installment Date : {data.installementDate}
-                    </Typography>
-
-                    <Typography>
-                      Course : {data.additionalFields.formdata?.Courses}
-                    </Typography>
-                    <Typography>
-                      Installment Amount : {data.additionalFields.fees}
-                    </Typography>
-                    <Typography>
-                      Payment Date :
-                      <input
-                        type="date"
-                        id="datePicker"
-                        name="datePicker"
-                        onChange={(e) => setpaymentdate(e.target.value)}
-                      ></input>
-                    </Typography>
-
-                    <Typography>
-                      Payment Mode :
-                      <Box sx={{ minWidth: 120, marginTop: "10px" }}>
-                        <FormControl sx={{ width: "50%" }}>
-                          <Select
-                            labelId="demo-simple-select-label"
-                            id="demo-simple-select"
-                            value={paymentmode}
-                            label="Age"
-                            onChange={handleChange}
-                          >
-                            <MenuItem value={"Debit / Credit Card"}>
-                              Debit / Credit Card
-                            </MenuItem>
-                            <MenuItem value={"Cash"}>Cash</MenuItem>
-                            <MenuItem value={"Cheque"}>Cheque</MenuItem>
-                            <MenuItem value={"Upi"}>Upi</MenuItem>
-                          </Select>
-                        </FormControl>
-                      </Box>
-                      <p
-                        style={{
-                          fontSize: "12px",
-                          marginLeft: "10px",
-                          color: "#283255",
-                        }}
+                  {/* Action buttons */}
+                  <div
+                    style={{
+                      padding: "10px",
+                      margin: "10px",
+                      display: "flex",
+                      justifyContent: "space-around",
+                    }}
+                  >
+                    {/* Accept button */}
+                    {data.status !== "Accept" && (
+                      <Button
+                        variant="contained"
+                        onClick={() => handleclick("Accept", data._id)}
                       >
-                        Please select payment mode here *{" "}
-                      </p>
-                    </Typography>
+                        Accept
+                      </Button>
+                    )}
 
-                    <Button
-                      variant="contained"
-                      sx={{ marginTop: "20px" }}
-                      onClick={() => handleinstallmentsubmition(data._id)}
-                    >
-                      Submit
-                    </Button>
+                    {/* Reject button */}
+                    {data.status !== "Reject" && (
+                      <Button
+                        variant="contained"
+                        onClick={() => handleclick("Reject", data._id)}
+                      >
+                        Reject
+                      </Button>
+                    )}
 
-                    <Divider sx={{ marginTop: "20px", marginBottom: "20px" }} />
+                    {/* Hold button */}
+                    {data.status !== "Hold" && (
+                      <Button
+                        variant="contained"
+                        onClick={() => handleclick("Hold", data._id)}
+                      >
+                        Hold
+                      </Button> 
+                    
+                    )}
+                  </div> 
+                  </div>
+                  </div>
 
-                    <Typography sx={{ fontWeight: "Bold" }}>
-                      Payment Info :
-                    </Typography>
+                  <Divider sx={{ marginTop: "30px", marginBottom: "30px" }} />
 
-                    <PaymentDetails data={installmentstate} />
-                  </>
-                ) : (
-                  <></>
-                )}
-              </>
-            ) : (
-              <Typography>No information available.</Typography>
-            )}
-          </DialogContentText>
-        </DialogContent>
+                  {toggleinstallment ? (
+                    <>
+                      <h1 style={{ fontWeight: "Bold", marginBottom: "20px" }}>
+                        Installment Info Here :{" "}
+                      </h1>
+
+                      <Typography>
+                        Student Name : {data.additionalFields.formdata?.Name}
+                      </Typography>
+
+                      <Typography>
+                        Installment Date : {data.installementDate}
+                      </Typography>
+
+                      <Typography>
+                        Course : {data.additionalFields.formdata?.Courses}
+                      </Typography>
+                      <Typography>
+                        Installment Amount : {data.additionalFields.fees}
+                      </Typography>
+                      <Typography>
+                        Payment Date :
+                        <input
+                          type="date"
+                          id="datePicker"
+                          name="datePicker"
+                          onChange={(e) => setpaymentdate(e.target.value)}
+                        ></input>
+                      </Typography>
+
+                      <Typography>
+                        Payment Mode :
+                        <Box sx={{ minWidth: 120, marginTop: "10px" }}>
+                          <FormControl sx={{ width: "50%" }}>
+                            <Select
+                              labelId="demo-simple-select-label"
+                              id="demo-simple-select"
+                              value={paymentmode}
+                              label="Age"
+                              onChange={handleChange}
+                            >
+                              <MenuItem value={"Debit / Credit Card"}>
+                                Debit / Credit Card
+                              </MenuItem>
+                              <MenuItem value={"Cash"}>Cash</MenuItem>
+                              <MenuItem value={"Cheque"}>Cheque</MenuItem>
+                              <MenuItem value={"Upi"}>Upi</MenuItem>
+                            </Select>
+                          </FormControl>
+                        </Box>
+                        <p
+                          style={{
+                            fontSize: "12px",
+                            marginLeft: "10px",
+                            color: "#283255",
+                          }}
+                        >
+                          Please select payment mode here *{" "}
+                        </p>
+                      </Typography>
+
+                      <Button
+                        variant="contained"
+                        sx={{ marginTop: "20px" }}
+                        onClick={() => handleinstallmentsubmition(data._id)}
+                      >
+                        Submit
+                      </Button>
+
+                      {/* <Divider
+                        sx={{ marginTop: "20px", marginBottom: "20px" }}
+                      /> */}
+
+                      <Typography sx={{ fontWeight: "Bold" }}>
+                        Payment Info :
+                      </Typography>
+
+                      <PaymentDetails data={installmentstate} />
+                    </>
+                  ) : (
+                    <></>
+                  )}
+                </>
+              ) : (
+                <Typography>No information available.</Typography>
+              )}
+            </DialogContentText>
+          </DialogContent>
+        </div>
         <DialogActions>
           <Button onClick={handleClose} color="primary">
             Close

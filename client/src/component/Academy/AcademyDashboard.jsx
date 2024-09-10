@@ -23,6 +23,7 @@ import IconButton from "@mui/material/IconButton";
 import Modal from "@mui/material/Modal";
 import ApplicantsTable from "./AppliacantsTable";
 import PendingFeesTable from "./PendingFeesTable";
+import Loader from "../Loader/Loader";
 
 function AcademyDashboard() {
   const academyname = sessionStorage.getItem("academyname");
@@ -39,6 +40,7 @@ function AcademyDashboard() {
   const [togglepaymentdue, settogglepaymentdue] = useState(false);
   const [radiovalue, setradiovalue] = useState([]);
   const [open, setOpen] = useState(false);
+  const [loading, setloading] = useState(false);
   const [passpaymentdetails, setpasspaymentdetails] = useState([]);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -75,6 +77,14 @@ function AcademyDashboard() {
   }, [academyname]);
 
   const navigate = useNavigate();
+
+  const handleClick = () => {
+    setloading(true);
+    setTimeout(() => {
+      setloading(false);
+      navigate(`/${academyname}/admin/regform`);
+    }, 2000);
+  };
 
   const handleAddition = () => {
     if (label && value) {
@@ -177,8 +187,14 @@ function AcademyDashboard() {
     const data = await response.json();
 
     if (Array.isArray(data)) {
-      setappdata(data);
-      toast.success("Details Fetch Success");
+      setloading(true);
+      setTimeout(() => {
+        setloading(false);
+        setappdata(data);
+        settogglepaymentdue(false)
+        setpasspaymentdetails(false)
+        toast.success("Details Fetch Success");
+      }, 2000);
     } else {
       toast.error("Error fetching details");
     }
@@ -199,6 +215,7 @@ function AcademyDashboard() {
   }
 
   const handleFees = async () => {
+    setappdata(false);
     settogglepaymentdue(true);
     const todaydate = getCurrentDate();
     const url = "http://localhost:5000/api/auth/getpaymnetdue";
@@ -218,8 +235,13 @@ function AcademyDashboard() {
 
     if (response.ok) {
       const data = await response.json();
-      setpasspaymentdetails(data);
-      toast.success("Payment Details Fetch Success");
+      setloading(true)
+      setTimeout(() => {
+        setloading(false)
+        setpasspaymentdetails(data); 
+        setappdata(false)
+        toast.success("Payment Details Fetch Success");
+      }, 2000);
     }
   };
 
@@ -271,6 +293,27 @@ function AcademyDashboard() {
 
   return (
     <>
+      {loading && (
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100vw",
+            height: "100vh",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            backgroundColor: "rgba(255, 255, 255,0.9)",
+            zIndex: 9999,
+          }}
+        >
+          <>
+            <Loader />
+          </>
+        </div>
+      )}
+
       <div
         style={{
           textAlign: "center",
@@ -298,7 +341,9 @@ function AcademyDashboard() {
           <Button
             style={{ margin: "10px", width: "200px" }}
             variant="contained"
-            onClick={() => navigate(`/${academyname}/admin/regform`)}
+            onClick={() => {
+              handleClick();
+            }}
           >
             Registration form
           </Button>
@@ -335,6 +380,22 @@ function AcademyDashboard() {
             backgroundColor: "#f3f3f5",
           }}
         >
+          {togglepaymentdue && (
+            <>
+              <h1
+                style={{
+                  marginTop: "30px",
+                  fontSize: "20px",
+                  fontWeight: "bold",
+                }}
+              >
+                Payment Due Details{" "}
+              </h1>
+              <div id="fees" style={{ margin: "60px" }}>
+                <PendingFeesTable data={passpaymentdetails} />
+              </div>
+            </>
+          )}
           {toggleapplicants === false ? (
             <>
               <p style={{ padding: "10px", fontFamily: "sans-serif" }}>
@@ -598,25 +659,38 @@ function AcademyDashboard() {
             </>
           ) : (
             <>
-              <Typography variant="h6" sx={{ marginTop: "20px" }} gutterBottom>
-                Applicants Data
-              </Typography>
-              <ApplicantsTable users={appdata} />
+              {appdata && (
+                <>
+                  <Typography
+                    variant="h6"
+                    sx={{ marginTop: "20px" }}
+                    gutterBottom
+                  >
+                    Applicants Data
+                  </Typography>
+                  <div
+                    style={{
+                      float: "right",
+                      marginRight: "20px",
+                      display: "flex",
+                      alignItems: "center",
+                    }}
+                  >
+                    <Typography>Filters :</Typography>
+                    <Button variant="contained" sx={{ marginLeft: "20px" }}>
+                      Existing User
+                    </Button>
+                  </div>
+
+                  <div>
+                    <ApplicantsTable users={appdata} />
+                  </div>
+                </>
+              )}
             </>
           )}
         </div>
       </div>
-
-      {togglepaymentdue ? (
-         <> 
-         <h1 style={{marginTop:'30px' , fontSize:'20px',  fontWeight:'bold'}}>Payment Due Details </h1>
-        <div id="fees" style={{ margin:'60px'}}>
-          <PendingFeesTable data={passpaymentdetails} />
-        </div>
-        </>
-      ) : (
-        <></>
-      )}
     </>
   );
 }
