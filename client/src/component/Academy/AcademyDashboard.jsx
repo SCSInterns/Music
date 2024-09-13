@@ -24,6 +24,7 @@ import Modal from "@mui/material/Modal";
 import ApplicantsTable from "./AppliacantsTable";
 import PendingFeesTable from "./PendingFeesTable";
 import Loader from "../Loader/Loader";
+import RegistrationForm from "./AcademyRegistration";
 
 function AcademyDashboard() {
   const academyname = sessionStorage.getItem("academyname");
@@ -35,12 +36,17 @@ function AcademyDashboard() {
   const [entries, setEntries] = useState([]);
   const [dropdown, setDropdown] = useState(false);
   const [option, setOption] = useState("");
+  const [style, setstyle] = useState(false);
+  const [pendingfeesstyle, setpendingfeesstyle] = useState(false);
   const [dynamicOptions, setDynamicOptions] = useState([]);
   const [radio, setradio] = useState(false);
+  const [displayregform, setdisplayregform] = useState(false);
+  const [regstyle, setregstyle] = useState(false);
   const [togglepaymentdue, settogglepaymentdue] = useState(false);
   const [radiovalue, setradiovalue] = useState([]);
   const [open, setOpen] = useState(false);
   const [loading, setloading] = useState(false);
+  const [defaulttoggle, setdefaulttoggle] = useState(true);
   const [passpaymentdetails, setpasspaymentdetails] = useState([]);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -80,9 +86,16 @@ function AcademyDashboard() {
 
   const handleClick = () => {
     setloading(true);
+    setdisplayregform(true);
+    setregstyle(true);
+    setappdata(false)
+    setstyle(false)
+    setpendingfeesstyle(false)
+    setdefaulttoggle(false);
+    settogglepaymentdue(false);
+    settoggleapplicants(false);
     setTimeout(() => {
       setloading(false);
-      navigate(`/${academyname}/admin/regform`);
     }, 2000);
   };
 
@@ -169,7 +182,11 @@ function AcademyDashboard() {
 
   const handleApplicants = async () => {
     settoggleapplicants(true);
-
+    setstyle(true);
+    setregstyle(false)
+    setdefaulttoggle(false)
+    setdisplayregform(false);
+    setpendingfeesstyle(false);
     let url = "http://localhost:5000/api/auth/getdata";
     const token = Token();
     const response = await fetch(url, {
@@ -191,8 +208,9 @@ function AcademyDashboard() {
       setTimeout(() => {
         setloading(false);
         setappdata(data);
-        settogglepaymentdue(false)
-        setpasspaymentdetails(false)
+        settogglepaymentdue(false);
+        setdisplayregform(false);
+        setpasspaymentdetails(false);
         toast.success("Details Fetch Success");
       }, 2000);
     } else {
@@ -216,7 +234,11 @@ function AcademyDashboard() {
 
   const handleFees = async () => {
     setappdata(false);
+    setpendingfeesstyle(true);
+    setregstyle(false)
+    setdefaulttoggle(false)
     settogglepaymentdue(true);
+    setstyle(false);
     const todaydate = getCurrentDate();
     const url = "http://localhost:5000/api/auth/getpaymnetdue";
     const token = Token();
@@ -235,11 +257,12 @@ function AcademyDashboard() {
 
     if (response.ok) {
       const data = await response.json();
-      setloading(true)
+      setloading(true);
       setTimeout(() => {
-        setloading(false)
-        setpasspaymentdetails(data); 
-        setappdata(false)
+        setloading(false);
+        setdisplayregform(false);
+        setpasspaymentdetails(data);
+        setappdata(false);
         toast.success("Payment Details Fetch Success");
       }, 2000);
     }
@@ -328,10 +351,9 @@ function AcademyDashboard() {
         <p style={{ fontSize: "15px", marginTop: "10px" }}>Admin Dashboard</p>
       </div>
 
-      <div style={{ display: "flex", height: "100vh" }}>
+      <div style={{ display: "flex", minHeight: "100vh" }}>
         <div
           style={{
-            height: "100%",
             width: "20%",
             borderRight: "2px solid black",
             backgroundColor: "#283255",
@@ -339,8 +361,11 @@ function AcademyDashboard() {
           }}
         >
           <Button
-            style={{ margin: "10px", width: "200px" }}
-            variant="contained"
+            style={{
+              color: regstyle ? "blue" : "white",
+              margin: "10px 10px 0px 0px ",
+              backgroundColor: regstyle ? "white" : "#283255",
+            }}
             onClick={() => {
               handleClick();
             }}
@@ -350,8 +375,12 @@ function AcademyDashboard() {
 
           <Divider />
           <Button
-            variant="contained"
-            style={{ margin: "10px", width: "200px" }}
+            style={{
+              margin: "10px",
+              width: "200px",
+              color: style ? "blue" : "white",
+              backgroundColor: style ? "white" : "#283255",
+            }}
             onClick={handleApplicants}
           >
             Applicants Data
@@ -359,11 +388,14 @@ function AcademyDashboard() {
           <Divider />
 
           <Button
-            variant="contained"
-            style={{ margin: "10px", width: "200px" }}
+            style={{
+              margin: "10px",
+              width: "200px",
+              color: pendingfeesstyle ? "blue" : "white",
+              backgroundColor: pendingfeesstyle ? "white" : "#283255",
+            }}
             onClick={() => {
               handleFees();
-              scrollToSection("fees");
             }}
           >
             Pending Fees
@@ -375,11 +407,12 @@ function AcademyDashboard() {
         </div>
         <div
           style={{
-            height: "100%",
             width: "80%",
             backgroundColor: "#f3f3f5",
           }}
-        >
+        > 
+
+        <div style={{height:'auto'}}>
           {togglepaymentdue && (
             <>
               <h1
@@ -396,7 +429,15 @@ function AcademyDashboard() {
               </div>
             </>
           )}
-          {toggleapplicants === false ? (
+          {displayregform && (
+            <>
+              <Box style={{ marginTop: "20px" }}>
+                <RegistrationForm />
+              </Box>
+            </>
+          )}
+
+          {defaulttoggle && (
             <>
               <p style={{ padding: "10px", fontFamily: "sans-serif" }}>
                 Create Academy Registration Form Here
@@ -657,38 +698,37 @@ function AcademyDashboard() {
                 Submit
               </Button>
             </>
-          ) : (
-            <>
-              {appdata && (
-                <>
-                  <Typography
-                    variant="h6"
-                    sx={{ marginTop: "20px" }}
-                    gutterBottom
-                  >
-                    Applicants Data
-                  </Typography>
-                  <div
-                    style={{
-                      float: "right",
-                      marginRight: "20px",
-                      display: "flex",
-                      alignItems: "center",
-                    }}
-                  >
-                    <Typography>Filters :</Typography>
-                    <Button variant="contained" sx={{ marginLeft: "20px" }}>
-                      Existing User
-                    </Button>
-                  </div>
+          )
+        }
+        
 
-                  <div>
-                    <ApplicantsTable users={appdata} />
-                  </div>
-                </>
-              )}
+
+          { (appdata && !defaulttoggle) && (
+            <>
+              <Typography variant="h6" sx={{ marginTop: "20px" }} gutterBottom>
+                Applicants Data
+              </Typography>
+              <div
+                style={{
+                  float: "right",
+                  marginRight: "20px",
+                  display: "flex",
+                  alignItems: "center",
+                }}
+              >
+                <Typography>Filters :</Typography>
+                <Button variant="contained" sx={{ marginLeft: "20px" }}>
+                  Existing User
+                </Button>
+              </div>
+
+              <div>
+                <ApplicantsTable users={appdata} />
+              </div>
             </>
           )}
+          
+        </div>
         </div>
       </div>
     </>
