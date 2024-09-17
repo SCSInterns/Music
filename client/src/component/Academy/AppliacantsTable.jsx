@@ -13,6 +13,8 @@ import {
   TextField,
 } from "@mui/material";
 import PreviewIcon from "@mui/icons-material/Preview";
+import AccountBoxIcon from "@mui/icons-material/AccountBox";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { toast } from "react-toastify";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
@@ -31,6 +33,7 @@ const ApplicantsTable = ({ users }) => {
   const [data, setData] = useState();
   const [toggle, setToggle] = useState(false);
   const [toggleinstallment, settoggleinstallment] = useState(false);
+  const [paymnetaddbox, setpaymnetaddbox] = useState(false)
   const hasUsers = users && users.length > 0;
   const academyname = sessionStorage.getItem("academyname");
   const role = sessionStorage.getItem("role");
@@ -256,7 +259,7 @@ const ApplicantsTable = ({ users }) => {
                   </TableCell>
                   <TableCell>
                     <Button onClick={() => handlePreview(user._id)}>
-                      <PreviewIcon />
+                      <AccountCircleIcon />
                     </Button>
                   </TableCell>
                 </TableRow>
@@ -274,96 +277,119 @@ const ApplicantsTable = ({ users }) => {
         onClose={handleClose}
         aria-labelledby="preview-dialog-title"
         aria-describedby="preview-dialog-description"
-        maxWidth="md"
-        sx={{
-          "& .MuiDialog-paper": {
-            width: "900px",
-            height: "900px",
-          },
-          margin: "auto",
-        }}
+        fullWidth={true}
+        maxWidth="xl" // "xl" will make the dialog cover almost the full screen width
       >
         <DialogTitle id="preview-dialog-title" sx={{ fontWeight: "bold" }}>
           Detailed Information
         </DialogTitle>
 
-        <div style={{display : "flex" , justifyContent : 'space-between'}}>
+        <div style={{ display: "flex", justifyContent: "space-between" }}>
           <DialogContent>
             <DialogContentText id="preview-dialog-description">
               {data ? (
-                <> 
+                <>
+                  <div style={{ display: "flex" }}>
+                    <div style={{ marginRight: "50px" }}>
+                      {/* Render fields dynamically */}
+                      {Object.entries(data.additionalFields.formdata).map(
+                        ([label, value]) => (
+                          <Typography key={label}>
+                            {label} : {value || "N/A"}{" "}
+                            {/* Handle missing data */}
+                          </Typography>
+                        )
+                      )}
 
-                <div style={{display:'flex'}}> 
-
-                  <div>
-                  {/* Render fields dynamically */}
-                  {Object.entries(data.additionalFields.formdata).map(
-                    ([label, value]) => (
-                      <Typography key={label}>
-                        {label} : {value || "N/A"} {/* Handle missing data */}
+                      {/* Fees */}
+                      <Typography>
+                        Fees : {data.additionalFields.fees || "N/A"}
                       </Typography>
-                    )
-                  )}
 
-                  {/* Fees */}
-                  <Typography>
-                    Fees : {data.additionalFields.fees || "N/A"}
-                  </Typography>
+                      {/* <Divider sx={{ marginTop: "30px", marginBottom: "20px"}} />  */}
+                    </div>
 
-                  {/* <Divider sx={{ marginTop: "30px", marginBottom: "20px" }} /> */}
- 
-                  </div>
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        borderLeft: "2px solid black",
+                        paddingLeft: "20px",
+                      }}
+                    >
+                      {/* Status */}
+                      <Typography>Status : {data.status}</Typography>
 
-                  <div style={{display:'flex' , flexDirection:'column'}}>
-                  {/* Status */}
-                  <Typography>Status : {data.status}</Typography>
-
-                  {/* Action buttons */}
-                  <div
-                    style={{
-                      padding: "10px",
-                      margin: "10px",
-                      display: "flex",
-                      justifyContent: "space-around",
-                    }}
-                  >
-                    {/* Accept button */}
-                    {data.status !== "Accept" && (
-                      <Button
-                        variant="contained"
-                        onClick={() => handleclick("Accept", data._id)}
+                      {/* Action buttons */}
+                      <div
+                        style={{
+                          padding: "10px",
+                          margin: "10px",
+                          display: "flex",
+                        }}
                       >
-                        Accept
-                      </Button>
-                    )}
+                        {/* Accept button */}
+                        {data.status !== "Accept" && (
+                          <Button
+                            variant="contained"
+                            onClick={() => handleclick("Accept", data._id)}
+                            sx={{ marginLeft: "20px" }}
+                          >
+                            Accept
+                          </Button>
+                        )}
 
-                    {/* Reject button */}
-                    {data.status !== "Reject" && (
-                      <Button
-                        variant="contained"
-                        onClick={() => handleclick("Reject", data._id)}
-                      >
-                        Reject
-                      </Button>
-                    )}
+                        {/* Reject button */}
+                        {data.status !== "Reject" && (
+                          <Button
+                            variant="contained"
+                            onClick={() => handleclick("Reject", data._id)}
+                            sx={{ marginLeft: "20px" }}
+                          >
+                            Reject
+                          </Button>
+                        )}
 
-                    {/* Hold button */}
-                    {data.status !== "Hold" && (
-                      <Button
-                        variant="contained"
-                        onClick={() => handleclick("Hold", data._id)}
-                      >
-                        Hold
-                      </Button> 
-                    
-                    )}
+                        {/* Hold button */}
+                        {data.status !== "Hold" && (
+                          <Button
+                            variant="contained"
+                            onClick={() => handleclick("Hold", data._id)}
+                            sx={{ marginLeft: "20px" }}
+                          >
+                            Hold
+                          </Button>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* <div 
+                     style={{ 
+                       borderLeft : '2px solid black'
+                     }}
+                    >
+                      <AccountBoxIcon
+                        sx={{ height: "200px", width: "200px" , color:'blue' }}
+                      />
+                    </div> */}
                   </div> 
-                  </div>
-                  </div>
 
-                  <Divider sx={{ marginTop: "30px", marginBottom: "30px" }} />
+                  <Divider sx={{ marginTop: "30px", marginBottom: "30px" }} /> 
 
-                  {toggleinstallment ? (
+                  <div 
+                  style={{display:'flex' , justifyContent:'space-around'}}>
+                       <Button variant="contained" onClick={()=> {setpaymnetaddbox(true)}}> 
+                           Add Payment 
+                       </Button>
+                       <Button variant="contained" onClick={()=> {settoggleinstallment(true)}}> 
+                           Payment History 
+                       </Button>
+                  </div> 
+
+                  <Divider sx={{marginTop:'20px' , marginBottom:'20px'}}/>
+
+
+                  {toggleinstallment && paymnetaddbox ? (
                     <>
                       <h1 style={{ fontWeight: "Bold", marginBottom: "20px" }}>
                         Installment Info Here :{" "}

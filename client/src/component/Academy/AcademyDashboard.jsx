@@ -4,7 +4,6 @@ import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useEffect } from "react";
-
 import Token from "../Token/Token";
 import {
   Button,
@@ -44,6 +43,7 @@ function AcademyDashboard() {
   const [regstyle, setregstyle] = useState(false);
   const [togglepaymentdue, settogglepaymentdue] = useState(false);
   const [radiovalue, setradiovalue] = useState([]);
+  const [defaultstyle, setdefaultstyle] = useState(false);
   const [open, setOpen] = useState(false);
   const [loading, setloading] = useState(false);
   const [defaulttoggle, setdefaulttoggle] = useState(true);
@@ -88,13 +88,32 @@ function AcademyDashboard() {
     setloading(true);
     setdisplayregform(true);
     setregstyle(true);
-    setappdata(false)
-    setstyle(false)
-    setpendingfeesstyle(false)
+    setappdata(false);
+    setdefaultstyle(false);
+    setstyle(false);
+    setpendingfeesstyle(false);
     setdefaulttoggle(false);
     settogglepaymentdue(false);
     settoggleapplicants(false);
     setTimeout(() => {
+      setloading(false);
+    }, 2000);
+  };
+
+  const handlecreateform = () => {
+    setloading(true);
+    setdisplayregform(false);
+    setregstyle(false);
+    setappdata(false);
+    setdefaultstyle(false);
+    setstyle(false);
+    setdefaultstyle(true)
+    setpendingfeesstyle(false);
+    setdefaulttoggle(false);
+    settogglepaymentdue(false);
+    settoggleapplicants(false);
+    setTimeout(() => {
+      setdefaulttoggle(true);
       setloading(false);
     }, 2000);
   };
@@ -183,11 +202,44 @@ function AcademyDashboard() {
   const handleApplicants = async () => {
     settoggleapplicants(true);
     setstyle(true);
-    setregstyle(false)
-    setdefaulttoggle(false)
+    setregstyle(false);
+    setdefaultstyle(false);
+    setdefaulttoggle(false);
     setdisplayregform(false);
     setpendingfeesstyle(false);
     let url = "http://localhost:5000/api/auth/getdata";
+    const token = Token();
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        Authorization: `${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        academyname: academyname,
+        role: role,
+      }),
+    });
+
+    const data = await response.json();
+
+    if (Array.isArray(data)) {
+      setloading(true);
+      setTimeout(() => {
+        setloading(false);
+        setappdata(data);
+        settogglepaymentdue(false);
+        setdisplayregform(false);
+        setpasspaymentdetails(false);
+        toast.success("Details Fetch Success");
+      }, 2000);
+    } else {
+      toast.error("Error fetching details");
+    }
+  };
+
+  const handlePastApplication = async () => {
+    let url = "http://localhost:5000/api/auth/getrejectedapplicant";
     const token = Token();
     const response = await fetch(url, {
       method: "POST",
@@ -235,8 +287,9 @@ function AcademyDashboard() {
   const handleFees = async () => {
     setappdata(false);
     setpendingfeesstyle(true);
-    setregstyle(false)
-    setdefaulttoggle(false)
+    setregstyle(false);
+    setdefaulttoggle(false);
+    setdefaultstyle(false);
     settogglepaymentdue(true);
     setstyle(false);
     const todaydate = getCurrentDate();
@@ -362,6 +415,19 @@ function AcademyDashboard() {
         >
           <Button
             style={{
+              color: defaultstyle ? "blue" : "white",
+              margin: "10px 10px 0px 0px ",
+              backgroundColor: defaultstyle ? "white" : "#283255",
+            }}
+            onClick={() => {
+              handlecreateform();
+            }}
+          >
+            Create Registration Form
+          </Button>
+
+          <Button
+            style={{
               color: regstyle ? "blue" : "white",
               margin: "10px 10px 0px 0px ",
               backgroundColor: regstyle ? "white" : "#283255",
@@ -370,7 +436,7 @@ function AcademyDashboard() {
               handleClick();
             }}
           >
-            Registration form
+            View Registration form
           </Button>
 
           <Divider />
@@ -410,325 +476,341 @@ function AcademyDashboard() {
             width: "80%",
             backgroundColor: "#f3f3f5",
           }}
-        > 
-
-        <div style={{height:'auto'}}>
-          {togglepaymentdue && (
-            <>
-              <h1
-                style={{
-                  marginTop: "30px",
-                  fontSize: "20px",
-                  fontWeight: "bold",
-                }}
-              >
-                Payment Due Details{" "}
-              </h1>
-              <div id="fees" style={{ margin: "60px" }}>
-                <PendingFeesTable data={passpaymentdetails} />
-              </div>
-            </>
-          )}
-          {displayregform && (
-            <>
-              <Box style={{ marginTop: "20px" }}>
-                <RegistrationForm />
-              </Box>
-            </>
-          )}
-
-          {defaulttoggle && (
-            <>
-              <p style={{ padding: "10px", fontFamily: "sans-serif" }}>
-                Create Academy Registration Form Here
-              </p>
-
-              <Divider />
-              <div>
-                <Box
-                  component="form"
-                  sx={{
-                    "& > :not(style)": { m: 1, width: "25ch" },
+        >
+          <div style={{ height: "auto" }}>
+            {togglepaymentdue && (
+              <>
+                <h1
+                  style={{
+                    marginTop: "30px",
+                    fontSize: "20px",
+                    fontWeight: "bold",
                   }}
-                  noValidate
-                  autoComplete="off"
                 >
-                  <Typography>Enter Label Name Here:</Typography>
-                  <TextField
-                    id="outlined-basic"
-                    label="Label"
-                    variant="outlined"
-                    value={label}
-                    onChange={(e) => setLabel(e.target.value)}
-                    style={{ width: "50%" }}
-                  />
+                  Payment Due Details{" "}
+                </h1>
+                <div id="fees" style={{ margin: "60px" }}>
+                  <PendingFeesTable data={passpaymentdetails} />
+                </div>
+              </>
+            )}
+            {displayregform && (
+              <>
+                <Box style={{ marginTop: "20px" }}>
+                  <RegistrationForm />
                 </Box>
-                <Divider sx={{ marginTop: "20px" }} />
+              </>
+            )}
 
-                <Box
-                  component="form"
-                  sx={{
-                    "& > :not(style)": { m: 1, width: "25ch" },
-                  }}
-                  noValidate
-                  autoComplete="off"
-                >
-                  <Typography>Enter Label Type Here:</Typography>
-                  <TextField
-                    id="outlined-select-currency-native"
-                    select
-                    value={value}
-                    SelectProps={{ native: true }}
-                    style={{ width: "50%" }}
-                    helperText="Please select your data type for defined label here"
-                    onChange={(e) => setValue(e.target.value)}
+            {defaulttoggle && (
+              <>
+                <p style={{ padding: "10px", fontFamily: "sans-serif" }}>
+                  Create Academy Registration Form Here
+                </p>
+
+                <Divider />
+                <div>
+                  <Box
+                    component="form"
+                    sx={{
+                      "& > :not(style)": { m: 1, width: "25ch" },
+                    }}
+                    noValidate
+                    autoComplete="off"
                   >
-                    <option value="" disabled>
-                      Select Option
-                    </option>
-                    {datatypes.map((option) => (
-                      <option key={option.value} value={option.label}>
-                        {option.label}
+                    <Typography>Enter Label Name Here:</Typography>
+                    <TextField
+                      id="outlined-basic"
+                      label="Label"
+                      variant="outlined"
+                      value={label}
+                      onChange={(e) => setLabel(e.target.value)}
+                      style={{ width: "50%" }}
+                    />
+                  </Box>
+                  <Divider sx={{ marginTop: "20px" }} />
+
+                  <Box
+                    component="form"
+                    sx={{
+                      "& > :not(style)": { m: 1, width: "25ch" },
+                    }}
+                    noValidate
+                    autoComplete="off"
+                  >
+                    <Typography>Enter Label Type Here:</Typography>
+                    <TextField
+                      id="outlined-select-currency-native"
+                      select
+                      value={value}
+                      SelectProps={{ native: true }}
+                      style={{ width: "50%" }}
+                      helperText="Please select your data type for defined label here"
+                      onChange={(e) => setValue(e.target.value)}
+                    >
+                      <option value="" disabled>
+                        Select Option
                       </option>
-                    ))}
-                  </TextField>
-                </Box>
-                <Divider sx={{ marginTop: "10px" }} />
+                      {datatypes.map((option) => (
+                        <option key={option.value} value={option.label}>
+                          {option.label}
+                        </option>
+                      ))}
+                    </TextField>
+                  </Box>
+                  <Divider sx={{ marginTop: "10px" }} />
+
+                  <Button
+                    variant="contained"
+                    sx={{
+                      backgroundColor: "#283255",
+                      margin: "30px",
+                      float: "right",
+                    }}
+                    onClick={handleAddition}
+                  >
+                    Add
+                  </Button>
+                </div>
+
+                {dropdown && (
+                  <>
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
+                      <Box
+                        component="form"
+                        sx={{
+                          "& > :not(style)": { m: 1, width: "25ch" },
+                        }}
+                        noValidate
+                        autoComplete="off"
+                      >
+                        <TextField
+                          id="outlined-basic"
+                          label="Enter no of options"
+                          variant="outlined"
+                          value={option}
+                          onChange={(e) => setOption(e.target.value)}
+                        />
+
+                        <Button
+                          variant="contained"
+                          onClick={handleDynamicOption}
+                        >
+                          Generate Options
+                        </Button>
+                      </Box>
+                    </div>
+
+                    {/* Render dynamic TextFields */}
+                    <div
+                      style={{
+                        padding: "10px",
+                        margin: "10px",
+                        display: "flex",
+                        flexWrap: "wrap",
+                        gap: "10px",
+                      }}
+                    >
+                      {dynamicOptions.map((opt, index) => (
+                        <Box
+                          key={index}
+                          sx={{
+                            "& > :not(style)": { m: 1, width: "25ch" },
+                          }}
+                        >
+                          <TextField
+                            id={`option-label-${index}`}
+                            label="Course Label"
+                            variant="outlined"
+                            value={opt.label}
+                            onChange={(e) =>
+                              handleOptionChange(index, "label", e.target.value)
+                            }
+                          />
+                          <TextField
+                            id={`option-value-${index}`}
+                            label="Fees"
+                            variant="outlined"
+                            value={opt.value}
+                            onChange={(e) =>
+                              handleOptionChange(index, "value", e.target.value)
+                            }
+                          />
+                        </Box>
+                      ))}
+                    </div>
+                    <Button
+                      variant="contained"
+                      onClick={handleOptionSubmission}
+                    >
+                      Submit Options
+                    </Button>
+                  </>
+                )}
+
+                {radio && (
+                  <>
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
+                      <Box
+                        component="form"
+                        sx={{
+                          "& > :not(style)": { m: 1, width: "25ch" },
+                        }}
+                        noValidate
+                        autoComplete="off"
+                      >
+                        <TextField
+                          id="outlined-basic"
+                          label="Enter no of options"
+                          variant="outlined"
+                          value={option}
+                          onChange={(e) => setOption(e.target.value)}
+                        />
+                        <Button
+                          variant="contained"
+                          onClick={handleDynamicOption}
+                        >
+                          Generate Options
+                        </Button>
+                      </Box>
+                    </div>
+
+                    <div
+                      style={{
+                        padding: "10px",
+                        margin: "10px",
+                        display: "flex",
+                        flexWrap: "wrap",
+                        gap: "10px",
+                      }}
+                    >
+                      {dynamicOptions.map((opt, index) => (
+                        <Box
+                          key={index}
+                          sx={{
+                            "& > :not(style)": { m: 1, width: "25ch" },
+                          }}
+                        >
+                          <TextField
+                            id={`option-label-${index}`}
+                            label={`Option ${index + 1}`}
+                            variant="outlined"
+                            value={radiovalue[index] || ""}
+                            onChange={(e) =>
+                              handleradiochange(index, e.target.value)
+                            }
+                          />
+                        </Box>
+                      ))}
+                    </div>
+                    <Button variant="contained" onClick={handleradiobutton}>
+                      Submit Options
+                    </Button>
+                  </>
+                )}
+
+                <Divider sx={{ marginTop: "30px" }} />
+
+                {/* Preview Table */}
+                <div style={{ padding: "10px", margin: "10px" }}>
+                  <Typography variant="h6">
+                    Preview of Submitted Data
+                  </Typography>
+                  <TableContainer component={Paper}>
+                    <Table>
+                      <TableHead>
+                        <TableRow>
+                          <TableCell>Label</TableCell>
+                          <TableCell>Type</TableCell>
+                          <TableCell>Options</TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {entries.map((entry, index) => (
+                          <TableRow key={index}>
+                            <TableCell>{entry.LabelName}</TableCell>
+                            <TableCell>{entry.ValueType}</TableCell>
+                            <TableCell>
+                              {entry.Options
+                                ? // Handle different formats for options
+                                  Array.isArray(entry.Options)
+                                  ? entry.Options.map((opt, idx) =>
+                                      // Handle radio options or dropdown options
+                                      typeof opt === "string" ? (
+                                        <div key={idx}>{opt}</div>
+                                      ) : (
+                                        <div key={idx}>
+                                          {opt.label}: {opt.value}
+                                        </div>
+                                      )
+                                    )
+                                  : "N/A"
+                                : "N/A"}
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
+                </div>
 
                 <Button
                   variant="contained"
-                  sx={{
-                    backgroundColor: "#283255",
-                    margin: "30px",
-                    float: "right",
-                  }}
-                  onClick={handleAddition}
+                  sx={{ backgroundColor: "#283255", margin: "30px" }}
+                  onClick={handleSubmit}
                 >
-                  Add
+                  Submit
                 </Button>
-              </div>
+              </>
+            )}
 
-              {dropdown && (
-                <>
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
+            {appdata && !defaulttoggle && (
+              <>
+                <Typography
+                  variant="h6"
+                  sx={{ marginTop: "20px" }}
+                  gutterBottom
+                >
+                  Applicants Data
+                </Typography>
+                <div
+                  style={{
+                    float: "right",
+                    marginRight: "20px",
+                    display: "flex",
+                    alignItems: "center",
+                  }}
+                >
+                  <Typography>Filters :</Typography>
+                  <Button
+                    variant="contained"
+                    sx={{ marginLeft: "20px" }}
+                    onClick={() => {
+                      handlePastApplication();
                     }}
                   >
-                    <Box
-                      component="form"
-                      sx={{
-                        "& > :not(style)": { m: 1, width: "25ch" },
-                      }}
-                      noValidate
-                      autoComplete="off"
-                    >
-                      <TextField
-                        id="outlined-basic"
-                        label="Enter no of options"
-                        variant="outlined"
-                        value={option}
-                        onChange={(e) => setOption(e.target.value)}
-                      />
-
-                      <Button variant="contained" onClick={handleDynamicOption}>
-                        Generate Options
-                      </Button>
-                    </Box>
-                  </div>
-
-                  {/* Render dynamic TextFields */}
-                  <div
-                    style={{
-                      padding: "10px",
-                      margin: "10px",
-                      display: "flex",
-                      flexWrap: "wrap",
-                      gap: "10px",
-                    }}
-                  >
-                    {dynamicOptions.map((opt, index) => (
-                      <Box
-                        key={index}
-                        sx={{
-                          "& > :not(style)": { m: 1, width: "25ch" },
-                        }}
-                      >
-                        <TextField
-                          id={`option-label-${index}`}
-                          label="Course Label"
-                          variant="outlined"
-                          value={opt.label}
-                          onChange={(e) =>
-                            handleOptionChange(index, "label", e.target.value)
-                          }
-                        />
-                        <TextField
-                          id={`option-value-${index}`}
-                          label="Fees"
-                          variant="outlined"
-                          value={opt.value}
-                          onChange={(e) =>
-                            handleOptionChange(index, "value", e.target.value)
-                          }
-                        />
-                      </Box>
-                    ))}
-                  </div>
-                  <Button variant="contained" onClick={handleOptionSubmission}>
-                    Submit Options
+                    Existing User
                   </Button>
-                </>
-              )}
+                </div>
 
-              {radio && (
-                <>
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                  >
-                    <Box
-                      component="form"
-                      sx={{
-                        "& > :not(style)": { m: 1, width: "25ch" },
-                      }}
-                      noValidate
-                      autoComplete="off"
-                    >
-                      <TextField
-                        id="outlined-basic"
-                        label="Enter no of options"
-                        variant="outlined"
-                        value={option}
-                        onChange={(e) => setOption(e.target.value)}
-                      />
-                      <Button variant="contained" onClick={handleDynamicOption}>
-                        Generate Options
-                      </Button>
-                    </Box>
-                  </div>
-
-                  <div
-                    style={{
-                      padding: "10px",
-                      margin: "10px",
-                      display: "flex",
-                      flexWrap: "wrap",
-                      gap: "10px",
-                    }}
-                  >
-                    {dynamicOptions.map((opt, index) => (
-                      <Box
-                        key={index}
-                        sx={{
-                          "& > :not(style)": { m: 1, width: "25ch" },
-                        }}
-                      >
-                        <TextField
-                          id={`option-label-${index}`}
-                          label={`Option ${index + 1}`}
-                          variant="outlined"
-                          value={radiovalue[index] || ""}
-                          onChange={(e) =>
-                            handleradiochange(index, e.target.value)
-                          }
-                        />
-                      </Box>
-                    ))}
-                  </div>
-                  <Button variant="contained" onClick={handleradiobutton}>
-                    Submit Options
-                  </Button>
-                </>
-              )}
-
-              <Divider sx={{ marginTop: "30px" }} />
-
-              {/* Preview Table */}
-              <div style={{ padding: "10px", margin: "10px" }}>
-                <Typography variant="h6">Preview of Submitted Data</Typography>
-                <TableContainer component={Paper}>
-                  <Table>
-                    <TableHead>
-                      <TableRow>
-                        <TableCell>Label</TableCell>
-                        <TableCell>Type</TableCell>
-                        <TableCell>Options</TableCell>
-                      </TableRow>
-                    </TableHead>
-                    <TableBody>
-                      {entries.map((entry, index) => (
-                        <TableRow key={index}>
-                          <TableCell>{entry.LabelName}</TableCell>
-                          <TableCell>{entry.ValueType}</TableCell>
-                          <TableCell>
-                            {entry.Options
-                              ? // Handle different formats for options
-                                Array.isArray(entry.Options)
-                                ? entry.Options.map((opt, idx) =>
-                                    // Handle radio options or dropdown options
-                                    typeof opt === "string" ? (
-                                      <div key={idx}>{opt}</div>
-                                    ) : (
-                                      <div key={idx}>
-                                        {opt.label}: {opt.value}
-                                      </div>
-                                    )
-                                  )
-                                : "N/A"
-                              : "N/A"}
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </TableContainer>
-              </div>
-
-              <Button
-                variant="contained"
-                sx={{ backgroundColor: "#283255", margin: "30px" }}
-                onClick={handleSubmit}
-              >
-                Submit
-              </Button>
-            </>
-          )
-        }
-        
-
-
-          { (appdata && !defaulttoggle) && (
-            <>
-              <Typography variant="h6" sx={{ marginTop: "20px" }} gutterBottom>
-                Applicants Data
-              </Typography>
-              <div
-                style={{
-                  float: "right",
-                  marginRight: "20px",
-                  display: "flex",
-                  alignItems: "center",
-                }}
-              >
-                <Typography>Filters :</Typography>
-                <Button variant="contained" sx={{ marginLeft: "20px" }}>
-                  Existing User
-                </Button>
-              </div>
-
-              <div>
-                <ApplicantsTable users={appdata} />
-              </div>
-            </>
-          )}
-          
-        </div>
+                <div>
+                  <ApplicantsTable users={appdata} />
+                </div>
+              </>
+            )}
+          </div>
         </div>
       </div>
     </>
