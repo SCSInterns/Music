@@ -8,12 +8,12 @@ import {
   TableRow,
   Paper,
   Typography,
+  Grid,
   Button,
   Divider,
   TextField,
 } from "@mui/material";
-import PreviewIcon from "@mui/icons-material/Preview";
-import AccountBoxIcon from "@mui/icons-material/AccountBox";
+import PortraitIcon from "@mui/icons-material/Portrait";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { toast } from "react-toastify";
 import Dialog from "@mui/material/Dialog";
@@ -22,6 +22,7 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogActions from "@mui/material/DialogActions";
 import Box from "@mui/material/Box";
+import ArrowCircleDownIcon from "@mui/icons-material/ArrowCircleDown";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
@@ -33,7 +34,7 @@ const ApplicantsTable = ({ users }) => {
   const [data, setData] = useState();
   const [toggle, setToggle] = useState(false);
   const [toggleinstallment, settoggleinstallment] = useState(false);
-  const [paymnetaddbox, setpaymnetaddbox] = useState(false)
+  const [paymnetaddbox, setpaymnetaddbox] = useState(false);
   const hasUsers = users && users.length > 0;
   const academyname = sessionStorage.getItem("academyname");
   const role = sessionStorage.getItem("role");
@@ -43,6 +44,7 @@ const ApplicantsTable = ({ users }) => {
     studentid: "",
     username: "",
   });
+  const [defaulttoggle, setdefaulttoggle] = useState(true);
   const [paymentdetails, setpaymentdetails] = useState({
     academyname: `${academyname}`,
     course: "",
@@ -290,20 +292,35 @@ const ApplicantsTable = ({ users }) => {
               {data ? (
                 <>
                   <div style={{ display: "flex" }}>
+                    <PortraitIcon
+                      sx={{
+                        height: "200px",
+                        width: "200px",
+                        color: "#283255",
+                        marginRight: "50px",
+                      }}
+                    />
                     <div style={{ marginRight: "50px" }}>
                       {/* Render fields dynamically */}
-                      {Object.entries(data.additionalFields.formdata).map(
-                        ([label, value]) => (
-                          <Typography key={label}>
-                            {label} : {value || "N/A"}{" "}
-                            {/* Handle missing data */}
-                          </Typography>
-                        )
-                      )}
+
+                      <Grid container spacing={2}>
+                        {Object.entries(data.additionalFields.formdata).map(
+                          ([label, value], index) => (
+                            <Grid item xs={12} sm={4} key={index}>
+                              {" "}
+                              {/* Set 3 columns with xs={12} for mobile and sm={4} for larger screens */}
+                              <Typography>
+                                <strong>{label}</strong>: {value || "N/A"}
+                              </Typography>
+                            </Grid>
+                          )
+                        )}
+                      </Grid>
 
                       {/* Fees */}
-                      <Typography>
-                        Fees : {data.additionalFields.fees || "N/A"}
+                      <Typography sx={{ marginTop: "20px" }}>
+                        <strong> Fees </strong> :{" "}
+                        {data.additionalFields.fees || "N/A"}
                       </Typography>
 
                       {/* <Divider sx={{ marginTop: "30px", marginBottom: "20px"}} />  */}
@@ -318,8 +335,17 @@ const ApplicantsTable = ({ users }) => {
                       }}
                     >
                       {/* Status */}
-                      <Typography>Status : {data.status}</Typography>
 
+                      <div style={{ display: "flex", alignItems: "center" }}>
+                        <Typography>
+                          {" "}
+                          <strong>Status</strong> : {data.status}
+                        </Typography>
+
+                        <Button>
+                          <ArrowCircleDownIcon />
+                        </Button>
+                      </div>
                       {/* Action buttons */}
                       <div
                         style={{
@@ -362,55 +388,78 @@ const ApplicantsTable = ({ users }) => {
                         )}
                       </div>
                     </div>
+                  </div>
 
-                    {/* <div 
-                     style={{ 
-                       borderLeft : '2px solid black'
-                     }}
+                  <Divider sx={{ marginTop: "30px", marginBottom: "30px" }} />
+
+                  <div
+                    style={{ display: "flex", justifyContent: "space-around" }}
+                  >
+                    {data.status === "Reject" ? (
+                      <>
+                        <Button
+                          variant="contained"
+                          disabled
+                          onClick={() => {
+                            setpaymnetaddbox(true);
+                            settoggleinstallment(false);
+                          }}
+                        >
+                          Add Payment
+                        </Button>
+                      </>
+                    ) : (
+                      <>
+                        <Button
+                          variant="contained"
+                          onClick={() => {
+                            setpaymnetaddbox(true);
+                            settoggleinstallment(false);
+                          }}
+                        >
+                          Add Payment
+                        </Button>
+                      </>
+                    )}
+                    <Button
+                      variant="contained"
+                      onClick={() => {
+                        settoggleinstallment(true);
+                        setpaymnetaddbox(false);
+                      }}
                     >
-                      <AccountBoxIcon
-                        sx={{ height: "200px", width: "200px" , color:'blue' }}
-                      />
-                    </div> */}
-                  </div> 
+                      Payment History
+                    </Button>
+                  </div>
 
-                  <Divider sx={{ marginTop: "30px", marginBottom: "30px" }} /> 
+                  <Divider sx={{ marginTop: "20px", marginBottom: "20px" }} />
 
-                  <div 
-                  style={{display:'flex' , justifyContent:'space-around'}}>
-                       <Button variant="contained" onClick={()=> {setpaymnetaddbox(true)}}> 
-                           Add Payment 
-                       </Button>
-                       <Button variant="contained" onClick={()=> {settoggleinstallment(true)}}> 
-                           Payment History 
-                       </Button>
-                  </div> 
-
-                  <Divider sx={{marginTop:'20px' , marginBottom:'20px'}}/>
-
-
-                  {toggleinstallment && paymnetaddbox ? (
+                  {paymnetaddbox && (
                     <>
                       <h1 style={{ fontWeight: "Bold", marginBottom: "20px" }}>
                         Installment Info Here :{" "}
                       </h1>
 
                       <Typography>
-                        Student Name : {data.additionalFields.formdata?.Name}
+                        <strong>Student Name </strong>:{" "}
+                        {data.additionalFields.formdata?.Name}
                       </Typography>
 
                       <Typography>
-                        Installment Date : {data.installementDate}
+                        <strong>Installment Date </strong>:{" "}
+                        {data.installementDate}
                       </Typography>
 
                       <Typography>
-                        Course : {data.additionalFields.formdata?.Courses}
+                        <strong>Course </strong>:{" "}
+                        {data.additionalFields.formdata?.Courses}
                       </Typography>
                       <Typography>
-                        Installment Amount : {data.additionalFields.fees}
+                        <strong>Installment Amount </strong> :{" "}
+                        {data.additionalFields.fees}
                       </Typography>
                       <Typography>
-                        Payment Date :
+                        <strong>Payment Date </strong>:
                         <input
                           type="date"
                           id="datePicker"
@@ -419,10 +468,15 @@ const ApplicantsTable = ({ users }) => {
                         ></input>
                       </Typography>
 
-                      <Typography>
-                        Payment Mode :
-                        <Box sx={{ minWidth: 120, marginTop: "10px" }}>
-                          <FormControl sx={{ width: "50%" }}>
+                      <div style={{ display: "flex", alignItems: "center" }}>
+                        <Typography>
+                          <strong>Payment Mode</strong> :
+                        </Typography>
+
+                        <Box sx={{ minWidth: 500, marginTop: "10px" }}>
+                          <FormControl
+                            sx={{ width: "50%", marginLeft: "30px" }}
+                          >
                             <Select
                               labelId="demo-simple-select-label"
                               id="demo-simple-select"
@@ -438,17 +492,17 @@ const ApplicantsTable = ({ users }) => {
                               <MenuItem value={"Upi"}>Upi</MenuItem>
                             </Select>
                           </FormControl>
+                          <p
+                            style={{
+                              fontSize: "12px",
+                              marginLeft: "30px",
+                              color: "#283255",
+                            }}
+                          >
+                            Please select payment mode here *{" "}
+                          </p>
                         </Box>
-                        <p
-                          style={{
-                            fontSize: "12px",
-                            marginLeft: "10px",
-                            color: "#283255",
-                          }}
-                        >
-                          Please select payment mode here *{" "}
-                        </p>
-                      </Typography>
+                      </div>
 
                       <Button
                         variant="contained"
@@ -461,15 +515,17 @@ const ApplicantsTable = ({ users }) => {
                       {/* <Divider
                         sx={{ marginTop: "20px", marginBottom: "20px" }}
                       /> */}
+                    </>
+                  )}
 
+                  {toggleinstallment && (
+                    <>
                       <Typography sx={{ fontWeight: "Bold" }}>
                         Payment Info :
                       </Typography>
 
-                      <PaymentDetails data={installmentstate} />
+                      {<PaymentDetails data={installmentstate} />}
                     </>
-                  ) : (
-                    <></>
                   )}
                 </>
               ) : (

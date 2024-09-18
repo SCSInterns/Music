@@ -13,12 +13,13 @@ import {
 import Token from "../Token/Token";
 import { toast } from "react-toastify";
 import MailOutlineIcon from "@mui/icons-material/MailOutline";
+import Loader from "../Loader/Loader";
 
 function PendingFeesTable({ data }) {
   const [date, setdate] = useState("");
   const [formatdate, setformatdate] = useState("");
   const [filtereddata, setfiltereddata] = useState([]);
-
+  const [loading, setloading] = useState(false);
   const formatedDate = (date) => {
     const [year, month, day] = date.split("-");
     setformatdate(`${day}-${month}-${year}`);
@@ -47,13 +48,18 @@ function PendingFeesTable({ data }) {
       }),
     });
 
-    if (response.ok) {
-      let data = await response.json();
-      setfiltereddata(data);
-      toast.success("Filtered Success");
-    } else {
-      toast.error("Error fetching filtered data");
-    }
+    setloading(true);
+    setTimeout(async () => {
+      if (response.ok) {
+        let data = await response.json();
+        setfiltereddata(data);
+        toast.success("Filtered Success");
+      } else {
+        toast.error("Error fetching filtered data");
+      }
+
+      setloading(false);
+    }, 2000);
   };
 
   const handlereminder = async (email, amount, name) => {
@@ -85,6 +91,26 @@ function PendingFeesTable({ data }) {
 
   return (
     <>
+      {loading && (
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100vw",
+            height: "100vh",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            backgroundColor: "rgba(255, 255, 255,0.9)",
+            zIndex: 9999,
+          }}
+        >
+          <>
+            <Loader />
+          </>
+        </div>
+      )}
       <div>
         <Typography
           sx={{
@@ -94,15 +120,14 @@ function PendingFeesTable({ data }) {
             display: "flex",
           }}
         >
-          Payment Date : 
-
-          <div style={{marginLeft:'10px'}}>
-          <input
-            type="date"
-            id="datePicker"
-            name="datePicker"
-            onChange={(e) => setdate(e.target.value)}
-          ></input>
+          Payment Date :
+          <div style={{ marginLeft: "10px" }}>
+            <input
+              type="date"
+              id="datePicker"
+              name="datePicker"
+              onChange={(e) => setdate(e.target.value)}
+            ></input>
           </div>
           <Button
             variant="contained"
@@ -118,19 +143,19 @@ function PendingFeesTable({ data }) {
       <div>
         <TableContainer
           component={Paper}
-          sx={{ border: "2px solid black", padding: "3px" }}
+          sx={{ border: "2px solid black", padding: "3px" , marginLeft:'-30px' , width:'950px'}}
         >
           <Table aria-label="pending fees table">
             <TableHead>
               <TableRow>
-                <TableCell>Student Name</TableCell>
-                <TableCell>Student Email</TableCell>
-                <TableCell>Course</TableCell>
-                <TableCell>Amount</TableCell>
-                <TableCell>Payment Mode</TableCell>
-                <TableCell>Enrollment Date</TableCell>
-                <TableCell>Next Payment Date</TableCell>
-                <TableCell>Send Reminder </TableCell>
+                <TableCell >Student Name</TableCell>
+                <TableCell >Student Email</TableCell>
+                <TableCell >Course</TableCell>
+                <TableCell >Amount</TableCell>
+                <TableCell >Payment Mode</TableCell>
+                <TableCell >Enrollment Date</TableCell>
+                <TableCell >Next Payment Date</TableCell>
+                <TableCell >Send Reminder </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>

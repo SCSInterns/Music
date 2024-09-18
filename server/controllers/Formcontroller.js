@@ -70,7 +70,8 @@ const handleapplicantdata = async (req, res) => {
   if (role == "Admin") {
     const response = await Form.find({
       academy_name: academyname,
-      role: 'User'
+      role: 'User' ,
+      status : 'Accept'
     })
 
 

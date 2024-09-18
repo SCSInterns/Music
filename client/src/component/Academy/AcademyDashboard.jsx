@@ -45,6 +45,7 @@ function AcademyDashboard() {
   const [radiovalue, setradiovalue] = useState([]);
   const [defaultstyle, setdefaultstyle] = useState(false);
   const [open, setOpen] = useState(false);
+  const [togglebutton, settogglebutton] = useState(false);
   const [loading, setloading] = useState(false);
   const [defaulttoggle, setdefaulttoggle] = useState(true);
   const [passpaymentdetails, setpasspaymentdetails] = useState([]);
@@ -107,7 +108,7 @@ function AcademyDashboard() {
     setappdata(false);
     setdefaultstyle(false);
     setstyle(false);
-    setdefaultstyle(true)
+    setdefaultstyle(true);
     setpendingfeesstyle(false);
     setdefaulttoggle(false);
     settogglepaymentdue(false);
@@ -203,6 +204,7 @@ function AcademyDashboard() {
     settoggleapplicants(true);
     setstyle(true);
     setregstyle(false);
+    settogglebutton(false);
     setdefaultstyle(false);
     setdefaulttoggle(false);
     setdisplayregform(false);
@@ -259,6 +261,7 @@ function AcademyDashboard() {
       setloading(true);
       setTimeout(() => {
         setloading(false);
+        settogglebutton(true);
         setappdata(data);
         settogglepaymentdue(false);
         setdisplayregform(false);
@@ -496,7 +499,7 @@ function AcademyDashboard() {
             )}
             {displayregform && (
               <>
-                <Box style={{ marginTop: "20px" }}>
+                <Box style={{ margin: "20px" }}>
                   <RegistrationForm />
                 </Box>
               </>
@@ -783,7 +786,11 @@ function AcademyDashboard() {
                   sx={{ marginTop: "20px" }}
                   gutterBottom
                 >
-                  Applicants Data
+                  {togglebutton ? (
+                    <>Existing Applicants Data</>
+                  ) : (
+                    <>Active Applicants Data</>
+                  )}
                 </Typography>
                 <div
                   style={{
@@ -794,15 +801,28 @@ function AcademyDashboard() {
                   }}
                 >
                   <Typography>Filters :</Typography>
-                  <Button
-                    variant="contained"
-                    sx={{ marginLeft: "20px" }}
-                    onClick={() => {
-                      handlePastApplication();
-                    }}
-                  >
-                    Existing User
-                  </Button>
+
+                  {togglebutton ? (
+                    <Button
+                      variant="contained"
+                      sx={{ marginLeft: "20px" }}
+                      onClick={() => {
+                        handleApplicants();
+                      }}
+                    >
+                      Active User
+                    </Button>
+                  ) : (
+                    <Button
+                      variant="contained"
+                      sx={{ marginLeft: "20px" }}
+                      onClick={() => {
+                        handlePastApplication();
+                      }}
+                    >
+                      Existing User
+                    </Button>
+                  )}
                 </div>
 
                 <div>
