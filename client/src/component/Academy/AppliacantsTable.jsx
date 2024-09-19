@@ -23,6 +23,7 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogActions from "@mui/material/DialogActions";
 import Box from "@mui/material/Box";
 import ArrowCircleDownIcon from "@mui/icons-material/ArrowCircleDown";
+import ArrowCircleUpIcon from "@mui/icons-material/ArrowCircleUp";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
@@ -44,7 +45,7 @@ const ApplicantsTable = ({ users }) => {
     studentid: "",
     username: "",
   });
-  const [defaulttoggle, setdefaulttoggle] = useState(true);
+  const [actiontoggle, setactiontoggle] = useState(true);
   const [paymentdetails, setpaymentdetails] = useState({
     academyname: `${academyname}`,
     course: "",
@@ -86,6 +87,10 @@ const ApplicantsTable = ({ users }) => {
     setpaymentmode(event.target.value);
   };
 
+  const handleactiontoggle = async (action) => {
+    setactiontoggle(action);
+  };
+
   const convertDateFormat = (dateStr) => {
     const [year, month, day] = dateStr.split("-");
     const dateObj = new Date(year, month - 1, day);
@@ -100,6 +105,16 @@ const ApplicantsTable = ({ users }) => {
   };
 
   const handleinstallmentsubmition = async (id) => {
+    if (paymentdetails.enrollmentDate === "NaN-NaN-NaN") {
+      toast.error("Please enter the date of payment");
+      return;
+    }
+
+    if (paymentdetails.paymentmode === "") {
+      toast.error("Please enter the mode of payment");
+      return;
+    }
+
     const url = `http://localhost:5000/api/auth/addpaymentdetails/${id}`;
 
     let token = Token();
@@ -129,7 +144,10 @@ const ApplicantsTable = ({ users }) => {
           username: data.additionalFields.formdata?.Name,
         });
         setpaymentdate("");
-        setpaymentmode("");
+        setpaymentmode(""); 
+
+        setpaymnetaddbox(false)
+        settoggleinstallment(true) 
       } else {
         toast.error("Payment Details Updation Failed ");
       }
@@ -330,7 +348,7 @@ const ApplicantsTable = ({ users }) => {
                       style={{
                         display: "flex",
                         flexDirection: "column",
-                        borderLeft: "2px solid black",
+                        // borderLeft: "2px solid black",
                         paddingLeft: "20px",
                       }}
                     >
@@ -342,51 +360,73 @@ const ApplicantsTable = ({ users }) => {
                           <strong>Status</strong> : {data.status}
                         </Typography>
 
-                        <Button>
-                          <ArrowCircleDownIcon />
-                        </Button>
+                        {actiontoggle ? (
+                          <>
+                            <Button
+                              onClick={() => {
+                                handleactiontoggle(false);
+                              }}
+                            >
+                              <ArrowCircleUpIcon />
+                            </Button>
+                          </>
+                        ) : (
+                          <>
+                            <Button
+                              onClick={() => {
+                                handleactiontoggle(true);
+                              }}
+                            >
+                              <ArrowCircleDownIcon />
+                            </Button>
+                          </>
+                        )}
                       </div>
                       {/* Action buttons */}
-                      <div
-                        style={{
-                          padding: "10px",
-                          margin: "10px",
-                          display: "flex",
-                        }}
-                      >
-                        {/* Accept button */}
-                        {data.status !== "Accept" && (
-                          <Button
-                            variant="contained"
-                            onClick={() => handleclick("Accept", data._id)}
-                            sx={{ marginLeft: "20px" }}
+                      {actiontoggle && (
+                        <>
+                          <div
+                            style={{
+                              padding: "10px",
+                              margin: "10px",
+                              display: "flex",
+                            }}
                           >
-                            Accept
-                          </Button>
-                        )}
+                            {/* Accept button */}
+                            {data.status !== "Accept" && (
+                              <Button
+                                variant="contained"
+                                onClick={() => handleclick("Accept", data._id)}
+                                sx={{ marginLeft: "20px" }}
+                              >
+                                Accept
+                              </Button>
+                            )}
 
-                        {/* Reject button */}
-                        {data.status !== "Reject" && (
-                          <Button
-                            variant="contained"
-                            onClick={() => handleclick("Reject", data._id)}
-                            sx={{ marginLeft: "20px" }}
-                          >
-                            Reject
-                          </Button>
-                        )}
+                            {/* Reject button */}
+                            {data.status !== "Reject" && (
+                              <Button
+                                variant="contained"
+                                onClick={() => handleclick("Reject", data._id)}
+                                sx={{ marginLeft: "20px" }}
+                              >
+                                Reject
+                              </Button>
+                            )}
 
-                        {/* Hold button */}
-                        {data.status !== "Hold" && (
-                          <Button
-                            variant="contained"
-                            onClick={() => handleclick("Hold", data._id)}
-                            sx={{ marginLeft: "20px" }}
-                          >
-                            Hold
-                          </Button>
-                        )}
-                      </div>
+                            {/* Hold button */}
+                            {data.status !== "Hold" && (
+                              <Button
+                                variant="contained"
+                                onClick={() => handleclick("Hold", data._id)}
+                                sx={{ marginLeft: "20px" }}
+                              >
+                                Hold
+                              </Button>
+                            )}
+                          </div>
+                        </>
+                      )}
                     </div>
                   </div>
 

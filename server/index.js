@@ -43,6 +43,11 @@ app.use('/api/auth', academyform)
 const installment = require('./routes/Installmentroute')
 app.use('/api/auth', installment)
 
+const media = require('./routes/ImageRoute')
+app.use('/api/auth', media)
+
+
+
 app.get('/', (req, res) => {
     res.send("Hello World");
 });

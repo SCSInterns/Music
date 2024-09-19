@@ -24,6 +24,7 @@ import ApplicantsTable from "./AppliacantsTable";
 import PendingFeesTable from "./PendingFeesTable";
 import Loader from "../Loader/Loader";
 import RegistrationForm from "./AcademyRegistration";
+import MediaMenu from "../Media/MediaMenu";
 
 function AcademyDashboard() {
   const academyname = sessionStorage.getItem("academyname");
@@ -49,6 +50,8 @@ function AcademyDashboard() {
   const [loading, setloading] = useState(false);
   const [defaulttoggle, setdefaulttoggle] = useState(true);
   const [passpaymentdetails, setpasspaymentdetails] = useState([]);
+  const [dispalymedia, setdispalymedia] = useState(false);
+  const [mediastyle, setmediastyle] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
@@ -89,6 +92,26 @@ function AcademyDashboard() {
     setloading(true);
     setdisplayregform(true);
     setregstyle(true);
+    setdispalymedia(false);
+    setappdata(false);
+    setdefaultstyle(false);
+    setstyle(false);
+    setmediastyle(false);
+    setpendingfeesstyle(false);
+    setdefaulttoggle(false);
+    settogglepaymentdue(false);
+    settoggleapplicants(false);
+    setTimeout(() => {
+      setloading(false);
+    }, 2000);
+  };
+
+  const handlemedia = () => {
+    setmediastyle(true);
+    setdispalymedia(true);
+    setloading(true);
+    setdisplayregform(false);
+    setregstyle(false);
     setappdata(false);
     setdefaultstyle(false);
     setstyle(false);
@@ -96,6 +119,7 @@ function AcademyDashboard() {
     setdefaulttoggle(false);
     settogglepaymentdue(false);
     settoggleapplicants(false);
+
     setTimeout(() => {
       setloading(false);
     }, 2000);
@@ -107,8 +131,10 @@ function AcademyDashboard() {
     setregstyle(false);
     setappdata(false);
     setdefaultstyle(false);
+    setdispalymedia(false);
     setstyle(false);
     setdefaultstyle(true);
+    setmediastyle(false);
     setpendingfeesstyle(false);
     setdefaulttoggle(false);
     settogglepaymentdue(false);
@@ -204,9 +230,11 @@ function AcademyDashboard() {
     settoggleapplicants(true);
     setstyle(true);
     setregstyle(false);
+    setdispalymedia(false);
     settogglebutton(false);
     setdefaultstyle(false);
     setdefaulttoggle(false);
+    setmediastyle(false);
     setdisplayregform(false);
     setpendingfeesstyle(false);
     let url = "http://localhost:5000/api/auth/getdata";
@@ -292,6 +320,8 @@ function AcademyDashboard() {
     setpendingfeesstyle(true);
     setregstyle(false);
     setdefaulttoggle(false);
+    setdispalymedia(false);
+    setmediastyle(false);
     setdefaultstyle(false);
     settogglepaymentdue(true);
     setstyle(false);
@@ -468,6 +498,21 @@ function AcademyDashboard() {
             }}
           >
             Pending Fees
+          </Button>
+
+          <Divider />
+          <Button
+            style={{
+              margin: "10px",
+              width: "200px",
+              color: mediastyle ? "blue" : "white",
+              backgroundColor: mediastyle ? "white" : "#283255",
+            }}
+            onClick={() => {
+              handlemedia();
+            }}
+          >
+            Add Media
           </Button>
 
           <Divider />
@@ -776,6 +821,12 @@ function AcademyDashboard() {
                 >
                   Submit
                 </Button>
+              </>
+            )}
+
+            {dispalymedia && (
+              <>
+                 <MediaMenu/>
               </>
             )}
 
