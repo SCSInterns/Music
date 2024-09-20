@@ -1,5 +1,7 @@
 const Form = require('../models/Form')
 const Token = require('../models/Token');
+const youtubeUrl = require('youtube-url');
+const Video = require('../models/Video')
 
 // form addition 
 const handledynamicform = async (req, res) => {
@@ -70,8 +72,8 @@ const handleapplicantdata = async (req, res) => {
   if (role == "Admin") {
     const response = await Form.find({
       academy_name: academyname,
-      role: 'User' ,
-      status : 'Accept'
+      role: 'User',
+      status: 'Accept'
     })
 
 
@@ -162,6 +164,35 @@ const handleinstallment = async (req, res) => {
   }
 }
 
+// checking the youtube video link url 
+
+const verifyyoutubelink = async (req, res) => {
+  try {
+    const { link, role, academyname } = req.body
+
+    if (role === "Admin") {
+      const response = await youtubeUrl.valid(link);
+
+      if (response) {
+        const data = new Video({
+          academyname: academyname,
+          link: link
+        })
+        await data.save()
+        res.status(200).json(data)
+      }
+      else {
+        res.status(404).json({ msg: "Inalid youtube link " })
+      }
+    }
+    else {
+      res.status(401).json({ msg: "Unauthorized Access" })
+    }
+
+  } catch (error) {
+    res.status(500).json({ message: 'Server not supported', error });
+  }
+}
 
 
-module.exports = { handledynamicform, getform, savedata, handleapplicantdata, finddatabyid, handlestatus , handleinstallment }
+module.exports = { handledynamicform, getform, savedata, handleapplicantdata, finddatabyid, handlestatus, handleinstallment, verifyyoutubelink }

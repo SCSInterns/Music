@@ -57,6 +57,12 @@ const ApplicantsTable = ({ users }) => {
     studentemail: "",
   });
 
+  useEffect(() => 
+  {
+    setactiontoggle(false)
+    settoggleinstallment(false)
+  }, [])
+
   useEffect(() => {
     if (data) {
       setpaymentdetails({

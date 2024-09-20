@@ -4,13 +4,13 @@ import { toast } from "react-toastify";
 const Addlogo = () => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [imageUrl, setImageUrl] = useState(null); //  uploaded image URL
-
+  const academyname = sessionStorage.getItem("academyname");
   const handleImageChange = (event) => {
     const file = event.target.files[0];
     if (file) {
       const imageUrl = URL.createObjectURL(file);
-      setSelectedImage(file); 
-      setImageUrl(imageUrl); 
+      setSelectedImage(file);
+      setImageUrl(imageUrl);
     }
   };
 
@@ -24,17 +24,22 @@ const Addlogo = () => {
       console.error("No image selected");
       return;
     }
- 
-    console.log(selectedImage)
+
+    console.log(selectedImage);
     const formData = new FormData();
     formData.append("logo", selectedImage); // Append the image file to form data
+    console.log(academyname);
+    formData.append("academyname", academyname);
+    console.log(academyname); 
+
+    console.log('Form Data:', Array.from(formData.entries())); // Log entries
 
     const url = "http://localhost:5000/api/auth/uploadlogo";
 
     try {
       const response = await fetch(url, {
         method: "POST",
-        body: formData,
+        body: formData, 
       });
 
       if (!response.ok) {
@@ -43,8 +48,8 @@ const Addlogo = () => {
       }
 
       const data = await response.json();
-      setImageUrl(data.imageUrl); // Save the uploaded image URL
       toast.success("Logo uploaded successfully ");
+      setImageUrl(data.imageUrl); // Save the uploaded image URL
       setSelectedImage(null);
     } catch (err) {
       console.error("Error uploading image:", err);
@@ -56,7 +61,7 @@ const Addlogo = () => {
       {selectedImage ? (
         <div className="relative">
           <img
-            src={selectedImage}
+            src={imageUrl}
             alt="Selected"
             className="w-64 h-64 object-cover rounded-lg shadow-md"
           />
@@ -109,9 +114,9 @@ const Addlogo = () => {
               src={`${imageUrl}?w=200&h=200`}
               alt="Resized Image"
               width={300}
-              height={300} 
-              style={{ 
-                marginBottom : "100px"
+              height={300}
+              style={{
+                marginBottom: "100px",
               }}
             />
           </div>

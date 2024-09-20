@@ -12,5 +12,6 @@ router.post('/getdatabyid/:id', authenticate.authenticatetoken, formcontroller.f
 router.put('/updatestatus/:id', authenticate.authenticatetoken, formcontroller.handlestatus)
 router.put('/updateinstallment/:id', authenticate.authenticatetoken, formcontroller.handleinstallment) 
 router.post('/getrejectedapplicant', authenticate.authenticatetoken , musiccontroller.rejectedapplicants)
+router.post('/uploadvideo', authenticate.authenticatetoken , formcontroller.verifyyoutubelink)
 
 module.exports = router 

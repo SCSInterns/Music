@@ -15,7 +15,9 @@ const path = `mongodb+srv://${muser}:${mpass}@musicacademy.o2ko5b4.mongodb.net/?
 
 const app = express();
 
-app.use(express.json());
+app.use(express.json()); 
+app.use(express.urlencoded({ extended: true }));
+
 app.use(cors());
 
 mongoose.connect(path)
