@@ -13,5 +13,6 @@ router.put('/updatestatus/:id', authenticate.authenticatetoken, formcontroller.h
 router.put('/updateinstallment/:id', authenticate.authenticatetoken, formcontroller.handleinstallment) 
 router.post('/getrejectedapplicant', authenticate.authenticatetoken , musiccontroller.rejectedapplicants)
 router.post('/uploadvideo', authenticate.authenticatetoken , formcontroller.verifyyoutubelink)
+router.post('/uploadlogodata' , authenticate.authenticatetoken , formcontroller.handlelogo)
 
 module.exports = router 

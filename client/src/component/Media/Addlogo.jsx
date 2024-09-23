@@ -1,10 +1,14 @@
 import React, { useState } from "react";
 import { toast } from "react-toastify";
+import Token from "../Token/Token";
+import { Typography, Button } from "@mui/material";
 
 const Addlogo = () => {
   const [selectedImage, setSelectedImage] = useState(null);
-  const [imageUrl, setImageUrl] = useState(null); //  uploaded image URL
+  const [imageUrl, setImageUrl] = useState(null);
+  const [data, setdata] = useState("");
   const academyname = sessionStorage.getItem("academyname");
+  const role = sessionStorage.getItem("role");
   const handleImageChange = (event) => {
     const file = event.target.files[0];
     if (file) {
@@ -30,16 +34,16 @@ const Addlogo = () => {
     formData.append("logo", selectedImage); // Append the image file to form data
     console.log(academyname);
     formData.append("academyname", academyname);
-    console.log(academyname); 
+    console.log(academyname);
 
-    console.log('Form Data:', Array.from(formData.entries())); // Log entries
+    console.log("Form Data:", Array.from(formData.entries())); // Log entries
 
     const url = "http://localhost:5000/api/auth/uploadlogo";
 
     try {
       const response = await fetch(url, {
         method: "POST",
-        body: formData, 
+        body: formData,
       });
 
       if (!response.ok) {
@@ -55,6 +59,37 @@ const Addlogo = () => {
       console.error("Error uploading image:", err);
     }
   };
+
+  const handlelogostoring = async () => {
+    try {
+      const url = "http://localhost:5000/api/auth/uploadlogodata";
+      const token = Token();
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          Authorization: `${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          role: role,
+          academyname: academyname,
+          link: imageUrl,
+        }),
+      });
+
+      if (response.ok) {
+        const final = await response.json();
+        setdata(final);
+        toast.success("Logo added Successfully ");
+      } else {
+        toast.error("Error Saving Logo");
+      }
+    } catch (error) {
+      console.error("Error saving image:", error);
+    }
+  };
+
+  console.log(data);
 
   return (
     <div className="flex flex-col items-center justify-center mt-10 space-y-4">
@@ -116,9 +151,15 @@ const Addlogo = () => {
               width={300}
               height={300}
               style={{
-                marginBottom: "100px",
+                marginBottom: "50px",
               }}
             />
+          </div>
+
+          <div style={{ marginBottom: "30px" }}>
+            <Button variant="contained" onClick={() => handlelogostoring()}>
+              Submit
+            </Button>
           </div>
         </>
       )}

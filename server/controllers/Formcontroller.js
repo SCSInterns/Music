@@ -2,6 +2,7 @@ const Form = require('../models/Form')
 const Token = require('../models/Token');
 const youtubeUrl = require('youtube-url');
 const Video = require('../models/Video')
+const Logo = require('../models/Logo')
 
 // form addition 
 const handledynamicform = async (req, res) => {
@@ -194,5 +195,34 @@ const verifyyoutubelink = async (req, res) => {
   }
 }
 
+const handlelogo = async (req, res) => {
+  try {
+    const { link, role, academyname } = req.body
 
-module.exports = { handledynamicform, getform, savedata, handleapplicantdata, finddatabyid, handlestatus, handleinstallment, verifyyoutubelink }
+    if (role === "Admin") {
+      const response = await Logo({
+        academyname: academyname,
+        link: link
+      })
+
+      const data = await response.save()
+
+      if (data) {
+        res.status(200).json(data)
+      }
+      else {
+        res.status(404).json({ msg: "Error saving data" })
+      }
+    }
+    else {
+      res.status(401).json({ msg: "Unauthorized Access" })
+    }
+
+  } catch (error) {
+    res.status(500).json({ message: 'Server not supported', error });
+  }
+
+}
+
+
+module.exports = { handledynamicform, getform, savedata, handleapplicantdata, finddatabyid, handlestatus, handleinstallment, verifyyoutubelink , handlelogo }
