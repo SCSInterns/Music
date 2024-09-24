@@ -167,9 +167,9 @@ function PendingFeesTable({ data }) {
                     <TableCell>{row.course}</TableCell>
                     <TableCell>{row.amount}</TableCell>
                     <TableCell>{row.paymentmode}</TableCell>
-                    <TableCell>{row.enrollmentDate}</TableCell>
+                    <TableCell>{row.paymentdate}</TableCell>
                     <TableCell sx={{ fontWeight: "bold" }}>
-                      {row.nextPaymentDate}
+                      {row.nextpaymentdate}
                     </TableCell>
                     <TableCell>
                       <Button

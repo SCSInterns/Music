@@ -9,5 +9,6 @@ router.post('/addpaymentdetails/:studentId',authenticate.authenticatetoken,Insta
 router.post('/getinfoinstallment' , authenticate.authenticatetoken , Installment.getinfoofinstallment)
 router.post('/getpaymnetdue' , authenticate.authenticatetoken , Installment.getinfoofpendingpayments)
 router.post('/paymentreminder',authenticate.authenticatetoken , Payment.calculatePaymentDueDates)
+router.put('/addlatestdue',authenticate.authenticatetoken , Installment.handlelatestpaymnetdue)
 
 module.exports = router

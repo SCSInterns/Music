@@ -1,4 +1,5 @@
 const Installement = require("../models/Installment")
+const Paymnetdue = require("../models/PaymentDues")
 const Token = require('../models/Token');
 
 const addMonths = (date, months) => {
@@ -92,7 +93,7 @@ const getinfoofinstallment = async (req, res) => {
 const getinfoofpendingpayments = async (req, res) => {
     const { academyname, role, currentdate } = req.body
 
-    const Users = await Installement.find({ nextPaymentDate: currentdate, academyname: academyname })
+    const Users = await Paymnetdue.find({ nextpaymentdate: currentdate, academyname: academyname })
 
     if (Users) {
         if (role === "Admin") {
@@ -109,5 +110,70 @@ const getinfoofpendingpayments = async (req, res) => {
 }
 
 
+const handlelatestpaymnetdue = async (req, res) => {
+    try {
+        const { paymentdate, academyname, studentname, role, studentid, course, amount, paymentmode, studentemail } = req.body
 
-module.exports = { handlenextinstallmentdate, getinfoofinstallment, getinfoofpendingpayments }
+        if (role === "Admin") {
+            const response = await Paymnetdue.findOne({
+                studentid: studentid,
+                studentname: studentname,
+                academyname: academyname
+            })
+
+            const dateStr = paymentdate;
+            const monthsToAdd = 1;
+
+            const nextpaymentdate = convertAndAddMonths(dateStr, monthsToAdd);
+
+            if (response) {
+
+                const updateduser = {
+                    ...req.body,
+                    paymentdate: paymentdate,
+                    nextpaymentdate: nextpaymentdate
+                };
+
+                const updatedinfo = await Paymnetdue.findByIdAndUpdate(response._id, { $set: updateduser }, { new: true })
+
+                if (updatedinfo) {
+                    res.status(200).json(updatedinfo)
+                }
+                else {
+                    res.status(404).json({ msg: "Error Updating Data" })
+                }
+            }
+            else {
+                const newentry = new Paymnetdue({
+                    studentid: studentid,
+                    studentname: studentname,
+                    academyname: academyname,
+                    paymentdate: paymentdate,
+                    course: course,
+                    amount: amount,
+                    paymentmode: paymentmode,
+                    studentemail: studentemail,
+                    nextpaymentdate: nextpaymentdate, 
+                     
+                })
+
+                const data = await newentry.save()
+
+                if (data) {
+                    res.status(200).json(data)
+                }
+            }
+        }
+        else {
+            res.status(401).json({ msg: "Unauthorized Access" })
+        }
+
+
+    } catch (error) {
+        res.status(500).json({ message: 'Server not supported', error });
+    }
+}
+
+
+
+module.exports = { handlenextinstallmentdate, getinfoofinstallment, getinfoofpendingpayments, handlelatestpaymnetdue }

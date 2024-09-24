@@ -1,4 +1,5 @@
 const Installment = require("../models/Installment");
+const PaymentDue = require("../models/PaymentDues")
 const Email = require("../controllers/emailc")
 const cron = require('node-cron');
 const moment = require('moment');
@@ -15,6 +16,7 @@ const moment = require('moment');
 cron.schedule('0 0 * * *', () => {
     console.log('Running cron job for payment reminder...');
     calculatePaymentDueDates();
+    calcexpirydays() ;
 });
 
 const calculatePaymentDueDates = async () => {
@@ -22,7 +24,7 @@ const calculatePaymentDueDates = async () => {
     console.log('Current Date:', currentdate);
 
     try {
-        const users = await Installment.find({ nextPaymentDate: currentdate });
+        const users = await PaymentDue.find({ nextpaymentdate: currentdate });
 
         if (users.length > 0) {
             const userNames = users.map(user => ({
@@ -30,7 +32,7 @@ const calculatePaymentDueDates = async () => {
                 course: user.course,
                 amount: user.amount,
                 email: user.studentemail,
-                nextPaymentDate: user.nextPaymentDate
+                nextPaymentDate: user.nextpaymentdate
             },
                 Email.sendpaymentmail(user.studentemail, user.amount, user.studentname, user.academyname)
             ),
@@ -52,5 +54,25 @@ const calculatePaymentDueDates = async () => {
 const sendPaymentReminder = (user) => {
     console.log("Your fees are pending for:", user);
 };
+
+const calcexpirydays = async () => {
+    const subscriptions = await PaymentDue.find();
+
+    try {
+        for (const subscription of subscriptions) {
+            const currentDate = moment();
+            const expiryDate = moment(subscription.nextpaymentdate);
+            const timeDiff = expiryDate.diff(currentDate);
+            const daysLeft = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+
+            console.log(`${subscription.studentname} has ${daysLeft} days left until expiry`);
+        }
+    } catch (error) {
+        console.error('Error calculating subscription expiry:', error);
+    }
+
+};
+
+
 
 module.exports = { calculatePaymentDueDates };

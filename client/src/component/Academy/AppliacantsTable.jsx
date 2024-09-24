@@ -57,11 +57,10 @@ const ApplicantsTable = ({ users }) => {
     studentemail: "",
   });
 
-  useEffect(() => 
-  {
-    setactiontoggle(false)
-    settoggleinstallment(false)
-  }, [])
+  useEffect(() => {
+    setactiontoggle(false);
+    settoggleinstallment(false);
+  }, []);
 
   useEffect(() => {
     if (data) {
@@ -110,6 +109,43 @@ const ApplicantsTable = ({ users }) => {
     return formattedDate;
   };
 
+  const addlatestpaymentdue = async (
+    id,
+    paymentdate,
+    studentname,
+    studentemail,
+    paymentmode,
+    amount,
+    course
+  ) => {
+    const url = "http://localhost:5000/api/auth/addlatestdue";
+    const token = Token();
+    const response = await fetch(url, {
+      method: "PUT",
+      headers: {
+        Authorization: `${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        studentname: studentname,
+        academyname: academyname,
+        role: role,
+        studentid: id,
+        paymentdate: paymentdate,
+        studentemail: studentemail,
+        paymentmode: paymentmode,
+        amount: amount,
+        course: course,
+      }),
+    });
+
+    if (response.ok) {
+      toast.success("Latest Payment Due Updated");
+    } else {
+      toast.error("Error Updating latest Due Date ");
+    }
+  };
+
   const handleinstallmentsubmition = async (id) => {
     if (paymentdetails.enrollmentDate === "NaN-NaN-NaN") {
       toast.error("Please enter the date of payment");
@@ -120,6 +156,16 @@ const ApplicantsTable = ({ users }) => {
       toast.error("Please enter the mode of payment");
       return;
     }
+
+    await addlatestpaymentdue(
+      id,
+      paymentdetails.enrollmentDate,
+      paymentdetails.studentname,
+      paymentdetails.studentemail,
+      paymentdetails.paymentmode,
+      paymentdetails.amount,
+      paymentdetails.course
+    );
 
     const url = `http://localhost:5000/api/auth/addpaymentdetails/${id}`;
 
@@ -150,10 +196,10 @@ const ApplicantsTable = ({ users }) => {
           username: data.additionalFields.formdata?.Name,
         });
         setpaymentdate("");
-        setpaymentmode(""); 
+        setpaymentmode("");
 
-        setpaymnetaddbox(false)
-        settoggleinstallment(true) 
+        setpaymnetaddbox(false);
+        settoggleinstallment(true);
       } else {
         toast.error("Payment Details Updation Failed ");
       }
@@ -272,6 +318,7 @@ const ApplicantsTable = ({ users }) => {
                 <TableCell>Name</TableCell>
                 <TableCell>Email</TableCell>
                 <TableCell>Mobile No</TableCell>
+                <TableCell>Next Payment Due </TableCell>
                 <TableCell>More Info</TableCell>
               </TableRow>
             </TableHead>
@@ -282,6 +329,9 @@ const ApplicantsTable = ({ users }) => {
                   <TableCell>{user.additionalFields.formdata?.Email}</TableCell>
                   <TableCell>
                     {user.additionalFields.formdata?.MobileNo}
+                  </TableCell>
+                  <TableCell>
+                    
                   </TableCell>
                   <TableCell>
                     <Button onClick={() => handlePreview(user._id)}>
