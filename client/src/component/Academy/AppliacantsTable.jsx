@@ -41,6 +41,7 @@ const ApplicantsTable = ({ users }) => {
   const role = sessionStorage.getItem("role");
   const [paymentmode, setpaymentmode] = useState("");
   const [paymentdate, setpaymentdate] = useState("");
+  const [expirydate, setexpirydate] = useState({});
   const [installmentstate, setinstallmentstate] = useState({
     studentid: "",
     username: "",
@@ -208,6 +209,52 @@ const ApplicantsTable = ({ users }) => {
     }
   };
 
+  const getsubscriptiondays = async (id) => {
+    const url = "http://localhost:5000/api/auth/getsubscriptiondetails";
+    let token = Token();
+
+    try {
+      let response = await fetch(url, {
+        method: "POST",
+        headers: {
+          Authorization: `${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          academyname: academyname,
+          role: role,
+          studentid: id,
+        }),
+      });
+
+      if (response.ok) {
+        const responseData = await response.json();
+        setexpirydate((prev) => ({
+          ...prev,
+          [id]: responseData[0].daysleft,
+        }));
+        toast.success("Expiry Days Fetch Success");
+      } else {
+        toast.error("Error getting expiry days ");
+      }
+    } catch (error) {
+      toast.error("Network error");
+    }
+  };
+
+  useEffect(() => {
+    users.forEach((user) => {
+      if (user.status !== "Reject") {
+        getsubscriptiondays(user._id);
+      } else {
+        setexpirydate((prev) => ({
+          ...prev,
+          [user._id]: "Not Applicable",
+        }));
+      }
+    });
+  }, [users]);
+
   const handlePreview = async (id) => {
     const url = `http://localhost:5000/api/auth/getdatabyid/${id}`;
     let token = Token();
@@ -331,7 +378,17 @@ const ApplicantsTable = ({ users }) => {
                     {user.additionalFields.formdata?.MobileNo}
                   </TableCell>
                   <TableCell>
-                    
+                    {expirydate[user._id] !== undefined &&
+                    user.status !== "Reject" ? (
+                      <span>
+                        <strong>{expirydate[user._id]}</strong> days left
+                      </span>
+                    ) : (
+                      <span>
+                        {" "}
+                        <strong>Not Applicable</strong>
+                      </span>
+                    )}
                   </TableCell>
                   <TableCell>
                     <Button onClick={() => handlePreview(user._id)}>

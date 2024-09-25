@@ -61,10 +61,15 @@ const calcexpirydays = async () => {
     try {
         for (const subscription of subscriptions) {
             const currentDate = moment();
-            const expiryDate = moment(subscription.nextpaymentdate);
+            const expiryDate = moment(subscription.nextpaymentdate, 'DD-MM-YYYY');;
             const timeDiff = expiryDate.diff(currentDate);
-            const daysLeft = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+            const daysLeft = Math.ceil(timeDiff / (1000 * 60 * 60 * 24)); 
 
+            await PaymentDue.updateOne(
+                { _id: subscription._id },
+                { $set: { daysleft: daysLeft } }
+            );
+   
             console.log(`${subscription.studentname} has ${daysLeft} days left until expiry`);
         }
     } catch (error) {

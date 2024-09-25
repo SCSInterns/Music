@@ -37,6 +37,11 @@ const dueschema = new mongoose.Schema({
     studentid: {
         type: String,
         required: true
+    } , 
+    daysleft : { 
+        type: String,
+        required: true, 
+        default : "0"
     }
 
 });

@@ -27,8 +27,6 @@ const handlenextinstallmentdate = async (req, res) => {
     try {
         const { studentId } = req.params;
         const { academyname, course, amount, role, studentname, enrollmentDate, paymentmode, studentemail } = req.body
-
-
         const dateStr = enrollmentDate;
         const monthsToAdd = 1;
 
@@ -153,8 +151,8 @@ const handlelatestpaymnetdue = async (req, res) => {
                     amount: amount,
                     paymentmode: paymentmode,
                     studentemail: studentemail,
-                    nextpaymentdate: nextpaymentdate, 
-                     
+                    nextpaymentdate: nextpaymentdate,
+
                 })
 
                 const data = await newentry.save()
@@ -175,5 +173,26 @@ const handlelatestpaymnetdue = async (req, res) => {
 }
 
 
+// getting days left for dashborad 
 
-module.exports = { handlenextinstallmentdate, getinfoofinstallment, getinfoofpendingpayments, handlelatestpaymnetdue }
+const getUserSubscriptionDetails = async (req, res) => {
+    try {
+        const { academyname, role, studentid } = req.body
+        if (role === "Admin") {
+            const subscriptions = await Paymnetdue.find({ studentid: studentid, academyname: academyname });
+            res.status(200).json(subscriptions);
+        }
+        else {
+            res.status(401).json({ msg: "Unauthorized Access" })
+        }
+
+    } catch (error) {
+        console.error('Error fetching subscription details:', error);
+        res.status(500).send('Server error');
+    }
+};
+
+
+
+
+module.exports = { handlenextinstallmentdate, getinfoofinstallment, getinfoofpendingpayments, handlelatestpaymnetdue, getUserSubscriptionDetails }
