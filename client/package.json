@@ -5,6 +5,8 @@
   "dependencies": {
     "@emotion/react": "^11.13.3",
     "@emotion/styled": "^11.13.0",
+    "@headlessui/react": "^2.1.8",
+    "@heroicons/react": "^2.1.5",
     "@mui/icons-material": "^5.16.4",
     "@mui/material": "^5.16.7",
     "@mui/utils": "^6.0.0",

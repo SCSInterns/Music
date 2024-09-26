@@ -158,16 +158,6 @@ const ApplicantsTable = ({ users }) => {
       return;
     }
 
-    await addlatestpaymentdue(
-      id,
-      paymentdetails.enrollmentDate,
-      paymentdetails.studentname,
-      paymentdetails.studentemail,
-      paymentdetails.paymentmode,
-      paymentdetails.amount,
-      paymentdetails.course
-    );
-
     const url = `http://localhost:5000/api/auth/addpaymentdetails/${id}`;
 
     let token = Token();
@@ -190,8 +180,22 @@ const ApplicantsTable = ({ users }) => {
         }),
       });
 
+      if (response.status === 400 ) {
+        toast.error("Installment paid already");
+      }
+
       if (response.ok) {
         toast.success("Payment Data Added Successfully ");
+
+        await addlatestpaymentdue(
+          id,
+          paymentdetails.enrollmentDate,
+          paymentdetails.studentname,
+          paymentdetails.studentemail,
+          paymentdetails.paymentmode,
+          paymentdetails.amount,
+          paymentdetails.course
+        );
         setinstallmentstate({
           studentid: data._id,
           username: data.additionalFields.formdata?.Name,
@@ -233,7 +237,6 @@ const ApplicantsTable = ({ users }) => {
           ...prev,
           [id]: responseData[0].daysleft,
         }));
-        toast.success("Expiry Days Fetch Success");
       } else {
         toast.error("Error getting expiry days ");
       }

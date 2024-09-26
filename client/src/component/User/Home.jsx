@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
+import Navbar from './Navbar'
 
 function Home() {
   const { academyname } = useParams();
@@ -22,7 +23,7 @@ function Home() {
 
     if (response.ok) {
       toast.success("Academy Url : Right ");
-      sessionStorage.setItem("Academy : ", `${academyname}`)
+      sessionStorage.setItem("Academy", `${academyname}`)
       setverified(true);
     } else {
       toast.error("Academy Url : Wrong ");
@@ -37,11 +38,7 @@ function Home() {
 
   return (
     <>
-      {verified ? (
-        <h1>Welcome to {academyname}</h1>
-      ) : (
-        <h1> Academy Not Found </h1>
-      )}
+      <Navbar/>
     </>
   );
 }

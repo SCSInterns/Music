@@ -48,6 +48,9 @@ app.use('/api/auth', installment)
 const media = require('./routes/ImageRoute')
 app.use('/api/auth', media)
 
+const users = require('./routes/Userrouter')
+app.use('/api/auth', users)
+
 
 
 app.get('/', (req, res) => {

@@ -27,11 +27,33 @@ const handlenextinstallmentdate = async (req, res) => {
     try {
         const { studentId } = req.params;
         const { academyname, course, amount, role, studentname, enrollmentDate, paymentmode, studentemail } = req.body
+
+        // Helper function to extract month and year from DD-MM-YYYY format
+        const extractMonthYear = (dateStr) => {
+            const [day, month, year] = dateStr.split('-');
+            return { month: parseInt(month), year: parseInt(year) };
+        };
+
+        // Fetch the existing payment data from the database
+        const existingInstallments = await Installement.find({ studentId: studentId });
+
+        if (existingInstallments.length > 0) {
+            const enrollmentDateParts = extractMonthYear(enrollmentDate);
+
+            // Loop through each existing installment and check for a month-year match with enrollmentDate
+            for (let installment of existingInstallments) {
+                const paymentDateParts = extractMonthYear(installment.enrollmentDate);
+                
+                if (paymentDateParts.month === enrollmentDateParts.month && paymentDateParts.year === enrollmentDateParts.year) {
+                    return res.status(400).json({ msg: "Enrollment date and an existing payment date fall in the same month. Consistency error in monthly installments." });
+                }
+            }
+        }
+        
         const dateStr = enrollmentDate;
         const monthsToAdd = 1;
-
         const nextPaymentDate = convertAndAddMonths(dateStr, monthsToAdd);
-
+        
         if (role === "Admin") {
             const Newuser = await new Installement({
                 studentId: studentId,
@@ -56,6 +78,7 @@ const handlenextinstallmentdate = async (req, res) => {
             res.status(401).json({ msg: "Unauthorised Access" })
         }
     } catch (error) {
+        console.log(error)
         res.status(500).json({ message: 'Server not supported', error });
     }
 
