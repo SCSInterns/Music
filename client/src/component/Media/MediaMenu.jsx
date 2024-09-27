@@ -7,26 +7,33 @@ import Addlogo from '../Media/Addlogo'
 
 import { Button, Typography } from "@mui/material";
 import Addvideo from "./Addvideo";
+import Addphotos from "./Addphotos";
 
 const MediaMenu = () => {
   const [logo, setlogo] = useState(false); 
   const [toggle, settoggle] = useState(true) 
   const [video, setvideo] = useState(false) 
+  const [photo, setphoto] = useState(false)
 
   const handleAddBusinessClick = () => {
      setlogo(true) 
      settoggle(false) 
      setvideo(false)
+     setphoto(false)
   };
 
   const handleAddPhotoClick = () => {
-    alert("Add Academy's Photo clicked");
+    setlogo(false) 
+    settoggle(false)
+    setvideo(false)
+    setphoto(true)
   };
 
   const handleVideoCallClick = () => {
     setlogo(false) 
     settoggle(false)
     setvideo(true)
+    setphoto(false)
   };
 
   const icons = [
@@ -93,6 +100,14 @@ const MediaMenu = () => {
       video && (
         <> 
            <Addvideo/>
+        </>
+      )
+     }
+
+     {
+      photo && (
+        <> 
+           <Addphotos/>
         </>
       )
      }
