@@ -147,6 +147,8 @@ const ApplicantsTable = ({ users }) => {
     }
   };
 
+  console.log(users)
+
   const handleinstallmentsubmition = async (id) => {
     if (paymentdetails.enrollmentDate === "NaN-NaN-NaN") {
       toast.error("Please enter the date of payment");
@@ -180,7 +182,7 @@ const ApplicantsTable = ({ users }) => {
         }),
       });
 
-      if (response.status === 400 ) {
+      if (response.status === 400) {
         toast.error("Installment paid already");
       }
 
@@ -247,7 +249,7 @@ const ApplicantsTable = ({ users }) => {
 
   useEffect(() => {
     users.forEach((user) => {
-      if (user.status !== "Reject") {
+      if (user.status === "Accept") {
         getsubscriptiondays(user._id);
       } else {
         setexpirydate((prev) => ({
@@ -382,7 +384,8 @@ const ApplicantsTable = ({ users }) => {
                   </TableCell>
                   <TableCell>
                     {expirydate[user._id] !== undefined &&
-                    user.status !== "Reject" ? (
+                    (user.status !== "Reject" ||
+                      user.status !== "To be updated") ? (
                       <span>
                         <strong>{expirydate[user._id]}</strong> days left
                       </span>

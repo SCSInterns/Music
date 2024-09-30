@@ -25,6 +25,10 @@ import PendingFeesTable from "./PendingFeesTable";
 import Loader from "../Loader/Loader";
 import RegistrationForm from "./AcademyRegistration";
 import MediaMenu from "../Media/MediaMenu";
+import Events from '../Academy Features/Events'
+import Instruments from '../Academy Features/Instruments'
+import SocialLinks from '../Academy Features/SocialLinks'
+import Aboutus from '../Academy Features/Aboutus'
 
 function AcademyDashboard() {
   const academyname = sessionStorage.getItem("academyname");
@@ -44,7 +48,7 @@ function AcademyDashboard() {
   const [regstyle, setregstyle] = useState(false);
   const [togglepaymentdue, settogglepaymentdue] = useState(false);
   const [radiovalue, setradiovalue] = useState([]);
-  const [defaultstyle, setdefaultstyle] = useState(false);
+  const [defaultstyle, setdefaultstyle] = useState(true);
   const [open, setOpen] = useState(false);
   const [togglebutton, settogglebutton] = useState(false);
   const [loading, setloading] = useState(false);
@@ -52,6 +56,20 @@ function AcademyDashboard() {
   const [passpaymentdetails, setpasspaymentdetails] = useState([]);
   const [dispalymedia, setdispalymedia] = useState(false);
   const [mediastyle, setmediastyle] = useState(false);
+
+  const [eventstyle, seteventstyle] = useState(false);
+  const [event, setevent] = useState(false);
+
+  const [about, setabout] = useState(false)
+  const [aboutstyle, setaboutstyle] = useState(false)
+
+  const [social, setsocial] = useState(false)
+  const [socialstyle, setsocialstyle] = useState(false)
+
+  const [instrument, setinstrument] = useState(false)
+  const [instrumentstyle, setinstrumentstyle] = useState(false)
+
+  
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
@@ -101,6 +119,14 @@ function AcademyDashboard() {
     setdefaulttoggle(false);
     settogglepaymentdue(false);
     settoggleapplicants(false);
+    setevent(false);
+    seteventstyle(false);
+    setabout(false)
+    setaboutstyle(false)
+    setinstrument(false)
+    setinstrumentstyle(false)
+    setsocial(false)
+    setsocialstyle(false)
     setTimeout(() => {
       setloading(false);
     }, 2000);
@@ -119,7 +145,14 @@ function AcademyDashboard() {
     setdefaulttoggle(false);
     settogglepaymentdue(false);
     settoggleapplicants(false);
-
+    setevent(false);
+    seteventstyle(false);
+    setabout(false)
+    setaboutstyle(false)
+    setinstrument(false)
+    setinstrumentstyle(false)
+    setsocial(false)
+    setsocialstyle(false)
     setTimeout(() => {
       setloading(false);
     }, 2000);
@@ -139,6 +172,14 @@ function AcademyDashboard() {
     setdefaulttoggle(false);
     settogglepaymentdue(false);
     settoggleapplicants(false);
+    setevent(false);
+    seteventstyle(false);
+    setabout(false)
+    setaboutstyle(false)
+    setinstrument(false)
+    setinstrumentstyle(false)
+    setsocial(false)
+    setsocialstyle(false)
     setTimeout(() => {
       setdefaulttoggle(true);
       setloading(false);
@@ -231,12 +272,20 @@ function AcademyDashboard() {
     setstyle(true);
     setregstyle(false);
     setdispalymedia(false);
+    setevent(false);
+    seteventstyle(false);
     settogglebutton(false);
     setdefaultstyle(false);
     setdefaulttoggle(false);
     setmediastyle(false);
     setdisplayregform(false);
     setpendingfeesstyle(false);
+    setabout(false)
+    setaboutstyle(false)
+    setinstrument(false)
+    setinstrumentstyle(false)
+    setsocial(false)
+    setsocialstyle(false)
     let url = "http://localhost:5000/api/auth/getdata";
     const token = Token();
     const response = await fetch(url, {
@@ -267,6 +316,8 @@ function AcademyDashboard() {
       toast.error("Error fetching details");
     }
   };
+
+  console.log(appdata);
 
   const handlePastApplication = async () => {
     let url = "http://localhost:5000/api/auth/getrejectedapplicant";
@@ -320,10 +371,18 @@ function AcademyDashboard() {
     setpendingfeesstyle(true);
     setregstyle(false);
     setdefaulttoggle(false);
+    setevent(false);
+    seteventstyle(false);
     setdispalymedia(false);
     setmediastyle(false);
     setdefaultstyle(false);
     settogglepaymentdue(true);
+    setabout(false)
+    setaboutstyle(false)
+    setinstrument(false)
+    setinstrumentstyle(false)
+    setsocial(false)
+    setsocialstyle(false)
     setstyle(false);
     const todaydate = getCurrentDate();
     const url = "http://localhost:5000/api/auth/getpaymnetdue";
@@ -399,6 +458,135 @@ function AcademyDashboard() {
       toast.error("Form Creation Failed");
     }
   };
+
+  const handleevent = () => {
+    setloading(true);
+
+    setmediastyle(false);
+    setdispalymedia(false);
+    setdisplayregform(false);
+    setregstyle(false);
+    setappdata(false);
+    setdefaultstyle(false);
+    setstyle(false);
+    setpendingfeesstyle(false);
+    setdefaulttoggle(false);
+    settogglepaymentdue(false);
+    settoggleapplicants(false);
+    setevent(true);
+    seteventstyle(true);
+
+    setabout(false)
+    setaboutstyle(false)
+    setinstrument(false)
+    setinstrumentstyle(false)
+    setsocial(false)
+    setsocialstyle(false)
+
+
+    setTimeout(() => {
+     
+      setloading(false);
+    }, 2000);
+  };
+
+  const handleabout = () => {
+    setloading(true);
+
+    setmediastyle(false);
+    setdispalymedia(false);
+    setdisplayregform(false);
+    setregstyle(false);
+    setappdata(false);
+    setdefaultstyle(false);
+    setstyle(false);
+    setpendingfeesstyle(false);
+    setdefaulttoggle(false);
+    settogglepaymentdue(false);
+    settoggleapplicants(false);
+    setevent(false);
+    seteventstyle(false);
+
+    setabout(true)
+    setaboutstyle(true)
+    setinstrument(false)
+    setinstrumentstyle(false)
+    setsocial(false)
+    setsocialstyle(false)
+
+
+    setTimeout(() => {
+     
+      setloading(false);
+    }, 2000);
+  };
+
+  const handleinstrument = () => {
+    setloading(true);
+
+    setmediastyle(false);
+    setdispalymedia(false);
+    setdisplayregform(false);
+    setregstyle(false);
+    setappdata(false);
+    setdefaultstyle(false);
+    setstyle(false);
+    setpendingfeesstyle(false);
+    setdefaulttoggle(false);
+    settogglepaymentdue(false);
+    settoggleapplicants(false);
+    setevent(false);
+    seteventstyle(false);
+
+    setabout(false)
+    setaboutstyle(false)
+    setinstrument(true)
+    setinstrumentstyle(true)
+    setsocial(false)
+    setsocialstyle(false)
+
+
+    setTimeout(() => {
+     
+      setloading(false);
+    }, 2000);
+  };
+
+
+  const handlesocial = () => {
+    setloading(true);
+
+    setmediastyle(false);
+    setdispalymedia(false);
+    setdisplayregform(false);
+    setregstyle(false);
+    setappdata(false);
+    setdefaultstyle(false);
+    setstyle(false);
+    setpendingfeesstyle(false);
+    setdefaulttoggle(false);
+    settogglepaymentdue(false);
+    settoggleapplicants(false);
+    setevent(false);
+    seteventstyle(false);
+
+    setabout(false)
+    setaboutstyle(false)
+    setinstrument(false)
+    setinstrumentstyle(false)
+    setsocial(true)
+    setsocialstyle(true)
+
+
+    setTimeout(() => {
+     
+      setloading(false);
+    }, 2000);
+  };
+
+  
+
+
 
   return (
     <>
@@ -517,6 +705,72 @@ function AcademyDashboard() {
 
           <Divider />
 
+          {/* events  */}
+          <Button
+            style={{
+              margin: "10px",
+              width: "200px",
+              color: eventstyle ? "blue" : "white",
+              backgroundColor: eventstyle ? "white" : "#283255",
+            }}
+            onClick={() => {
+              handleevent();
+            }}
+          >
+            Add Events
+          </Button>
+
+          <Divider />
+
+          {/* About us  */}
+          <Button
+            style={{
+              margin: "10px",
+              width: "200px",
+              color: aboutstyle ? "blue" : "white",
+              backgroundColor: aboutstyle ? "white" : "#283255",
+            }}
+            onClick={() => {
+              handleabout();
+            }}
+          >
+            Add About us
+          </Button>
+
+          <Divider />
+
+          {/* Add Instruments  */}
+          <Button
+            style={{
+              margin: "10px",
+              width: "200px",
+              color: instrumentstyle ? "blue" : "white",
+              backgroundColor: instrumentstyle ? "white" : "#283255",
+            }}
+            onClick={() => {
+              handleinstrument();
+            }}
+          >
+            Add Instruments
+          </Button>
+
+          <Divider />
+
+          {/* Add Social Media Link  */}
+          <Button
+            style={{
+              margin: "10px",
+              width: "200px",
+              color: socialstyle ? "blue" : "white",
+              backgroundColor: socialstyle ? "white" : "#283255",
+            }}
+            onClick={() => {
+              handlesocial();
+            }}
+          >
+            Add Social Links
+          </Button>
+
           <Divider />
         </div>
         <div
@@ -549,6 +803,40 @@ function AcademyDashboard() {
                 </Box>
               </>
             )}
+
+            {event && (
+              <>
+                <Box style={{ margin: "20px" }}>
+                  <Events />
+                </Box>
+              </>
+            )}
+
+            {about && (
+              <>
+                <Box style={{ margin: "20px" }}>
+                  <Aboutus/>
+                </Box>
+              </>
+            )} 
+
+            {social && (
+              <>
+                <Box style={{ margin: "20px" }}>
+                  <SocialLinks/>
+                </Box>
+              </>
+            )}
+
+            {instrument && (
+              <>
+                <Box style={{ margin: "20px" }}>
+                  <Instruments/>
+                </Box>
+              </>
+            )}
+
+            
 
             {defaulttoggle && (
               <>
@@ -826,7 +1114,7 @@ function AcademyDashboard() {
 
             {dispalymedia && (
               <>
-                 <MediaMenu/>
+                <MediaMenu />
               </>
             )}
 

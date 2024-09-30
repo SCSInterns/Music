@@ -74,7 +74,7 @@ const handleapplicantdata = async (req, res) => {
     const response = await Form.find({
       academy_name: academyname,
       role: 'User',
-      status: 'Accept'
+      status: { $in: ['Accept', 'To be updated'] }
     })
 
 
@@ -200,18 +200,28 @@ const handlelogo = async (req, res) => {
     const { link, role, academyname } = req.body
 
     if (role === "Admin") {
-      const response = await Logo({
-        academyname: academyname,
-        link: link
-      })
 
-      const data = await response.save()
+      const exisitingdata = await Logo.findOne({ academyname: academyname })
 
-      if (data) {
-        res.status(200).json(data)
+      if (exisitingdata) {
+        exisitingdata.link = link
+        await exisitingdata.save()
+        res.status(200).json(exisitingdata)
       }
       else {
-        res.status(404).json({ msg: "Error saving data" })
+        const response = await Logo({
+          academyname: academyname,
+          link: link
+        })
+
+        const data = await response.save()
+
+        if (data) {
+          res.status(200).json(data)
+        }
+        else {
+          res.status(404).json({ msg: "Error saving data" })
+        }
       }
     }
     else {
@@ -225,4 +235,4 @@ const handlelogo = async (req, res) => {
 }
 
 
-module.exports = { handledynamicform, getform, savedata, handleapplicantdata, finddatabyid, handlestatus, handleinstallment, verifyyoutubelink , handlelogo }
+module.exports = { handledynamicform, getform, savedata, handleapplicantdata, finddatabyid, handlestatus, handleinstallment, verifyyoutubelink, handlelogo }
