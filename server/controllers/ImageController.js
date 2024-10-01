@@ -15,12 +15,12 @@ const storage = new CloudinaryStorage({
   params: async (req, file) => {
 
     return {
-      folder: 'uploads', 
+      folder: 'uploads',
       public_id: `academies/Logo`,
-      allowed_formats: ['jpg', 'png'], 
+      allowed_formats: ['jpg', 'png', 'jpeg'],
     };
   },
-});  
+});
 
 const Gallerystorage = new CloudinaryStorage({
   cloudinary: cloudinary,
@@ -28,9 +28,20 @@ const Gallerystorage = new CloudinaryStorage({
     return {
       folder: 'galleryphotos',
       public_id: file.originalname.split('.')[0],
-      allowed_formats: ['jpg', 'png' , 'jpeg'],
+      allowed_formats: ['jpg', 'png', 'jpeg'],
     };
   },
 });
 
-module.exports = { cloudinary, storage , Gallerystorage };
+const EventStorage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: async (req, file) => {
+    return {
+      folder: 'Event',
+      public_id: file.originalname.split('.')[0],
+      allowed_formats: ['jpg', 'png', 'jpeg'],
+    };
+  },
+});
+
+module.exports = { cloudinary, storage, Gallerystorage , EventStorage};

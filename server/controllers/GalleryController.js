@@ -1,5 +1,5 @@
 const Image = require("../models/Gallery");
-
+const Event = require("../models/Event")
 
 const saveImageUrls = async (req, res) => {
     try {
@@ -50,4 +50,33 @@ const saveImageUrls = async (req, res) => {
     }
 };
 
-module.exports = { saveImageUrls }
+
+const handleevents = async (req, res) => {
+    try {
+
+        const { role, imageUrl, academyname, description, eventname } = req.body
+
+        if (role === "Admin") {
+
+            const response = await new Event({
+                academyname: academyname,
+                eventname: eventname,
+                description: description,
+                imageUrl: imageUrl
+            })
+
+            await response.save() 
+
+            res.status(200).json(response)
+
+        } else {
+            res.status(401).json({ msg: "Unauthorized Access" })
+
+        }
+
+    } catch (error) {
+        res.status(500).json({ message: "Failed to save or update image URLs" });
+    }
+}
+
+module.exports = { saveImageUrls , handleevents }
