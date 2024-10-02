@@ -221,14 +221,28 @@ function Events() {
       </div>
 
       <div style={{ marginTop: "30px", float: "right", marginRight: "20px" }}>
-        <Button
-          variant="contained"
-          onClick={() => {
-            handlefinalsubmit();
-          }}
-        >
-          Submit
-        </Button>
+        {imageUrl && eventtitle && eventdesc ? (
+          <Button
+            variant="contained"
+            onClick={() => {
+              handlefinalsubmit();
+            }}
+          >
+            Submit
+          </Button>
+        ) : (
+          <>
+            <Button
+              variant="contained"
+              disabled
+              onClick={() => {
+                handlefinalsubmit();
+              }}
+            >
+              Submit
+            </Button>
+          </>
+        )}
       </div>
     </>
   );

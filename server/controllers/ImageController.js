@@ -44,4 +44,26 @@ const EventStorage = new CloudinaryStorage({
   },
 });
 
-module.exports = { cloudinary, storage, Gallerystorage , EventStorage};
+const AboutStorage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: async (req, file) => {
+    return {
+      folder: 'About',
+      public_id: file.originalname.split('.')[0],
+      allowed_formats: ['jpg', 'png', 'jpeg'],
+    };
+  },
+});
+
+const InstrumentStorage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: async (req, file) => {
+    return {
+      folder: 'Instruments',
+      public_id: file.originalname.split('.')[0],
+      allowed_formats: ['jpg', 'png', 'jpeg'],
+    };
+  },
+});
+
+module.exports = { cloudinary, storage, Gallerystorage, EventStorage, AboutStorage , InstrumentStorage };

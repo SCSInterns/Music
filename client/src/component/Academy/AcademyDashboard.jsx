@@ -19,16 +19,17 @@ import {
 import { useState } from "react";
 import { toast } from "react-toastify";
 import IconButton from "@mui/material/IconButton";
+import ArrowCircleDownIcon from "@mui/icons-material/ArrowCircleDown";
 import Modal from "@mui/material/Modal";
 import ApplicantsTable from "./AppliacantsTable";
 import PendingFeesTable from "./PendingFeesTable";
 import Loader from "../Loader/Loader";
 import RegistrationForm from "./AcademyRegistration";
 import MediaMenu from "../Media/MediaMenu";
-import Events from '../Academy Features/Events'
-import Instruments from '../Academy Features/Instruments'
-import SocialLinks from '../Academy Features/SocialLinks'
-import Aboutus from '../Academy Features/Aboutus'
+import Events from "../Academy Features/Events";
+import Instruments from "../Academy Features/Instruments";
+import SocialLinks from "../Academy Features/SocialLinks";
+import Aboutus from "../Academy Features/Aboutus";
 
 function AcademyDashboard() {
   const academyname = sessionStorage.getItem("academyname");
@@ -60,16 +61,18 @@ function AcademyDashboard() {
   const [eventstyle, seteventstyle] = useState(false);
   const [event, setevent] = useState(false);
 
-  const [about, setabout] = useState(false)
-  const [aboutstyle, setaboutstyle] = useState(false)
+  const [about, setabout] = useState(false);
+  const [aboutstyle, setaboutstyle] = useState(false);
 
-  const [social, setsocial] = useState(false)
-  const [socialstyle, setsocialstyle] = useState(false)
+  const [social, setsocial] = useState(false);
+  const [socialstyle, setsocialstyle] = useState(false);
 
-  const [instrument, setinstrument] = useState(false)
-  const [instrumentstyle, setinstrumentstyle] = useState(false)
+  const [instrument, setinstrument] = useState(false);
+  const [instrumentstyle, setinstrumentstyle] = useState(false);
 
-  
+  const [contentmenu, setcontentmenu] = useState(false);
+  const [formmenu, setformmenu] = useState(false);
+
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
@@ -121,16 +124,21 @@ function AcademyDashboard() {
     settoggleapplicants(false);
     setevent(false);
     seteventstyle(false);
-    setabout(false)
-    setaboutstyle(false)
-    setinstrument(false)
-    setinstrumentstyle(false)
-    setsocial(false)
-    setsocialstyle(false)
+    setabout(false);
+    setaboutstyle(false);
+    setinstrument(false);
+    setinstrumentstyle(false);
+    setsocial(false);
+    setsocialstyle(false);
     setTimeout(() => {
       setloading(false);
     }, 2000);
-  };
+  }; 
+
+  const handleformmenu = () => 
+  {
+      setformmenu(true)
+  }
 
   const handlemedia = () => {
     setmediastyle(true);
@@ -147,12 +155,12 @@ function AcademyDashboard() {
     settoggleapplicants(false);
     setevent(false);
     seteventstyle(false);
-    setabout(false)
-    setaboutstyle(false)
-    setinstrument(false)
-    setinstrumentstyle(false)
-    setsocial(false)
-    setsocialstyle(false)
+    setabout(false);
+    setaboutstyle(false);
+    setinstrument(false);
+    setinstrumentstyle(false);
+    setsocial(false);
+    setsocialstyle(false);
     setTimeout(() => {
       setloading(false);
     }, 2000);
@@ -174,12 +182,12 @@ function AcademyDashboard() {
     settoggleapplicants(false);
     setevent(false);
     seteventstyle(false);
-    setabout(false)
-    setaboutstyle(false)
-    setinstrument(false)
-    setinstrumentstyle(false)
-    setsocial(false)
-    setsocialstyle(false)
+    setabout(false);
+    setaboutstyle(false);
+    setinstrument(false);
+    setinstrumentstyle(false);
+    setsocial(false);
+    setsocialstyle(false);
     setTimeout(() => {
       setdefaulttoggle(true);
       setloading(false);
@@ -280,12 +288,12 @@ function AcademyDashboard() {
     setmediastyle(false);
     setdisplayregform(false);
     setpendingfeesstyle(false);
-    setabout(false)
-    setaboutstyle(false)
-    setinstrument(false)
-    setinstrumentstyle(false)
-    setsocial(false)
-    setsocialstyle(false)
+    setabout(false);
+    setaboutstyle(false);
+    setinstrument(false);
+    setinstrumentstyle(false);
+    setsocial(false);
+    setsocialstyle(false);
     let url = "http://localhost:5000/api/auth/getdata";
     const token = Token();
     const response = await fetch(url, {
@@ -377,12 +385,12 @@ function AcademyDashboard() {
     setmediastyle(false);
     setdefaultstyle(false);
     settogglepaymentdue(true);
-    setabout(false)
-    setaboutstyle(false)
-    setinstrument(false)
-    setinstrumentstyle(false)
-    setsocial(false)
-    setsocialstyle(false)
+    setabout(false);
+    setaboutstyle(false);
+    setinstrument(false);
+    setinstrumentstyle(false);
+    setsocial(false);
+    setsocialstyle(false);
     setstyle(false);
     const todaydate = getCurrentDate();
     const url = "http://localhost:5000/api/auth/getpaymnetdue";
@@ -476,16 +484,14 @@ function AcademyDashboard() {
     setevent(true);
     seteventstyle(true);
 
-    setabout(false)
-    setaboutstyle(false)
-    setinstrument(false)
-    setinstrumentstyle(false)
-    setsocial(false)
-    setsocialstyle(false)
-
+    setabout(false);
+    setaboutstyle(false);
+    setinstrument(false);
+    setinstrumentstyle(false);
+    setsocial(false);
+    setsocialstyle(false);
 
     setTimeout(() => {
-     
       setloading(false);
     }, 2000);
   };
@@ -507,16 +513,14 @@ function AcademyDashboard() {
     setevent(false);
     seteventstyle(false);
 
-    setabout(true)
-    setaboutstyle(true)
-    setinstrument(false)
-    setinstrumentstyle(false)
-    setsocial(false)
-    setsocialstyle(false)
-
+    setabout(true);
+    setaboutstyle(true);
+    setinstrument(false);
+    setinstrumentstyle(false);
+    setsocial(false);
+    setsocialstyle(false);
 
     setTimeout(() => {
-     
       setloading(false);
     }, 2000);
   };
@@ -538,20 +542,17 @@ function AcademyDashboard() {
     setevent(false);
     seteventstyle(false);
 
-    setabout(false)
-    setaboutstyle(false)
-    setinstrument(true)
-    setinstrumentstyle(true)
-    setsocial(false)
-    setsocialstyle(false)
-
+    setabout(false);
+    setaboutstyle(false);
+    setinstrument(true);
+    setinstrumentstyle(true);
+    setsocial(false);
+    setsocialstyle(false);
 
     setTimeout(() => {
-     
       setloading(false);
     }, 2000);
   };
-
 
   const handlesocial = () => {
     setloading(true);
@@ -570,23 +571,17 @@ function AcademyDashboard() {
     setevent(false);
     seteventstyle(false);
 
-    setabout(false)
-    setaboutstyle(false)
-    setinstrument(false)
-    setinstrumentstyle(false)
-    setsocial(true)
-    setsocialstyle(true)
-
+    setabout(false);
+    setaboutstyle(false);
+    setinstrument(false);
+    setinstrumentstyle(false);
+    setsocial(true);
+    setsocialstyle(true);
 
     setTimeout(() => {
-     
       setloading(false);
     }, 2000);
   };
-
-  
-
-
 
   return (
     <>
@@ -634,45 +629,66 @@ function AcademyDashboard() {
             color: "white",
           }}
         >
-          <Button
-            style={{
-              color: defaultstyle ? "blue" : "white",
-              margin: "10px 10px 0px 0px ",
-              backgroundColor: defaultstyle ? "white" : "#283255",
-            }}
-            onClick={() => {
-              handlecreateform();
-            }}
-          >
-            Create Registration Form
-          </Button>
+          {formmenu ? (
+            <>
+              <Button
+                style={{
+                  color: defaultstyle ? "blue" : "white",
+                  margin: "10px 10px 0px 0px ",
+                  backgroundColor: defaultstyle ? "white" : "#283255",
+                }}
+                onClick={() => {
+                  handlecreateform();
+                }}
+              >
+                Create Registration Form
+              </Button>
 
-          <Button
-            style={{
-              color: regstyle ? "blue" : "white",
-              margin: "10px 10px 0px 0px ",
-              backgroundColor: regstyle ? "white" : "#283255",
-            }}
-            onClick={() => {
-              handleClick();
-            }}
-          >
-            View Registration form
-          </Button>
+              <Button
+                style={{
+                  color: regstyle ? "blue" : "white",
+                  margin: "10px 10px 0px 0px ",
+                  backgroundColor: regstyle ? "white" : "#283255",
+                }}
+                onClick={() => {
+                  handleClick();
+                }}
+              >
+                View Registration form
+              </Button>
 
-          <Divider />
-          <Button
-            style={{
-              margin: "10px",
-              width: "200px",
-              color: style ? "blue" : "white",
-              backgroundColor: style ? "white" : "#283255",
-            }}
-            onClick={handleApplicants}
-          >
-            Applicants Data
-          </Button>
-          <Divider />
+              <Divider />
+              <Button
+                style={{
+                  margin: "10px",
+                  width: "200px",
+                  color: style ? "blue" : "white",
+                  backgroundColor: style ? "white" : "#283255",
+                }}
+                onClick={handleApplicants}
+              >
+                Applicants Data
+              </Button>
+              <Divider />
+            </>
+          ) : (
+            <>
+              {" "}
+              <Button
+                style={{
+                  color: regstyle ? "blue" : "white",
+                  margin: "10px 10px 0px 0px ",
+                  backgroundColor: regstyle ? "white" : "#283255",
+                }}
+                onClick={() => {
+                  handleformmenu();
+                }}
+              >
+                <ArrowCircleDownIcon sx={{ marginRight: "10px" }} />
+                Form Menu
+              </Button>
+            </>
+          )}
 
           <Button
             style={{
@@ -815,15 +831,15 @@ function AcademyDashboard() {
             {about && (
               <>
                 <Box style={{ margin: "20px" }}>
-                  <Aboutus/>
+                  <Aboutus />
                 </Box>
               </>
-            )} 
+            )}
 
             {social && (
               <>
                 <Box style={{ margin: "20px" }}>
-                  <SocialLinks/>
+                  <SocialLinks />
                 </Box>
               </>
             )}
@@ -831,12 +847,10 @@ function AcademyDashboard() {
             {instrument && (
               <>
                 <Box style={{ margin: "20px" }}>
-                  <Instruments/>
+                  <Instruments />
                 </Box>
               </>
             )}
-
-            
 
             {defaulttoggle && (
               <>
