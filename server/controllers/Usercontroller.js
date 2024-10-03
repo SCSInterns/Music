@@ -1,4 +1,5 @@
 const Logo = require("../models/Logo")
+const SocialLinks = require("../models/SocialLinks")
 
 // get the logo for navbar 
 const fetchlogo = async (req, res) => {
@@ -17,6 +18,54 @@ const fetchlogo = async (req, res) => {
         res.status(500).json({ msg: "Server Error" })
     }
 
-} 
+}
 
-module.exports = {fetchlogo}
+// set the social media link 
+
+const setsociallinks = async (req, res) => {
+
+
+
+    try {
+        const { academyname, role, instagram, youtube, facebook, whatsapp, mail } = req.body
+
+        if (role === "Admin") {
+            const existing = await SocialLinks.findOne({ academyname: academyname })
+
+            if (existing) {
+                existing.instagram = instagram
+                existing.youtube = youtube
+                existing.facebook = facebook
+                existing.whatsapp = whatsapp
+                existing.mail = mail
+
+                await existing.save()
+
+                res.status(200).json({ msg: "Updated Links", existing })
+            }
+            else {
+                const newdata = await new SocialLinks({
+                    academyname: academyname,
+                    instagram: instagram,
+                    youtube: youtube,
+                    facebook: facebook,
+                    whatsapp: whatsapp,
+                    mail: mail
+                })
+
+                await newdata.save()
+
+                res.status(200).json(newdata)
+            }
+        }
+        else {
+            res.status(401).json({ msg: "Unauthorized Access" })
+        }
+    }
+    catch (error) {
+        res.status(500).json({ msg: "Server Error" })
+    }
+
+}
+
+module.exports = { fetchlogo , setsociallinks }

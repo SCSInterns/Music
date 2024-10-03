@@ -20,6 +20,8 @@ import { useState } from "react";
 import { toast } from "react-toastify";
 import IconButton from "@mui/material/IconButton";
 import ArrowCircleDownIcon from "@mui/icons-material/ArrowCircleDown";
+import ArrowCircleUpIcon from "@mui/icons-material/ArrowCircleUp";
+import ArrowCircleRightIcon from '@mui/icons-material/ArrowCircleRight';
 import Modal from "@mui/material/Modal";
 import ApplicantsTable from "./AppliacantsTable";
 import PendingFeesTable from "./PendingFeesTable";
@@ -41,7 +43,7 @@ function AcademyDashboard() {
   const [entries, setEntries] = useState([]);
   const [dropdown, setDropdown] = useState(false);
   const [option, setOption] = useState("");
-  const [style, setstyle] = useState(false);
+  const [style, setstyle] = useState(true);
   const [pendingfeesstyle, setpendingfeesstyle] = useState(false);
   const [dynamicOptions, setDynamicOptions] = useState([]);
   const [radio, setradio] = useState(false);
@@ -49,11 +51,11 @@ function AcademyDashboard() {
   const [regstyle, setregstyle] = useState(false);
   const [togglepaymentdue, settogglepaymentdue] = useState(false);
   const [radiovalue, setradiovalue] = useState([]);
-  const [defaultstyle, setdefaultstyle] = useState(true);
+  const [defaultstyle, setdefaultstyle] = useState(false);
   const [open, setOpen] = useState(false);
   const [togglebutton, settogglebutton] = useState(false);
   const [loading, setloading] = useState(false);
-  const [defaulttoggle, setdefaulttoggle] = useState(true);
+  const [defaulttoggle, setdefaulttoggle] = useState(false);
   const [passpaymentdetails, setpasspaymentdetails] = useState([]);
   const [dispalymedia, setdispalymedia] = useState(false);
   const [mediastyle, setmediastyle] = useState(false);
@@ -83,6 +85,10 @@ function AcademyDashboard() {
     { value: "Object", label: "Radio Button" },
     { value: "Email", label: "Email Id" },
   ];
+
+  useEffect(() => {
+    handleApplicants();
+  }, []);
 
   const verifyurl = async () => {
     const url = `http://localhost:5000/api/auth/verifyurl`;
@@ -133,12 +139,15 @@ function AcademyDashboard() {
     setTimeout(() => {
       setloading(false);
     }, 2000);
-  }; 
+  };
 
-  const handleformmenu = () => 
-  {
-      setformmenu(true)
-  }
+  const handleformmenu = () => {
+    setformmenu(true);
+  };
+
+  const handleformenuclose = () => {
+    setformmenu(false);
+  };
 
   const handlemedia = () => {
     setmediastyle(true);
@@ -631,6 +640,22 @@ function AcademyDashboard() {
         >
           {formmenu ? (
             <>
+              <>
+                {" "}
+                <Button
+                  style={{
+                    color: regstyle ? "blue" : "white",
+                    margin: "10px 10px 0px 0px ",
+                    backgroundColor: regstyle ? "white" : "#283255",
+                  }}
+                  onClick={() => {
+                    handleformenuclose();
+                  }}
+                >
+                  <ArrowCircleUpIcon sx={{ marginRight: "10px" }} />
+                  Form Menu
+                </Button>
+              </>
               <Button
                 style={{
                   color: defaultstyle ? "blue" : "white",
@@ -656,20 +681,6 @@ function AcademyDashboard() {
               >
                 View Registration form
               </Button>
-
-              <Divider />
-              <Button
-                style={{
-                  margin: "10px",
-                  width: "200px",
-                  color: style ? "blue" : "white",
-                  backgroundColor: style ? "white" : "#283255",
-                }}
-                onClick={handleApplicants}
-              >
-                Applicants Data
-              </Button>
-              <Divider />
             </>
           ) : (
             <>
@@ -684,11 +695,24 @@ function AcademyDashboard() {
                   handleformmenu();
                 }}
               >
-                <ArrowCircleDownIcon sx={{ marginRight: "10px" }} />
+                <ArrowCircleRightIcon sx={{ marginRight: "10px" }} />
                 Form Menu
               </Button>
             </>
           )}
+
+          <Button
+            style={{
+              margin: "10px",
+              width: "200px",
+              color: style ? "blue" : "white",
+              backgroundColor: style ? "white" : "#283255",
+            }}
+            onClick={handleApplicants}
+          >
+            Applicants Data
+          </Button>
+          <Divider />
 
           <Button
             style={{
@@ -1162,9 +1186,7 @@ function AcademyDashboard() {
                       onClick={() => {
                         handleApplicants();
                       }}
-                    >
-                      Active User
-                    </Button>
+                    ></Button>
                   ) : (
                     <Button
                       variant="contained"
