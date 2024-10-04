@@ -11,6 +11,7 @@ import {
   Transition,
 } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
+import { Typography } from "@mui/material";
 
 const navigation = [
   { name: "Aboutus", href: "/", title: "Aboutus", current: false },
@@ -26,7 +27,21 @@ function classNames(...classes) {
 
 const academyname = sessionStorage.getItem("Academy");
 
+const role = sessionStorage.getItem("role");
+
 export default function Example() {
+  const [academyname, setAcademyName] = useState(
+    sessionStorage.getItem("Academy") || ""
+  );
+
+  const storedAcademyName = sessionStorage.getItem("Academy");
+
+  useEffect(() => {
+    if (storedAcademyName) {
+      setAcademyName(storedAcademyName);
+    }
+  }, [storedAcademyName]);
+
   const [currentPath, setCurrentPath] = useState(null);
   const [logo, setlogo] = useState("");
 
@@ -50,7 +65,9 @@ export default function Example() {
   };
 
   useEffect(() => {
-    getlogo();
+    if (academyname) {
+      getlogo();
+    }
   }, [academyname]);
 
   useEffect(() => {
@@ -60,7 +77,7 @@ export default function Example() {
 
       const currentPage = navigation.find((item) => item.href === path);
       if (currentPage) {
-        document.title = `Kalam : ${currentPage.title}`;
+        document.title = `Music Academy  : ${currentPage.title}`;
       }
 
       const favicon = document.getElementById("favicon");
@@ -92,7 +109,7 @@ export default function Example() {
           <div
             className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8 navbarstyle"
             style={{
-              background: `linear-gradient(to bottom, #374151, #111827)`,
+              background: `#020617`,
               color: "white",
               position: "",
             }}
@@ -115,8 +132,8 @@ export default function Example() {
                   className="flex flex-shrink-0 items-center justify-center"
                   style={{
                     marginLeft: window.innerWidth < 1024 ? "30px" : "0",
-                    borderRadius: "8px", // Optional: add a small border radius
-                    paddingBottom: "15px", // Adds space around the logo
+                    borderRadius: "8px",
+                    paddingBottom: "15px",
                   }}
                 >
                   {logo ? (
@@ -127,7 +144,7 @@ export default function Example() {
                         width: "80px",
                         height: "80px",
                         objectFit: "contain",
-                        mixBlendMode: "screen"
+                        mixBlendMode: "screen",
                       }}
                     />
                   ) : null}
@@ -155,10 +172,24 @@ export default function Example() {
               {/* Profile dropdown */}
               <Menu as="div" className="relative ml-3">
                 <div>
-                  <MenuButton className="relative flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
+                  <MenuButton className="relative flex rounded-full bg-gray-800 text-sm">
                     <span className="absolute -inset-1.5" />
                     <span className="sr-only">Open user menu</span>
-                    <AccountCircleOutlinedIcon fontSize="large" />
+
+                    {role ? (
+                      <>
+                        <AccountCircleOutlinedIcon fontSize="large" />
+                      </>
+                    ) : (
+                      <>
+                        <button
+                          class="shadow-lg flex gap-2 items-center bg-white p-2  hover:shadow-xl duration-300 hover:border-2 border-gray-400 group delay-200 rounded-md focus:outline-none"
+                          style={{ color: "black", padding: "10px" }}
+                        >
+                          Login / Signup
+                        </button>
+                      </>
+                    )}
                   </MenuButton>
                 </div>
                 <Transition
@@ -172,16 +203,30 @@ export default function Example() {
                   <MenuItems className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                     <MenuItem>
                       {({ focus }) => (
-                        <a
-                          onClick={handleSignOut}
-                          href="/login"
-                          className={classNames(
-                            focus ? "bg-gray-100" : "",
-                            "block px-4 py-2 text-sm text-gray-700"
+                        <>
+                          <a
+                            onClick={handleSignOut}
+                            href="/login"
+                            className={classNames(
+                              focus ? "bg-gray-100" : "",
+                              "block px-4 py-2 text-sm text-gray-700"
+                            )}
+                          >
+                            {!username == " " ? ` Sign Out ` : ` Login`}
+                          </a>
+                          {!username && (
+                            <a
+                              // onClick={handleSignOut}
+                              href="/login"
+                              className={classNames(
+                                focus ? "bg-gray-100" : "",
+                                "block px-4 py-2 text-sm text-gray-700"
+                              )}
+                            >
+                              Signup
+                            </a>
                           )}
-                        >
-                          {!username == " " ? ` Sign Out ` : ` Login`}
-                        </a>
+                        </>
                       )}
                     </MenuItem>
                   </MenuItems>
@@ -194,7 +239,7 @@ export default function Example() {
             <div
               className="space-y-1 px-2 pb-3 pt-2"
               style={{
-                background: "linear-gradient(to bottom, #374151, #111827) ",
+                background: "#020617",
               }}
             >
               {navigation.map((item) => (

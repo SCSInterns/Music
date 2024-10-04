@@ -88,23 +88,36 @@ const handleabout = async (req, res) => {
 
         if (role === "Admin") {
 
-            const response = await new About({
-                academyname: academyname,
-                description: description,
-                imageUrl: imageUrl
-            })
+            const exisiting = await About.findOne({ academyname: academyname })
 
-            await response.save()
+            if (exisiting) {
+                exisiting.imageUrl = imageUrl
+                exisiting.description = description
 
-            res.status(200).json(response)
+                await exisiting.save()
 
+                res.status(200).json(exisiting)
+            }
+            else {
+
+                const response = await new About({
+                    academyname: academyname,
+                    description: description,
+                    imageUrl: imageUrl
+                })
+
+                await response.save()
+
+                res.status(200).json(response)
+
+            }
         } else {
             res.status(401).json({ msg: "Unauthorized Access" })
 
         }
 
     } catch (error) {
-        res.status(500).json({ message: "Failed to save or update image URLs" });
+        res.status(500).json({ message: "Failed to save or update image URLs" , error });
     }
 }
 
