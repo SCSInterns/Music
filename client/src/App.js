@@ -22,6 +22,9 @@ import { toast } from 'react-toastify';
 import { useEffect } from 'react';
 import AcademyRegistration from './component/Academy/AcademyRegistration';
 import PaymentDetails from './component/Academy/PaymentDetails';
+import Gallery from './component/User/Gallery';
+import Error from './component/User/Error';
+
 
 
 function App() {
@@ -69,6 +72,8 @@ function App() {
           {/* public routes  */}
 
           <Route path='/:academyname' element={<Home />} />
+          <Route path='/:academyname/gallery' element={<Gallery />} />
+          <Route path='/error' element={<Error />} />
 
         </Routes>
       </Router>

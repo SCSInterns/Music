@@ -9,7 +9,7 @@ function IntroText() {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
-      transition: { duration: 5 },
+      transition: { duration: 10 },
     },
     exit: {
       opacity: 0,
@@ -29,19 +29,25 @@ function IntroText() {
           margin: "20px",
           marginTop: "200px",
           paddingLeft: "50px",
-          marginRight:'20px',
+          marginRight: "30px",
           fontFamily: "ubuntu",
           color: "#0c4b65",
           fontSize: "35px",
         }}
       >
-        Welcome to {academyname} Music Academy!
+        Welcome to  <div></div>{academyname} Music Academy!
       </motion.h1>
 
       <Button
         variant="contained"
         color="secondary"
-        sx={{ bgcolor: "#0c4b65", color:'white' , float: "left", marginLeft: "70px" , marginTop: '20px'}}
+        sx={{
+          bgcolor: "#0c4b65",
+          color: "white",
+          float: "left",
+          marginLeft: "70px",
+          marginTop: "20px",
+        }}
       >
         Get Started
       </Button>

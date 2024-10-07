@@ -13,9 +13,11 @@ import {
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { Typography } from "@mui/material";
 
+const academyname = sessionStorage.getItem("Academy");
+
 const navigation = [
   { name: "Aboutus", href: "/", title: "Aboutus", current: false },
-  { name: "Gallery", href: "/", title: "Gallery", current: false },
+  { name: "Gallery", href: `/${academyname}/gallery`, title: "Gallery", current: false },
   { name: "Videos", href: "/", title: "Videos", current: false },
   { name: "Events", href: "/", title: "Events", current: false },
   { name: "Instruments", href: "/", title: "Instruments", current: false },
@@ -25,7 +27,7 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
-const academyname = sessionStorage.getItem("Academy");
+
 
 const role = sessionStorage.getItem("role");
 

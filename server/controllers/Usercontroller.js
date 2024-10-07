@@ -1,5 +1,6 @@
 const Logo = require("../models/Logo")
 const SocialLinks = require("../models/SocialLinks")
+const Gallery = require("../models/Gallery")
 
 // get the logo for navbar 
 const fetchlogo = async (req, res) => {
@@ -23,9 +24,6 @@ const fetchlogo = async (req, res) => {
 // set the social media link 
 
 const setsociallinks = async (req, res) => {
-
-
-
     try {
         const { academyname, role, instagram, youtube, facebook, whatsapp, mail } = req.body
 
@@ -68,4 +66,18 @@ const setsociallinks = async (req, res) => {
 
 }
 
-module.exports = { fetchlogo , setsociallinks }
+// get the images for gallery 
+
+const getimages = async (req, res) => {
+    const { academyname } = req.body
+    const response = await Gallery.findOne({ academyname: academyname })
+
+    if (response) {
+        res.status(200).json(response)
+    }
+    else {
+        res.status(404).json({ msg: 'No images found' })
+    }
+}
+
+module.exports = { fetchlogo, setsociallinks , getimages }

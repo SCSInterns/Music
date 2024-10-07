@@ -30,6 +30,7 @@ const Slideshow = () => {
         position: "relative",
         height: "400px",
         overflow: "hidden",
+        marginRight:'20px'
       }}
     >
       <motion.img

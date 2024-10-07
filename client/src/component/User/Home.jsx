@@ -1,6 +1,6 @@
 // Home.js
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams , useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import Navbar from "./Navbar";
 import Slider from "./Slider";
@@ -8,6 +8,7 @@ import IntroText from "./IntroText";
 
 function Home() {
   const { academyname } = useParams();
+  const navigate = useNavigate()
   const [verified, setverified] = useState(false);
 
   const verifiedurl = async () => {
@@ -27,7 +28,7 @@ function Home() {
       sessionStorage.setItem("Academy", `${academyname}`);
       setverified(true);
     } else {
-      toast.error("Academy Url : Wrong ");
+      navigate('/error')
     }
   };
 

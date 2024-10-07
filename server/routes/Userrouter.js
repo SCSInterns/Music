@@ -5,5 +5,6 @@ const authenticate = require('../controllers/Authenticate')
 
 router.post('/getlogo',user.fetchlogo)
 router.post('/savesociallink',authenticate.authenticatetoken , user.setsociallinks)
+router.post('/getimages',user.getimages)
 
 module.exports = router;
