@@ -24,6 +24,9 @@ import AcademyRegistration from './component/Academy/AcademyRegistration';
 import PaymentDetails from './component/Academy/PaymentDetails';
 import Gallery from './component/User/Gallery';
 import Error from './component/User/Error';
+import About from './component/User/About';
+import Event from './component/User/Event';
+import Instrument from './component/User/Instrument';
 
 
 
@@ -70,9 +73,11 @@ function App() {
           {/* path='' */}
 
           {/* public routes  */}
-
           <Route path='/:academyname' element={<Home />} />
           <Route path='/:academyname/gallery' element={<Gallery />} />
+          <Route path='/:academyname/about' element={<About />} />
+          <Route path='/:academyname/event' element={<Event />} />
+          <Route path='/:academyname/instrument' element={<Instrument />} />
           <Route path='/error' element={<Error />} />
 
         </Routes>

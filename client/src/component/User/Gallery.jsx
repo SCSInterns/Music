@@ -87,7 +87,7 @@ function Gallery() {
               }
               className="bg-gray-800 p-2 rounded-full text-white"
             >
-              &#8592;
+              &#8592; 
             </button>
           </div>
           <div className="absolute top-1/2 right-4 transform -translate-y-1/2 cursor-pointer">

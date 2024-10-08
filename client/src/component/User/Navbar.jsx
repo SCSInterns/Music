@@ -16,18 +16,31 @@ import { Typography } from "@mui/material";
 const academyname = sessionStorage.getItem("Academy");
 
 const navigation = [
-  { name: "Aboutus", href: "/", title: "Aboutus", current: false },
-  { name: "Gallery", href: `/${academyname}/gallery`, title: "Gallery", current: false },
+  {
+    name: "Aboutus",
+    href: `/${academyname}/about`,
+    title: "Aboutus",
+    current: false,
+  },
+  {
+    name: "Gallery",
+    href: `/${academyname}/gallery`,
+    title: "Gallery",
+    current: false,
+  },
   { name: "Videos", href: "/", title: "Videos", current: false },
-  { name: "Events", href: "/", title: "Events", current: false },
-  { name: "Instruments", href: "/", title: "Instruments", current: false },
+  {
+    name: "Events",
+    href: `/${academyname}/event`,
+    title: "Events",
+    current: false,
+  },
+  { name: "Instruments", href: `/${academyname}/instrument`, title: "Instruments", current: false },
 ];
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
-
-
 
 const role = sessionStorage.getItem("role");
 
@@ -138,18 +151,20 @@ export default function Example() {
                     paddingBottom: "15px",
                   }}
                 >
-                  {logo ? (
-                    <img
-                      src={logo}
-                      alt="Academy Logo"
-                      style={{
-                        width: "80px",
-                        height: "80px",
-                        objectFit: "contain",
-                        mixBlendMode: "screen",
-                      }}
-                    />
-                  ) : null}
+                  <a href={`/${academyname}`}>
+                    {logo ? (
+                      <img
+                        src={logo}
+                        alt="Academy Logo"
+                        style={{
+                          width: "80px",
+                          height: "80px",
+                          objectFit: "contain",
+                          mixBlendMode: "screen",
+                        }}
+                      />
+                    ) : null}
+                  </a>
                 </div>
                 <div className="hidden sm:ml-6 sm:block">
                   <div className="flex space-x-4 items-center">

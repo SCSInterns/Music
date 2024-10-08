@@ -1,6 +1,8 @@
 const Logo = require("../models/Logo")
 const SocialLinks = require("../models/SocialLinks")
 const Gallery = require("../models/Gallery")
+const About = require("../models/About")
+const Instrument = require('../models/Instrument') 
 
 // get the logo for navbar 
 const fetchlogo = async (req, res) => {
@@ -78,6 +80,48 @@ const getimages = async (req, res) => {
     else {
         res.status(404).json({ msg: 'No images found' })
     }
+} 
+
+// get the about content  
+
+const getabout = async (req,res) => 
+{
+      try { 
+        const { academyname } = req.body
+        const response = await About.findOne({ academyname: academyname })
+    
+        if (response) {
+            res.status(200).json(response)
+        }
+        else {
+            res.status(404).json({ msg: 'No images found' })
+        }
+        
+      } catch (error) {
+        res.status(500).json({ msg: "Server Error" })
+      }
 }
 
-module.exports = { fetchlogo, setsociallinks , getimages }
+
+// get the instrument content  
+
+const getinstruments = async (req,res) => 
+{
+    try { 
+    
+        const { academyname } = req.body
+        const response = await Instrument.findOne({ academyname: academyname })
+    
+        if (response) {
+            res.status(200).json(response)
+        }
+        else {
+            res.status(404).json({ msg: 'No images found' })
+        } 
+
+        
+    } catch (error) {
+        res.status(500).json({ msg: "Server Error" })
+    }
+}
+module.exports = { fetchlogo, setsociallinks , getimages , getabout , getinstruments}
