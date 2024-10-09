@@ -27,6 +27,7 @@ import Error from './component/User/Error';
 import About from './component/User/About';
 import Event from './component/User/Event';
 import Instrument from './component/User/Instrument';
+import Form from './component/User/Form';
 
 
 
@@ -77,7 +78,9 @@ function App() {
           <Route path='/:academyname/gallery' element={<Gallery />} />
           <Route path='/:academyname/about' element={<About />} />
           <Route path='/:academyname/event' element={<Event />} />
+          <Route path='/:academyname/registrationform' element={<Form />} />
           <Route path='/:academyname/instrument' element={<Instrument />} />
+
           <Route path='/error' element={<Error />} />
 
         </Routes>

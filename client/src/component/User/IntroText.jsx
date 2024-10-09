@@ -3,8 +3,10 @@ import { motion } from "framer-motion";
 import { Button } from "@mui/material";
 
 function IntroText() {
-  const academyname = sessionStorage.getItem("Academy") || "Your";
+  const academyname = sessionStorage.getItem("Academy") || "Your"; 
 
+  const nextroute = `/${academyname}/registrationform`;  
+  
   const textVariants = {
     hidden: { opacity: 0 },
     visible: {

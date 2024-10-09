@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from "react";
 import Navbar from "./Navbar";
+import { useNavigate } from "react-router-dom";
 
 function Instrument() {
   const [instruments, setInstruments] = useState([]);
   const academyname = sessionStorage.getItem("Academy");
+  const navigate = useNavigate();
+  const nextroute = `/${academyname}/registrationform`;
 
   useEffect(() => {
     const fetchInstruments = async () => {
@@ -39,6 +42,10 @@ function Instrument() {
     fetchInstruments();
   }, [academyname]);
 
+  const handleclick = () => {
+    navigate(nextroute);
+  };
+
   return (
     <>
       <Navbar />
@@ -69,8 +76,8 @@ function Instrument() {
         {instruments.map((instrument) => (
           <div
             key={instrument.id}
-            className={`flex-shrink-0 m-6 relative overflow-hidden ${instrument.bgColor} rounded-lg max-w-xs shadow-lg group h-78`} 
-            style={{ height: '300px' }}
+            className={`flex-shrink-0 m-6 relative overflow-hidden ${instrument.bgColor} rounded-lg max-w-xs shadow-lg group h-78`}
+            style={{ height: "300px" }}
           >
             <svg
               className="absolute bottom-0 left-0 mb-8 scale-150 group-hover:scale-[1.65] transition-transform"
@@ -118,13 +125,13 @@ function Instrument() {
             </div>
             <span className="absolute left-6 bottom-6 text-white font-semibold text-xl">
               {instrument.name}
-            </span> 
-            <button>
-            <span
-              className={`absolute right-6 bottom-6 text-white rounded-full bg-black text-xs font-bold px-3 py-2 leading-none flex items-center`}
-            >
-              Enroll Now
-            </span> 
+            </span>
+            <button onClick={() => {handleclick()}}>
+              <span
+                className={`absolute right-6 bottom-6 text-white rounded-full bg-black text-xs font-bold px-3 py-2 leading-none flex items-center`}
+              >
+                Enroll Now
+              </span>
             </button>
           </div>
         ))}

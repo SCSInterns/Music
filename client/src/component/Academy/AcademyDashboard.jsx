@@ -21,7 +21,7 @@ import { toast } from "react-toastify";
 import IconButton from "@mui/material/IconButton";
 import ArrowCircleDownIcon from "@mui/icons-material/ArrowCircleDown";
 import ArrowCircleUpIcon from "@mui/icons-material/ArrowCircleUp";
-import ArrowCircleRightIcon from '@mui/icons-material/ArrowCircleRight';
+import ArrowCircleRightIcon from "@mui/icons-material/ArrowCircleRight";
 import Modal from "@mui/material/Modal";
 import ApplicantsTable from "./AppliacantsTable";
 import PendingFeesTable from "./PendingFeesTable";
@@ -1186,7 +1186,10 @@ function AcademyDashboard() {
                       onClick={() => {
                         handleApplicants();
                       }}
-                    ></Button>
+                    >
+                      {" "}
+                      Active User
+                    </Button>
                   ) : (
                     <Button
                       variant="contained"

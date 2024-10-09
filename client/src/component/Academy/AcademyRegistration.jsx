@@ -14,14 +14,14 @@ import {
   FormControlLabel,
 } from "@mui/material";
 
-function AcademyRegistration() {
+function AcademyRegistration({ academyName, Role }) {
   const [formFields, setFormFields] = useState({});
   const [dropdownOptions, setDropdownOptions] = useState([]);
   const [radio, setRadio] = useState([]);
   const [formdata, setFormdata] = useState({});
   const [courseFee, setCourseFee] = useState("");
-  const academyname = sessionStorage.getItem("academyname");
-  const role = sessionStorage.getItem("role");
+  var academyname = sessionStorage.getItem("academyname");
+  var role = sessionStorage.getItem("role");
 
   function validateForm(formdata, formFields) {
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -33,8 +33,8 @@ function AcademyRegistration() {
       isValid: true,
       errors: {},
     };
- 
-    console.log(formFields)
+
+    console.log(formFields);
     Object.keys(formFields).forEach((field) => {
       if (
         field === "Courses-Type" ||
@@ -94,7 +94,10 @@ function AcademyRegistration() {
     return validationResults;
   }
 
-  const fetchForm = async () => {
+  const fetchForm = async (academy) => {
+    if (academy) {
+      academyname = academy;
+    }
     let url = "http://localhost:5000/api/auth/getform";
 
     try {
@@ -115,7 +118,6 @@ function AcademyRegistration() {
           setFormFields(additionalFields);
           setDropdownOptions(additionalFields["Courses-Type_Options"] || []);
           setRadio(additionalFields["Radio-Type_Options"] || []);
-          toast.success("Form Fetch Success");
         } else {
           toast.error("No form data available");
         }
@@ -127,9 +129,16 @@ function AcademyRegistration() {
     }
   };
 
+  console.log(academyName);
+
   useEffect(() => {
-    fetchForm();
-  }, [academyname]);
+    if (academyName) {
+      console.log(academyName);
+      fetchForm(academyName);
+    } else if (academyname) {
+      fetchForm(academyname);
+    }
+  }, [academyName, academyname]);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -153,6 +162,14 @@ function AcademyRegistration() {
   const handleFormSubmission = async (e) => {
     e.preventDefault();
 
+    if (Role) {
+      role = Role;
+    }
+
+    if (academyName) {
+      academyname = academyName;
+    }
+
     const validationResult = validateForm(formdata, formFields);
 
     if (!validationResult.isValid) {
@@ -164,6 +181,7 @@ function AcademyRegistration() {
 
     let url = `http://localhost:5000/api/auth/savedata`;
 
+    console.log(academyname, role);
     const response = await fetch(url, {
       method: "POST",
       headers: {
@@ -190,94 +208,98 @@ function AcademyRegistration() {
       if (label === "Courses" && type === "Dropdown List") {
         return (
           <div key={label} className="mb-4">
-            <label htmlFor={label} className="block text-gray-700 font-bold">
-              {label}:
-            </label>
+            <div className="flex items-center">
+              <label htmlFor={label} className="block text-gray-700 font-bold">
+                {label}:
+              </label>
 
-            <Box
-              component="form"
-              sx={{
-                "& > :not(style)": { m: 1, width: "100%" },
-              }}
-              noValidate
-              autoComplete="off"
-            >
-              <FormControl fullWidth>
-                <Select
-                  value={formdata[label] || ""}
-                  name={label}
-                  onChange={handleChange}
-                  displayEmpty
-                  required
-                >
-                  <MenuItem disabled value="">
-                    Please select your option
-                  </MenuItem>
-                  {Array.isArray(dropdownOptions) &&
-                    dropdownOptions.map((option) => (
-                      <MenuItem key={option.value} value={option.label}>
-                        {option.label}
-                      </MenuItem>
-                    ))}
-                </Select>
-              </FormControl>
+              <Box
+                component="form"
+                sx={{
+                  "& > :not(style)": { m: 1, width: "100%" },
+                }}
+                noValidate
+                autoComplete="off"
+              >
+                <FormControl fullWidth>
+                  <Select
+                    value={formdata[label] || ""}
+                    name={label}
+                    onChange={handleChange}
+                    displayEmpty
+                    required
+                  >
+                    <MenuItem disabled value="">
+                      Please select your option
+                    </MenuItem>
+                    {Array.isArray(dropdownOptions) &&
+                      dropdownOptions.map((option) => (
+                        <MenuItem key={option.value} value={option.label}>
+                          {option.label}
+                        </MenuItem>
+                      ))}
+                  </Select>
+                </FormControl>
 
-              {courseFee && (
-                <TextField
-                  label="Course Fee"
-                  variant="outlined"
-                  value={courseFee || "Please select course "}
-                  InputProps={{
-                    readOnly: true,
-                  }}
-                  sx={{ mt: 2 }}
-                />
-              )}
-            </Box>
+                {courseFee && (
+                  <TextField
+                    label="Course Fee"
+                    variant="outlined"
+                    value={courseFee || "Please select course "}
+                    InputProps={{
+                      readOnly: true,
+                    }}
+                    sx={{ mt: 2 }}
+                  />
+                )}
+              </Box>
+            </div>
           </div>
         );
       } else if (label === "Gender" && type === "Radio Button") {
         return (
           <div key={label} className="mb-4">
-            <label htmlFor={label} className="block text-gray-700 font-bold">
-              {label}:
-            </label>
+            <div className="flex items-center">
+              <label htmlFor={label} className="block text-gray-700 font-bold">
+                {label}:
+              </label>
 
-            <Box
-              component="form"
-              sx={{
-                "& > :not(style)": { m: 1, width: "100%" },
-              }}
-              noValidate
-              autoComplete="off"
-            >
-              <FormControl component="fieldset" fullWidth>
-                <RadioGroup
-                  value={formdata[label] || ""}
-                  name={label}
-                  onChange={handleChange}
-                  aria-label={label}
-                >
-                  {radio.length === 0 ? (
-                    <FormControlLabel
-                      value=""
-                      control={<Radio />}
-                      label="Please select your option"
-                      disabled
-                    />
-                  ) : (
-                    radio.map((option) => (
+              <Box
+                component="form"
+                sx={{
+                  "& > :not(style)": { m: 1, width: "100%" },
+                }}
+                noValidate
+                autoComplete="off"
+              >
+                <FormControl component="fieldset" fullWidth>
+                  <RadioGroup
+                    value={formdata[label] || ""}
+                    name={label}
+                    onChange={handleChange}
+                    aria-label={label}
+                  >
+                    {radio.length === 0 ? (
                       <FormControlLabel
-                        key={option}
-                        value={option}
+                        value=""
                         control={<Radio />}
-                        label={option}
+                        label="Please select your option"
+                        disabled
                       />
-                    ))
-                  )}
-                </RadioGroup>
-              </FormControl>
-            </Box>
+                    ) : (
+                      radio.map((option) => (
+                        <FormControlLabel
+                          key={option}
+                          value={option}
+                          control={<Radio />}
+                          label={option}
+                        />
+                      ))
+                    )}
+                  </RadioGroup>
+                </FormControl>
+              </Box>
+            </div>
           </div>
         );
       } else {
@@ -288,31 +310,35 @@ function AcademyRegistration() {
             label === "Radio-Type_Options" ||
             label === "Courses-Type_Options" ? null : (
               <div key={label} className="mb-4">
-                <label
-                  htmlFor={label}
-                  className="block text-gray-700 font-bold"
-                >
-                  {label}:
-                </label>
-                <Box
-                  component="form"
-                  sx={{
-                    "& > :not(style)": { m: 1, width: "100%" },
-                  }}
-                  noValidate
-                  autoComplete="off"
-                >
-                  <TextField
-                    label={label}
-                    variant="outlined"
-                    type={type.toLowerCase() === "email id" ? "email" : "text"}
-                    onChange={handleChange}
-                    id={label}
-                    name={label}
-                    value={formdata[label] || ""}
-                    required
-                  />
-                </Box>
+                <div className="flex items-center">
+                  <label
+                    htmlFor={label}
+                    className="block text-gray-700 font-bold"
+                  >
+                    {label}:
+                  </label>
+                  <Box
+                    component="form"
+                    sx={{
+                      "& > :not(style)": { m: 1, width: "100%" },
+                    }}
+                    noValidate
+                    autoComplete="off"
+                  >
+                    <TextField
+                      label={label}
+                      variant="outlined"
+                      type={
+                        type.toLowerCase() === "email id" ? "email" : "text"
+                      }
+                      onChange={handleChange}
+                      id={label}
+                      name={label}
+                      value={formdata[label] || ""}
+                      required
+                    />
+                  </Box>
+                </div>
               </div>
             )}
           </>
