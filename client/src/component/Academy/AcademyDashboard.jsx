@@ -16,6 +16,7 @@ import {
   TableRow,
   Paper,
 } from "@mui/material";
+import { io } from "socket.io-client";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import IconButton from "@mui/material/IconButton";
@@ -34,6 +35,7 @@ import SocialLinks from "../Academy Features/SocialLinks";
 import Aboutus from "../Academy Features/Aboutus";
 
 function AcademyDashboard() {
+  const socket = React.useRef(null);
   const academyname = sessionStorage.getItem("academyname");
   const role = sessionStorage.getItem("role");
   const [toggleapplicants, settoggleapplicants] = useState(false);
@@ -86,8 +88,20 @@ function AcademyDashboard() {
     { value: "Email", label: "Email Id" },
   ];
 
+  const startSocket = () => {
+    socket.current.on("newData", (newEntry) => {
+      setappdata((prevEntries) => [newEntry, ...prevEntries]);
+    });
+    console.log("hhheelllloooo");
+  };
   useEffect(() => {
-    handleApplicants();
+    socket.current = io("http://localhost:5000");
+    startSocket();
+
+    return () => {
+      socket.current.off("newData");
+      socket.current.disconnect();
+    };
   }, []);
 
   const verifyurl = async () => {

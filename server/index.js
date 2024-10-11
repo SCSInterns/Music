@@ -2,7 +2,8 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const dotenv = require("dotenv");
-
+const http = require('http');
+const { Server } = require('socket.io');
 
 dotenv.config();
 const port = process.env.PORT || 5000;
@@ -14,8 +15,16 @@ const path = `mongodb+srv://${muser}:${mpass}@musicacademy.o2ko5b4.mongodb.net/?
 
 
 const app = express();
+const server = http.createServer(app);
+const io = new Server(server, {
+    cors: {
+      origin: "http://localhost:3000", 
+      methods: ["GET", "POST"],
+    },
+  });
+module.exports = { io };
 
-app.use(express.json()); 
+app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use(cors());
@@ -51,12 +60,21 @@ app.use('/api/auth', media)
 const users = require('./routes/Userrouter')
 app.use('/api/auth', users)
 
+// Socket.IO connection
+io.on('connection', (socket) => {
+    console.log('Admin connected:', socket.id);
+
+    socket.on('disconnect', () => {
+        console.log('Admin disconnected:', socket.id);
+    });
+});
+
 
 
 app.get('/', (req, res) => {
     res.send("Hello World");
 });
 
-app.listen(port, () => {
+server.listen(port, () => {
     console.log(`Server started on ${port}`);
 });

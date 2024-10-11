@@ -3,6 +3,7 @@ const SocialLinks = require("../models/SocialLinks")
 const Gallery = require("../models/Gallery")
 const About = require("../models/About")
 const Instrument = require('../models/Instrument') 
+const Event = require('../models/Event')
 
 // get the logo for navbar 
 const fetchlogo = async (req, res) => {
@@ -123,5 +124,32 @@ const getinstruments = async (req,res) =>
     } catch (error) {
         res.status(500).json({ msg: "Server Error" })
     }
-}
-module.exports = { fetchlogo, setsociallinks , getimages , getabout , getinstruments}
+} 
+
+
+// get the event details  
+ 
+
+const getevents = async (req,res) => 
+    {
+        try { 
+        
+            const { academyname } = req.body
+            const response = await Event.find({ academyname: academyname })
+        
+            if (response) {
+                res.status(200).json(response)
+            }
+            else {
+                res.status(404).json({ msg: 'No events found' })
+            } 
+    
+            
+        } catch (error) {
+            res.status(500).json({ msg: "Server Error" })
+        }
+    } 
+    
+
+
+module.exports = { fetchlogo, setsociallinks , getimages , getabout , getinstruments , getevents}

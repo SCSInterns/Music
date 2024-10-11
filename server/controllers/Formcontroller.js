@@ -3,6 +3,7 @@ const Token = require('../models/Token');
 const youtubeUrl = require('youtube-url');
 const Video = require('../models/Video')
 const Logo = require('../models/Logo')
+const { io } = require('../index');
 
 // form addition 
 const handledynamicform = async (req, res) => {
@@ -55,6 +56,7 @@ const savedata = async (req, res) => {
   })
 
   const response = await newform.save();
+  io.emit('newData', response);
 
   if (response) {
     res.status(200).json(response)

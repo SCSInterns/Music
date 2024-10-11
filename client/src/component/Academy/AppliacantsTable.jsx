@@ -361,7 +361,7 @@ const ApplicantsTable = ({ users }) => {
     <>
       <TableContainer
         component={Paper}
-        sx={{ width: "90%", margin: "auto", marginTop: "100px" }}
+        sx={{ width: "90%", margin: "auto", marginTop: "100px" , marginBottom : '50px'}}
       >
         {hasUsers ? (
           <Table>

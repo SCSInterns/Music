@@ -8,5 +8,7 @@ router.post('/savesociallink',authenticate.authenticatetoken , user.setsociallin
 router.post('/getimages',user.getimages)
 router.post('/getabout',user.getabout)
 router.post('/getinstrument',user.getinstruments)
+router.post('/getevents',user.getevents)
+
 
 module.exports = router;

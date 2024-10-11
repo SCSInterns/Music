@@ -14,6 +14,7 @@ import {
   FormControlLabel,
 } from "@mui/material";
 
+
 function AcademyRegistration({ academyName, Role }) {
   const [formFields, setFormFields] = useState({});
   const [dropdownOptions, setDropdownOptions] = useState([]);
@@ -158,7 +159,6 @@ function AcademyRegistration({ academyName, Role }) {
   };
 
   console.log(formdata);
-
   const handleFormSubmission = async (e) => {
     e.preventDefault();
 
@@ -207,8 +207,8 @@ function AcademyRegistration({ academyName, Role }) {
     return Object.entries(formFields).map(([label, type]) => {
       if (label === "Courses" && type === "Dropdown List") {
         return (
-          <div key={label} className="mb-4">
-            <div className="flex items-center">
+          <div key={label} className="mb-2">
+            <div className="flex w-full   justify-between items-center">
               <label htmlFor={label} className="block text-gray-700 font-bold">
                 {label}:
               </label>
@@ -221,13 +221,14 @@ function AcademyRegistration({ academyName, Role }) {
                 noValidate
                 autoComplete="off"
               >
-                <FormControl fullWidth>
+                <FormControl>
                   <Select
                     value={formdata[label] || ""}
                     name={label}
                     onChange={handleChange}
                     displayEmpty
                     required
+                    sx={{ width: "400px" }}
                   >
                     <MenuItem disabled value="">
                       Please select your option
@@ -249,7 +250,7 @@ function AcademyRegistration({ academyName, Role }) {
                     InputProps={{
                       readOnly: true,
                     }}
-                    sx={{ mt: 2 }}
+                    sx={{ marginLeft: "100px", width: "70%" }}
                   />
                 )}
               </Box>
@@ -258,8 +259,8 @@ function AcademyRegistration({ academyName, Role }) {
         );
       } else if (label === "Gender" && type === "Radio Button") {
         return (
-          <div key={label} className="mb-4">
-            <div className="flex items-center">
+          <div key={label} className="mb-2">
+            <div className="flex justify-between items-center">
               <label htmlFor={label} className="block text-gray-700 font-bold">
                 {label}:
               </label>
@@ -267,17 +268,22 @@ function AcademyRegistration({ academyName, Role }) {
               <Box
                 component="form"
                 sx={{
-                  "& > :not(style)": { m: 1, width: "100%" },
+                  "& > :not(style)": { m: 1, width: "100%", display: "flex" },
                 }}
                 noValidate
                 autoComplete="off"
               >
-                <FormControl component="fieldset" fullWidth>
+                <FormControl component="fieldset" fullWidth sx={{}}>
                   <RadioGroup
                     value={formdata[label] || ""}
                     name={label}
                     onChange={handleChange}
                     aria-label={label}
+                    sx={{
+                      display: "flex",
+                      flexDirection: "row",
+                      marginRight: "100px",
+                    }}
                   >
                     {radio.length === 0 ? (
                       <FormControlLabel
@@ -309,8 +315,8 @@ function AcademyRegistration({ academyName, Role }) {
             (label === "Radio-Type" && type === "Radio") ||
             label === "Radio-Type_Options" ||
             label === "Courses-Type_Options" ? null : (
-              <div key={label} className="mb-4">
-                <div className="flex items-center">
+              <div key={label} className="mb-2">
+                <div className="flex justify-between  items-center">
                   <label
                     htmlFor={label}
                     className="block text-gray-700 font-bold"
@@ -325,18 +331,22 @@ function AcademyRegistration({ academyName, Role }) {
                     noValidate
                     autoComplete="off"
                   >
-                    <TextField
-                      label={label}
-                      variant="outlined"
-                      type={
-                        type.toLowerCase() === "email id" ? "email" : "text"
-                      }
-                      onChange={handleChange}
-                      id={label}
-                      name={label}
-                      value={formdata[label] || ""}
-                      required
-                    />
+                    <div className="w-full">
+                      <TextField
+                        label={label}
+                        variant="outlined"
+                        sx={{ marginRight: "20px", width: "400px" }}
+                        type={
+                          type.toLowerCase() === "email id" ? "email" : "text"
+                        }
+                        onChange={handleChange}
+                        id={label}
+                        fullWidth
+                        name={label}
+                        value={formdata[label] || ""}
+                        required
+                      />
+                    </div>
                   </Box>
                 </div>
               </div>
@@ -363,11 +373,11 @@ function AcademyRegistration({ academyName, Role }) {
           backgroundColor: "#fff",
           borderRadius: "8px",
           boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-          width: "100%",
+          width: "75%",
           maxWidth: "600px",
         }}
       >
-        <h1 className="text-2xl font-bold mb-4 text-center">
+        <h1 className="text-2xl font-bold mb-2 text-center">
           {academyname} Registration Form
         </h1>
 
