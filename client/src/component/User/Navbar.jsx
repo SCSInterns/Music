@@ -35,7 +35,12 @@ const navigation = [
     title: "Events",
     current: false,
   },
-  { name: "Instruments", href: `/${academyname}/instrument`, title: "Instruments", current: false },
+  {
+    name: "Instruments",
+    href: `/${academyname}/instrument`,
+    title: "Instruments",
+    current: false,
+  },
 ];
 
 function classNames(...classes) {

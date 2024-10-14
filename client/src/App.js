@@ -28,6 +28,7 @@ import About from './component/User/About';
 import Event from './component/User/Event';
 import Instrument from './component/User/Instrument';
 import Form from './component/User/Form';
+import Detailview from './component/User/Detailview';
 
 
 
@@ -80,6 +81,7 @@ function App() {
           <Route path='/:academyname/event' element={<Event />} />
           <Route path='/:academyname/registrationform' element={<Form />} />
           <Route path='/:academyname/instrument' element={<Instrument />} />
+          <Route path='/:academyname/event/:id' element={<Detailview />} />
 
           <Route path='/error' element={<Error />} />
 

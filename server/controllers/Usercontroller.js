@@ -2,7 +2,7 @@ const Logo = require("../models/Logo")
 const SocialLinks = require("../models/SocialLinks")
 const Gallery = require("../models/Gallery")
 const About = require("../models/About")
-const Instrument = require('../models/Instrument') 
+const Instrument = require('../models/Instrument')
 const Event = require('../models/Event')
 
 // get the logo for navbar 
@@ -81,75 +81,93 @@ const getimages = async (req, res) => {
     else {
         res.status(404).json({ msg: 'No images found' })
     }
-} 
+}
 
 // get the about content  
 
-const getabout = async (req,res) => 
-{
-      try { 
+const getabout = async (req, res) => {
+    try {
         const { academyname } = req.body
         const response = await About.findOne({ academyname: academyname })
-    
+
         if (response) {
             res.status(200).json(response)
         }
         else {
             res.status(404).json({ msg: 'No images found' })
         }
-        
-      } catch (error) {
+
+    } catch (error) {
         res.status(500).json({ msg: "Server Error" })
-      }
+    }
 }
 
 
 // get the instrument content  
 
-const getinstruments = async (req,res) => 
-{
-    try { 
-    
+const getinstruments = async (req, res) => {
+    try {
+
         const { academyname } = req.body
         const response = await Instrument.findOne({ academyname: academyname })
-    
+
         if (response) {
             res.status(200).json(response)
         }
         else {
             res.status(404).json({ msg: 'No images found' })
-        } 
+        }
 
-        
+
     } catch (error) {
         res.status(500).json({ msg: "Server Error" })
     }
-} 
+}
 
 
 // get the event details  
- 
 
-const getevents = async (req,res) => 
-    {
-        try { 
-        
-            const { academyname } = req.body
-            const response = await Event.find({ academyname: academyname })
-        
-            if (response) {
-                res.status(200).json(response)
-            }
-            else {
-                res.status(404).json({ msg: 'No events found' })
-            } 
-    
-            
-        } catch (error) {
-            res.status(500).json({ msg: "Server Error" })
+
+const getevents = async (req, res) => {
+    try {
+
+        const { academyname } = req.body
+        const response = await Event.find({ academyname: academyname })
+
+        if (response) {
+            res.status(200).json(response)
         }
-    } 
-    
+        else {
+            res.status(404).json({ msg: 'No events found' })
+        }
 
 
-module.exports = { fetchlogo, setsociallinks , getimages , getabout , getinstruments , getevents}
+    } catch (error) {
+        res.status(500).json({ msg: "Server Error" })
+    }
+}
+
+
+// get particular event details  
+
+const knowmore = async (req, res) => {
+
+    try {
+        const { academyname, id } = req.body
+        const response = await Event.find({ academyname: academyname, _id: id })
+        if (response) {
+            res.status(200).json(response)
+        }
+        else {
+            res.status(404).json({ msg: 'No events details found' })
+        }
+
+
+    } catch (error) {
+        res.status(500).json({ msg: "Server Error" })
+    }
+
+}
+
+
+module.exports = { fetchlogo, setsociallinks, getimages, getabout, getinstruments, getevents , knowmore}

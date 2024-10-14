@@ -8,6 +8,9 @@ function Events() {
   const [imageUrl, setImageUrl] = useState(null);
   const [eventtitle, seteventtitle] = useState("");
   const [eventdesc, seteventdesc] = useState("");
+  const [eventtime, seteventtime] = useState("");
+  const [eventdate, seteventdate] = useState("");
+  const [eventlocation, seteventlocation] = useState("");
   const academyname = sessionStorage.getItem("academyname");
   const role = sessionStorage.getItem("role");
 
@@ -31,6 +34,15 @@ function Events() {
 
   const handledescchange = (e) => {
     seteventdesc(e);
+  };
+  const handlelocchange = (e) => {
+    seteventlocation(e);
+  };
+  const handledatechange = (e) => {
+    seteventdate(e);
+  };
+  const handletimechange = (e) => {
+    seteventtime(e);
   };
 
   const handlesubmit = async (e) => {
@@ -83,6 +95,9 @@ function Events() {
         imageUrl: imageUrl,
         description: eventdesc,
         eventname: eventtitle,
+        date: eventdate,
+        time: eventtime,
+        location: eventlocation,
       }),
     });
 
@@ -90,9 +105,16 @@ function Events() {
       toast.success("Data Added Successfully");
       seteventtitle("");
       seteventdesc("");
+      seteventdate("");
+      seteventtime("");
+      seteventlocation("");
       setImageUrl(null);
     }
   };
+
+  console.log(eventdate);
+  console.log(eventtime);
+  console.log(eventlocation);
 
   return (
     <>
@@ -105,7 +127,7 @@ function Events() {
             style={{
               height: "300px",
               width: "300px",
-              marginTop: "10px",
+              marginTop: "90px",
               marginBottom: "20px",
               display: "flex",
               justifyContent: "center",
@@ -199,6 +221,54 @@ function Events() {
               />
             </Box>
           </div>
+
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              gap: 2,
+              margin: "20px",
+            }}
+          >
+            <div style={{ display: "flex" }}>
+              {/* Date Input */}
+              <TextField
+                label="Date"
+                type="date"
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                variant="outlined"
+                value={eventdate}
+                onChange={(e) => handledatechange(e.target.value)}
+                fullWidth
+                sx={{ marginRight: "10px" }}
+              />
+
+              {/* Time Input */}
+              <TextField
+                label="Time"
+                type="time"
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                value={eventtime}
+                variant="outlined"
+                onChange={(e) => handletimechange(e.target.value)}
+                fullWidth
+                sx={{ marginLeft: "10px" }}
+              />
+            </div>
+
+            {/* Location Input */}
+            <TextField
+              label="Location"
+              value={eventlocation}
+              variant="outlined"
+              fullWidth
+              onChange={(e) => handlelocchange(e.target.value)}
+            />
+          </Box>
           <div
             style={{
               height: "300px",
@@ -220,7 +290,14 @@ function Events() {
         </div>
       </div>
 
-      <div style={{ marginTop: "30px", float: "right", marginRight: "20px" }}>
+      <div
+        style={{
+          marginTop: "30px",
+          float: "right",
+          marginRight: "20px",
+          marginBottom: "50px",
+        }}
+      >
         {imageUrl && eventtitle && eventdesc ? (
           <Button
             variant="contained"

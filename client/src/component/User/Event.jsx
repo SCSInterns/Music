@@ -41,8 +41,8 @@ function Event() {
       : description;
   };
 
-  const handleKnowMore = (eventId) => {
-    console.log(eventId);
+  const handleKnowMore = async (eventId) => {
+    navigate(`/${academyname}/event/${eventId}`);
   };
 
   return (
@@ -53,33 +53,47 @@ function Event() {
         <img
           src={Eventbanner}
           alt="Event Banner"
-          className="w-full  object-cover"  
-          style={{height : '400px'}}
+          className="w-full  object-cover"
+          style={{ height: "400px" }}
         />
       </div>
-      <div className="container mx-auto p-4 mt-20">
+
+      <h1
+        style={{
+          fontFamily: "ubuntu",
+          margin: "20px",
+          fontSize: "20px",
+          textAlign: "center",
+          marginTop: "30px",
+        }}
+      >
+        Our Recent Event's
+      </h1>
+      <div className="container mx-auto p-4 mt-18">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {events.map((event) => (
             <div
               key={event._id}
-              className="bg-white shadow-md rounded-lg overflow-hidden"
+              className="bg-white shadow-md rounded-lg overflow-hidden flex flex-col"
             >
               <img
                 src={event.imageUrl}
                 alt={event.eventname}
                 className="w-full h-48 object-cover"
               />
-              <div className="p-4">
+              <div className="p-4 flex flex-col flex-grow">
                 <h2 className="text-xl font-semibold">{event.eventname}</h2>
-                <p className="mt-2 text-gray-600">
+                <p className="mt-2 text-gray-600 flex-grow">
                   {truncateDescription(event.description)}
                 </p>
-                <button
-                  onClick={() => handleKnowMore(event._id)}
-                  className="mt-4 bg-slate-900 text-white py-2 px-4 rounded hover:bg-slate-950"
-                >
-                  Know More
-                </button>
+                <div style={{ marginTop: "20px" }}>
+                  <button
+                    onClick={() => handleKnowMore(event._id)}
+                    className="mt-auto bg-slate-900 text-white py-2 px-4 rounded hover:bg-slate-950"
+                  >
+                    Know More
+                  </button>
+                </div>
               </div>
             </div>
           ))}

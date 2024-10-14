@@ -55,7 +55,7 @@ const saveImageUrls = async (req, res) => {
 const handleevents = async (req, res) => {
     try {
 
-        const { role, imageUrl, academyname, description, eventname } = req.body
+        const { role, imageUrl, academyname, description, eventname, date, time, location } = req.body
 
         if (role === "Admin") {
 
@@ -63,7 +63,10 @@ const handleevents = async (req, res) => {
                 academyname: academyname,
                 eventname: eventname,
                 description: description,
-                imageUrl: imageUrl
+                imageUrl: imageUrl,
+                date: date,
+                time: time,
+                location: location
             })
 
             await response.save()
@@ -117,7 +120,7 @@ const handleabout = async (req, res) => {
         }
 
     } catch (error) {
-        res.status(500).json({ message: "Failed to save or update image URLs" , error });
+        res.status(500).json({ message: "Failed to save or update image URLs", error });
     }
 }
 

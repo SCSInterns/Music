@@ -9,6 +9,7 @@ router.post('/getimages',user.getimages)
 router.post('/getabout',user.getabout)
 router.post('/getinstrument',user.getinstruments)
 router.post('/getevents',user.getevents)
+router.post('/knowmoredetails',user.knowmore)
 
 
 module.exports = router;
