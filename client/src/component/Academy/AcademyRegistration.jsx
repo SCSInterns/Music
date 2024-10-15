@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
+import { motion } from "framer-motion";
 import {
   Divider,
   MenuItem,
@@ -13,7 +14,6 @@ import {
   RadioGroup,
   FormControlLabel,
 } from "@mui/material";
-
 
 function AcademyRegistration({ academyName, Role }) {
   const [formFields, setFormFields] = useState({});
@@ -358,7 +358,10 @@ function AcademyRegistration({ academyName, Role }) {
   };
 
   return (
-    <div
+    <motion.div
+      initial={{ x: 20, y: 20, opacity: 0 }}
+      animate={{ x: 0, y: 0, opacity: 1 }}
+      transition={{ duration: 1, ease: "easeIn", staggerChildren: 0.1 }}
       style={{
         display: "flex",
         alignItems: "center",
@@ -392,7 +395,7 @@ function AcademyRegistration({ academyName, Role }) {
           </button>
         </form>
       </div>
-    </div>
+    </motion.div>
   );
 }
 

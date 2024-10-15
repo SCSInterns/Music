@@ -1,12 +1,18 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { Button } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 function IntroText() {
-  const academyname = sessionStorage.getItem("Academy") || "Your"; 
+  const navigate = useNavigate();
 
-  const nextroute = `/${academyname}/registrationform`;  
-  
+  const academyname = sessionStorage.getItem("Academy") || "Your";
+
+  const nextroute = `/${academyname}/registrationform`;
+
+  const handlenext = () => {
+    navigate(nextroute);
+  };
   const textVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -32,9 +38,9 @@ function IntroText() {
             margin: "20px",
             marginTop: "200px",
             paddingLeft: "50px",
-            marginRight: "30px",
+            marginRight: "100px",
             fontFamily: "ubuntu",
-            color: "#0c4b65",
+            color: "white",
             fontSize: "35px",
           }}
         >
@@ -51,6 +57,9 @@ function IntroText() {
             float: "left",
             marginLeft: "70px",
             marginTop: "20px",
+          }}
+          onClick={() => {
+            handlenext()
           }}
         >
           Get Started

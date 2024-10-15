@@ -1,14 +1,18 @@
 // Home.js
 import React, { useEffect, useState } from "react";
-import { useParams , useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import Navbar from "./Navbar";
 import Slider from "./Slider";
 import IntroText from "./IntroText";
+import Gallery from "./Gallery";
+import About from "./About";
+import Instrument from "./Instrument";
+import Video from "./Video";
 
 function Home() {
   const { academyname } = useParams();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const [verified, setverified] = useState(false);
 
   const verifiedurl = async () => {
@@ -28,7 +32,7 @@ function Home() {
       sessionStorage.setItem("Academy", `${academyname}`);
       setverified(true);
     } else {
-      navigate('/error')
+      navigate("/error");
     }
   };
 
@@ -40,8 +44,13 @@ function Home() {
 
   return (
     <>
-      <Navbar />
-      <Slider />
+      <div className="overflow-x-hidden">
+        <Navbar />
+        <Gallery />
+        <About />
+        <Instrument />
+        <Video />
+      </div>
     </>
   );
 }

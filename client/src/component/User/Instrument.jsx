@@ -1,12 +1,16 @@
 import React, { useState, useEffect } from "react";
 import Navbar from "./Navbar";
 import { useNavigate } from "react-router-dom";
+import { motion, useAnimation } from "framer-motion";
+import { useRef } from "react";
 
 function Instrument() {
   const [instruments, setInstruments] = useState([]);
   const academyname = sessionStorage.getItem("Academy");
   const navigate = useNavigate();
   const nextroute = `/${academyname}/registrationform`;
+  const controls = useAnimation();
+  const ref = useRef(null);
 
   useEffect(() => {
     const fetchInstruments = async () => {
@@ -46,21 +50,56 @@ function Instrument() {
     navigate(nextroute);
   };
 
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          controls.start("visible");
+        } else {
+          controls.start("hidden");
+        }
+      },
+      { threshold: 0.2 }
+    );
+
+    if (ref.current) {
+      observer.observe(ref.current);
+    }
+
+    return () => {
+      if (ref.current) {
+        observer.unobserve(ref.current);
+      }
+    };
+  }, [controls]);
+
+  const animationVariants = {
+    hidden: { opacity: 0, x: 100 },
+    visible: {
+      opacity: 1,
+      x: 0,
+      transition: { duration: 0.8, ease: "easeInOut" },
+    },
+  };
+
   return (
     <>
-      <Navbar />
-
-      <div>
+      <motion.div
+        ref={ref}
+        initial="hidden"
+        animate={controls}
+        variants={animationVariants} 
+      >
         <p
           style={{
             textAlign: "justify",
             margin: "40px",
-            marginTop: "50px",
+            marginTop: "20px",
             fontFamily: "ubuntu",
             fontSize: "18px",
             color: "#0c4b65",
           }}
-        >
+        > 
           At {academyname}, we offer a wide range of musical instruments to
           inspire your musical journey. Whether you're passionate about rhythm,
           melody, or harmony, we provide personalized instruction for every
@@ -70,7 +109,7 @@ function Instrument() {
           Explore the selection below, each accompanied by beautiful images, and
           take the first step toward mastering your musical craft!
         </p>
-      </div>
+      </motion.div>
 
       <div className="p-1 flex flex-wrap items-center justify-center">
         {instruments.map((instrument) => (
@@ -126,7 +165,11 @@ function Instrument() {
             <span className="absolute left-6 bottom-6 text-white font-semibold text-xl">
               {instrument.name}
             </span>
-            <button onClick={() => {handleclick()}}>
+            <button
+              onClick={() => {
+                handleclick();
+              }}
+            >
               <span
                 className={`absolute right-6 bottom-6 text-white rounded-full bg-black text-xs font-bold px-3 py-2 leading-none flex items-center`}
               >

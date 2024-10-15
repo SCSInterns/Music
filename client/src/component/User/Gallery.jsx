@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import Navbar from "./Navbar";
 import { motion } from "framer-motion";
 import { toast } from "react-toastify";
+import IntroText from "./IntroText";
 
 function Gallery() {
   const academyname = sessionStorage.getItem("Academy");
@@ -56,7 +57,6 @@ function Gallery() {
 
   return (
     <>
-      <Navbar />
       <div className="relative h-screen w-full">
         {/* Dynamic Background Image */}
         {galleryimages.length > 0 && (
@@ -67,7 +67,7 @@ function Gallery() {
             animate="animate"
             className="absolute inset-0 bg-cover bg-center z-0"
             style={{
-              backgroundImage: `url(${galleryimages[currentIndex]})`,
+              backgroundImage: `url(${galleryimages[currentIndex]})`
             }}
           />
         )}
@@ -77,7 +77,7 @@ function Gallery() {
         {/* Main Content */}
         <div className="relative z-20 h-full flex flex-col items-center justify-center text-white">
           {/* Arrow Navigation */}
-          <div className="absolute top-1/2 left-4 transform -translate-y-1/2 cursor-pointer">
+          <div className="absolute top-1/2 left-4 transform -translate-y-1/2 cursor-pointer z-30">
             <button
               onClick={() =>
                 setCurrentIndex(
@@ -87,10 +87,19 @@ function Gallery() {
               }
               className="bg-gray-800 p-2 rounded-full text-white"
             >
-              &#8592; 
+              &#8592;
             </button>
           </div>
-          <div className="absolute top-1/2 right-4 transform -translate-y-1/2 cursor-pointer">
+
+          {/* Centered IntroText */}
+          <div
+            className="absolute inset-0 flex items-center justify-center z-20"
+            style={{ marginBottom: "250px", marginRight: "400px" }}
+          >
+            <IntroText />
+          </div>
+
+          <div className="absolute top-1/2 right-4 transform -translate-y-1/2 cursor-pointer z-30">
             <button
               onClick={() =>
                 setCurrentIndex((currentIndex + 1) % galleryimages.length)
@@ -102,9 +111,7 @@ function Gallery() {
           </div>
 
           {/* Queue Display of Images */}
-          <div className="flex items-center justify-center space-x-2 absolute bottom-8 right-8 overflow-hidden whitespace-nowrap">
-            {" "}
-            {/* Change overflow-x-auto to overflow-hidden */}
+          <div className="flex items-center justify-center space-x-2 absolute bottom-8 right-8 overflow-hidden whitespace-nowrap z-30">
             {galleryimages.slice(0, queueSize).map((url, index) => (
               <motion.div
                 key={index}
