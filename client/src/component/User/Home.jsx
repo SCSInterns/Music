@@ -9,6 +9,7 @@ import Gallery from "./Gallery";
 import About from "./About";
 import Instrument from "./Instrument";
 import Video from "./Video";
+import Footer from "./Footer";
 
 function Home() {
   const { academyname } = useParams();
@@ -36,6 +37,14 @@ function Home() {
     }
   };
 
+  // Refresh the page once if it hasn't been refreshed yet
+  useEffect(() => {
+    if (!sessionStorage.getItem("refreshed")) {
+      sessionStorage.setItem("refreshed", "true");
+      window.location.reload(); // Hard refresh
+    }
+  }, []);
+
   useEffect(() => {
     if (academyname) {
       verifiedurl();
@@ -49,7 +58,8 @@ function Home() {
         <Gallery />
         <About />
         <Instrument />
-        <Video />
+        <Video /> 
+        <Footer/>
       </div>
     </>
   );

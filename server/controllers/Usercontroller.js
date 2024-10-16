@@ -4,6 +4,8 @@ const Gallery = require("../models/Gallery")
 const About = require("../models/About")
 const Instrument = require('../models/Instrument')
 const Event = require('../models/Event')
+const Video = require('../models/Video')
+const Musicacademy = require('../models/MusicAcademy')
 
 // get the logo for navbar 
 const fetchlogo = async (req, res) => {
@@ -147,6 +149,27 @@ const getevents = async (req, res) => {
     }
 }
 
+// get the video details  
+
+
+const getvideos = async (req, res) => {
+    try {
+
+        const { academyname } = req.body
+        const response = await Video.find({ academyname: academyname })
+
+        if (response) {
+            res.status(200).json(response)
+        }
+        else {
+            res.status(404).json({ msg: 'No videos found' })
+        }
+
+
+    } catch (error) {
+        res.status(500).json({ msg: "Server Error" })
+    }
+}
 
 // get particular event details  
 
@@ -170,4 +193,43 @@ const knowmore = async (req, res) => {
 }
 
 
-module.exports = { fetchlogo, setsociallinks, getimages, getabout, getinstruments, getevents , knowmore}
+// get the footer details  
+
+const academydetails = async (req, res) => {
+    try {
+        const { academyname } = req.body
+        const response = await Musicacademy.find({ academy_name: academyname })
+        if (response) {
+            res.status(200).json(response)
+        }
+        else {
+            res.status(404).json({ msg: 'No details found' })
+        }
+    } catch (error) {
+        res.status(500).json({ msg: "Server Error" })
+    }
+
+}
+
+
+const sociallinks = async (req, res) => {
+    try {
+        const { academyname } = req.body
+        const response = await SocialLinks.find({ academyname: academyname })
+        if (response) {
+            res.status(200).json(response)
+        }
+        else {
+            res.status(404).json({ msg: 'No links found' })
+        }
+    } catch (error) {
+        res.status(500).json({ msg: "Server Error" })
+    }
+
+}
+
+
+
+
+
+module.exports = { fetchlogo, setsociallinks, getimages, getabout, getinstruments, getevents, knowmore, getvideos, academydetails, sociallinks }

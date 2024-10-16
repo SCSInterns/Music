@@ -23,7 +23,7 @@ function About() {
       const data = await response.json();
       setAbout(data);
     } else {
-      toast.error("Error fetching about content");
+      // toast.error("Error fetching about content"); 
     }
   };
 

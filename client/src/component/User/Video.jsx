@@ -1,6 +1,61 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 
 function Video() {
+  const academyname = sessionStorage.getItem("Academy");
+  const [videolink, setvideolink] = useState("");
+  const [data, setdata] = useState("");
+
+  function convertToEmbedUrl(youtubeUrl) {
+    if (youtubeUrl.includes("youtu.be")) {
+      const videoId = youtubeUrl.split("/").pop();
+      let url = `https://www.youtube.com/embed/${videoId}`;
+      setvideolink(url);
+    } else {
+      return "Invalid YouTube short link format.";
+    }
+  }
+
+  useEffect(() => {
+    if (data) {
+      console.log(data);
+      convertToEmbedUrl(data.link);
+    }
+  }, [data]);
+
+  const getvideolink = async () => {
+    const url = "http://localhost:5000/api/auth/getvideos";
+
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          academyname: academyname,
+        }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data && data.length > 0 && data[0].link) {
+          console.log(data);
+          setdata(data[0]);
+          convertToEmbedUrl(data[0].link);
+        }
+      } else {
+        toast.error("Error fetching video link");
+      }
+    } catch (error) {
+      toast.error("Failed to fetch video link");
+    }
+  };
+
+  useEffect(() => {
+    getvideolink();
+  }, [academyname]);
+
   return (
     <>
       <div style={{ position: "relative", marginBottom: "50px" }}>
@@ -12,44 +67,45 @@ function Video() {
             position: "absolute",
             top: "-250px",
             left: "10px",
-            zIndex: "1", 
+            zIndex: "1",
           }}
         ></div>
+      </div>
+      <div>
+        <h1
+          style={{
+            color: "#0c4b65",
+            lineHeight: "1.8",
+            fontSize: "20px",
+            fontFamily: "ubuntu",
+          }}
+        >
+          Our Media
+        </h1>
       </div>
       <div
         className="flex justify-center items-center p-4"
         style={{ marginTop: "100px", display: "flex", flexDirection: "column" }}
       >
-        {/* Outer Box Container */}
-        <div
-          style={{
-            backgroundColor: "#0c4b65",
-            borderRadius: "8px",
-            padding: "20px",
-            boxShadow: "0 4px 15px rgba(0, 0, 0, 0.2)",
-            width: "1000px", 
-            height: "50%", 
-            margin: "auto",
-            position: "relative",
-            zIndex: "2", 
-          }}
-        >
-          {/* Video Container */}
+        {videolink && (
           <div className="bg-white shadow-lg rounded-lg overflow-hidden w-full">
             <iframe
               className="h-80"
               style={{
                 height: "400px",
-                width: "100%", 
+                width: "70%",
                 zIndex: "10",
                 border: "none",
+                margin: "auto",
+                padding: "20px",
               }}
-              src="https://www.youtube.com/embed/khUaF36F_SY"
+              src={videolink}
               title="YouTube Video"
+              allow="autoplay; encrypted-media"
               allowFullScreen
             ></iframe>
           </div>
-        </div>
+        )}
       </div>
     </>
   );

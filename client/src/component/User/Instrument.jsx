@@ -111,7 +111,7 @@ function Instrument() {
         </p>
       </motion.div>
 
-      <div className="p-1 flex flex-wrap items-center justify-center">
+      <div className="p-1 flex flex-wrap items-center justify-center" style={{zIndex : '10' , position : 'relative'}}>
         {instruments.map((instrument) => (
           <div
             key={instrument.id}

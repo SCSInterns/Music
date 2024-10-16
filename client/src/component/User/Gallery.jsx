@@ -26,7 +26,7 @@ function Gallery() {
       const data = await response.json();
       setgalleryimages(data.imageUrls);
     } else {
-      toast.error("Images Not found");
+      // toast.error("Images Not found");
     }
   };
 
