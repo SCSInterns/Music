@@ -37,11 +37,10 @@ function Home() {
     }
   };
 
-  // Refresh the page once if it hasn't been refreshed yet
   useEffect(() => {
     if (!sessionStorage.getItem("refreshed")) {
       sessionStorage.setItem("refreshed", "true");
-      window.location.reload(); // Hard refresh
+      window.location.reload();
     }
   }, []);
 
@@ -55,11 +54,24 @@ function Home() {
     <>
       <div className="overflow-x-hidden">
         <Navbar />
-        <Gallery />
-        <About />
-        <Instrument />
-        <Video /> 
-        <Footer/>
+
+        <section id="gallery" className="h-screen">
+          <Gallery />
+        </section>
+
+        <section id="about" className="h-screen">
+          <About />
+        </section>
+
+        <section id="instrument" className="h-screen">
+          <Instrument />
+        </section>
+
+        <section id="video" className="h-screen">
+          <Video />
+        </section>
+
+        <Footer />
       </div>
     </>
   );

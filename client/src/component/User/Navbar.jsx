@@ -13,59 +13,49 @@ import {
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { Typography } from "@mui/material";
 
-const academyname = sessionStorage.getItem("Academy");
-
-const navigation = [
-  {
-    name: "Aboutus",
-    href: `/${academyname}/about`,
-    title: "Aboutus",
-    current: false,
-  },
-  {
-    name: "Gallery",
-    href: `/${academyname}/gallery`,
-    title: "Gallery",
-    current: false,
-  },
-  { name: "Videos", href: "/", title: "Videos", current: false },
-  {
-    name: "Events",
-    href: `/${academyname}/event`,
-    title: "Events",
-    current: false,
-  },
-  {
-    name: "Instruments",
-    href: `/${academyname}/instrument`,
-    title: "Instruments",
-    current: false,
-  },
-];
-
-function classNames(...classes) {
-  return classes.filter(Boolean).join(" ");
-}
-
-const role = sessionStorage.getItem("role");
-
-export default function Example() {
-  const [academyname, setAcademyName] = useState(
-    sessionStorage.getItem("Academy") || ""
-  );
-
+const Example = () => {
   const storedAcademyName = sessionStorage.getItem("Academy");
-
-  useEffect(() => {
-    if (storedAcademyName) {
-      setAcademyName(storedAcademyName);
-    }
-  }, [storedAcademyName]);
-
+  const [academyname, setAcademyName] = useState(storedAcademyName || "");
   const [currentPath, setCurrentPath] = useState(null);
-  const [logo, setlogo] = useState("");
+  const [logo, setLogo] = useState("");
+  const role = sessionStorage.getItem("role");
+  const username = sessionStorage.getItem("username");
 
-  const getlogo = async () => {
+  const navigation = [
+    {
+      name: "About Us",
+      href: "about",
+      title: "About Us",
+    },
+    {
+      name: "Gallery",
+      href: "gallery",
+      title: "Gallery",
+    },
+    {
+      name: "Events",
+      href: `/${academyname}/event`,
+      title: "Event",
+    },
+    {
+      name: "Instruments",
+      href: "instrument",
+      title: "Instruments",
+    },
+  ];
+
+  function classNames(...classes) {
+    return classes.filter(Boolean).join(" ");
+  }
+
+  const scrollToSection = (sectionId) => {
+    const section = document.getElementById(sectionId);
+    if (section) {
+      section.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
+  const getLogo = async () => {
     const url = "http://localhost:5000/api/auth/getlogo";
 
     const response = await fetch(url, {
@@ -80,13 +70,13 @@ export default function Example() {
 
     if (response.ok) {
       const data = await response.json();
-      setlogo(data.link);
+      setLogo(data.link);
     }
   };
 
   useEffect(() => {
     if (academyname) {
-      getlogo();
+      getLogo();
     }
   }, [academyname]);
 
@@ -105,6 +95,7 @@ export default function Example() {
         favicon.href = `/favicon-${currentPage.title.toLowerCase()}.ico`;
       }
     };
+
     handlePathChange();
     window.addEventListener("popstate", handlePathChange);
     return () => {
@@ -116,8 +107,6 @@ export default function Example() {
     sessionStorage.clear();
   };
 
-  const username = sessionStorage.getItem("username");
-
   return (
     <Disclosure
       as="nav"
@@ -128,15 +117,11 @@ export default function Example() {
         <>
           <div
             className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8 navbarstyle"
-            style={{
-              background: `#020617`,
-              color: "white",
-              position: "",
-            }}
+            style={{ background: `#020617`, color: "white" }}
           >
             <div className="relative flex h-16 items-center justify-between">
               <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
-                {/* Mobile menu button*/}
+                {/* Mobile menu button */}
                 <Disclosure.Button className="relative inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
                   <span className="absolute -inset-0.5" />
                   <span className="sr-only">Open main menu</span>
@@ -157,7 +142,7 @@ export default function Example() {
                   }}
                 >
                   <a href={`/${academyname}`}>
-                    {logo ? (
+                    {logo && (
                       <img
                         src={logo}
                         alt="Academy Logo"
@@ -168,49 +153,72 @@ export default function Example() {
                           mixBlendMode: "screen",
                         }}
                       />
-                    ) : null}
+                    )}
                   </a>
                 </div>
                 <div className="hidden sm:ml-6 sm:block">
                   <div className="flex space-x-4 items-center">
-                    {navigation.map((item) => (
-                      <a
-                        key={item.name}
-                        href={item.href}
-                        className={classNames(
-                          currentPath === item.href
-                            ? "bg-gray-900 text-white"
-                            : "text-gray-300 hover:bg-gray-700 hover:text-white",
-                          "rounded-md px-3 py-2 text-sm font-medium"
-                        )}
-                      >
-                        {item.name}
-                      </a>
-                    ))}
+                    {navigation.map((item) =>
+                      item.name === "Events" ? (
+                        <a
+                          key={item.name}
+                          href={item.href}
+                          className={classNames(
+                            currentPath === item.href
+                              ? "bg-gray-900 text-white"
+                              : "text-gray-300 hover:bg-gray-700 hover:text-white",
+                            "rounded-md px-3 py-2 text-sm font-medium"
+                          )}
+                        >
+                          {item.name}
+                        </a>
+                      ) : (
+                        <button
+                          key={item.name}
+                          onClick={() => {
+                            if (
+                              currentPath.includes("event") ||
+                              currentPath.includes("registrationform")
+                            ) {
+                              window.location.href = `/${academyname}`;
+                            } else {
+                              scrollToSection(item.href);
+                            }
+                          }}
+                          className={classNames(
+                            currentPath === item.href
+                              ? "bg-gray-900 text-white"
+                              : "text-gray-300 hover:bg-gray-700 hover:text-white",
+                            "rounded-md px-3 py-2 text-sm font-medium"
+                          )}
+                        >
+                          {item.name}
+                        </button>
+                      )
+                    )}
                   </div>
                 </div>
               </div>
 
               {/* Profile dropdown */}
-              <Menu as="div" className="relative ml-3">
+              <Menu
+                as="div"
+                className="relative ml-3"
+                style={{ position: "relative", zIndex: "20" }}
+              >
                 <div>
                   <MenuButton className="relative flex rounded-full bg-gray-800 text-sm">
                     <span className="absolute -inset-1.5" />
                     <span className="sr-only">Open user menu</span>
-
                     {role ? (
-                      <>
-                        <AccountCircleOutlinedIcon fontSize="large" />
-                      </>
+                      <AccountCircleOutlinedIcon fontSize="large" />
                     ) : (
-                      <>
-                        <button
-                          class="shadow-lg flex gap-2 items-center bg-white p-2  hover:shadow-xl duration-300 hover:border-2 border-gray-400 group delay-200 rounded-md focus:outline-none"
-                          style={{ color: "black", padding: "10px" }}
-                        >
-                          Login / Signup
-                        </button>
-                      </>
+                      <button
+                        className="shadow-lg flex gap-2 items-center bg-white p-2 hover:shadow-xl duration-300 hover:border-2 border-gray-400 group delay-200 rounded-md focus:outline-none"
+                        style={{ color: "black", padding: "10px" }}
+                      >
+                        Login / Signup
+                      </button>
                     )}
                   </MenuButton>
                 </div>
@@ -227,19 +235,18 @@ export default function Example() {
                       {({ focus }) => (
                         <>
                           <a
-                            onClick={handleSignOut}
-                            href="/login"
+                            // onClick={handleSignOut} 
+                            href={`${academyname}/login`}
                             className={classNames(
                               focus ? "bg-gray-100" : "",
                               "block px-4 py-2 text-sm text-gray-700"
                             )}
                           >
-                            {!username == " " ? ` Sign Out ` : ` Login`}
+                            {username ? `Sign Out` : `Login`}
                           </a>
                           {!username && (
                             <a
-                              // onClick={handleSignOut}
-                              href="/login"
+                              href={`${academyname}/registrationform`}
                               className={classNames(
                                 focus ? "bg-gray-100" : "",
                                 "block px-4 py-2 text-sm text-gray-700"
@@ -260,28 +267,52 @@ export default function Example() {
           <Disclosure.Panel className="sm:hidden">
             <div
               className="space-y-1 px-2 pb-3 pt-2"
-              style={{
-                background: "#020617",
-              }}
+              style={{ background: "#020617" }}
             >
-              {navigation.map((item) => (
-                <a
-                  key={item.name}
-                  href={item.href}
-                  className={classNames(
-                    currentPath === item.href
-                      ? "bg-gray-900 text-white"
-                      : "text-gray-300 hover:bg-gray-700 hover:text-white",
-                    "block rounded-md px-3 py-2 text-base font-medium"
-                  )}
-                >
-                  {item.name}
-                </a>
-              ))}
+              {navigation.map((item) =>
+                item.name === "Events" ? (
+                  <a
+                    key={item.name}
+                    href={item.href}
+                    className={classNames(
+                      currentPath === item.href
+                        ? "bg-gray-900 text-white"
+                        : "text-gray-300 hover:bg-gray-700 hover:text-white",
+                      "rounded-md px-3 py-2 text-sm font-medium"
+                    )}
+                  >
+                    {item.name}
+                  </a>
+                ) : (
+                  <button
+                    key={item.name}
+                    onClick={() => {
+                      if (
+                        currentPath.includes("event") ||
+                        currentPath.includes("registrationform")
+                      ) {
+                        window.location.href = `/${academyname}`;
+                      } else {
+                        scrollToSection(item.href);
+                      }
+                    }}
+                    className={classNames(
+                      currentPath === item.href
+                        ? "bg-gray-900 text-white"
+                        : "text-gray-300 hover:bg-gray-700 hover:text-white",
+                      "rounded-md px-3 py-2 text-sm font-medium"
+                    )}
+                  >
+                    {item.name}
+                  </button>
+                )
+              )}
             </div>
           </Disclosure.Panel>
         </>
       )}
     </Disclosure>
   );
-}
+};
+
+export default Example;

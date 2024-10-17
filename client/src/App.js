@@ -29,6 +29,7 @@ import Event from './component/User/Event';
 import Instrument from './component/User/Instrument';
 import Form from './component/User/Form';
 import Detailview from './component/User/Detailview';
+import UserLogin from './component/User/Login';
 
 
 
@@ -82,7 +83,7 @@ function App() {
           <Route path='/:academyname/registrationform' element={<Form />} />
           <Route path='/:academyname/instrument' element={<Instrument />} />
           <Route path='/:academyname/event/:id' element={<Detailview />} />
-
+          <Route path='/:academyname/login' element={<UserLogin />} />
           <Route path='/error' element={<Error />} />
 
         </Routes>

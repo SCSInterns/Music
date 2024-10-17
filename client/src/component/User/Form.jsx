@@ -4,6 +4,7 @@ import Avtar from "../../static/Images/Avtar.jpeg";
 import AcademyRegistration from "../Academy/AcademyRegistration";
 import ScrollAnimation from "react-animate-on-scroll";
 import { motion } from "framer-motion";
+import Footer from './Footer'
 
 function Form() {
   const academyname = sessionStorage.getItem("Academy");
@@ -42,7 +43,9 @@ function Form() {
         </div>
 
         <div style={{ height: "100px", backgroundColor: "#f5f5f5" }}></div>
-      </ScrollAnimation>
+      </ScrollAnimation> 
+
+      <Footer/>
     </>
   );
 }

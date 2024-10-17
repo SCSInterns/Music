@@ -118,7 +118,7 @@ function Detailview() {
             Event Details :
           </h1>
 
-          <div style={{ marginLeft: "20px", marginTop: "80px" , marginBottom : '100px' }}>
+          <div style={{ marginLeft: "20px", marginTop: "80px" , marginBottom : '100px' , display : 'flex' , justifyContent : 'space-evenly' }}>
             <p
               style={{
                 fontFamily: "ubuntu",

@@ -3,6 +3,7 @@ import Navbar from "./Navbar";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import Eventbanner from "../../static/Images/Event_Banner.jpeg";
+import Footer from "./Footer";
 
 function Event() {
   const academyname = sessionStorage.getItem("Academy");
@@ -98,7 +99,9 @@ function Event() {
             </div>
           ))}
         </div>
-      </div>
+      </div> 
+
+      <Footer/>
     </>
   );
 }
