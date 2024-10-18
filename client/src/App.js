@@ -30,6 +30,7 @@ import Instrument from './component/User/Instrument';
 import Form from './component/User/Form';
 import Detailview from './component/User/Detailview';
 import UserLogin from './component/User/Login';
+import SetPassword from './component/User/SetPassword';
 
 
 
@@ -84,6 +85,7 @@ function App() {
           <Route path='/:academyname/instrument' element={<Instrument />} />
           <Route path='/:academyname/event/:id' element={<Detailview />} />
           <Route path='/:academyname/login' element={<UserLogin />} />
+          <Route path='/:academyname/newaccount' element={<SetPassword />} />
           <Route path='/error' element={<Error />} />
 
         </Routes>

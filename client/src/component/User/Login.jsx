@@ -2,11 +2,29 @@ import React from "react";
 import Navbar from "../User/Navbar";
 import Footer from "./Footer";
 import { PiUserCirclePlusFill } from "react-icons/pi";
+import { useNavigate } from "react-router-dom";
+import { PiNotePencilBold } from "react-icons/pi";
+import { FaHome } from "react-icons/fa";
 
 function Login() {
+  const academyname = sessionStorage.getItem("Academy");
+  const navigate = useNavigate();
+
+  const handleclick = () => {
+    navigate(`/${academyname}/registrationform`);
+  };
+
+  const handlehome = () => {
+    navigate(`/${academyname}`);
+  };
+
+  const handlepasswordclick = () => {
+    navigate(`/${academyname}/newaccount`);
+  };
+
   return (
     <>
-      <Navbar />
+      {/* <Navbar /> */}
 
       <div className="min-h-screen bg-gray-100 py-6 flex flex-col justify-center sm:py-12">
         <div className="relative py-3 sm:max-w-xl sm:mx-auto">
@@ -15,7 +33,10 @@ function Login() {
             <div className="max-w-md mx-auto">
               <h1 className="text-2xl font-semibold">Login</h1>
               <div className="divide-y divide-gray-200">
-                <div className="py-8 text-base leading-6 space-y-4 text-gray-700 sm:text-lg sm:leading-7">
+                <div
+                  className="py-8 text-base leading-6 space-y-4 text-gray-700 sm:text-lg sm:leading-7"
+                  style={{ width: "250px" }}
+                >
                   <div className="relative">
                     <input
                       autoComplete="off"
@@ -24,6 +45,7 @@ function Login() {
                       type="text"
                       className="peer placeholder-transparent h-10 w-full border-b-2 border-gray-300 text-gray-900 focus:outline-none focus:border-rose-600"
                       placeholder="Email address"
+                      style={{ marginBottom: "20px" }}
                     />
                     <label
                       htmlFor="email"
@@ -40,6 +62,7 @@ function Login() {
                       type="password"
                       className="peer placeholder-transparent h-10 w-full border-b-2 border-gray-300 text-gray-900 focus:outline-none focus:border-rose-600"
                       placeholder="Password"
+                      style={{ marginBottom: "20px" }}
                     />
                     <label
                       htmlFor="password"
@@ -57,17 +80,57 @@ function Login() {
               </div>
             </div>
 
+            <div
+              className="w-full flex justify-center mt-6"
+              style={{ alignItems: "center" }}
+            >
+              <button
+                className="flex items-center my-2 bg-white border border-gray-300 rounded-lg shadow-md mx-2 px-4 py-2 text-sm font-medium text-gray-800 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+                onClick={() => {
+                  handlepasswordclick();
+                }}
+              >
+                <PiNotePencilBold className="mr-2" size={"24"} />
+                <span>Forgot Password</span>
+              </button>
+            </div>
+
             <div className="w-full flex justify-center mt-6">
-              <button className="flex items-center bg-white border border-gray-300 rounded-lg shadow-md px-6 py-2 text-sm font-medium text-gray-800 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
+              <button
+                className="flex items-center bg-white border border-gray-300 rounded-lg shadow-md px-6 py-2 text-sm font-medium text-gray-800 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+                onClick={() => {
+                  handleclick();
+                }}
+              >
                 <PiUserCirclePlusFill className="mr-2" size={"24"} />
                 <span>Signup</span>
+              </button>
+            </div>
+            <div className="mt-10 flex justify-center">
+              <p
+                style={{
+                  fontFamily: "ubuntu",
+                  fontSize: "15px",
+                  color: "#0c4b65",
+                  marginTop: "5px",
+                }}
+              >
+                Back to Home :{" "}
+              </p>
+              <button
+                className="bg-cyan-500 text-white rounded-md py-1 mx-2"
+                onClick={() => {
+                  handlehome();
+                }}
+              >
+                <FaHome size={24} className="mx-3" />
               </button>
             </div>
           </div>
         </div>
       </div>
 
-      <Footer />
+      {/* <Footer /> */}
     </>
   );
 }

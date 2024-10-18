@@ -18,10 +18,10 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
     cors: {
-      origin: "http://localhost:3000", 
-      methods: ["GET", "POST"],
+        origin: "http://localhost:3000",
+        methods: ["GET", "POST"],
     },
-  });
+});
 module.exports = { io };
 
 app.use(express.json());
@@ -59,6 +59,9 @@ app.use('/api/auth', media)
 
 const users = require('./routes/Userrouter')
 app.use('/api/auth', users)
+
+const userlogin = require('./routes/UserLoginr')
+app.use('/api/auth', userlogin)
 
 // Socket.IO connection
 io.on('connection', (socket) => {
