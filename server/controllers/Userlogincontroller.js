@@ -1,7 +1,9 @@
-const Userlogin = require('../models/User')
 const Form = require('../models/Form')
 const User = require('../models/User')
-
+const Mail = require('../controllers/emailc')
+const Token = require('../models/Token');
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
 
 function generateRandomPin() {
     const pin = Math.floor(1000 + Math.random() * 9000);
@@ -32,14 +34,11 @@ const setusercredentials = async (req, res) => {
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
-
-        console.log(user)
         const formData = user.additionalFields.get('formdata');
-        console.log(formData)
         const foundStudentName = formData.Name;
         const foundStatus = user.status;
 
-        const password = generateRandomPin()
+        const password = generateRandomPin().toString()
 
         if (foundStudentName !== studentname) {
             return res.status(400).json({ message: 'Student name does not match' });
@@ -51,16 +50,23 @@ const setusercredentials = async (req, res) => {
         } else if (foundStatus === 'Reject') {
             return res.status(200).json({ message: 'Status is rejected ', user });
         }
+
+        const salt = await bcrypt.genSalt(10);
+        const hashedpwd = await bcrypt.hash(password, salt);
+
         const newuser = new User({
             academyname: academyname,
             email: email,
             username: studentname,
-            password: password
+            password: hashedpwd
         })
 
         await newuser.save()
+        const mail = await Mail.welcome(email, studentname, academyname, password, role)
 
-        res.status(200).json({ msg: "Credentials setted success ", newuser })
+        if (mail) {
+            res.status(200).json({ msg: "Credentials setted and shared success ", newuser })
+        }
 
 
     } catch (error) {
@@ -69,4 +75,81 @@ const setusercredentials = async (req, res) => {
     }
 }
 
-module.exports = { setusercredentials }
+// forget password api 
+
+
+const forgetpass = async (req, res) => {
+
+    try {
+
+        const { academyname, email, role, studentname } = req.body
+
+        if (role !== "Admin") {
+            return res.status(401).json({ msg: 'Unauthorized access' })
+        }
+
+
+        const settedpwd = await User.findOne({
+            academyname: academyname,
+            email: email,
+            username: studentname
+        })
+
+        if (!settedpwd) {
+            res.status(404).json({ msg: "No password is setted " })
+        }
+
+        const newpassword = generateRandomPin().toString();
+        const salt = await bcrypt.genSalt(10);
+        const hashedpwd = await bcrypt.hash(newpassword, salt);
+        settedpwd.password = hashedpwd
+
+        const newcred = await settedpwd.save()
+        const mail = await Mail.welcome(email, studentname, academyname, newpassword, role)
+        if (mail) {
+            res.status(200).json({ msg: "Credentials resetted successfully  ", newcred })
+        }
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({ message: 'Server not supported', error });
+    }
+}
+
+
+// login of user 
+
+const loginuser = async (req, res) => {
+
+    try {
+
+        const { email, password, academyname } = req.body
+
+        const user = await User.findOne({
+            email: email, academyname: academyname
+        })
+
+        if (user) {
+            const validPassword = await bcrypt.compare(password, user.password);
+            if (validPassword) {
+
+                const accesstoken = jwt.sign(user.toJSON(), process.env.SECRET_KEY, { expiresIn: '1h' });
+                const refreshtoken = jwt.sign(user.toJSON(), process.env.REFRESH_KEY);
+                const newToken = new Token({ token: refreshtoken });
+                await newToken.save();
+                return res.status(200).json({ accesstoken, user, refreshtoken });
+            }
+            else {
+                return res.status(400).json({ msg: "Invalid Credentials " })
+            }
+        }
+        else {
+            res.status(404).json({ msg: "User not found " })
+        }
+
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({ message: 'Server not supported', error });
+    }
+}
+
+module.exports = { setusercredentials, forgetpass, loginuser }
