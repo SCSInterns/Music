@@ -5,9 +5,14 @@ import { PiUserCirclePlusFill } from "react-icons/pi";
 import { useNavigate } from "react-router-dom";
 import { PiNotePencilBold } from "react-icons/pi";
 import { FaHome } from "react-icons/fa";
+import { useState } from "react";
 
 function Login() {
+  const [email, setemail] = useState("");
+  const [password, setpassword] = useState("");
+
   const academyname = sessionStorage.getItem("Academy");
+  const nexturl = `/${academyname}/userprofile`;
   const navigate = useNavigate();
 
   const handleclick = () => {
@@ -19,7 +24,42 @@ function Login() {
   };
 
   const handlepasswordclick = () => {
-    navigate(`/${academyname}/newaccount`);
+    navigate(`/${academyname}/resetcred`);
+  };
+
+  const handleemailchange = (e) => {
+    setemail(e);
+  };
+
+  const handlepasswordchange = (e) => {
+    setpassword(e);
+  };
+
+  const handlesubmit = async () => {
+    const url = "http://localhost:5000/api/auth/userlogin";
+
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        academyname: academyname,
+        email: email,
+        password: password,
+      }),
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      sessionStorage.setItem("accesstoken", `${data.accesstoken}`);
+      sessionStorage.setItem("refreshtoken", `${data.refreshtoken}`);
+      sessionStorage.setItem("Userid", `${data.user._id}`);
+      sessionStorage.setItem("role", `User`);
+      setemail("");
+      setpassword("");
+      navigate(nexturl);
+    }
   };
 
   return (
@@ -27,7 +67,10 @@ function Login() {
       {/* <Navbar /> */}
 
       <div className="min-h-screen bg-gray-100 py-6 flex flex-col justify-center sm:py-12">
-        <div className="relative py-3 sm:max-w-xl sm:mx-auto">
+        <div
+          className="relative py-3 sm:max-w-xl sm:mx-auto"
+          style={{ width: "500px" }}
+        >
           <div className="absolute inset-0 bg-gradient-to-r from-cyan-400 to-sky-500 shadow-lg transform -skew-y-6 sm:skew-y-0 sm:-rotate-6 sm:rounded-3xl"></div>
           <div className="relative px-4 py-10 bg-white shadow-lg sm:rounded-3xl sm:p-20">
             <div className="max-w-md mx-auto">
@@ -43,9 +86,11 @@ function Login() {
                       id="email"
                       name="email"
                       type="text"
+                      value={email}
                       className="peer placeholder-transparent h-10 w-full border-b-2 border-gray-300 text-gray-900 focus:outline-none focus:border-rose-600"
                       placeholder="Email address"
-                      style={{ marginBottom: "20px" }}
+                      style={{ marginBottom: "20px", width: "300px" }}
+                      onChange={(e) => handleemailchange(e.target.value)}
                     />
                     <label
                       htmlFor="email"
@@ -60,9 +105,11 @@ function Login() {
                       id="password"
                       name="password"
                       type="password"
+                      value={password}
                       className="peer placeholder-transparent h-10 w-full border-b-2 border-gray-300 text-gray-900 focus:outline-none focus:border-rose-600"
                       placeholder="Password"
-                      style={{ marginBottom: "20px" }}
+                      style={{ marginBottom: "20px", width: "300px" }}
+                      onChange={(e) => handlepasswordchange(e.target.value)}
                     />
                     <label
                       htmlFor="password"
@@ -72,7 +119,11 @@ function Login() {
                     </label>
                   </div>
                   <div className="relative">
-                    <button className="bg-cyan-500 text-white rounded-md px-2 py-1">
+                    <button
+                      className="bg-cyan-500 text-white rounded-md px-2 py-1"
+                      onClick={handlesubmit}
+                      style={{ marginLeft: "30px" }}
+                    >
                       Submit
                     </button>
                   </div>
@@ -80,32 +131,25 @@ function Login() {
               </div>
             </div>
 
-            <div
-              className="w-full flex justify-center mt-6"
-              style={{ alignItems: "center" }}
-            >
+            {/* Flex container to keep both buttons in one row */}
+            <div className="flex justify-between mt-6">
               <button
-                className="flex items-center my-2 bg-white border border-gray-300 rounded-lg shadow-md mx-2 px-4 py-2 text-sm font-medium text-gray-800 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
-                onClick={() => {
-                  handlepasswordclick();
-                }}
+                className="flex items-center my-2 bg-white border border-gray-300 rounded-lg shadow-md px-6 py-2 text-sm font-medium text-gray-800 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+                onClick={handlepasswordclick}
               >
-                <PiNotePencilBold className="mr-2" size={"24"} />
+                <PiNotePencilBold className="mr-2" size={24} />
                 <span>Forgot Password</span>
               </button>
-            </div>
 
-            <div className="w-full flex justify-center mt-6">
               <button
-                className="flex items-center bg-white border border-gray-300 rounded-lg shadow-md px-6 py-2 text-sm font-medium text-gray-800 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
-                onClick={() => {
-                  handleclick();
-                }}
+                className="flex items-center my-2 bg-white border border-gray-300 rounded-lg shadow-md px-6 py-2 text-sm font-medium text-gray-800 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+                onClick={handleclick}
               >
-                <PiUserCirclePlusFill className="mr-2" size={"24"} />
+                <PiUserCirclePlusFill className="mr-2" size={24} />
                 <span>Signup</span>
               </button>
             </div>
+
             <div className="mt-10 flex justify-center">
               <p
                 style={{
@@ -119,9 +163,7 @@ function Login() {
               </p>
               <button
                 className="bg-cyan-500 text-white rounded-md py-1 mx-2"
-                onClick={() => {
-                  handlehome();
-                }}
+                onClick={handlehome}
               >
                 <FaHome size={24} className="mx-3" />
               </button>

@@ -147,7 +147,7 @@ const ApplicantsTable = ({ users }) => {
     }
   };
 
-  console.log(users)
+  console.log(users);
 
   const handleinstallmentsubmition = async (id) => {
     if (paymentdetails.enrollmentDate === "NaN-NaN-NaN") {
@@ -235,6 +235,7 @@ const ApplicantsTable = ({ users }) => {
 
       if (response.ok) {
         const responseData = await response.json();
+        console.log(responseData);
         setexpirydate((prev) => ({
           ...prev,
           [id]: responseData[0].daysleft,
@@ -259,6 +260,35 @@ const ApplicantsTable = ({ users }) => {
       }
     });
   }, [users]);
+
+  const sendcredentialsemail = async (
+    academyname,
+    email,
+    role,
+    studentname
+  ) => {
+    console.log(academyname, email, role, studentname);
+    const url = "http://localhost:5000/api/auth/setcredentials";
+    const token = Token();
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        Authorization: `${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        role: role,
+        academyname: academyname,
+        email: email,
+        studentname: studentname,
+      }),
+    });
+
+    console.log(response);
+    if (response.ok) {
+      toast.success("Credentials setted successfully");
+    }
+  };
 
   const handlePreview = async (id) => {
     const url = `http://localhost:5000/api/auth/getdatabyid/${id}`;
@@ -343,6 +373,15 @@ const ApplicantsTable = ({ users }) => {
     });
 
     if (response.ok) {
+      if (status === "Accept") {
+        await sendcredentialsemail(
+          academyname,
+          data.additionalFields.formdata?.Email,
+          "Admin",
+          data.additionalFields.formdata?.Name
+        );
+      }
+
       toast.success("Status updated successfully");
       await handleinstallment(id);
       handlePreview(id);
@@ -361,7 +400,12 @@ const ApplicantsTable = ({ users }) => {
     <>
       <TableContainer
         component={Paper}
-        sx={{ width: "90%", margin: "auto", marginTop: "100px" , marginBottom : '50px'}}
+        sx={{
+          width: "90%",
+          margin: "auto",
+          marginTop: "100px",
+          marginBottom: "50px",
+        }}
       >
         {hasUsers ? (
           <Table>
