@@ -63,6 +63,9 @@ app.use('/api/auth', users)
 const userlogin = require('./routes/UserLoginr')
 app.use('/api/auth', userlogin)
 
+const userprofile = require('./routes/Profiler')
+app.use('/api/auth', userprofile)
+
 // Socket.IO connection
 io.on('connection', (socket) => {
     console.log('Admin connected:', socket.id);

@@ -82,7 +82,7 @@ const forgetpass = async (req, res) => {
 
     try {
 
-        const { academyname, email, role, studentname } = req.body
+        const { academyname, email, role, password } = req.body
 
         if (role !== "Admin") {
             return res.status(401).json({ msg: 'Unauthorized access' })
@@ -92,20 +92,20 @@ const forgetpass = async (req, res) => {
         const settedpwd = await User.findOne({
             academyname: academyname,
             email: email,
-            username: studentname
         })
 
         if (!settedpwd) {
             res.status(404).json({ msg: "No password is setted " })
         }
-
-        const newpassword = generateRandomPin().toString();
+        const studentname = settedpwd.username
+        // const newpassword = generateRandomPin().toString(); 
+        const newpassword = password
         const salt = await bcrypt.genSalt(10);
         const hashedpwd = await bcrypt.hash(newpassword, salt);
         settedpwd.password = hashedpwd
 
         const newcred = await settedpwd.save()
-        const mail = await Mail.welcome(email, studentname, academyname, newpassword, role)
+        const mail = await Mail.welcome(email, studentname, academyname, newpassword, role) 
         if (mail) {
             res.status(200).json({ msg: "Credentials resetted successfully  ", newcred })
         }
