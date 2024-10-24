@@ -1,6 +1,9 @@
 const Form = require("../models/Form")
 const User = require("../models/User")
 
+
+// basic info 
+
 const profilecontroller = async (req, res) => {
 
     const { studentid, academyname } = req.body
@@ -10,11 +13,11 @@ const profilecontroller = async (req, res) => {
         const user = await User.find({ _id: studentid, academyname: academyname })
 
         if (user) {
-
-            const email = user.email
-
-            const details = await Form.find({ academy_name: academyname, "additionalFields.formdata.Email": email })
-
+            const email = user[0].email
+            if (!email) {
+                return res.status(404).json({ msg: "Email not found " })
+            }
+            const details = await Form.findOne({ academy_name: academyname, "additionalFields.formdata.Email": email })
             if (details) {
                 return res.status(200).json(details)
             }
@@ -24,9 +27,6 @@ const profilecontroller = async (req, res) => {
         } else {
             return res.status(404).json({ msg: "No user profile found " })
         }
-
-
-
     } catch (error) {
         res.status(500).json({ message: 'Server not supported', error });
     }

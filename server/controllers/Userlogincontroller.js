@@ -105,7 +105,7 @@ const forgetpass = async (req, res) => {
         settedpwd.password = hashedpwd
 
         const newcred = await settedpwd.save()
-        const mail = await Mail.welcome(email, studentname, academyname, newpassword, role) 
+        const mail = await Mail.welcome(email, studentname, academyname, newpassword, role)
         if (mail) {
             res.status(200).json({ msg: "Credentials resetted successfully  ", newcred })
         }
@@ -131,8 +131,7 @@ const loginuser = async (req, res) => {
         if (user) {
             const validPassword = await bcrypt.compare(password, user.password);
             if (validPassword) {
-
-                const accesstoken = jwt.sign(user.toJSON(), process.env.SECRET_KEY, { expiresIn: '1h' });
+                const accesstoken = jwt.sign(user.toJSON(), process.env.SECRET_KEY, { expiresIn: '4h' });
                 const refreshtoken = jwt.sign(user.toJSON(), process.env.REFRESH_KEY);
                 const newToken = new Token({ token: refreshtoken });
                 await newToken.save();
