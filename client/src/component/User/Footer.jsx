@@ -88,9 +88,6 @@ export default function Footer() {
     }
   }, [academyname]);
 
-  console.log(details);
-  console.log(fulladdress);
-  console.log(sociallinks);
 
   return (
     <div

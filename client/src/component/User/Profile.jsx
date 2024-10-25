@@ -12,15 +12,50 @@ import Navbar from "./Navbar";
 import Footer from "./Footer";
 import Token from "../Token/Token";
 import Cover from "../../static/Images/Profilecover.jpeg";
+import Paymnettable from "./Paymnettable";
+import ProfileAbout from "./ProfileAbout";
+import { Fab } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import SupportAgentIcon from "@mui/icons-material/SupportAgent";
 
 function Profile() {
-  const token = Token();
+  const [sociallinks, setsociallinks] = useState("");
   const academyname = sessionStorage.getItem("Academy");
+
+  const getsociallinks = async () => {
+    const url = "http://localhost:5000/api/auth/getsociallinks";
+
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        academyname: academyname,
+      }),
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      setsociallinks(data[0]);
+    }
+  };
+
+  console.log(sociallinks);
+
+  useEffect(() => {
+    getsociallinks();
+  }, [academyname]);
+
+  const token = Token();
+  const navigate = useNavigate();
   const id = sessionStorage.getItem("Userid");
+
+  const [togglepayment, settogglepayment] = useState(false);
+  const [toggleabout, settoggleabout] = useState(true);
 
   const [data, setData] = useState({});
   const [paymnetdata, setpaymnetdata] = useState({});
-
   const [profilename, setprofilename] = useState("");
 
   function extractFirstLetter(fullName) {
@@ -57,9 +92,6 @@ function Profile() {
     }
   };
 
-  console.log(data._id);
-  console.log(paymnetdata);
-
   const paymentinfo = async (id, name, role, academyname) => {
     const url = "http://localhost:5000/api/auth/getinfoinstallment";
 
@@ -87,8 +119,6 @@ function Profile() {
     fetchProfile();
   }, []);
 
-  console.log(data._id);
-
   useEffect(() => {
     if (data && data._id) {
       paymentinfo(
@@ -100,8 +130,6 @@ function Profile() {
     }
   }, [data]);
 
-  console.log("paymnet info : ", paymnetdata);
-
   if (loading) {
     return (
       <div className="flex justify-center items-center h-screen">
@@ -109,6 +137,16 @@ function Profile() {
       </div>
     );
   }
+
+  const handletoggleabout = () => {
+    settoggleabout(true);
+    settogglepayment(false);
+  };
+
+  const handlepaymenttoggle = () => {
+    settoggleabout(false);
+    settogglepayment(true);
+  };
 
   return (
     <>
@@ -142,131 +180,81 @@ function Profile() {
               {profilename}
             </Avatar>
           </Box>
-          <CardContent className="text-center">
-            <div style={{ marginTop: "-40px" }}>
-              <Typography
-                variant="h4"
-                className="font-bold mb-2"
-                sx={{ fontFamily: "ubuntu" }}
-              >
-                {data.additionalFields.formdata?.Name || "N/A"}
-              </Typography>
-              <Typography
-                variant="h6"
-                className="text-gray-500 mb-4 py-2"
-                sx={{ fontFamily: "ubuntu" }}
-              >
-                {data.role || "User"}
-              </Typography>
-            </div>
 
-            {/* Profile Info Grid */}
-            <Grid
-              container
-              spacing={4}
-              className="mt-8"
-              sx={{ marginTop: "50px" }}
+          <div style={{ marginTop: "-70px" }}>
+            <Typography
+              variant="h4"
+              className="font-bold mb-2"
+              sx={{ fontFamily: "ubuntu" }}
             >
-              <Grid item xs={12} sm={6}>
-                <Typography
-                  variant="h6"
-                  className="font-semibold"
-                  sx={{ fontFamily: "ubuntu" }}
-                >
-                  Email:
-                </Typography>
-                <Typography variant="body1" className="mb-4">
-                  {data.additionalFields.formdata?.Email || "N/A"}
-                </Typography>
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <Typography
-                  variant="h6"
-                  className="font-semibold"
-                  sx={{ fontFamily: "ubuntu" }}
-                >
-                  Mobile No:
-                </Typography>
-                <Typography variant="body1" className="mb-4">
-                  {data.additionalFields.formdata?.MobileNo || "N/A"}
-                </Typography>
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <Typography
-                  variant="h6"
-                  className="font-semibold"
-                  sx={{ fontFamily: "ubuntu" }}
-                >
-                  Academy Name:
-                </Typography>
-                <Typography variant="body1" className="mb-4">
-                  {data.academy_name || "N/A"}
-                </Typography>
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <Typography
-                  variant="h6"
-                  className="font-semibold"
-                  sx={{ fontFamily: "ubuntu" }}
-                >
-                  Course:
-                </Typography>
-                <Typography variant="body1" className="mb-4">
-                  {data.additionalFields.formdata?.Courses || "N/A"}
-                </Typography>
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <Typography
-                  variant="h6"
-                  className="font-semibold"
-                  sx={{ fontFamily: "ubuntu" }}
-                >
-                  Fees:
-                </Typography>
-                <Typography variant="body1" className="mb-4">
-                  {data.additionalFields?.fees || "N/A"}
-                </Typography>
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <Typography
-                  variant="h6"
-                  className="font-semibold"
-                  sx={{ fontFamily: "ubuntu" }}
-                >
-                  Installment Date:
-                </Typography>
-                <Typography variant="body1" className="mb-4">
-                  {data.installementDate || "N/A"}
-                </Typography>
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <Typography
-                  variant="h6"
-                  className="font-semibold"
-                  sx={{ fontFamily: "ubuntu" }}
-                >
-                  Gender:
-                </Typography>
-                <Typography variant="body1" className="mb-4">
-                  {data.additionalFields.formdata?.Gender || "N/A"}
-                </Typography>
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <Typography
-                  variant="h6"
-                  className="font-semibold"
-                  sx={{ fontFamily: "ubuntu" }}
-                >
-                  Status:
-                </Typography>
-                <Typography variant="body1" className="mb-4">
-                  {data.status || "N/A"}
-                </Typography>
-              </Grid>
-            </Grid>
-          </CardContent>
+              {data.additionalFields.formdata?.Name || "N/A"}
+            </Typography>
+            <Typography
+              variant="h6"
+              className="text-gray-500 mb-4 py-2"
+              sx={{ fontFamily: "ubuntu" }}
+            >
+              {data.role || "User"}
+            </Typography>
+          </div>
+
+          <div
+            style={{
+              backgroundColor: "#f9fafb",
+              padding: "10px",
+              display: "flex",
+              marginTop: "20px",
+            }}
+          >
+            <Button
+              style={{
+                backgroundColor: toggleabout ? "#9C27B0" : "transparent",
+                color: toggleabout ? "#fff" : "#000",
+                border: "1px solid #ccc",
+              }}
+              onClick={() => handletoggleabout()}
+            >
+              Account Info
+            </Button>
+            <Button
+              style={{
+                marginLeft: "10px",
+                backgroundColor: togglepayment ? "#9C27B0" : "transparent",
+                color: togglepayment ? "#fff" : "#000",
+                border: "1px solid #ccc",
+              }}
+              onClick={() => handlepaymenttoggle()}
+            >
+              Payment Info
+            </Button>
+          </div>
+
+          {toggleabout && <ProfileAbout data={data} />}
+
+          {togglepayment && <Paymnettable info={paymnetdata} />}
         </Card>
       </Box>
+
+      <a href={`${sociallinks.whatsapp}`} target="blank">
+        <Fab
+          color="primary"
+          size="small"
+          aria-label="support"
+          sx={{
+            position: "fixed",
+            bottom: 20,
+            padding: "5px",
+            right: 20,
+            backgroundColor: "#9C27B0",
+            "&:hover": {
+              backgroundColor: "#7B1FA2",
+            },
+          }}
+        >
+          <SupportAgentIcon />
+        </Fab>
+      </a>
+
       <Footer />
     </>
   );
