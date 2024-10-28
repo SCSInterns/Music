@@ -66,6 +66,9 @@ app.use('/api/auth', userlogin)
 const userprofile = require('./routes/Profiler')
 app.use('/api/auth', userprofile)
 
+const batches = require('./routes/Batchesrouter')
+app.use('/api/auth', batches)
+
 // Socket.IO connection
 io.on('connection', (socket) => {
     console.log('Admin connected:', socket.id);
