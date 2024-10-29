@@ -5,15 +5,26 @@ const SpecificBatch = require("../models/SpecificBatch")
 
 const addbtachescount = async (req, res) => {
     try {
-        const { academyname, role, batchescount, studentscount } = req.body
+        const { academyname, role, batchescount, studentscount, classescount, instrumentperclass, typeofins, duration, startime, endtime } = req.body
 
         if (role === "Admin") {
 
             const existing = await Batches.findOne({ academyname: academyname })
 
             if (existing) {
-                existing.no_of_batches = batchescount
+
+                const maximumcount = batchescount * classescount * studentscount
+
+                existing.no_of_batches_per_day = batchescount
                 existing.max_no_of_students_per_batch = studentscount
+                existing.no_of_classes = classescount
+                existing.no_of_instruments_per_class = instrumentperclass
+                existing.instrument_types = typeofins
+                existing.academy_start_time = startime
+                existing.academy_end_time = endtime
+                existing.duration = duration
+                existing.max_no_of_students_per_day = maximumcount
+
 
                 const data = await existing.save()
 
@@ -26,10 +37,20 @@ const addbtachescount = async (req, res) => {
             }
             else {
 
+                const maximumcount = batchescount * classescount * studentscount
+
                 const response = await new Batches({
                     academyname: academyname,
-                    no_of_batches: batchescount,
-                    max_no_of_students_per_batch: studentscount
+                    no_of_batches_per_day: batchescount,
+                    max_no_of_students_per_batch: studentscount,
+                    no_of_classes: classescount,
+                    duration: duration,
+                    no_of_instruments_per_class: instrumentperclass,
+                    instrument_types: typeofins,
+                    max_no_of_students_per_day: maximumcount,
+                    academy_start_time: startime,
+                    academy_end_time: endtime
+
                 })
 
                 if (response) {

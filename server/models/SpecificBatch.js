@@ -6,12 +6,12 @@ const ParticularBatch = new Schema({
         type: String,
         required: true,
     },
-    instrument : 
-    { 
-        type: String,
+    noofstudents:
+    {
+        type: Number,
         required: true,
     },
-    noofstudents:
+    max_noofstudents:
     {
         type: Number,
         required: true,
