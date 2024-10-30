@@ -10,11 +10,7 @@ const ParticularBatch = new Schema({
     {
         type: Number,
         required: true,
-    },
-    max_noofstudents:
-    {
-        type: Number,
-        required: true,
+        default: 0
     },
     batchname:
     {
@@ -31,12 +27,32 @@ const ParticularBatch = new Schema({
     {
         type: String,
         required: true,
+        validate: {
+            validator: function (endTime) {
+                const [startHours, startMinutes] = this.starttime.split(':').map(Number);
+                const [endHours, endMinutes] = endTime.split(':').map(Number);
+                return (endHours > startHours) || (endHours === startHours && endMinutes > startMinutes);
+            },
+            message: "End time must be later than start time."
+        }
     },
     days:
     {
-        type: [String], 
+        type: [String],
         required: true
-    }
+    },
+    batchtype:
+    {
+        type: String,
+        required: true
+    },
+    instrument_types: [
+        {
+            type: { type: String, required: true },
+            quantity: { type: Number, required: true },
+            currentstudentcount: { type: Number, default: 0 },
+        }
+    ]
 
 });
 

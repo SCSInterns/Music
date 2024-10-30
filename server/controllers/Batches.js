@@ -1,145 +1,199 @@
-const Batches = require("../models/Batch")
-const SpecificBatch = require("../models/SpecificBatch")
+const Batches = require("../models/Batch");
+const SpecificBatch = require("../models/SpecificBatch");
 
-// starting - no of batches count addition 
 
-const addbtachescount = async (req, res) => {
+// Function to calculate time difference
+function calculateTimeDifference(startTime, endTime) {
+    const [startHours, startMinutes] = startTime.split(":").map(Number);
+    const [endHours, endMinutes] = endTime.split(":").map(Number);
+
+    const startDate = new Date();
+    startDate.setHours(startHours, startMinutes, 0);
+
+    const endDate = new Date();
+    endDate.setHours(endHours, endMinutes, 0);
+
+    let timeDiff = endDate - startDate;
+    if (timeDiff < 0) {
+        endDate.setDate(endDate.getDate() + 1);
+        timeDiff = endDate - startDate;
+    }
+
+    return timeDiff / (1000 * 60 * 60);
+}
+
+const addBatchesCount = async (req, res) => {
     try {
-        const { academyname, role, batchescount, studentscount, classescount, instrumentperclass, typeofins, duration, startime, endtime } = req.body
+        const {
+            academyname,
+            role,
+            batchescount,
+            studentscount,
+            classescount,
+            instrumentperclass,
+            typeofins,
+            duration,
+            startime,
+            endtime
+        } = req.body;
 
-        if (role === "Admin") {
+        if (role !== "Admin") {
+            return res.status(401).json({ msg: "Unauthorized Access" });
+        }
 
-            const existing = await Batches.findOne({ academyname: academyname })
+        const timeDiff = calculateTimeDifference(startime, endtime);
+        const maximumNoOfBatches = Math.floor(timeDiff / duration);
 
-            if (existing) {
+        if (batchescount > maximumNoOfBatches) {
+            return res.status(404).json({
+                msg: `The maximum number of batches that can be allocated is ${maximumNoOfBatches} according to your academy timing`
+            });
+        }
+        const existingBatch = await Batches.findOne({ academyname });
 
-                const maximumcount = batchescount * classescount * studentscount
+        const maximumCount = batchescount * classescount * studentscount;
 
-                existing.no_of_batches_per_day = batchescount
-                existing.max_no_of_students_per_batch = studentscount
-                existing.no_of_classes = classescount
-                existing.no_of_instruments_per_class = instrumentperclass
-                existing.instrument_types = typeofins
-                existing.academy_start_time = startime
-                existing.academy_end_time = endtime
-                existing.duration = duration
-                existing.max_no_of_students_per_day = maximumcount
+        if (existingBatch) {
+            existingBatch.no_of_batches_per_day = batchescount;
+            existingBatch.max_no_of_students_per_batch = studentscount;
+            existingBatch.no_of_classes = classescount;
+            existingBatch.duration = duration;
+            existingBatch.no_of_instruments_per_class = instrumentperclass;
+            existingBatch.instrument_types = typeofins;
+            existingBatch.academy_start_time = startime;
+            existingBatch.academy_end_time = endtime;
+            existingBatch.max_no_of_students_per_day = maximumCount;
 
+            const updatedBatch = await existingBatch.save();
 
-                const data = await existing.save()
+            await updateBatchSpecs(updatedBatch, batchescount);
 
-                if (data) {
-                    res.status(200).json({ msg: "Batches details updated success", data })
-                }
-                else {
-                    res.status(404).json("Error saving Details")
-                }
-            }
-            else {
-
-                const maximumcount = batchescount * classescount * studentscount
-
-                const response = await new Batches({
-                    academyname: academyname,
-                    no_of_batches_per_day: batchescount,
-                    max_no_of_students_per_batch: studentscount,
-                    no_of_classes: classescount,
-                    duration: duration,
-                    no_of_instruments_per_class: instrumentperclass,
-                    instrument_types: typeofins,
-                    max_no_of_students_per_day: maximumcount,
-                    academy_start_time: startime,
-                    academy_end_time: endtime
-
-                })
-
-                if (response) {
-
-                    const data = await response.save()
-                    res.status(200).json({ msg: "Batched Info Inserted Success", data })
-                }
-                else {
-                    res.status(404).json({ msg: "Batched Info Insertion Failed" })
-                }
-            }
+            return res.status(200).json({ msg: "Batches details updated successfully", data: updatedBatch });
         } else {
-            res.status(401).json({ msg: "Unauthorized Access" })
-        }
+            const newBatch = new Batches({
+                academyname,
+                no_of_batches_per_day: batchescount,
+                max_no_of_students_per_batch: studentscount,
+                no_of_classes: classescount,
+                duration,
+                no_of_instruments_per_class: instrumentperclass,
+                instrument_types: typeofins,
+                max_no_of_students_per_day: maximumCount,
+                academy_start_time: startime,
+                academy_end_time: endtime
+            });
 
+            const savedBatch = await newBatch.save();
+            await addBatchSpecs(savedBatch);
+
+            return res.status(200).json({ msg: "Batches Info Inserted Successfully", data: savedBatch });
+        }
     } catch (error) {
-        res.status(500).json({ message: 'Server not supported', error });
+        console.error(error);
+        return res.status(500).json({ message: 'Server error', error: error.message });
     }
 }
 
-const addbatchesspecs = async (req, res) => {
+
+// Helper function to create batch specs based on the main batch details  
+
+const addBatchSpecs = async (mainBatch) => {
+    const { academyname, no_of_batches_per_day, no_of_classes, instrument_types } = mainBatch;
+
+    for (let i = 1; i <= no_of_batches_per_day; i++) {
+        for (let j = 1; j <= no_of_classes; j++) {
+            const batchSpec = new SpecificBatch({
+                academyname,
+                batchname: `${academyname}-Batch${i}-Class${j}`,
+                starttime: mainBatch.academy_start_time,
+                endtime: mainBatch.academy_end_time,
+                days: ["Monday", "Wednesday", "Friday"],
+                batchtype: "Default",
+                noofstudents: 0,
+                instrument_types: instrument_types.map(ins => ({
+                    type: ins.type,
+                    quantity: ins.quantity,
+                    currentstudentcount: 0
+                }))
+            });
+            await batchSpec.save();
+        }
+    }
+};
+
+
+// Helper function to update batch specs based on the new batch count
+const updateBatchSpecs = async (mainBatch, newBatchesCount) => {
+    const { academyname, no_of_classes } = mainBatch;
+    const existingSpecs = await SpecificBatch.find({ academyname });
+    const neededSpecsCount = newBatchesCount * no_of_classes;
+
+    if (existingSpecs.length > neededSpecsCount) {
+        const specsToDelete = existingSpecs.slice(neededSpecsCount);
+        await SpecificBatch.deleteMany({ _id: { $in: specsToDelete.map(spec => spec._id) } });
+    }
+
+    if (existingSpecs.length < neededSpecsCount) {
+        const existingBatchNumbers = new Set(existingSpecs.map(spec => parseInt(spec.batchname.split('-Batch')[1].split('-Class')[0])));
+
+        let batchCounter = 1;
+        let classCounter = 1;
+
+        while (existingSpecs.length < neededSpecsCount) {
+            const batchName = `${academyname}-Batch${batchCounter}-Class${classCounter}`;
+            const specExists = existingSpecs.some(spec => spec.batchname === batchName);
+
+            if (!specExists) {
+                const batchSpec = new SpecificBatch({
+                    academyname,
+                    batchname: batchName,
+                    starttime: mainBatch.academy_start_time,
+                    endtime: mainBatch.academy_end_time,
+                    days: ["Monday", "Wednesday", "Friday"],
+                    batchtype: "Default",
+                    noofstudents: 0,
+                    instrument_types: mainBatch.instrument_types.map(ins => ({
+                        type: ins.type,
+                        quantity: ins.quantity,
+                        currentstudentcount: 0
+                    }))
+                });
+
+                await batchSpec.save();
+                existingSpecs.push(batchSpec);
+            }
+
+            classCounter++;
+            if (classCounter > no_of_classes) {
+                classCounter = 1;
+                batchCounter++;
+            }
+        }
+    }
+};
+
+
+// put api function to update the details  
+
+const updatedetailsofbatch = async () => {
 
     try {
 
-        const { academyname, role, noofstudents, batchname, starttime, endtime, days } = req.body
+        const { role, days, startime, endtime, id } = req.body
 
         if (role === "Admin") {
-            const available = await Batches.findOne({ academyname: academyname }
-            )
 
-            const existingbatch = await SpecificBatch.findOne({
-                batchname: batchname
-            })
+            const batchdetails = SpecificBatch.find({})
 
-            if (existingbatch) {
-                return res.status(404).json({ msg: "Btach name already exist " })
-            }
-
-            if (available) {
-                const availablecount = available.no_of_batches - available.currentbatchcount
-
-                if (availablecount === 0) {
-                    res.status(404).json({ msg: " No batches are available . Please increase your batches" })
-                }
-                else {
-
-                    if (available.max_no_of_students_per_batch < noofstudents) {
-                        return res.status(404).json({ msg: "No of students are more than allowed " })
-                    }
-
-                    const newbatch = await new SpecificBatch({
-                        academyname: academyname,
-                        noofstudents: noofstudents,
-                        batchname: batchname,
-                        starttime: starttime,
-                        endtime: endtime,
-                        days: days
-                    })
-
-                    const data = await newbatch.save()
-
-                    if (data) {
-
-                        available.currentbatchcount =
-                            available.currentbatchcount + 1
-
-                        await available.save()
-
-                        res.status(200).json({ msg: "New Batch Created Successfuly ", data })
-
-                    }
-                }
-            }
-            else {
-                res.status(404).json({ msg: "Please add main info first " })
-            }
-        }
-        else {
-            res.status(401).json({ msg: "Unauthorized Access" })
+        } else {
+            return res.status(401).json({ msg: "Unauthorized Access" })
         }
 
     } catch (error) {
-        res.status(500).json({ message: 'Server not supported', error });
+        console.error(error);
+        return res.status(500).json({ message: 'Server error', error: error.message });
     }
 }
 
 
-
-
-
-
-module.exports = { addbtachescount, addbatchesspecs }
+module.exports = { addBatchesCount, addBatchSpecs };
