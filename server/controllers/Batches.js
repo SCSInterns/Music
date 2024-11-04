@@ -1,3 +1,4 @@
+const Batch = require("../models/Batch");
 const Batches = require("../models/Batch");
 const SpecificBatch = require("../models/SpecificBatch");
 
@@ -107,7 +108,7 @@ const addBatchSpecs = async (mainBatch) => {
                 batchname: `${academyname}-Batch${i}-Class${j}`,
                 starttime: mainBatch.academy_start_time,
                 endtime: mainBatch.academy_end_time,
-                days: ["Monday", "Wednesday", "Friday"],
+                days: ["Default"],
                 batchtype: "Default",
                 noofstudents: 0,
                 instrument_types: instrument_types.map(ins => ({
@@ -173,27 +174,115 @@ const updateBatchSpecs = async (mainBatch, newBatchesCount) => {
 };
 
 
-// put api function to update the details  
+// put api function to update the details    
 
-const updatedetailsofbatch = async () => {
-
+const updatedetailsofbatch = async (req, res) => {
     try {
+        const { role, days, startime, endtime, id, batchcoustomname, academynameinput } = req.body;
 
-        const { role, days, startime, endtime, id } = req.body
+        if (role !== "Admin") {
+            return res.status(401).json({ msg: "Unauthorized Access" });
+        }
+
+        const batchdetails = await SpecificBatch.findById(id);
+        const mainbatchdata = await Batch.findOne({ academyname: academynameinput });
+        const alldetails = await SpecificBatch.find({ academyname: academynameinput });
+
+        if (!batchdetails || !mainbatchdata) {
+            return res.status(404).json({ msg: "Batch or academy data not found" });
+        }
+
+        const maxClassesPerTimeSlot = mainbatchdata.no_of_classes;
+        const academyStartTime = mainbatchdata.academy_start_time;
+        const academyEndTime = mainbatchdata.academy_end_time;
+        const customBatchName = `${academynameinput}-${batchcoustomname}`;
+        const [academyStartHours, academyStartMinutes] = academyStartTime.split(':').map(Number);
+        const [academyEndHours, academyEndMinutes] = academyEndTime.split(':').map(Number);
+        const academyStartInMinutes = academyStartHours * 60 + academyStartMinutes;
+        const academyEndInMinutes = academyEndHours * 60 + academyEndMinutes;
+
+        const [inputStartHours, inputStartMinutes] = startime.split(':').map(Number);
+        const [inputEndHours, inputEndMinutes] = endtime.split(':').map(Number);
+        const batchStartInMinutes = inputStartHours * 60 + inputStartMinutes;
+        const batchEndInMinutes = inputEndHours * 60 + inputEndMinutes;
+        if (batchStartInMinutes < academyStartInMinutes || batchEndInMinutes > academyEndInMinutes) {
+            return res.status(400).json({ msg: "Batch time must be within academy operating hours." });
+        }
+
+        const overlappingBatches = alldetails.filter(batch => {
+
+            if (batch.starttime === mainbatchdata.academy_start_time || batch.endtime === mainbatchdata.academy_end_time) {
+                return false;
+            }
+            return batch.days.some(day => days.includes(day));
+        }
+        );
+
+        let sameTimeCount = 0;
+
+        for (const batch of overlappingBatches) {
+            const [batchStartHours, batchStartMinutes] = batch.starttime.split(':').map(Number);
+            const [batchEndHours, batchEndMinutes] = batch.endtime.split(':').map(Number);
+            const batchStart = batchStartHours * 60 + batchStartMinutes;
+            const batchEnd = batchEndHours * 60 + batchEndMinutes;
+
+            if (
+                (batchStart < batchEndInMinutes && batchEnd > batchStartInMinutes) ||
+                (batchStart === batchStartInMinutes && batchEnd === batchEndInMinutes)
+            ) {
+                sameTimeCount += 1;
+
+                if (sameTimeCount >= maxClassesPerTimeSlot) {
+                    return res.status(400).json({ msg: "Batch timing conflicts with existing batch(es)" });
+                }
+            }
+        }
+
+        batchdetails.starttime = startime;
+        batchdetails.endtime = endtime;
+        batchdetails.days = days;
+        batchdetails.batchtype = customBatchName;
+
+        const updatedDetails = await batchdetails.save();
+
+        if (updatedDetails) {
+            return res.status(200).json({ msg: "Batch details updated successfully", data: updatedDetails });
+        } else {
+            return res.status(500).json({ msg: "Failed to update batch details" });
+        }
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: "Server error", error: error.message });
+    }
+};
+
+
+// get all details of particular ba{tches  
+
+const getallbatches = async (req, res) => {
+    try {
+        const { academyname, role } = req.body
 
         if (role === "Admin") {
+            const details = await SpecificBatch.find({ academyname: academyname })
 
-            const batchdetails = SpecificBatch.find({})
-
-        } else {
-            return res.status(401).json({ msg: "Unauthorized Access" })
+            if (details) {
+                res.status(200).json(details)
+            }
+            else {
+                res.status(404).json({ msg: "Details Not Found " })
+            }
+        }
+        else {
+            res.status(401).json({ msg: "Unauthorized Access" })
         }
 
     } catch (error) {
         console.error(error);
-        return res.status(500).json({ message: 'Server error', error: error.message });
+        return res.status(500).json({ message: "Server error", error: error.message });
     }
 }
 
 
-module.exports = { addBatchesCount, addBatchSpecs };
+
+module.exports = { addBatchesCount, addBatchSpecs, updatedetailsofbatch , getallbatches};

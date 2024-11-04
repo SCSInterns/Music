@@ -44,7 +44,7 @@ const ParticularBatch = new Schema({
     batchtype:
     {
         type: String,
-        required: true
+        required: true,
     },
     instrument_types: [
         {

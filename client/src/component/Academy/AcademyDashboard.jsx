@@ -33,6 +33,8 @@ import Events from "../Academy Features/Events";
 import Instruments from "../Academy Features/Instruments";
 import SocialLinks from "../Academy Features/SocialLinks";
 import Aboutus from "../Academy Features/Aboutus";
+import BatchManagement from "./BatchManagement";
+import Batchmenu from "./Batchmenu";
 
 function AcademyDashboard() {
   const socket = React.useRef(null);
@@ -76,6 +78,9 @@ function AcademyDashboard() {
 
   const [contentmenu, setcontentmenu] = useState(false);
   const [formmenu, setformmenu] = useState(false);
+
+  const [batchmenu, setbatchmenu] = useState(false);
+  const [batchmenustyle, setbatchmenustyle] = useState(false);
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -150,6 +155,8 @@ function AcademyDashboard() {
     setinstrumentstyle(false);
     setsocial(false);
     setsocialstyle(false);
+    setbatchmenustyle(false);
+    setbatchmenu(false);
     setTimeout(() => {
       setloading(false);
     }, 2000);
@@ -184,6 +191,8 @@ function AcademyDashboard() {
     setinstrumentstyle(false);
     setsocial(false);
     setsocialstyle(false);
+    setbatchmenustyle(false);
+    setbatchmenu(false);
     setTimeout(() => {
       setloading(false);
     }, 2000);
@@ -211,8 +220,39 @@ function AcademyDashboard() {
     setinstrumentstyle(false);
     setsocial(false);
     setsocialstyle(false);
+    setbatchmenustyle(false);
+    setbatchmenu(false);
     setTimeout(() => {
       setdefaulttoggle(true);
+      setloading(false);
+    }, 2000);
+  };
+
+  const handlebatchclick = () => {
+    setloading(true);
+    setdisplayregform(false);
+    setregstyle(false);
+    setappdata(false);
+    setdefaultstyle(false);
+    setdispalymedia(false);
+    setstyle(false);
+    setdefaultstyle(false);
+    setmediastyle(false);
+    setpendingfeesstyle(false);
+    setdefaulttoggle(false);
+    settogglepaymentdue(false);
+    settoggleapplicants(false);
+    setevent(false);
+    seteventstyle(false);
+    setabout(false);
+    setaboutstyle(false);
+    setinstrument(false);
+    setinstrumentstyle(false);
+    setsocial(false);
+    setsocialstyle(false);
+    setbatchmenustyle(true);
+    setTimeout(() => {
+      setbatchmenu(true);
       setloading(false);
     }, 2000);
   };
@@ -317,6 +357,8 @@ function AcademyDashboard() {
     setinstrumentstyle(false);
     setsocial(false);
     setsocialstyle(false);
+    setbatchmenustyle(false);
+    setbatchmenu(false);
     let url = "http://localhost:5000/api/auth/getdata";
     const token = Token();
     const response = await fetch(url, {
@@ -415,6 +457,8 @@ function AcademyDashboard() {
     setsocial(false);
     setsocialstyle(false);
     setstyle(false);
+    setbatchmenustyle(false);
+    setbatchmenu(false);
     const todaydate = getCurrentDate();
     const url = "http://localhost:5000/api/auth/getpaymnetdue";
     const token = Token();
@@ -492,7 +536,8 @@ function AcademyDashboard() {
 
   const handleevent = () => {
     setloading(true);
-
+    setbatchmenustyle(false);
+    setbatchmenu(false);
     setmediastyle(false);
     setdispalymedia(false);
     setdisplayregform(false);
@@ -521,7 +566,8 @@ function AcademyDashboard() {
 
   const handleabout = () => {
     setloading(true);
-
+    setbatchmenustyle(false);
+    setbatchmenu(false);
     setmediastyle(false);
     setdispalymedia(false);
     setdisplayregform(false);
@@ -550,7 +596,8 @@ function AcademyDashboard() {
 
   const handleinstrument = () => {
     setloading(true);
-
+    setbatchmenustyle(false);
+    setbatchmenu(false);
     setmediastyle(false);
     setdispalymedia(false);
     setdisplayregform(false);
@@ -579,7 +626,8 @@ function AcademyDashboard() {
 
   const handlesocial = () => {
     setloading(true);
-
+    setbatchmenustyle(false);
+    setbatchmenu(false);
     setmediastyle(false);
     setdispalymedia(false);
     setdisplayregform(false);
@@ -826,7 +874,25 @@ function AcademyDashboard() {
           </Button>
 
           <Divider />
+
+          {/* Batch Management option  */}
+          <Button
+            style={{
+              margin: "10px",
+              width: "200px",
+              color: batchmenustyle ? "blue" : "white",
+              backgroundColor: batchmenustyle ? "white" : "#283255",
+            }}
+            onClick={() => {
+              handlebatchclick();
+            }}
+          >
+            Batch Management
+          </Button>
+
+          <Divider />
         </div>
+
         <div
           style={{
             width: "80%",
@@ -862,6 +928,14 @@ function AcademyDashboard() {
               <>
                 <Box style={{ margin: "20px" }}>
                   <Events />
+                </Box>
+              </>
+            )}
+
+            {batchmenu && (
+              <>
+                <Box style={{ margin: "20px" }}>
+                  <Batchmenu />
                 </Box>
               </>
             )}

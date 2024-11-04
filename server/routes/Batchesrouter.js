@@ -4,8 +4,7 @@ const authenticate = require('../controllers/Authenticate')
 const batches = require('../controllers/Batches')
 
 router.post('/addbatchesinfo', authenticate.authenticatetoken, batches.addBatchesCount)
-
-router.post('/addbatchspecs', authenticate.authenticatetoken, batches.addBatchSpecs)
-
+router.post('/getbatchesdetails',authenticate.authenticatetoken,batches.getallbatches)
+router.put('/updatebatchdetails', authenticate.authenticatetoken, batches.updatedetailsofbatch)
 
 module.exports = router 
