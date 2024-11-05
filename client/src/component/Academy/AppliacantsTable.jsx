@@ -25,16 +25,21 @@ import Box from "@mui/material/Box";
 import ArrowCircleDownIcon from "@mui/icons-material/ArrowCircleDown";
 import ArrowCircleUpIcon from "@mui/icons-material/ArrowCircleUp";
 import InputLabel from "@mui/material/InputLabel";
+import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import Token from "../Token/Token";
 import PaymentDetails from "./PaymentDetails";
+import BatchProfile from "./BatchProfile";
+import BatchSelectionModal from "./BatchAssignForm";
 
 const ApplicantsTable = ({ users }) => {
   const [data, setData] = useState();
   const [toggle, setToggle] = useState(false);
   const [toggleinstallment, settoggleinstallment] = useState(false);
+  const [togglebatch, settogglebatch] = useState(false);
+  const [studentid, setstudentid] = useState("");
   const [paymnetaddbox, setpaymnetaddbox] = useState(false);
   const hasUsers = users && users.length > 0;
   const academyname = sessionStorage.getItem("academyname");
@@ -46,6 +51,7 @@ const ApplicantsTable = ({ users }) => {
     studentid: "",
     username: "",
   });
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [actiontoggle, setactiontoggle] = useState(true);
   const [paymentdetails, setpaymentdetails] = useState({
     academyname: `${academyname}`,
@@ -95,6 +101,17 @@ const ApplicantsTable = ({ users }) => {
 
   const handleactiontoggle = async (action) => {
     setactiontoggle(action);
+  };
+
+  // Function to open the modal
+  const handlebatchadd = (studentid) => {
+    setIsModalOpen(true);
+    setstudentid(studentid);
+  };
+
+  // Function to close the modal
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
   };
 
   const convertDateFormat = (dateStr) => {
@@ -398,6 +415,18 @@ const ApplicantsTable = ({ users }) => {
 
   return (
     <>
+      <div style={{ display: "none" }}>
+        <Button variant="contained" color="primary" onClick={handlebatchadd}>
+          Open Batch Selection
+        </Button>
+
+        <BatchSelectionModal
+          open={isModalOpen}
+          onClose={handleCloseModal}
+          data={studentid}
+        />
+      </div>
+
       <TableContainer
         component={Paper}
         sx={{
@@ -415,6 +444,7 @@ const ApplicantsTable = ({ users }) => {
                 <TableCell>Email</TableCell>
                 <TableCell>Mobile No</TableCell>
                 <TableCell>Next Payment Due </TableCell>
+                <TableCell>Batch</TableCell>
                 <TableCell>More Info</TableCell>
               </TableRow>
             </TableHead>
@@ -440,6 +470,17 @@ const ApplicantsTable = ({ users }) => {
                       </span>
                     )}
                   </TableCell>
+
+                  <TableCell>
+                    <Button
+                      onClick={() => {
+                        handlebatchadd(user._id);
+                      }}
+                    >
+                      <AddCircleOutlineIcon />
+                    </Button>
+                  </TableCell>
+
                   <TableCell>
                     <Button onClick={() => handlePreview(user._id)}>
                       <AccountCircleIcon />
@@ -606,6 +647,7 @@ const ApplicantsTable = ({ users }) => {
                           onClick={() => {
                             setpaymnetaddbox(true);
                             settoggleinstallment(false);
+                            settogglebatch(false);
                           }}
                         >
                           Add Payment
@@ -618,6 +660,7 @@ const ApplicantsTable = ({ users }) => {
                           onClick={() => {
                             setpaymnetaddbox(true);
                             settoggleinstallment(false);
+                            settogglebatch(false);
                           }}
                         >
                           Add Payment
@@ -627,12 +670,42 @@ const ApplicantsTable = ({ users }) => {
                     <Button
                       variant="contained"
                       onClick={() => {
-                        settoggleinstallment(true);
                         setpaymnetaddbox(false);
+                        settoggleinstallment(true);
+                        settogglebatch(false);
                       }}
                     >
                       Payment History
                     </Button>
+
+                    {data.status === "Reject" ? (
+                      <>
+                        <Button
+                          variant="contained"
+                          disabled
+                          onClick={() => {
+                            setpaymnetaddbox(false);
+                            settoggleinstallment(false);
+                            settogglebatch(true);
+                          }}
+                        >
+                          Batch Info
+                        </Button>
+                      </>
+                    ) : (
+                      <>
+                        <Button
+                          variant="contained"
+                          onClick={() => {
+                            setpaymnetaddbox(false);
+                            settoggleinstallment(false);
+                            settogglebatch(true);
+                          }}
+                        >
+                          Batch Info
+                        </Button>
+                      </>
+                    )}
                   </div>
 
                   <Divider sx={{ marginTop: "20px", marginBottom: "20px" }} />
@@ -728,6 +801,16 @@ const ApplicantsTable = ({ users }) => {
                       </Typography>
 
                       {<PaymentDetails data={installmentstate} />}
+                    </>
+                  )}
+
+                  {togglebatch && (
+                    <>
+                      <Typography sx={{ fontWeight: "Bold" }}>
+                        Batch Info :
+                      </Typography>
+
+                      {<BatchProfile data={installmentstate} />}
                     </>
                   )}
                 </>

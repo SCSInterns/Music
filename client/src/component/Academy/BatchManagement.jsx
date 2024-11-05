@@ -104,23 +104,25 @@ function BatchManagement() {
             <Grid container spacing={2}>
               <Grid item xs={6}>
                 <TextField
-                  label="No of Batches per class "
-                  name="batchescount"
-                  type="number"
-                  fullWidth
-                  variant="outlined"
-                  value={formData.batchescount}
-                  onChange={handleChange}
-                />
-              </Grid>
-              <Grid item xs={6}>
-                <TextField
                   label="No of classes in academy "
                   name="classescount"
                   type="number"
                   fullWidth
                   variant="outlined"
                   value={formData.classescount}
+                  onChange={handleChange}
+                  inputProps={{ min: 0 }}
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <TextField
+                  label="No of Batches per class per day "
+                  name="batchescount"
+                  type="number"
+                  fullWidth
+                  variant="outlined"
+                  value={formData.batchescount}
+                  inputProps={{ min: 0 }}
                   onChange={handleChange}
                 />
               </Grid>
@@ -132,6 +134,7 @@ function BatchManagement() {
                   fullWidth
                   variant="outlined"
                   value={formData.studentscount}
+                  inputProps={{ min: 0 }}
                   onChange={handleChange}
                 />
               </Grid>
@@ -142,6 +145,7 @@ function BatchManagement() {
                   type="number"
                   fullWidth
                   variant="outlined"
+                  inputProps={{ min: 0 }}
                   value={formData.instrumentperclass}
                   onChange={handleChange}
                 />
@@ -168,6 +172,7 @@ function BatchManagement() {
                         type="number"
                         variant="outlined"
                         value={instrument.quantity}
+                        inputProps={{ min: 0 }}
                         onChange={(e) => handleInstrumentChange(index, e)}
                       />
                       <Button
@@ -222,6 +227,7 @@ function BatchManagement() {
                   fullWidth
                   variant="outlined"
                   value={formData.duration}
+                  inputProps={{ min: 1 }}
                   onChange={handleChange}
                 />
               </Grid>

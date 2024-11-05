@@ -1,6 +1,8 @@
 const Batch = require("../models/Batch");
 const Batches = require("../models/Batch");
 const SpecificBatch = require("../models/SpecificBatch");
+const BatchAssign = require("../models/BatchAssign")
+const Form = require("../models/Form")
 
 
 // Function to calculate time difference
@@ -123,7 +125,8 @@ const addBatchSpecs = async (mainBatch) => {
 };
 
 
-// Helper function to update batch specs based on the new batch count
+// Helper function to update batch specs based on the new batch count 
+
 const updateBatchSpecs = async (mainBatch, newBatchesCount) => {
     const { academyname, no_of_classes } = mainBatch;
     const existingSpecs = await SpecificBatch.find({ academyname });
@@ -184,9 +187,19 @@ const updatedetailsofbatch = async (req, res) => {
             return res.status(401).json({ msg: "Unauthorized Access" });
         }
 
+
+
         const batchdetails = await SpecificBatch.findById(id);
         const mainbatchdata = await Batch.findOne({ academyname: academynameinput });
         const alldetails = await SpecificBatch.find({ academyname: academynameinput });
+
+        const timedifference = await calculateTimeDifference(startime, endtime)
+
+        const maxduration = mainbatchdata.duration
+
+        if (timedifference > maxduration) {
+            return res.status(404).json({ msg: "Time of batch cannot exceed batch duration" })
+        }
 
         if (!batchdetails || !mainbatchdata) {
             return res.status(404).json({ msg: "Batch or academy data not found" });
@@ -257,7 +270,7 @@ const updatedetailsofbatch = async (req, res) => {
 };
 
 
-// get all details of particular ba{tches  
+// get all details of particular batches  
 
 const getallbatches = async (req, res) => {
     try {
@@ -283,6 +296,122 @@ const getallbatches = async (req, res) => {
     }
 }
 
+// assign batches  
+
+const assignbatches = async (req, res) => {
+
+    try {
+
+        const { academyname, role, batchid, studentid, instrumentName } = req.body
+
+        if (role === "Admin") {
 
 
-module.exports = { addBatchesCount, addBatchSpecs, updatedetailsofbatch , getallbatches};
+            // registered data of user 
+
+            let registeruser = await Form.find({ _id: studentid })
+
+            registeruser = registeruser[0]
+
+            if (!registeruser) {
+                return res.status(404).json({ msg: "No user with this id " })
+            }
+
+            const formdata = registeruser.additionalFields.get('formdata');
+            const appliedInstrument = formdata?.Courses;
+
+            if (appliedInstrument !== instrumentName) {
+                return res.status(404).json({ msg: "User has not applied for following instrument " })
+            }
+
+            // already assign student 
+
+            const existing = await BatchAssign.findOne({ studentid: studentid })
+
+            if (existing) {
+                return res.status(403).json({ msg: "Student is already assigned " })
+            }
+
+            var batch = await SpecificBatch.find({ _id: batchid })
+
+            batch = batch[0]
+
+            const batchname = await batch.batchname
+
+            let mainbatch = await Batches.find({ academyname: academyname })
+
+            mainbatch = mainbatch[0]
+
+            let mainbatchcount = mainbatch.currentstudentcount
+
+
+            let batchcurrentstudentcount =
+                await batch.noofstudents
+
+
+
+            if (batch) {
+
+                // Find the specific instrument within the batch's instrument_types array
+                const instrument = batch.instrument_types.find(
+                    (inst) => inst.type === instrumentName
+                );
+
+                if (!instrument) {
+                    return res.status(404).json({ msg: "No such instrument found " })
+                }
+
+                const currentcount = instrument.currentstudentcount
+                const quantity = instrument.quantity
+
+                if (quantity > currentcount) {
+
+                    const response = new BatchAssign({
+                        academyname: academyname,
+                        studentid: studentid,
+                        batchid: batchid,
+                        batchname: batchname
+
+                    })
+
+                    if (response) {
+
+                        // increase the student count  
+                        instrument.currentstudentcount += 1;
+                        batch.noofstudents += 1;
+                        mainbatch.currentstudentcount += 1;
+
+                        const mainresponse = await mainbatch.save();
+                        const updatedbatchresponse = await batch.save();
+
+                        if (!mainresponse || !updatedbatchresponse) {
+                            return res.status(404).json({ msg: "Error saving details " })
+                        }
+
+                        const data = await response.save()
+
+                        return res.status(200).json({ msg: "Added to batch successfully ", data })
+                    }
+                    else {
+                        return res.status(404).json({ msg: "Addition to Batch Failed " })
+                    }
+                }
+
+            } else {
+                return res.status(404).json({ msg: "No such batch found " })
+            }
+
+        } else {
+            return res.status(401).json({ msg: "Unauthorized Access" })
+        }
+
+
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: "Server error", error: error.message });
+    }
+
+}
+
+
+module.exports = { addBatchesCount, addBatchSpecs, updatedetailsofbatch, getallbatches, assignbatches };
