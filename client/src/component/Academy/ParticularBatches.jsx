@@ -40,6 +40,9 @@ function ParticularBatches() {
   const [open, setOpen] = useState(false);
   const [selectedBatch, setSelectedBatch] = useState(null);
   const [selectedDays, setSelectedDays] = useState([]);
+  const [thoerydays, setthoerydays] = useState([]);
+  const [practical, setpracticaldays] = useState([]);
+  const [customdays, setcustomdays] = useState("");
   const [id, setid] = useState("");
 
   const handleSubmitDays = () => {
@@ -108,6 +111,9 @@ function ParticularBatches() {
         startime: selectedBatch.starttime,
         endtime: selectedBatch.endtime,
         batchcoustomname: selectedBatch.batchtype,
+        practicalday: practical,
+        theoryday: thoerydays,
+        maxstudent : customdays
       }),
     });
 
@@ -119,7 +125,7 @@ function ParticularBatches() {
         toast.success("Batch details updated");
         handleCloseModal();
         handlebatches();
-        setSelectedDays([])
+        setSelectedDays([]);
       } else {
         toast.error("Error saving data");
       }
@@ -129,6 +135,21 @@ function ParticularBatches() {
   const handleDayChange = (event) => {
     const { value } = event.target;
     setSelectedDays(typeof value === "string" ? value.split(",") : value);
+  };
+
+  const handleTheoryChange = (event) => {
+    const { value } = event.target;
+    setthoerydays(typeof value === "string" ? value.split(",") : value);
+  };
+
+  const handlePracticalChange = (event) => {
+    const { value } = event.target;
+    setpracticaldays(typeof value === "string" ? value.split(",") : value);
+  };
+
+  const handlestudents = (event) => {
+    const { value } = event.target;
+    setcustomdays(value);
   };
 
   useEffect(() => {
@@ -233,6 +254,19 @@ function ParticularBatches() {
                 InputProps={{ readOnly: true }}
               />
 
+              {/* Custom maximum days  */}
+              <TextField
+                label=" Maximum Number of Students For Batch"
+                fullWidth
+                margin="dense"
+                variant="outlined"
+                type="number"
+                onChange={handlestudents}
+                value={customdays}
+                inputProps={{ min: 0 }}
+                sx={{marginBottom : '20px'}}
+              />
+
               {/* Currentdays */}
               <TextField
                 label="Current Days"
@@ -260,6 +294,46 @@ function ParticularBatches() {
                 {daysOfWeek.map((day) => (
                   <MenuItem key={day} value={day}>
                     <Checkbox checked={selectedDays.includes(day)} />
+                    <ListItemText primary={day} />
+                  </MenuItem>
+                ))}
+              </Select>
+
+              {/* Thoery Days Selection */}
+              <Typography> Edit Theory Days :</Typography>
+              <Select
+                label="Select Theory Batch Days Here"
+                fullWidth
+                multiple
+                value={thoerydays}
+                onChange={handleTheoryChange}
+                input={<OutlinedInput />}
+                renderValue={(selected) => selected.join(", ")}
+                sx={{ marginTop: "10px", marginBottom: "10px" }}
+              >
+                {daysOfWeek.map((day) => (
+                  <MenuItem key={day} value={day}>
+                    <Checkbox checked={thoerydays.includes(day)} />
+                    <ListItemText primary={day} />
+                  </MenuItem>
+                ))}
+              </Select>
+
+              {/* Practical Days Selection */}
+              <Typography> Edit Practical Days :</Typography>
+              <Select
+                label="Select Practical Batch Days Here"
+                fullWidth
+                multiple
+                value={practical}
+                onChange={handlePracticalChange}
+                input={<OutlinedInput />}
+                renderValue={(selected) => selected.join(", ")}
+                sx={{ marginTop: "10px", marginBottom: "10px" }}
+              >
+                {daysOfWeek.map((day) => (
+                  <MenuItem key={day} value={day}>
+                    <Checkbox checked={practical.includes(day)} />
                     <ListItemText primary={day} />
                   </MenuItem>
                 ))}

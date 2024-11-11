@@ -1,103 +1,79 @@
-import React, { useEffect } from "react";
-import { Button } from "@mui/material";
-import { useState } from "react";
-import Token from "../Token/Token";
+import React from "react";
 import { Card, CardContent, Typography } from "@mui/material";
 
-function BatchProfile({ data }) {
-  const [batchdata, setbatchdata] = useState({});
-  const token = Token();
-  console.log(" Info : ", data);
-
-  console.log("Id : ", data.studentid);
-  const academyname = sessionStorage.getItem("academyname");
-
-  const batchdetails = async (id) => {
-    console.log("Student Id :", id);
-    const url = "http://localhost:5000/api/auth/getbatchdetail";
-
-    const response = await fetch(url, {
-      method: "POST",
-      headers: {
-        Authorization: `${token}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        studentid: id,
-        academyname: academyname,
-      }),
-    });
-
-    if (response.ok) {
-      const data = await response.json();
-      setbatchdata(data);
-    }
-  };
-
-  useEffect(() => {
-    batchdetails(data.studentid);
-  }, []);
-
-  console.log("Batches info:", batchdata);
-
+function BatchProfile({ details }) {
   return (
     <>
       <CardContent className="text-center">
         <Card
           sx={{
             borderRadius: "16px",
-            backgroundColor: "#ffffff",
+            backgroundColor: "#F7F7F7",
             marginTop: "30px",
             display: "flex",
-            justifyContent: "space-evenly", 
+            justifyContent: "space-evenly",
           }}
         >
           <CardContent>
+            <Typography
+              variant="h5"
+              className="font-semibold"
+              sx={{
+                fontFamily: "ubuntu",
+                color: "#9C27B0",
+                marginBottom: "16px",
+              }}
+            >
+              Batch Details
+            </Typography>
+
             <div style={{ display: "flex", padding: "20px" }}>
               <Typography variant="body1">
-                <strong>Academy Name -</strong> {batchdata.academyname || "N/A"}
+                <strong>Academy Name -</strong> {details.academyname || "N/A"}
               </Typography>
               <Typography variant="body1" style={{ marginLeft: "40px" }}>
-                <strong>Batch Name -</strong> {batchdata.batchname || "N/A"}
+                <strong>Batch Name -</strong> {details.batchname || "N/A"}
+              </Typography>
+            </div>
+
+            <div style={{ display: "flex", padding: "20px" }}>
+              <Typography
+                variant="body1"
+              >
+                <strong>Batch Type -</strong> {details?.batchtype || "N/A"}
               </Typography>
             </div>
 
             <div style={{ display: "flex", padding: "20px" }}>
               <Typography variant="body1">
-                <strong>Batch Type -</strong> {batchdata?.batchtype || "N/A"}
+                <strong>Days -</strong> {details?.days?.join(", ") || "N/A"}
               </Typography>
             </div>
 
             <div style={{ display: "flex", padding: "20px" }}>
               <Typography variant="body1">
-                <strong>Days -</strong> {batchdata?.days?.join(", ") || "N/A"}
-              </Typography>
-            </div>
-
-            <div style={{ display: "flex", padding: "20px" }}>
-              <Typography variant="body1">
-                <strong>Start Time -</strong> {batchdata?.starttime || "N/A"}
+                <strong>Start Time -</strong> {details?.starttime || "N/A"}
               </Typography>
               <Typography variant="body1" style={{ marginLeft: "80px" }}>
-                <strong>End Time -</strong> {batchdata?.endtime || "N/A"}
+                <strong>End Time -</strong> {details?.endtime || "N/A"}
               </Typography>
             </div>
 
             <div style={{ display: "flex", padding: "20px" }}>
               <Typography variant="body1">
                 <strong>Theory Days -</strong>{" "}
-                {batchdata?.theorydays?.join(", ") || "N/A"}
+                {details?.theorydays?.join(", ") || "N/A"}
               </Typography>
               <Typography variant="body1" style={{ marginLeft: "45px" }}>
                 <strong>Practical Days -</strong>{" "}
-                {batchdata?.practicaldays?.join(", ") || "N/A"}
+                {details?.practicaldays?.join(", ") || "N/A"}
               </Typography>
             </div>
 
             <div style={{ display: "flex", padding: "20px" }}>
               <Typography variant="body1">
                 <strong>No of Students -</strong>{" "}
-                {batchdata?.noofstudents || "N/A"}
+                {details?.noofstudents || "N/A"}
               </Typography>
             </div>
 
@@ -105,15 +81,11 @@ function BatchProfile({ data }) {
               <Typography variant="body1">
                 <strong>Instruments :</strong>
               </Typography>
-              {batchdata?.instrument_types?.length > 0 ? (
-                batchdata.instrument_types.map((instrument, index) => (
+              {details?.instrument_types?.length > 0 ? (
+                details.instrument_types.map((instrument, index) => (
                   <div
                     key={index}
-                    style={{
-                      display: "flex",
-                      paddingTop: "10px",
-                      marginTop: "20px",
-                    }}
+                    style={{ display: "flex", paddingTop: "10px", marginTop: "20px" }}
                   >
                     <Typography variant="body2">
                       <strong>Type -</strong> {instrument.type || "N/A"}

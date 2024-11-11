@@ -3,19 +3,29 @@ import BatchManagement from "./BatchManagement";
 import { useState } from "react";
 import ParticularBatches from "./ParticularBatches";
 import { Button } from "@mui/material";
+import Timetable from "./TimeTable";
 
 function Batchmenu() {
   const [firststep, setfirststep] = useState(true);
   const [secondstep, setsecondstep] = useState(false);
+  const [thirdstep, setthirdstep] = useState(false);
 
   const handlemain = () => {
     setfirststep(true);
     setsecondstep(false);
+    setthirdstep(false);
   };
 
   const handlespecific = () => {
     setfirststep(false);
     setsecondstep(true);
+    setthirdstep(false);
+  };
+
+  const handletimetable = () => {
+    setfirststep(false);
+    setsecondstep(false);
+    setthirdstep(true);
   };
 
   return (
@@ -52,6 +62,17 @@ function Batchmenu() {
           >
             Add Specific Details
           </Button>
+          <Button
+            style={{
+              marginLeft: "10px",
+              backgroundColor: thirdstep ? "#283255" : "transparent",
+              color: thirdstep ? "#fff" : "#000",
+              border: "1px solid #ccc",
+            }}
+            onClick={() => handletimetable()}
+          >
+            Time Table
+          </Button>
         </div>
       </div>
 
@@ -65,6 +86,11 @@ function Batchmenu() {
         {secondstep && (
           <>
             <ParticularBatches />
+          </>
+        )}
+        {thirdstep && (
+          <>
+            <Timetable />
           </>
         )}
       </div>

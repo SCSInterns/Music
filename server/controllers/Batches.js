@@ -177,21 +177,36 @@ const updateBatchSpecs = async (mainBatch, newBatchesCount) => {
 };
 
 
+function checkDays(batchDays, theoryDays, practicalDays) {
+
+    const theoryValid = theoryDays.every(day => batchDays.includes(day));
+    const practicalValid = practicalDays.every(day => batchDays.includes(day));
+    return {
+        theoryValid,
+        practicalValid
+    };
+}
+
 // put api function to update the details    
 
 const updatedetailsofbatch = async (req, res) => {
     try {
-        const { role, days, startime, endtime, id, batchcoustomname, academynameinput } = req.body;
+        const { role, days, startime, endtime, id, batchcoustomname, academynameinput, maxstudent, theoryday, practicalday } = req.body;
 
         if (role !== "Admin") {
             return res.status(401).json({ msg: "Unauthorized Access" });
         }
 
-
-
         const batchdetails = await SpecificBatch.findById(id);
         const mainbatchdata = await Batch.findOne({ academyname: academynameinput });
         const alldetails = await SpecificBatch.find({ academyname: academynameinput });
+
+
+        const defaultmaximum = await mainbatchdata.max_no_of_students_per_batch
+
+        if (maxstudent > defaultmaximum) {
+            return res.status(404).json({ msg: "Maximum students should be less than deafult maximum setted " })
+        }
 
         const timedifference = await calculateTimeDifference(startime, endtime)
 
@@ -251,10 +266,23 @@ const updatedetailsofbatch = async (req, res) => {
             }
         }
 
+        const result = checkDays(days, theoryday, practicalday);
+        if (!result.theoryValid || !result.practicalValid) {
+            return res.status(404).json({ msg: "All theory and practical days must be within batch days." });
+        }
+
+        if (theoryday.length + practicalday.length !== days.length) {
+            return res.status(404).json({ msg: "Total number of theory and practical days must match the selected batch days." });
+        }
+
+
         batchdetails.starttime = startime;
         batchdetails.endtime = endtime;
         batchdetails.days = days;
+        batchdetails.practicaldays = practicalday;
+        batchdetails.theorydays = theoryday;
         batchdetails.batchtype = customBatchName;
+        batchdetails.maximum_no_of_students = maxstudent
 
         const updatedDetails = await batchdetails.save();
 
@@ -396,6 +424,9 @@ const assignbatches = async (req, res) => {
                         return res.status(404).json({ msg: "Addition to Batch Failed " })
                     }
                 }
+                else {
+                    return res.status(404).json({ msg: "Batch is fulled for following instruments" })
+                }
 
             } else {
                 return res.status(404).json({ msg: "No such batch found " })
@@ -413,5 +444,35 @@ const assignbatches = async (req, res) => {
 
 }
 
+// get the student details for seeing in profile view
 
-module.exports = { addBatchesCount, addBatchSpecs, updatedetailsofbatch, getallbatches, assignbatches };
+const getbatchdetails = async (req, res) => {
+
+    try {
+        const { studentid, academyname } = req.body
+        const assignbatch = await BatchAssign.findOne({ studentid: studentid, academyname: academyname })
+        if (!assignbatch) {
+            return res.status(404).json({ msg: "No Batch is assign for this student" })
+        }
+        const batchid = await assignbatch.batchid
+
+        if (batchid) {
+
+            const batchdetail = await SpecificBatch.findOne({ _id: batchid })
+
+            if (batchdetail) {
+                return res.status(200).json(batchdetail)
+            }
+            else {
+                return res.status(404).json({ msg: "Batch Not Found " })
+            }
+        }
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: "Server error", error: error.message });
+    }
+
+}
+
+
+module.exports = { addBatchesCount, addBatchSpecs, updatedetailsofbatch, getallbatches, assignbatches, getbatchdetails };

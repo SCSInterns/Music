@@ -17,6 +17,7 @@ import ProfileAbout from "./ProfileAbout";
 import { Fab } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import SupportAgentIcon from "@mui/icons-material/SupportAgent";
+import BatchProfile from "./BatchProfile";
 
 function Profile() {
   const [sociallinks, setsociallinks] = useState("");
@@ -53,9 +54,11 @@ function Profile() {
 
   const [togglepayment, settogglepayment] = useState(false);
   const [toggleabout, settoggleabout] = useState(true);
+  const [toggleBatch, settoggleBatch] = useState(false);
 
   const [data, setData] = useState({});
   const [paymnetdata, setpaymnetdata] = useState({});
+  const [batchdata, setbatchdata] = useState({});
   const [profilename, setprofilename] = useState("");
 
   function extractFirstLetter(fullName) {
@@ -115,6 +118,28 @@ function Profile() {
     }
   };
 
+  const batchdetails = async (id) => {
+    console.log("Student Id :", id);
+    const url = "http://localhost:5000/api/auth/getbatchdetail";
+
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        Authorization: `${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        studentid: id,
+        academyname: academyname,
+      }),
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      setbatchdata(data);
+    }
+  };
+
   useEffect(() => {
     fetchProfile();
   }, []);
@@ -127,6 +152,8 @@ function Profile() {
         "Admin",
         academyname
       );
+
+      batchdetails(data._id);
     }
   }, [data]);
 
@@ -141,11 +168,19 @@ function Profile() {
   const handletoggleabout = () => {
     settoggleabout(true);
     settogglepayment(false);
+    settoggleBatch(false);
+  };
+
+  const handlebatchtoggle = () => {
+    settoggleBatch(true);
+    settoggleabout(false);
+    settogglepayment(false);
   };
 
   const handlepaymenttoggle = () => {
     settoggleabout(false);
     settogglepayment(true);
+    settoggleBatch(false);
   };
 
   return (
@@ -227,11 +262,25 @@ function Profile() {
             >
               Payment Info
             </Button>
+
+            <Button
+              style={{
+                marginLeft: "10px",
+                backgroundColor: toggleBatch ? "#9C27B0" : "transparent",
+                color: toggleBatch ? "#fff" : "#000",
+                border: "1px solid #ccc",
+              }}
+              onClick={() => handlebatchtoggle()}
+            >
+              Batch Info
+            </Button>
           </div>
 
           {toggleabout && <ProfileAbout data={data} />}
 
           {togglepayment && <Paymnettable info={paymnetdata} />}
+
+          {toggleBatch && <BatchProfile details={batchdata} />}
         </Card>
       </Box>
 

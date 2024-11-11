@@ -52,8 +52,22 @@ const ParticularBatch = new Schema({
             quantity: { type: Number, required: true },
             currentstudentcount: { type: Number, default: 0 },
         }
-    ]
-
+    ],
+    maximum_no_of_students:
+    {
+        type: Number,
+        required: true,
+    },
+    practicaldays:
+    {
+        type: [String],
+        required: true
+    },
+    theorydays:
+    {
+        type: [String],
+        required: true
+    }
 });
 
 module.exports = mongoose.model("BatchesSpec", ParticularBatch);
