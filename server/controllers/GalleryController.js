@@ -1,6 +1,8 @@
 const Image = require("../models/Gallery");
 const Event = require("../models/Event")
 const About = require("../models/About")
+const Stats = require("../models/Stats")
+const Mentor = require("../models/Mentors")
 
 const saveImageUrls = async (req, res) => {
     try {
@@ -47,7 +49,7 @@ const saveImageUrls = async (req, res) => {
         }
     } catch (error) {
         console.error("Error saving or updating image URLs:", error);
-        res.status(500).json({ message: "Failed to save or update image URLs" });
+        res.status(500).json({ message: "Failed to save or  update details" });
     }
 };
 
@@ -79,7 +81,7 @@ const handleevents = async (req, res) => {
         }
 
     } catch (error) {
-        res.status(500).json({ message: "Failed to save or update image URLs" });
+        res.status(500).json({ message: "Failed to save or  update details" });
     }
 }
 
@@ -120,8 +122,119 @@ const handleabout = async (req, res) => {
         }
 
     } catch (error) {
-        res.status(500).json({ message: "Failed to save or update image URLs", error });
+        res.status(500).json({ message: "Failed to save or  update details", error });
     }
 }
 
-module.exports = { saveImageUrls, handleevents, handleabout }
+const handlestats = async (req, res) => {
+    try {
+
+        const { role, academyname, students_enroll, instrument_cousre_offered, Certified_Instructors, Years_of_Operation } = req.body
+
+        if (role === "Admin") {
+
+            const existing = await Stats.findOne({ academyname: academyname })
+
+
+            if (existing) {
+
+                existing.students_enroll = students_enroll
+                existing.instrument_cousre_offered = instrument_cousre_offered
+                existing.Certified_Instructors = Certified_Instructors
+                existing.Years_of_Operation =
+                    Years_of_Operation
+
+                await existing.save()
+
+                return res.status(200).json({ msg: "Details Updated Success ", existing })
+            }
+
+            else {
+                const response = await new Stats({
+                    academyname: academyname,
+                    students_enroll: students_enroll,
+                    instrument_cousre_offered: instrument_cousre_offered,
+                    Certified_Instructors: Certified_Instructors,
+                    Years_of_Operation: Years_of_Operation
+                })
+
+                const data = await response.save()
+
+                if (data) {
+                    return res.status(200).json({ msg: "Stats Entered Success", response })
+                }
+            }
+        }
+        else {
+            return res.status(401).json({ msg: "Unauthorized Access" })
+        }
+
+
+
+    } catch (error) {
+        res.status(500).json({ message: "Failed to save or update details", error });
+    }
+}
+
+const handleMentors = async (req, res) => {
+
+
+    try {
+
+        const {
+            academyname, name, profileimage, course, no_of_exp, email, role
+        } = req.body
+
+        if (role === "Admin") {
+
+            const existing = await Mentor.findOne({
+                academyname: academyname,
+                email: email
+            })
+
+            if (existing) {
+                existing.name = name,
+                    existing.profileimage = profileimage,
+                    existing.course = course,
+                    existing.no_of_exp = no_of_exp,
+                    existing.email = email,
+                    existing.academyname = academyname
+
+
+                await existing.save()
+
+                return res.status(200).json({ msg: "Updation Success", existing })
+            }
+            else {
+                const response = await new Mentor({
+                    academyname: academyname,
+                    name: name,
+                    profileimage: profileimage,
+                    course: course,
+                    no_of_exp: no_of_exp,
+                    email: email
+                })
+
+                const data = await response.save()
+
+                if (data) {
+                    return res.status(200).json({ msg: "Details entered success", data })
+                } else {
+                    return res.status(404).json({ msg: "Error saving details " })
+                }
+            }
+
+        } else {
+            return res.status(401).json({ msg: "Unauthorized Access" })
+        }
+
+
+
+    } catch (error) {
+        res.status(500).json({ message: "Failed to save or update details", error });
+    }
+}
+
+
+
+module.exports = { saveImageUrls, handleevents, handleabout, handlestats, handleMentors }

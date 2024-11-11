@@ -67,6 +67,12 @@ const ParticularBatch = new Schema({
     {
         type: [String],
         required: true
+    },
+    non_instrument_students_count:
+    {
+        type: Number,
+        required: true,
+        default: 0
     }
 });
 

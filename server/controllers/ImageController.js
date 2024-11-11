@@ -66,4 +66,15 @@ const InstrumentStorage = new CloudinaryStorage({
   },
 });
 
-module.exports = { cloudinary, storage, Gallerystorage, EventStorage, AboutStorage , InstrumentStorage };
+const MentorsStorage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: async (req, file) => {
+    return {
+      folder: 'Mentor',
+      public_id: file.originalname.split('.')[0],
+      allowed_formats: ['jpg', 'png', 'jpeg'],
+    };
+  },
+});
+
+module.exports = { cloudinary, storage, Gallerystorage, EventStorage, AboutStorage, InstrumentStorage, MentorsStorage };

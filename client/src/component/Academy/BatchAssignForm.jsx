@@ -127,6 +127,7 @@ const BatchSelectionModal = ({ open, onClose, data }) => {
               onChange={handleInstrumentChange}
               label="Select Instrument"
             >
+              <MenuItem value="None">Bring Its Own Instrument </MenuItem>
               {batches
                 .find((batch) => batch.id === selectedBatch)
                 ?.instruments.map((instrument) => (

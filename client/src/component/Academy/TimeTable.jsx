@@ -40,21 +40,13 @@ function Timetable() {
   useEffect(() => {
     handlebatches();
   }, [academyname]);
-
   const getRandomColor = () => {
-    const colors = [
-      "#FF5733",
-      "#33FF57",
-      "#3357FF",
-      "#FF33F6",
-      "#F6FF33",
-      "#33F6FF",
-      "#FF8333",
-      "#8333FF",
-      "#33FF83",
-      "#FF3333",
-    ];
-    return colors[Math.floor(Math.random() * colors.length)];
+    const randomValue = () => Math.floor(Math.random() * 128);
+    const r = randomValue();
+    const g = randomValue();
+    const b = randomValue();
+
+    return `rgb(${r}, ${g}, ${b})`;
   };
 
   const createEventsFromData = (batches) => {

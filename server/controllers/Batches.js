@@ -348,7 +348,7 @@ const assignbatches = async (req, res) => {
             const formdata = registeruser.additionalFields.get('formdata');
             const appliedInstrument = formdata?.Courses;
 
-            if (appliedInstrument !== instrumentName) {
+            if (appliedInstrument !== instrumentName && instrumentName !== "None") {
                 return res.status(404).json({ msg: "User has not applied for following instrument " })
             }
 
@@ -376,9 +376,40 @@ const assignbatches = async (req, res) => {
             let batchcurrentstudentcount =
                 await batch.noofstudents
 
-
+            const defaultmaximum = await batch.maximum_no_of_students
 
             if (batch) {
+                if (instrumentName === "None") {
+
+                    const currentcount = await batch.non_instrument_students_count
+
+                    if (currentcount >= defaultmaximum) {
+                        return res.status(404).json({ msg: "Batch is full " })
+                    }
+
+                    const response = new BatchAssign({
+                        academyname: academyname,
+                        studentid: studentid,
+                        batchid: batchid,
+                        batchname: batchname
+                    })
+
+                    if (response) {
+                        batch.noofstudents += 1;
+                        mainbatch.currentstudentcount += 1;
+                        batch.non_instrument_students_count += 1;
+
+                        const mainresponse = await mainbatch.save();
+                        const updatedbatchresponse = await batch.save();
+
+                        if (!mainresponse || !updatedbatchresponse) {
+                            return res.status(404).json({ msg: "Error saving details " })
+                        }
+                        const data = await response.save()
+                        return res.status(200).json({ msg: "Added to batch successfully ", data })
+                    }
+                }
+
 
                 // Find the specific instrument within the batch's instrument_types array
                 const instrument = batch.instrument_types.find(

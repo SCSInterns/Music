@@ -1,7 +1,7 @@
 const express = require('express');
 const multer = require('multer');
 const authenicate = require('../controllers/Authenticate')
-const { storage, Gallerystorage, EventStorage, AboutStorage, InstrumentStorage } = require('../controllers/ImageController');
+const { storage, Gallerystorage, EventStorage, AboutStorage, InstrumentStorage, MentorsStorage } = require('../controllers/ImageController');
 const gallery = require('../controllers/GalleryController')
 const instrument = require('../controllers/Instrumentc')
 const router = express.Router();
@@ -16,6 +16,8 @@ const eventUpload = multer({ storage: EventStorage })
 const aboutUpload = multer({ storage: AboutStorage })
 
 const instrumentUpload = multer({ storage: InstrumentStorage })
+
+const profileUpload = multer({ storage: MentorsStorage })
 
 // API route to upload an image
 router.post('/uploadlogo', upload.fields([{ name: 'logo', maxCount: 1 }]), async (req, res) => {
@@ -63,10 +65,23 @@ router.post('/uploadintrumentimage', instrumentUpload.single('picture'), (req, r
     }
 });
 
+router.post('/uploadmentorimage', profileUpload.single('picture'), (req, res) => {
+    try {
+        const uploadedFile = req.file;
+        res.json({ imageUrl: uploadedFile.path, imageId: uploadedFile.filename });
+    } catch (error) {
+        console.error("Error uploading to Cloudinary", error);
+        res.status(500).json({ error: "Upload failed" });
+    }
+});
+
 
 router.put('/uploadgallerytodb', authenicate.authenticatetoken, gallery.saveImageUrls)
 router.post('/uploadevents', authenicate.authenticatetoken, gallery.handleevents)
 router.post('/uploadabout', authenicate.authenticatetoken, gallery.handleabout)
 router.post('/uploadinstrument', authenicate.authenticatetoken, instrument.handleInstrument)
+router.post('/addmentors', authenicate.authenticatetoken, gallery.handleMentors)
+router.post('/addstats', authenicate.authenticatetoken, gallery.handlestats)
+
 
 module.exports = router;
