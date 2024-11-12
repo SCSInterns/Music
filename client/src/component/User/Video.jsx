@@ -88,7 +88,7 @@ function Video() {
         style={{ marginTop: "100px", display: "flex", flexDirection: "column" }}
       >
         {videolink && (
-          <div className="bg-white shadow-lg rounded-lg overflow-hidden w-full">
+          <div className="bg-white overflow-hidden w-full">
             <iframe
               className="h-80"
               style={{

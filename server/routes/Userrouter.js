@@ -13,6 +13,8 @@ router.post('/knowmoredetails', user.knowmore)
 router.post('/getvideos', user.getvideos)
 router.post('/getacademydetails', user.academydetails)
 router.post('/getsociallinks', user.sociallinks)
+router.post('/getmentors', user.getmentors)
+router.post('/getstats', user.getstats)
 
 
 module.exports = router;

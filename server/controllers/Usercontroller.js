@@ -5,6 +5,8 @@ const About = require("../models/About")
 const Instrument = require('../models/Instrument')
 const Event = require('../models/Event')
 const Video = require('../models/Video')
+const Mentors = require("../models/Mentors")
+const Stats = require("../models/Stats")
 const Musicacademy = require('../models/MusicAcademy')
 
 // get the logo for navbar 
@@ -211,7 +213,7 @@ const academydetails = async (req, res) => {
 
 }
 
-
+// get the social link 
 const sociallinks = async (req, res) => {
     try {
         const { academyname } = req.body
@@ -229,7 +231,46 @@ const sociallinks = async (req, res) => {
 }
 
 
+// get the mentors detail 
+
+const getmentors = async (req, res) => {
+
+    try {
+
+        const { academyname } = req.body
+        const response = await Mentors.find({ academyname: academyname })
+
+        if (response) {
+            res.status(200).json(response)
+        } else {
+            res.status(404).json({ msg: 'No Mentors found' })
+        }
+
+    } catch (error) {
+        res.status(500).json({ msg: "Server Error" })
+    }
+}
+
+
+// get the stats detail
+
+const getstats = async (req, res) => {
+    try {
+
+        const { academyname } = req.body
+        const response = await Stats.findOne({ academyname: academyname })
+
+        if (response) {
+            res.status(200).json(response)
+        } else {
+            res.status(404).json({ msg: 'No Stats found' })
+        }
+
+    } catch (error) {
+        res.status(500).json({ msg: "Server Error" })
+    }
+}
 
 
 
-module.exports = { fetchlogo, setsociallinks, getimages, getabout, getinstruments, getevents, knowmore, getvideos, academydetails, sociallinks }
+module.exports = { fetchlogo, setsociallinks, getimages, getabout, getinstruments, getevents, knowmore, getvideos, academydetails, sociallinks, getmentors, getstats }

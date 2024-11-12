@@ -10,6 +10,8 @@ import About from "./About";
 import Instrument from "./Instrument";
 import Video from "./Video";
 import Footer from "./Footer";
+import Mentor from "./Mentor";
+import Stats from "./Stats";
 
 function Home() {
   const { academyname } = useParams();
@@ -69,6 +71,14 @@ function Home() {
 
         <section id="video" className="h-screen">
           <Video />
+        </section>
+
+        <section id="stats" className="h-screen">
+          <Stats />
+        </section>
+
+        <section id="mentor" className="h-screen">
+          <Mentor />
         </section>
 
         <Footer />

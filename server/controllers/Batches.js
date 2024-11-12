@@ -223,7 +223,7 @@ const updatedetailsofbatch = async (req, res) => {
         const maxClassesPerTimeSlot = mainbatchdata.no_of_classes;
         const academyStartTime = mainbatchdata.academy_start_time;
         const academyEndTime = mainbatchdata.academy_end_time;
-        const customBatchName = `${academynameinput}-${batchcoustomname}`;
+        const customBatchName = `${batchcoustomname}`;
         const [academyStartHours, academyStartMinutes] = academyStartTime.split(':').map(Number);
         const [academyEndHours, academyEndMinutes] = academyEndTime.split(':').map(Number);
         const academyStartInMinutes = academyStartHours * 60 + academyStartMinutes;
@@ -506,4 +506,36 @@ const getbatchdetails = async (req, res) => {
 }
 
 
-module.exports = { addBatchesCount, addBatchSpecs, updatedetailsofbatch, getallbatches, assignbatches, getbatchdetails };
+// get applicants acc to particular batches  
+
+const handleapplicants = async (req, res) => {
+
+    try {
+
+        const { academyname, role, batchid } = req.body
+
+        if (role === "Admin") {
+
+            const academydetails = await BatchAssign.find({ batchid: batchid, academyname: academyname })
+
+            const studentIds = academydetails.map(batch => batch.studentid);
+
+            const studentDetails = await Form.find({ _id: { $in: studentIds } });
+
+            if (studentDetails) {
+                return res.status(200).json(studentDetails)
+            } else {
+                return res.status(404).json({ msg: "No batch found " })
+            }
+
+        } else {
+            return res.status(401).json({ msg: "Unauthorized Access" })
+        }
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: "Server error", error: error.message });
+    }
+}
+
+
+module.exports = { addBatchesCount, addBatchSpecs, updatedetailsofbatch, getallbatches, assignbatches, getbatchdetails, handleapplicants };
