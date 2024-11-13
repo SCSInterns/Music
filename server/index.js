@@ -69,6 +69,9 @@ app.use('/api/auth', userprofile)
 const batches = require('./routes/Batchesrouter')
 app.use('/api/auth', batches)
 
+const qrcode = require('./routes/Qrcoderoute')
+app.use('/api/auth', qrcode)
+
 // Socket.IO connection
 io.on('connection', (socket) => {
     console.log('Admin connected:', socket.id);

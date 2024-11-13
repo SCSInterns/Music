@@ -35,6 +35,7 @@ import SocialLinks from "../Academy Features/SocialLinks";
 import Aboutus from "../Academy Features/Aboutus";
 import BatchManagement from "./BatchManagement";
 import Batchmenu from "./Batchmenu";
+import QrScan from "./QrScan";
 
 function AcademyDashboard() {
   const socket = React.useRef(null);
@@ -81,6 +82,9 @@ function AcademyDashboard() {
 
   const [batchmenu, setbatchmenu] = useState(false);
   const [batchmenustyle, setbatchmenustyle] = useState(false);
+
+  const [attendance, setattendance] = useState(false);
+  const [attendancestyle, setattendancestyle] = useState(false);
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -134,6 +138,38 @@ function AcademyDashboard() {
 
   const navigate = useNavigate();
 
+  const handleattendance = () => {
+    setloading(true);
+    setdisplayregform(false);
+    setregstyle(false);
+    setdispalymedia(false);
+    setappdata(false);
+    setdefaultstyle(false);
+    setstyle(false);
+    setmediastyle(false);
+    setpendingfeesstyle(false);
+    setdefaulttoggle(false);
+    settogglepaymentdue(false);
+    settoggleapplicants(false);
+    setevent(false);
+    seteventstyle(false);
+    setabout(false);
+    setaboutstyle(false);
+    setinstrument(false);
+    setinstrumentstyle(false);
+    setsocial(false);
+    setsocialstyle(false);
+    setbatchmenustyle(false);
+    setbatchmenu(false);
+
+    setattendance(true);
+    setattendancestyle(true);
+
+    setTimeout(() => {
+      setloading(false);
+    }, 2000);
+  };
+
   const handleClick = () => {
     setloading(true);
     setdisplayregform(true);
@@ -157,6 +193,9 @@ function AcademyDashboard() {
     setsocialstyle(false);
     setbatchmenustyle(false);
     setbatchmenu(false);
+
+    setattendance(false);
+    setattendancestyle(false);
     setTimeout(() => {
       setloading(false);
     }, 2000);
@@ -193,6 +232,9 @@ function AcademyDashboard() {
     setsocialstyle(false);
     setbatchmenustyle(false);
     setbatchmenu(false);
+
+    setattendance(false);
+    setattendancestyle(false);
     setTimeout(() => {
       setloading(false);
     }, 2000);
@@ -222,6 +264,9 @@ function AcademyDashboard() {
     setsocialstyle(false);
     setbatchmenustyle(false);
     setbatchmenu(false);
+
+    setattendance(false);
+    setattendancestyle(false);
     setTimeout(() => {
       setdefaulttoggle(true);
       setloading(false);
@@ -251,6 +296,9 @@ function AcademyDashboard() {
     setsocial(false);
     setsocialstyle(false);
     setbatchmenustyle(true);
+
+    setattendance(false);
+    setattendancestyle(false);
     setTimeout(() => {
       setbatchmenu(true);
       setloading(false);
@@ -359,6 +407,9 @@ function AcademyDashboard() {
     setsocialstyle(false);
     setbatchmenustyle(false);
     setbatchmenu(false);
+
+    setattendance(false);
+    setattendancestyle(false);
     let url = "http://localhost:5000/api/auth/getdata";
     const token = Token();
     const response = await fetch(url, {
@@ -458,6 +509,9 @@ function AcademyDashboard() {
     setsocialstyle(false);
     setstyle(false);
     setbatchmenustyle(false);
+
+    setattendance(false);
+    setattendancestyle(false);
     setbatchmenu(false);
     const todaydate = getCurrentDate();
     const url = "http://localhost:5000/api/auth/getpaymnetdue";
@@ -552,6 +606,8 @@ function AcademyDashboard() {
     setevent(true);
     seteventstyle(true);
 
+    setattendance(false);
+    setattendancestyle(false);
     setabout(false);
     setaboutstyle(false);
     setinstrument(false);
@@ -582,6 +638,8 @@ function AcademyDashboard() {
     setevent(false);
     seteventstyle(false);
 
+    setattendance(false);
+    setattendancestyle(false);
     setabout(true);
     setaboutstyle(true);
     setinstrument(false);
@@ -605,6 +663,9 @@ function AcademyDashboard() {
     setappdata(false);
     setdefaultstyle(false);
     setstyle(false);
+
+    setattendance(false);
+    setattendancestyle(false);
     setpendingfeesstyle(false);
     setdefaulttoggle(false);
     settogglepaymentdue(false);
@@ -634,6 +695,9 @@ function AcademyDashboard() {
     setregstyle(false);
     setappdata(false);
     setdefaultstyle(false);
+
+    setattendance(false);
+    setattendancestyle(false);
     setstyle(false);
     setpendingfeesstyle(false);
     setdefaulttoggle(false);
@@ -891,6 +955,23 @@ function AcademyDashboard() {
           </Button>
 
           <Divider />
+
+          {/* Attendance Management  */}
+          <Button
+            style={{
+              margin: "10px",
+              width: "200px",
+              color: attendancestyle ? "blue" : "white",
+              backgroundColor: attendancestyle ? "white" : "#283255",
+            }}
+            onClick={() => {
+              handleattendance();
+            }}
+          >
+            Attendance
+          </Button>
+
+          <Divider />
         </div>
 
         <div
@@ -952,6 +1033,14 @@ function AcademyDashboard() {
               <>
                 <Box style={{ margin: "20px" }}>
                   <SocialLinks />
+                </Box>
+              </>
+            )}
+
+            {attendance && (
+              <>
+                <Box style={{ margin: "20px" }}>
+                  <QrScan />
                 </Box>
               </>
             )}

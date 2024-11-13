@@ -34,7 +34,33 @@ function Timetable() {
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [selectedBatchId, setSelectedBatchId] = useState(null);
+  const [logo, setlogo] = useState("");
   const [data, setdata] = useState([]);
+
+  const getLogo = async () => {
+    const url = "http://localhost:5000/api/auth/getlogo";
+
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        academyname: academyname,
+      }),
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      setlogo(data.link);
+    }
+  };
+
+  useEffect(() => {
+    if (academyname) {
+      getLogo();
+    }
+  }, [academyname]);
 
   const handleapplicants = async (id) => {
     const token = Token();
@@ -114,34 +140,129 @@ function Timetable() {
     const newWindow = window.open();
 
     newWindow.document.write(`
-      <html>
-        <head>
-          <title>Print Students List</title>
-          <style>
-            body {
-              font-family: Arial, sans-serif;
-              margin: 20px;
-            }
-            table {
-              width: 100%;
-              border-collapse: collapse;
-            }
-            table, th, td {
-              border: 1px solid black;
-            }
-            th, td {
-              padding: 8px;
-              text-align: left;
-            }
-            th {
-              background-color: #f2f2f2;
-            }
-          </style>
-        </head>
-        <body>
-          ${printContent}
-        </body>
-      </html>
+   <html>
+  <head>
+    <title>Print Students List</title>
+    <style>
+      /* General styles */
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+        line-height: 1.6;
+        background-color: #f4f4f4;
+      }
+      
+      /* Container for the entire document */
+      .container {
+        width: 100%;
+        margin: 0 auto;
+        background-color: white;
+        padding: 20px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+      
+      /* Header with logo and academy name */
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 2px solid #ddd;
+        padding-bottom: 10px;
+        margin-bottom: 20px;
+      }
+      
+      .header img {
+        max-width: 150px;
+        max-height: 80px;
+        object-fit: contain;
+      }
+      
+      .header .academy-name {
+        font-size: 24px;
+        font-weight: bold;
+        color: #333;
+      } 
+
+      .academy-name
+      { 
+        text-align : center ;
+      }
+
+      /* Table styles */
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+      }
+
+      table, th, td {
+        border: 1px solid #ddd;
+      }
+
+      th, td {
+        padding: 10px;
+        text-align: left;
+      }
+
+      th {
+        background-color: #4CAF50;
+        color: white;
+      }
+
+      td {
+        background-color: #f9f9f9;
+      }
+
+      /* Footer for print */
+      .footer {
+        text-align: center;
+        margin-top: 30px;
+        font-size: 14px;
+        color: #888;
+      }
+
+      /* Style for print version */
+      @media print {
+        body {
+          background-color: white;
+          margin: 0;
+        }
+
+        .container {
+          box-shadow: none;
+          margin: 0;
+          padding: 0;
+        }
+
+        .header {
+          border-bottom: none;
+          margin-bottom: 10px;
+        }
+
+        .footer {
+          margin-top: 20px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <img src="${logo}" alt="Academy Logo" />
+        <div class="academy-name">${academyname}</div>
+      </div>
+
+      <div>
+        ${printContent}
+      </div>
+
+      <div class="footer">
+        <p>Powered by ${academyname} - All rights reserved</p>
+      </div>
+    </div>
+  </body>
+</html>
+
     `);
     newWindow.document.close();
     newWindow.print();

@@ -33,6 +33,7 @@ import Token from "../Token/Token";
 import PaymentDetails from "./PaymentDetails";
 import BatchProfile from "./BatchProfile";
 import BatchSelectionModal from "./BatchAssignForm";
+import AttendanceManagement from "./AttendanceManagement";
 
 const ApplicantsTable = ({ users }) => {
   const [data, setData] = useState();
@@ -53,6 +54,7 @@ const ApplicantsTable = ({ users }) => {
   });
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [actiontoggle, setactiontoggle] = useState(true);
+  const [toggleqr, settoggleqr] = useState(false);
   const [paymentdetails, setpaymentdetails] = useState({
     academyname: `${academyname}`,
     course: "",
@@ -67,6 +69,7 @@ const ApplicantsTable = ({ users }) => {
   useEffect(() => {
     setactiontoggle(false);
     settoggleinstallment(false);
+    settoggleqr(false);
   }, []);
 
   useEffect(() => {
@@ -648,6 +651,7 @@ const ApplicantsTable = ({ users }) => {
                             setpaymnetaddbox(true);
                             settoggleinstallment(false);
                             settogglebatch(false);
+                            settoggleqr(false);
                           }}
                         >
                           Add Payment
@@ -661,6 +665,7 @@ const ApplicantsTable = ({ users }) => {
                             setpaymnetaddbox(true);
                             settoggleinstallment(false);
                             settogglebatch(false);
+                            settoggleqr(false);
                           }}
                         >
                           Add Payment
@@ -673,6 +678,7 @@ const ApplicantsTable = ({ users }) => {
                         setpaymnetaddbox(false);
                         settoggleinstallment(true);
                         settogglebatch(false);
+                        settoggleqr(false);
                       }}
                     >
                       Payment History
@@ -687,6 +693,7 @@ const ApplicantsTable = ({ users }) => {
                             setpaymnetaddbox(false);
                             settoggleinstallment(false);
                             settogglebatch(true);
+                            settoggleqr(false);
                           }}
                         >
                           Batch Info
@@ -700,9 +707,40 @@ const ApplicantsTable = ({ users }) => {
                             setpaymnetaddbox(false);
                             settoggleinstallment(false);
                             settogglebatch(true);
+                            settoggleqr(false);
                           }}
                         >
                           Batch Info
+                        </Button>
+                      </>
+                    )}
+                    {data.status === "Reject" ? (
+                      <>
+                        <Button
+                          variant="contained"
+                          disabled
+                          onClick={() => {
+                            setpaymnetaddbox(false);
+                            settoggleinstallment(false);
+                            settogglebatch(false);
+                            settoggleqr(true);
+                          }}
+                        >
+                          Attendance QR
+                        </Button>
+                      </>
+                    ) : (
+                      <>
+                        <Button
+                          variant="contained"
+                          onClick={() => {
+                            setpaymnetaddbox(false);
+                            settoggleinstallment(false);
+                            settogglebatch(false);
+                            settoggleqr(true);
+                          }}
+                        >
+                          Attendance QR
                         </Button>
                       </>
                     )}
@@ -811,6 +849,16 @@ const ApplicantsTable = ({ users }) => {
                       </Typography>
 
                       {<BatchProfile data={installmentstate} />}
+                    </>
+                  )}
+
+                  {toggleqr && (
+                    <>
+                      <Typography sx={{ fontWeight: "Bold" }}>
+                        Attendance Management :
+                      </Typography>
+
+                      {<AttendanceManagement data={data} />}
                     </>
                   )}
                 </>

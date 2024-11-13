@@ -18,9 +18,11 @@ import { Fab } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import SupportAgentIcon from "@mui/icons-material/SupportAgent";
 import BatchProfile from "./BatchProfile";
+import Qrcode from "./Qrcode";
 
 function Profile() {
   const [sociallinks, setsociallinks] = useState("");
+  const [qrCodeData, setQrCodeData] = useState("");
   const academyname = sessionStorage.getItem("Academy");
 
   const getsociallinks = async () => {
@@ -55,6 +57,7 @@ function Profile() {
   const [togglepayment, settogglepayment] = useState(false);
   const [toggleabout, settoggleabout] = useState(true);
   const [toggleBatch, settoggleBatch] = useState(false);
+  const [toggleqr, settoggleqr] = useState(false);
 
   const [data, setData] = useState({});
   const [paymnetdata, setpaymnetdata] = useState({});
@@ -140,6 +143,31 @@ function Profile() {
     }
   };
 
+  const fetchqr = async (studentId) => {
+    try {
+      const url = "http://localhost:5000/api/auth/fetchqr";
+
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          Authorization: `${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          academyname: academyname,
+          studentid: studentId,
+        }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setQrCodeData(data);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   useEffect(() => {
     fetchProfile();
   }, []);
@@ -152,7 +180,7 @@ function Profile() {
         "Admin",
         academyname
       );
-
+      fetchqr(data._id);
       batchdetails(data._id);
     }
   }, [data]);
@@ -169,18 +197,28 @@ function Profile() {
     settoggleabout(true);
     settogglepayment(false);
     settoggleBatch(false);
+    settoggleqr(false);
   };
 
   const handlebatchtoggle = () => {
     settoggleBatch(true);
     settoggleabout(false);
     settogglepayment(false);
+    settoggleqr(false);
   };
 
   const handlepaymenttoggle = () => {
     settoggleabout(false);
     settogglepayment(true);
     settoggleBatch(false);
+    settoggleqr(false);
+  };
+
+  const handleqr = () => {
+    settoggleabout(false);
+    settogglepayment(false);
+    settoggleBatch(false);
+    settoggleqr(true);
   };
 
   return (
@@ -274,6 +312,18 @@ function Profile() {
             >
               Batch Info
             </Button>
+
+            <Button
+              style={{
+                marginLeft: "10px",
+                backgroundColor: toggleqr ? "#9C27B0" : "transparent",
+                color: toggleqr ? "#fff" : "#000",
+                border: "1px solid #ccc",
+              }}
+              onClick={() => handleqr()}
+            >
+              Attendance Qr code
+            </Button>
           </div>
 
           {toggleabout && <ProfileAbout data={data} />}
@@ -281,6 +331,8 @@ function Profile() {
           {togglepayment && <Paymnettable info={paymnetdata} />}
 
           {toggleBatch && <BatchProfile details={batchdata} />}
+
+          {toggleqr && <Qrcode qrcode={qrCodeData} />}
         </Card>
       </Box>
 

@@ -88,7 +88,7 @@ function Instrument() {
 
   return (
     <>
-      <h2 style={{ fontWeight: "bold" }}>Add About Your Academy</h2>
+      <h2 style={{ fontWeight: "bold" }}>Add Instruments</h2>
       <Divider sx={{ marginBottom: "20px", marginTop: "20px" }} />
 
       <div style={{ display: "flex", marginTop: "60px" }}>
