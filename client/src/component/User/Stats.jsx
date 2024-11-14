@@ -8,7 +8,7 @@ const StatsSection = () => {
     Certified_Instructors: 0,
     Years_of_Operation: 0,
   });
-  const [visible, setVisible] = useState(false); 
+  const [visible, setVisible] = useState(false);
 
   const academyname = sessionStorage.getItem("Academy");
   const controls = useAnimation();
@@ -28,10 +28,10 @@ const StatsSection = () => {
       ([entry]) => {
         if (entry.isIntersecting) {
           controls.start("visible");
-          setVisible(true); 
+          setVisible(true);
         } else {
           controls.start("hidden");
-          setVisible(false); 
+          setVisible(false);
         }
       },
       { threshold: 0.2 }
@@ -93,11 +93,15 @@ const StatsSection = () => {
   useEffect(() => {
     if (visible) {
       animateCountUp("students_enroll", data.students_enroll, "+");
-      animateCountUp("instrument_course_offered", data.instrument_course_offered, "+");
+      animateCountUp(
+        "instrument_course_offered",
+        data.instrument_course_offered,
+        "+"
+      );
       animateCountUp("Certified_Instructors", data.Certified_Instructors);
       animateCountUp("Years_of_Operation", data.Years_of_Operation, "+");
     }
-  }, [visible, data]); 
+  }, [visible, data]);
 
   return (
     <div className="h-screen overflow-hidden" style={{ fontFamily: "ubuntu" }}>

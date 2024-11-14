@@ -32,7 +32,8 @@ function Signup() {
       return;
     }
 
-    const url = "http://localhost:5000/api/auth/send-otp";
+    const url =
+      "http://localhost:5000/api/auth/send-otp";
     const response = await fetch(url, {
       method: "POST",
       headers: {
@@ -56,7 +57,8 @@ function Signup() {
 
   const handleVerifyOtp = async (e) => {
     e.preventDefault();
-    const url = "http://localhost:5000/api/auth/verify-otp";
+    const url =
+      "http://localhost:5000/api/auth/verify-otp";
     const response = await fetch(url, {
       method: "POST",
       headers: {
@@ -102,16 +104,13 @@ function Signup() {
       sessionStorage.setItem("refreshtoken", `${data.refreshtoken}`);
       sessionStorage.setItem("academyname", `${data.academyname}`);
 
-      const academyname = await sessionStorage.getItem("academyname")
-      sessionStorage.setItem("role","Admin")
+      const academyname = await sessionStorage.getItem("academyname");
+      sessionStorage.setItem("role", "Admin");
 
-      if(academyname)
-      {
+      if (academyname) {
         navigate(`/${academyname}/admin/dashboard`, { replace: true });
-        window.location.reload(); 
-        
+        window.location.reload();
       }
-   
     } else {
       setMsg("Contact SuperAdmin");
       toast.error("Access Denied");

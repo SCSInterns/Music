@@ -113,7 +113,7 @@ function ParticularBatches() {
         batchcoustomname: selectedBatch.batchtype,
         practicalday: practical,
         theoryday: thoerydays,
-        maxstudent : customdays
+        maxstudent: customdays,
       }),
     });
 
@@ -264,7 +264,7 @@ function ParticularBatches() {
                 onChange={handlestudents}
                 value={customdays}
                 inputProps={{ min: 0 }}
-                sx={{marginBottom : '20px'}}
+                sx={{ marginBottom: "20px" }}
               />
 
               {/* Currentdays */}

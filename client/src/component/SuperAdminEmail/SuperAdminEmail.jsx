@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Token from "../Token/Token";
 
 function NewRequest() {
-  const [emailinfo, setEmailinfo] = useState({ email: '' });
+  const [emailinfo, setEmailinfo] = useState({ email: "" });
   const username = sessionStorage.getItem("name");
 
   useEffect(() => {
@@ -43,11 +43,9 @@ function NewRequest() {
     }
   }, [username]);
 
-    let   superadminemail = emailinfo.email  
+  let superadminemail = emailinfo.email;
 
-  return (
-      superadminemail
-  );
+  return superadminemail;
 }
 
 export default NewRequest;

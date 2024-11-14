@@ -67,7 +67,7 @@ function Gallery() {
             animate="animate"
             className="absolute inset-0 bg-cover bg-center z-0"
             style={{
-              backgroundImage: `url(${galleryimages[currentIndex]})`
+              backgroundImage: `url(${galleryimages[currentIndex]})`,
             }}
           />
         )}

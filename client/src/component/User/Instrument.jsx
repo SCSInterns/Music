@@ -88,7 +88,7 @@ function Instrument() {
         ref={ref}
         initial="hidden"
         animate={controls}
-        variants={animationVariants} 
+        variants={animationVariants}
       >
         <p
           style={{
@@ -99,7 +99,7 @@ function Instrument() {
             fontSize: "18px",
             color: "#0c4b65",
           }}
-        > 
+        >
           At {academyname}, we offer a wide range of musical instruments to
           inspire your musical journey. Whether you're passionate about rhythm,
           melody, or harmony, we provide personalized instruction for every
@@ -111,7 +111,10 @@ function Instrument() {
         </p>
       </motion.div>
 
-      <div className="p-1 flex flex-wrap items-center justify-center" style={{zIndex : '10' , position : 'relative'}}>
+      <div
+        className="p-1 flex flex-wrap items-center justify-center"
+        style={{ zIndex: "10", position: "relative" }}
+      >
         {instruments.map((instrument) => (
           <div
             key={instrument.id}

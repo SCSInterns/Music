@@ -23,7 +23,7 @@ function About() {
       const data = await response.json();
       setAbout(data);
     } else {
-      // toast.error("Error fetching about content"); 
+      // toast.error("Error fetching about content");
     }
   };
 
@@ -40,7 +40,7 @@ function About() {
           controls.start("hidden");
         }
       },
-      { threshold: 0.2 } 
+      { threshold: 0.2 }
     );
 
     if (ref.current) {

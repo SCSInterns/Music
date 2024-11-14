@@ -34,6 +34,7 @@ import PaymentDetails from "./PaymentDetails";
 import BatchProfile from "./BatchProfile";
 import BatchSelectionModal from "./BatchAssignForm";
 import AttendanceManagement from "./AttendanceManagement";
+import AttendanceSheet from "./AttendanceSheet";
 
 const ApplicantsTable = ({ users }) => {
   const [data, setData] = useState();
@@ -47,6 +48,7 @@ const ApplicantsTable = ({ users }) => {
   const role = sessionStorage.getItem("role");
   const [paymentmode, setpaymentmode] = useState("");
   const [paymentdate, setpaymentdate] = useState("");
+  const [batchdata, setbatchdata] = useState({});
   const [expirydate, setexpirydate] = useState({});
   const [installmentstate, setinstallmentstate] = useState({
     studentid: "",
@@ -55,6 +57,8 @@ const ApplicantsTable = ({ users }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [actiontoggle, setactiontoggle] = useState(true);
   const [toggleqr, settoggleqr] = useState(false);
+  const [togglesheet, settogglesheet] = useState(false);
+  const [recordsheet, setrecordsheet] = useState([]);
   const [paymentdetails, setpaymentdetails] = useState({
     academyname: `${academyname}`,
     course: "",
@@ -70,6 +74,7 @@ const ApplicantsTable = ({ users }) => {
     setactiontoggle(false);
     settoggleinstallment(false);
     settoggleqr(false);
+    settogglesheet(false);
   }, []);
 
   useEffect(() => {
@@ -91,6 +96,36 @@ const ApplicantsTable = ({ users }) => {
     });
   }, [paymentmode]);
 
+  const handleattendancerecord = async () => {
+    const url = "http://localhost:5000/api/auth/getrecords";
+    const token = Token();
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        academyname: academyname,
+        role: role,
+        studentid: data._id,
+        batchid: batchdata._id,
+      }),
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      setrecordsheet(data);
+    }
+  };
+
+  useEffect(() => {
+    if (data && batchdata) {
+      handleattendancerecord();
+    }
+  }, [data && batchdata]);
+
   useEffect(() => {
     setpaymentdetails({
       ...paymentdetails,
@@ -105,6 +140,33 @@ const ApplicantsTable = ({ users }) => {
   const handleactiontoggle = async (action) => {
     setactiontoggle(action);
   };
+
+  const batchdetails = async (id) => {
+    console.log("Student Id :", id);
+    const url = "http://localhost:5000/api/auth/getbatchdetail";
+    const token = Token();
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        Authorization: `${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        studentid: id,
+        academyname: academyname,
+      }),
+    });
+    if (response.ok) {
+      const data = await response.json();
+      setbatchdata(data);
+    }
+  };
+
+  useEffect(() => {
+    if (data) {
+      batchdetails(data._id);
+    }
+  }, [data]);
 
   // Function to open the modal
   const handlebatchadd = (studentid) => {
@@ -652,6 +714,7 @@ const ApplicantsTable = ({ users }) => {
                             settoggleinstallment(false);
                             settogglebatch(false);
                             settoggleqr(false);
+                            settogglesheet(false);
                           }}
                         >
                           Add Payment
@@ -666,6 +729,7 @@ const ApplicantsTable = ({ users }) => {
                             settoggleinstallment(false);
                             settogglebatch(false);
                             settoggleqr(false);
+                            settogglesheet(false);
                           }}
                         >
                           Add Payment
@@ -679,6 +743,7 @@ const ApplicantsTable = ({ users }) => {
                         settoggleinstallment(true);
                         settogglebatch(false);
                         settoggleqr(false);
+                        settogglesheet(false);
                       }}
                     >
                       Payment History
@@ -694,6 +759,7 @@ const ApplicantsTable = ({ users }) => {
                             settoggleinstallment(false);
                             settogglebatch(true);
                             settoggleqr(false);
+                            settogglesheet(false);
                           }}
                         >
                           Batch Info
@@ -708,12 +774,14 @@ const ApplicantsTable = ({ users }) => {
                             settoggleinstallment(false);
                             settogglebatch(true);
                             settoggleqr(false);
+                            settogglesheet(false);
                           }}
                         >
                           Batch Info
                         </Button>
                       </>
                     )}
+
                     {data.status === "Reject" ? (
                       <>
                         <Button
@@ -724,6 +792,7 @@ const ApplicantsTable = ({ users }) => {
                             settoggleinstallment(false);
                             settogglebatch(false);
                             settoggleqr(true);
+                            settogglesheet(false);
                           }}
                         >
                           Attendance QR
@@ -738,9 +807,43 @@ const ApplicantsTable = ({ users }) => {
                             settoggleinstallment(false);
                             settogglebatch(false);
                             settoggleqr(true);
+                            settogglesheet(false);
                           }}
                         >
                           Attendance QR
+                        </Button>
+                      </>
+                    )}
+
+                    {data.status === "Reject" ? (
+                      <>
+                        <Button
+                          variant="contained"
+                          disabled
+                          onClick={() => {
+                            setpaymnetaddbox(false);
+                            settoggleinstallment(false);
+                            settogglebatch(false);
+                            settoggleqr(false);
+                            settogglesheet(true);
+                          }}
+                        >
+                          Attendance Sheet
+                        </Button>
+                      </>
+                    ) : (
+                      <>
+                        <Button
+                          variant="contained"
+                          onClick={() => {
+                            setpaymnetaddbox(false);
+                            settoggleinstallment(false);
+                            settogglebatch(false);
+                            settoggleqr(false);
+                            settogglesheet(true);
+                          }}
+                        >
+                          Attendance Sheet
                         </Button>
                       </>
                     )}
@@ -848,7 +951,16 @@ const ApplicantsTable = ({ users }) => {
                         Batch Info :
                       </Typography>
 
-                      {<BatchProfile data={installmentstate} />}
+                      {<BatchProfile batchdata={batchdata} />}
+                    </>
+                  )}
+
+                  {togglesheet && (
+                    <>
+                      <Typography sx={{ fontWeight: "Bold" }}>
+                        Attendance Info :
+                      </Typography>
+                      {<AttendanceSheet records={recordsheet} />}
                     </>
                   )}
 

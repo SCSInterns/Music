@@ -126,8 +126,7 @@ const Addlogo = () => {
 
       <div className="flex flex-col items-center justify-center mt-10 space-y-4">
         {defaulttoggle && (
-          <> 
-             
+          <>
             {selectedImage ? (
               <div className="relative">
                 <img
@@ -163,21 +162,21 @@ const Addlogo = () => {
               className="bg-green-500 text-white px-4 py-2 rounded-md shadow-md hover:bg-green-400"
             >
               Upload
-            </button> 
+            </button>
 
             <div style={{ marginLeft: "700px" }}>
-                  <Button
-                    variant="contained"
-                    onClick={handleBack}
-                    sx={{
-                      marginRight: "30px",
-                      marginBottom: "30px",
-                      marginTop: "30px",
-                    }}
-                  >
-                    Back
-                  </Button>
-                </div>
+              <Button
+                variant="contained"
+                onClick={handleBack}
+                sx={{
+                  marginRight: "30px",
+                  marginBottom: "30px",
+                  marginTop: "30px",
+                }}
+              >
+                Back
+              </Button>
+            </div>
 
             {imageUrl && (
               <>

@@ -13,8 +13,8 @@ export default function Addvideo() {
   const [videolink, setvideolink] = useState("");
   const [loading, setloading] = useState(false);
   const [data, setdata] = useState("");
-  const [toggle, settoggle] = useState(true); 
-  const [menutoggle, setmenutoggle] = useState(false)
+  const [toggle, settoggle] = useState(true);
+  const [menutoggle, setmenutoggle] = useState(false);
   const academyname = sessionStorage.getItem("academyname");
   const role = sessionStorage.getItem("role");
   const navigate = useNavigate();
@@ -63,17 +63,16 @@ export default function Addvideo() {
       }
     }, 2000);
   };
- 
-  const handleback = () => 
-  {
-     settoggle(false) 
-     setloading(true) 
 
-     setTimeout(() => {
-      setloading(false)
-      setmenutoggle(true)
-     }, 2000);
-  }
+  const handleback = () => {
+    settoggle(false);
+    setloading(true);
+
+    setTimeout(() => {
+      setloading(false);
+      setmenutoggle(true);
+    }, 2000);
+  };
   console.log(data);
   console.log(data.link);
 
@@ -157,18 +156,18 @@ export default function Addvideo() {
           )}
 
           <Button
-            variant="contained" 
+            variant="contained"
             onClick={() => handleback()}
             sx={{ float: "right", marginRight: "30px", marginBottom: "30px" }}
           >
             Back
           </Button>
         </>
-      )} 
+      )}
 
       {menutoggle && (
         <>
-           <MediaMenu/>
+          <MediaMenu />
         </>
       )}
     </>

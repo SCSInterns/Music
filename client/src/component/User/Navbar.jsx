@@ -235,7 +235,7 @@ const Example = () => {
                       {({ focus }) => (
                         <>
                           <a
-                            // onClick={handleSignOut} 
+                            // onClick={handleSignOut}
                             href={`${academyname}/login`}
                             className={classNames(
                               focus ? "bg-gray-100" : "",

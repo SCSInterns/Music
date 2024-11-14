@@ -143,19 +143,24 @@ function PendingFeesTable({ data }) {
       <div>
         <TableContainer
           component={Paper}
-          sx={{ border: "2px solid black", padding: "3px" , marginLeft:'-30px' , width:'950px'}}
+          sx={{
+            border: "2px solid black",
+            padding: "3px",
+            marginLeft: "-30px",
+            width: "950px",
+          }}
         >
           <Table aria-label="pending fees table">
             <TableHead>
               <TableRow>
-                <TableCell >Student Name</TableCell>
-                <TableCell >Student Email</TableCell>
-                <TableCell >Course</TableCell>
-                <TableCell >Amount</TableCell>
-                <TableCell >Payment Mode</TableCell>
-                <TableCell >Enrollment Date</TableCell>
-                <TableCell >Next Payment Date</TableCell>
-                <TableCell >Send Reminder </TableCell>
+                <TableCell>Student Name</TableCell>
+                <TableCell>Student Email</TableCell>
+                <TableCell>Course</TableCell>
+                <TableCell>Amount</TableCell>
+                <TableCell>Payment Mode</TableCell>
+                <TableCell>Enrollment Date</TableCell>
+                <TableCell>Next Payment Date</TableCell>
+                <TableCell>Send Reminder </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>

@@ -4,41 +4,8 @@ import { useState } from "react";
 import Token from "../Token/Token";
 import { Card, CardContent, Typography } from "@mui/material";
 
-function BatchProfile({ data }) {
-  const [batchdata, setbatchdata] = useState({});
-  const token = Token();
-  console.log(" Info : ", data);
-
-  console.log("Id : ", data.studentid);
-  const academyname = sessionStorage.getItem("academyname");
-
-  const batchdetails = async (id) => {
-    console.log("Student Id :", id);
-    const url = "http://localhost:5000/api/auth/getbatchdetail";
-
-    const response = await fetch(url, {
-      method: "POST",
-      headers: {
-        Authorization: `${token}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        studentid: id,
-        academyname: academyname,
-      }),
-    });
-
-    if (response.ok) {
-      const data = await response.json();
-      setbatchdata(data);
-    }
-  };
-
-  useEffect(() => {
-    batchdetails(data.studentid);
-  }, []);
-
-  console.log("Batches info:", batchdata);
+function BatchProfile({ batchdata }) {
+  console.log(batchdata);
 
   return (
     <>
@@ -49,7 +16,7 @@ function BatchProfile({ data }) {
             backgroundColor: "#ffffff",
             marginTop: "30px",
             display: "flex",
-            justifyContent: "space-evenly", 
+            justifyContent: "space-evenly",
           }}
         >
           <CardContent>

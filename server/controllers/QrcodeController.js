@@ -73,6 +73,7 @@ const fetchqr = async (req, res) => {
 
     }
 }
+
 const attendance = async (req, res) => {
     try {
         const { studentid, academyname, role, batchid } = req.body;
@@ -84,12 +85,14 @@ const attendance = async (req, res) => {
 
             const currentDate = new Date();
 
+
             const offset = 5.5 * 60 * 60 * 1000;
             const istDate = new Date(currentDate.getTime() + offset);
 
+            // Extract the date, time, and day
             const date = istDate.toISOString().split("T")[0];
             const time = istDate.toISOString().split("T")[1].split(".")[0];
-
+            const day = istDate.toLocaleString("en-IN", { weekday: "long" });
 
             const alreadyDone = await Attendance.findOne({
                 studentid: studentid,
@@ -100,6 +103,7 @@ const attendance = async (req, res) => {
             if (alreadyDone) {
                 return res.status(409).json({ msg: "Attendance has already been marked for today." });
             }
+
             const attendanceRecord = new Attendance({
                 studentid,
                 academyname,
@@ -107,12 +111,13 @@ const attendance = async (req, res) => {
                 batchid,
                 date,
                 time,
+                day,
             });
+
             await attendanceRecord.save();
 
             return res.status(201).json({ message: "Attendance logged successfully", attendanceRecord });
         } else {
-
             return res.status(401).json({ msg: "Unauthorized Access" });
         }
     } catch (error) {
@@ -120,6 +125,7 @@ const attendance = async (req, res) => {
         return res.status(500).json({ message: "Server error occurred", error });
     }
 };
+
 
 
 

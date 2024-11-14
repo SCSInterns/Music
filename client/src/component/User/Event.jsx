@@ -99,9 +99,9 @@ function Event() {
             </div>
           ))}
         </div>
-      </div> 
+      </div>
 
-      <Footer/>
+      <Footer />
     </>
   );
 }

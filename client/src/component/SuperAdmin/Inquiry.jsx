@@ -45,7 +45,7 @@ function Dashboard() {
 
   const setcredentials = async (id) => {
     const url = `http://localhost:5000/api/superadmin/academycredentials/${id}`;
-    const academyurl = `http://localhost:3000/${admin[0].academy_name}`
+    const academyurl = `http://localhost:3000/${admin[0].academy_name}`;
     const token = Token();
     const response = await fetch(url, {
       method: "PUT",
@@ -56,7 +56,7 @@ function Dashboard() {
       body: JSON.stringify({
         username: academycred.username,
         password: academycred.password,
-        url: academyurl
+        url: academyurl,
       }),
     });
 

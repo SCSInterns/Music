@@ -32,7 +32,7 @@ import Detailview from './component/User/Detailview';
 import UserLogin from './component/User/Login';
 import SetPassword from './component/User/SetPassword';
 import Profile from './component/User/Profile';
-
+import AutomatedAttendance from './component/Academy/AutomatedAttendance'
 
 
 function App() {
@@ -66,6 +66,7 @@ function App() {
               <Route path={'/:academyname/admin/dashboard'} element={<AcademyDashboard />}></Route>
               <Route path={'/:academyname/admin/regform'} element={<AcademyRegistration />}></Route>
               <Route path={'/:academyname/admin/feesdetails'} element={<PaymentDetails />}></Route>
+              <Route path={'/:academyname/attendance'} element={<AutomatedAttendance />}></Route>
             </> :
             <>
               <Route path='/academyregform' element={<RegForm />}></Route>
@@ -73,6 +74,7 @@ function App() {
               <Route path='/admin/login' element={<AcademyLogin />}></Route>
               <Route path='/personaldetails/:id' element={<PersonalDetails />} ></Route>
               <Route path='/admin/dashboard' element={<Navigate to='/admin/login' />}></Route>
+              <Route path={'/:academyname/attendance'} element={<AcademyLogin />}></Route>
             </>}
 
           {/* path='' */}

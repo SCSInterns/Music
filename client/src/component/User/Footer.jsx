@@ -88,7 +88,6 @@ export default function Footer() {
     }
   }, [academyname]);
 
-
   return (
     <div
       className="px-4 pt-16 mx-auto sm:max-w-xl md:max-w-full lg:max-w-screen-xl md:px-24 lg:px-8"
@@ -150,7 +149,7 @@ export default function Footer() {
             </p>
           </div>
         </div>
-        <div className="space-y-2 text-sm" style={{marginLeft: "-50px"}}>
+        <div className="space-y-2 text-sm" style={{ marginLeft: "-50px" }}>
           <p
             className="text-base font-bold tracking-wide text-gray-900"
             style={{ color: "white", textAlign: "left" }}

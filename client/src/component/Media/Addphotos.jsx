@@ -30,7 +30,7 @@ const MultipleImageUpload = () => {
       });
 
       if (validFiles.length > 0) {
-        setFiles((prevFiles) => [...prevFiles, ...validFiles]); ;
+        setFiles((prevFiles) => [...prevFiles, ...validFiles]);
       }
     },
   });
@@ -93,8 +93,8 @@ const MultipleImageUpload = () => {
     });
 
     if (response.ok) {
-      setUploadedUrls([])
-      setFiles([])
+      setUploadedUrls([]);
+      setFiles([]);
       toast.success("Saved to database");
     } else {
       toast.error("Error saving to database");

@@ -69,11 +69,11 @@ const Team = () => {
     <>
       <motion.div
         className=" h-screen overflow-hidden"
-        style={{ fontFamily: "ubuntu" , marginTop : '-30px'}}
+        style={{ fontFamily: "ubuntu", marginTop: "-30px" }}
         ref={ref}
         initial="hidden"
         animate={controls}
-        variants={animationVariants} 
+        variants={animationVariants}
       >
         <div className="max-w-screen-lg mx-auto">
           <div className="text-center mb-16">

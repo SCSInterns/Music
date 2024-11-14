@@ -22,6 +22,11 @@ const QrcodeSchema = new Schema({
     {
         type: String,
         required: true,
+    },
+    rollno:
+    {
+        type: String,
+        required: true,
     }
 })
 
