@@ -9,10 +9,12 @@ import { FaFilePdf } from "react-icons/fa6";
 import "jspdf-autotable";
 
 function AttendanceTable({ records }) {
+  console.log(records);
+
   const columns = [
     {
-      accessorKey: "studentid",
-      header: "Student ID",
+      accessorKey: "currentrollno",
+      header: "Roll No",
       size: 150,
     },
     {

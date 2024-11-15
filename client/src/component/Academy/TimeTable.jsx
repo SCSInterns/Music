@@ -8,6 +8,7 @@ import PrintIcon from "@mui/icons-material/Print";
 import html2canvas from "html2canvas";
 import DownloadIcon from "@mui/icons-material/Download";
 import { jsPDF } from "jspdf";
+import "jspdf-autotable";
 
 import {
   Dialog,
@@ -52,7 +53,7 @@ function Timetable() {
 
     if (response.ok) {
       const data = await response.json();
-      setlogo(data.link);
+      const result = await setlogo(data.link);
     }
   };
 
@@ -140,7 +141,7 @@ function Timetable() {
     const newWindow = window.open();
 
     newWindow.document.write(`
-   <html>
+        <html>
   <head>
     <title>Print Students List</title>
     <style>
@@ -164,7 +165,6 @@ function Timetable() {
       /* Header with logo and academy name */
       .header {
         display: flex;
-        justify-content: space-between;
         align-items: center;
         border-bottom: 2px solid #ddd;
         padding-bottom: 10px;
@@ -183,9 +183,8 @@ function Timetable() {
         color: #333;
       } 
 
-      .academy-name
-      { 
-        text-align : center ;
+      .academy-name { 
+        margin-left : 150px ;
       }
 
       /* Table styles */
@@ -248,9 +247,9 @@ function Timetable() {
   <body>
     <div class="container">
       <div class="header">
-        <img src="${logo}" alt="Academy Logo" />
-        <div class="academy-name">${academyname}</div>
-      </div>
+        <img src="${logo}" alt="Academy Logo" onerror="${logo}"/>
+        <div class="academy-name">${academyname} Music Academy </div>
+        </div>
 
       <div>
         ${printContent}
@@ -262,10 +261,12 @@ function Timetable() {
     </div>
   </body>
 </html>
-
     `);
+
     newWindow.document.close();
-    newWindow.print();
+    setTimeout(() => {
+      newWindow.print();
+    }, 1000);
   };
 
   useEffect(() => {
@@ -407,94 +408,69 @@ function Timetable() {
             </Button>
           </div>
           <div id="student-list-print">
+            <DialogTitle sx={{ fontWeight: "bold" }}>
+              Batch Details :
+            </DialogTitle>
             <div
               style={{
                 display: "flex",
-                alignItems: "center",
                 flexDirection: "column",
+                alignItems: "center",
               }}
             >
-              <DialogTitle>Applicants List</DialogTitle>
-              <DialogTitle> Batch Details : </DialogTitle>
-
-              <div style={{ display: "flex" }}>
-                <div style={{ display: "flex", flexDirection: "column" }}>
-                  <Typography style={{ fontWeight: "bold" }}>
-                    {" "}
-                    Batch Name :{" "}
-                  </Typography>
-                  <Typography>{selectedEvent.title}</Typography>
-                </div>
-
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    marginLeft: "30px",
-                  }}
-                >
-                  <Typography style={{ fontWeight: "bold" }}>
-                    {" "}
-                    Batch Timings :{" "}
-                  </Typography>
-                  <Typography>{selectedEvent.batchtiming}</Typography>
-                </div>
-              </div>
-
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  marginTop: "20px",
-                  marginRight: "20px",
-                }}
-              >
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    marginLeft: "30px",
-                  }}
-                >
-                  <Typography style={{ fontWeight: "bold" }}>
-                    {" "}
-                    Batch Days :{" "}
-                  </Typography>
-                  <Typography>{selectedEvent.days.join(" - ")}</Typography>
-                </div>
-
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    marginLeft: "30px",
-                  }}
-                >
-                  <Typography style={{ fontWeight: "bold" }}>
-                    {" "}
-                    Practical Days :{" "}
-                  </Typography>
-                  <Typography>
-                    {selectedEvent.practicaldays.join("-")}
-                  </Typography>
-                </div>
-
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    marginLeft: "20px",
-                  }}
-                >
-                  <Typography style={{ fontWeight: "bold" }}>
-                    {" "}
-                    Theory Days :{" "}
-                  </Typography>
-                  <Typography>{selectedEvent.theorydays.join("-")}</Typography>
-                </div>
-              </div>
+              <Table>
+                <TableBody>
+                  <TableRow>
+                    <TableCell>
+                      <Typography style={{ fontWeight: "bold" }}>
+                        Batch Name:
+                      </Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography>{selectedEvent.title}</Typography>
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell>
+                      <Typography style={{ fontWeight: "bold" }}>
+                        Batch Timings:
+                      </Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography>{selectedEvent.batchtiming}</Typography>
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell>
+                      <Typography style={{ fontWeight: "bold" }}>
+                        Practical Days:
+                      </Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography>
+                        {selectedEvent.practicaldays.join(" - ")}
+                      </Typography>
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell>
+                      <Typography style={{ fontWeight: "bold" }}>
+                        Theory Days:
+                      </Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography>
+                        {selectedEvent.theorydays.join(" - ")}
+                      </Typography>
+                    </TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
             </div>
 
+            <DialogTitle sx={{ fontWeight: "bold" }}>
+              Applicants List :{" "}
+            </DialogTitle>
             <DialogContent sx={{ marginTop: "20px" }}>
               <TableContainer component={Paper}>
                 <Table>

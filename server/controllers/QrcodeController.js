@@ -1,6 +1,20 @@
 const Qrcode = require("../models/Qrcode")
 const QR = require('qrcode');
 const Attendance = require("../models/Attendance")
+const Rollno = require("../controllers/RollnoController")
+
+
+
+
+function getInitials(str) {
+    return str
+        .split(' ')
+        .map(word => word[0])
+        .join('')
+        .toUpperCase();
+}
+
+
 
 const generateqrcode = async (req, res) => {
 
@@ -17,7 +31,10 @@ const generateqrcode = async (req, res) => {
                 return res.status(404).json({ msg: " Qr code already generated for this student " })
             }
 
-            const data = JSON.stringify({ studentid, batchid })
+            const rollnofind = await Rollno.updaterollno(role, academyname)
+            const academynameinitial = await getInitials(academyname)
+            const rollno = `${academynameinitial}-${rollnofind}`
+            const data = JSON.stringify({ studentid, batchid, rollno })
             const qrCodeData = await QR.toDataURL(data);
 
             if (qrCodeData) {
@@ -26,7 +43,8 @@ const generateqrcode = async (req, res) => {
                     academyname: academyname,
                     qrcode: qrCodeData,
                     studentid: studentid,
-                    batchid: batchid
+                    batchid: batchid,
+                    rollno: rollno
                 })
 
                 const id = await newidcard.save()
@@ -76,10 +94,10 @@ const fetchqr = async (req, res) => {
 
 const attendance = async (req, res) => {
     try {
-        const { studentid, academyname, role, batchid } = req.body;
+        const { studentid, academyname, role, batchid, currentrollno } = req.body;
 
         if (role === "Admin") {
-            if (!studentid || !academyname || !batchid) {
+            if (!studentid || !academyname || !batchid || !currentrollno) {
                 return res.status(400).json({ message: "All fields are required" });
             }
 
@@ -112,6 +130,7 @@ const attendance = async (req, res) => {
                 date,
                 time,
                 day,
+                currentrollno
             });
 
             await attendanceRecord.save();

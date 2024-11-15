@@ -7,6 +7,7 @@ import { QrReader } from "react-qr-reader";
 function AttendanceLogger() {
   const [studentId, setStudentId] = useState("");
   const [batchId, setBatchId] = useState("");
+  const [rollno, setrollno] = useState("");
   const [role, setRole] = useState("");
   const [showScanner, setShowScanner] = useState(false);
   const academyName = sessionStorage.getItem("academyname");
@@ -20,7 +21,7 @@ function AttendanceLogger() {
 
   // Log attendance after scanning QR code
   const logAttendance = async () => {
-    if (!studentId || !batchId || !academyName) {
+    if (!studentId || !batchId || !academyName || !rollno) {
       toast.error("Please fill in all required fields.");
       return;
     }
@@ -38,6 +39,7 @@ function AttendanceLogger() {
           academyname: academyName,
           role: role,
           batchid: batchId,
+          currentrollno: rollno,
         }),
       });
 
@@ -48,6 +50,7 @@ function AttendanceLogger() {
         toast.success("Attendance logged successfully.");
         setStudentId("");
         setBatchId("");
+        setrollno("");
       }
     } catch (error) {
       console.error("Error logging attendance:", error);
@@ -61,6 +64,7 @@ function AttendanceLogger() {
       const scannedData = JSON.parse(data);
       setStudentId(scannedData.studentid);
       setBatchId(scannedData.batchid);
+      setrollno(scannedData.rollno);
       setShowScanner(false);
       toast.success("QR Code scanned successfully!");
     }
@@ -112,6 +116,14 @@ function AttendanceLogger() {
         label="Batch ID"
         value={batchId}
         onChange={(e) => setBatchId(e.target.value)}
+        fullWidth
+        margin="normal"
+        required
+      />
+      <TextField
+        label="Roll No"
+        value={rollno}
+        onChange={(e) => setrollno(e.target.value)}
         fullWidth
         margin="normal"
         required

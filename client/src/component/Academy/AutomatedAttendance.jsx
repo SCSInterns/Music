@@ -8,6 +8,7 @@ import HeaderAutoAttend from "./HeaderAutoAttend";
 function AutomatedAttendanceLogger() {
   const [studentId, setStudentId] = useState("");
   const [batchId, setBatchId] = useState("");
+  const [rollno, setrollno] = useState("");
   const [role, setRole] = useState("");
   const [loading, setLoading] = useState(false);
   const [scannerEnabled, setScannerEnabled] = useState(true);
@@ -19,10 +20,10 @@ function AutomatedAttendanceLogger() {
   }, []);
 
   // Log attendance with passed student and batch IDs
-  const logAttendance = async (studentid, batchid) => {
-    console.log("Log Attendance with:", studentid, batchid);
+  const logAttendance = async (studentid, batchid, rollno) => {
+    console.log("Log Attendance with:", studentid, batchid, rollno);
 
-    if (!studentid || !batchid || !academyName) {
+    if (!studentid || !batchid || !academyName || !rollno) {
       toast.error("Please fill in all required fields.");
       setLoading(false);
       setScannerEnabled(true);
@@ -42,6 +43,7 @@ function AutomatedAttendanceLogger() {
           academyname: academyName,
           role: role,
           batchid: batchid,
+          currentrollno: rollno,
         }),
       });
 
@@ -55,6 +57,7 @@ function AutomatedAttendanceLogger() {
         toast.success("Attendance logged successfully.");
         setStudentId("");
         setBatchId("");
+        setrollno("");
       }
     } catch (error) {
       console.error("Error logging attendance:", error);
@@ -73,13 +76,18 @@ function AutomatedAttendanceLogger() {
         if (scannedData.studentid && scannedData.batchid) {
           setStudentId(scannedData.studentid);
           setBatchId(scannedData.batchid);
+          setrollno(scannedData.rollno);
           toast.success("QR Code scanned successfully!");
 
           setScannerEnabled(false);
           setLoading(true);
           setTimeout(() => {
-            logAttendance(scannedData.studentid, scannedData.batchid); 
-          }, 4000); 
+            logAttendance(
+              scannedData.studentid,
+              scannedData.batchid,
+              scannedData.rollno
+            );
+          }, 4000);
         } else {
           toast.error("Invalid QR code format: Missing studentid or batchid.");
         }
@@ -142,6 +150,14 @@ function AutomatedAttendanceLogger() {
               <TextField
                 label="Batch ID"
                 value={batchId}
+                fullWidth
+                margin="normal"
+                required
+                disabled
+              />
+              <TextField
+                label="Roll No"
+                value={rollno}
                 fullWidth
                 margin="normal"
                 required

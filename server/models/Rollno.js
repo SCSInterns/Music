@@ -7,7 +7,7 @@ const RollnoSchema = new mongoose.Schema({
     },
     currentrollno:
     {
-        type: Numer,
+        type: Number,
         required: true,
         default: 0,
     }

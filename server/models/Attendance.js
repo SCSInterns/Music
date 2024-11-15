@@ -29,6 +29,11 @@ const attendanceSchema = new mongoose.Schema({
     day: {
         type: String,
         required: true
+    },
+    currentrollno:
+    {
+        type: String,
+        required: true
     }
 });
 
