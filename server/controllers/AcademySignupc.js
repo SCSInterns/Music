@@ -8,16 +8,50 @@ const MusicAcademy = require('../models/MusicAcademy')
 const academy_signup = async (req, res) => {
     try {
         const { academy_name, academy_email } = req.body;
+
+        // Check if the academy is already registered
         const existingUser = await Admin.findOne({ academy_email });
         if (existingUser) {
             return res.status(409).json({ error: 'Academy is already registered' });
         }
-        const id = MusicAcademy._id
-        const newUser = new Admin({ academy_name, academy_email, academy_id: id });
+
+        // Prevent conflict with existing academy names
+        let resolvedAcademyName = academy_name;
+        const existingNameConflict = await preventconflict(academy_name);
+
+        if (existingNameConflict) {
+            let isConflict = true;
+
+            while (isConflict) {
+                const randomSuffix = generateRandomThreeDigitNumber();
+                resolvedAcademyName = `${academy_name}${randomSuffix}`;
+                isConflict = await preventconflict(resolvedAcademyName);
+            }
+        }
+
+        // Fetch basic details from MusicAcademy after resolving name conflict
+        const basicDetails = await MusicAcademy.findOne({ academy_name: resolvedAcademyName });
+
+        let id = ""
+        if (basicDetails) {
+            id = basicDetails._id
+        } else {
+            id = "";
+        }
+
+        // Create a new admin entry
+        const newUser = new Admin({
+            academy_name: resolvedAcademyName,
+            academy_email,
+            academy_id: id
+        });
+
         const user = await newUser.save();
         res.status(200).json(user);
+
     } catch (error) {
-        res.status(500).json({ message: 'Server not supported', error });
+        console.error('Error in academy_signup:', error);
+        res.status(500).json({ message: 'Server error', error });
     }
 };
 
@@ -53,6 +87,26 @@ const academybyname = async (req, res) => {
     }
     else {
         res.status(404).json({ msg: 'No user found ' })
+    }
+
+}
+
+
+
+// random 3 digit genearator  
+
+function generateRandomThreeDigitNumber() {
+    return Math.floor(Math.random() * 900) + 100;
+}
+
+// function to check the academy name exists for conflict prevent 
+
+const preventconflict = async (academyname) => {
+    const existingacademy = await Admin.findOne({ academy_name: academyname })
+    if (existingacademy) {
+        return true
+    } else {
+        return false
     }
 
 }

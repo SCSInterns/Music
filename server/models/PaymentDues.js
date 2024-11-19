@@ -37,11 +37,28 @@ const dueschema = new mongoose.Schema({
     studentid: {
         type: String,
         required: true
-    } , 
-    daysleft : { 
+    },
+    daysleft: {
         type: String,
-        required: true, 
-        default : "0"
+        required: true,
+        default: "0"
+    },
+    advanceamount:
+    {
+        type: String,
+        required: true,
+        default: "0"
+    },
+    dueamount:
+    {
+        type: String,
+        required: true,
+        default: "0"
+    } ,
+    installmentdate : 
+    { 
+        type: String,
+        // required: true
     }
 
 });

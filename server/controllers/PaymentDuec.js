@@ -3,6 +3,7 @@ const PaymentDue = require("../models/PaymentDues")
 const Email = require("../controllers/emailc")
 const cron = require('node-cron');
 const moment = require('moment');
+const Handlepayment = require("../controllers/Handlepaymentstats")
 
 // Schedule the cron job to run every minute 
 
@@ -16,7 +17,7 @@ const moment = require('moment');
 cron.schedule('0 0 * * *', () => {
     console.log('Running cron job for payment reminder...');
     calculatePaymentDueDates();
-    calcexpirydays() ;
+    calcexpirydays();
 });
 
 const calculatePaymentDueDates = async () => {
@@ -63,13 +64,13 @@ const calcexpirydays = async () => {
             const currentDate = moment();
             const expiryDate = moment(subscription.nextpaymentdate, 'DD-MM-YYYY');;
             const timeDiff = expiryDate.diff(currentDate);
-            const daysLeft = Math.ceil(timeDiff / (1000 * 60 * 60 * 24)); 
+            const daysLeft = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
 
             await PaymentDue.updateOne(
                 { _id: subscription._id },
                 { $set: { daysleft: daysLeft } }
             );
-   
+
             console.log(`${subscription.studentname} has ${daysLeft} days left until expiry`);
         }
     } catch (error) {

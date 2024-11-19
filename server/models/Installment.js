@@ -39,6 +39,11 @@ const InstallmentSchema = new Schema(
         nextPaymentDate: {
             type: String,
             required: true
+        } ,
+        installmentdate : 
+        { 
+            type: String,
+            // required: true
         }
 
     }

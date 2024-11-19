@@ -145,6 +145,9 @@ const handlestatus = async (req, res) => {
 
 }
 
+
+// changes for installment date starts here  
+
 const handleinstallment = async (req, res) => {
   try {
     const { date } = req.body
@@ -156,6 +159,11 @@ const handleinstallment = async (req, res) => {
     };
     if (user && user.status === "Accept") {
       const updatedinfo = await Form.findByIdAndUpdate(req.params.id, { $set: updateduser })
+      
+     // create the default entry in installment with empty field for relieve error  
+
+
+
 
       res.status(200).json({ msg: "Installement updated successfully ", updatedinfo })
     }
