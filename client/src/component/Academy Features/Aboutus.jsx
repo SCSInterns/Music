@@ -196,7 +196,14 @@ function About() {
         </div>
       </div>
 
-      <div style={{ marginTop: "30px", float: "right", marginRight: "20px" }}>
+      <div
+        style={{
+          marginTop: "30px",
+          float: "right",
+          marginRight: "20px",
+          marginBottom: "20px",
+        }}
+      >
         {imageUrl && eventdesc ? (
           <Button
             variant="contained"

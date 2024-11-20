@@ -158,8 +158,8 @@ function PendingFeesTable({ data }) {
                 <TableCell>Course</TableCell>
                 <TableCell>Amount</TableCell>
                 <TableCell>Payment Mode</TableCell>
-                <TableCell>Enrollment Date</TableCell>
-                <TableCell>Next Payment Date</TableCell>
+                <TableCell>Last Payment Date</TableCell>
+                <TableCell>Next Installment Date</TableCell>
                 <TableCell>Send Reminder </TableCell>
               </TableRow>
             </TableHead>

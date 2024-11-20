@@ -36,6 +36,7 @@ import Aboutus from "../Academy Features/Aboutus";
 import BatchManagement from "./BatchManagement";
 import Batchmenu from "./Batchmenu";
 import QrScan from "./QrScan";
+import WebContentMenu from "./WebContentMenu";
 
 function AcademyDashboard() {
   const socket = React.useRef(null);
@@ -85,6 +86,8 @@ function AcademyDashboard() {
 
   const [attendance, setattendance] = useState(false);
   const [attendancestyle, setattendancestyle] = useState(false);
+
+  const [webcontentmenu, setwebcontentmenu] = useState(false);
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -161,7 +164,7 @@ function AcademyDashboard() {
     setsocialstyle(false);
     setbatchmenustyle(false);
     setbatchmenu(false);
-
+    setwebcontentmenu(false);
     setattendance(true);
     setattendancestyle(true);
 
@@ -193,7 +196,7 @@ function AcademyDashboard() {
     setsocialstyle(false);
     setbatchmenustyle(false);
     setbatchmenu(false);
-
+    setwebcontentmenu(false);
     setattendance(false);
     setattendancestyle(false);
     setTimeout(() => {
@@ -207,37 +210,6 @@ function AcademyDashboard() {
 
   const handleformenuclose = () => {
     setformmenu(false);
-  };
-
-  const handlemedia = () => {
-    setmediastyle(true);
-    setdispalymedia(true);
-    setloading(true);
-    setdisplayregform(false);
-    setregstyle(false);
-    setappdata(false);
-    setdefaultstyle(false);
-    setstyle(false);
-    setpendingfeesstyle(false);
-    setdefaulttoggle(false);
-    settogglepaymentdue(false);
-    settoggleapplicants(false);
-    setevent(false);
-    seteventstyle(false);
-    setabout(false);
-    setaboutstyle(false);
-    setinstrument(false);
-    setinstrumentstyle(false);
-    setsocial(false);
-    setsocialstyle(false);
-    setbatchmenustyle(false);
-    setbatchmenu(false);
-
-    setattendance(false);
-    setattendancestyle(false);
-    setTimeout(() => {
-      setloading(false);
-    }, 2000);
   };
 
   const handlecreateform = () => {
@@ -264,7 +236,7 @@ function AcademyDashboard() {
     setsocialstyle(false);
     setbatchmenustyle(false);
     setbatchmenu(false);
-
+    setwebcontentmenu(false);
     setattendance(false);
     setattendancestyle(false);
     setTimeout(() => {
@@ -296,7 +268,7 @@ function AcademyDashboard() {
     setsocial(false);
     setsocialstyle(false);
     setbatchmenustyle(true);
-
+    setwebcontentmenu(false);
     setattendance(false);
     setattendancestyle(false);
     setTimeout(() => {
@@ -407,7 +379,7 @@ function AcademyDashboard() {
     setsocialstyle(false);
     setbatchmenustyle(false);
     setbatchmenu(false);
-
+    setwebcontentmenu(false);
     setattendance(false);
     setattendancestyle(false);
     let url = "http://localhost:5000/api/auth/getdata";
@@ -509,7 +481,7 @@ function AcademyDashboard() {
     setsocialstyle(false);
     setstyle(false);
     setbatchmenustyle(false);
-
+    setwebcontentmenu(false);
     setattendance(false);
     setattendancestyle(false);
     setbatchmenu(false);
@@ -588,104 +560,7 @@ function AcademyDashboard() {
     }
   };
 
-  const handleevent = () => {
-    setloading(true);
-    setbatchmenustyle(false);
-    setbatchmenu(false);
-    setmediastyle(false);
-    setdispalymedia(false);
-    setdisplayregform(false);
-    setregstyle(false);
-    setappdata(false);
-    setdefaultstyle(false);
-    setstyle(false);
-    setpendingfeesstyle(false);
-    setdefaulttoggle(false);
-    settogglepaymentdue(false);
-    settoggleapplicants(false);
-    setevent(true);
-    seteventstyle(true);
-
-    setattendance(false);
-    setattendancestyle(false);
-    setabout(false);
-    setaboutstyle(false);
-    setinstrument(false);
-    setinstrumentstyle(false);
-    setsocial(false);
-    setsocialstyle(false);
-
-    setTimeout(() => {
-      setloading(false);
-    }, 2000);
-  };
-
-  const handleabout = () => {
-    setloading(true);
-    setbatchmenustyle(false);
-    setbatchmenu(false);
-    setmediastyle(false);
-    setdispalymedia(false);
-    setdisplayregform(false);
-    setregstyle(false);
-    setappdata(false);
-    setdefaultstyle(false);
-    setstyle(false);
-    setpendingfeesstyle(false);
-    setdefaulttoggle(false);
-    settogglepaymentdue(false);
-    settoggleapplicants(false);
-    setevent(false);
-    seteventstyle(false);
-
-    setattendance(false);
-    setattendancestyle(false);
-    setabout(true);
-    setaboutstyle(true);
-    setinstrument(false);
-    setinstrumentstyle(false);
-    setsocial(false);
-    setsocialstyle(false);
-
-    setTimeout(() => {
-      setloading(false);
-    }, 2000);
-  };
-
-  const handleinstrument = () => {
-    setloading(true);
-    setbatchmenustyle(false);
-    setbatchmenu(false);
-    setmediastyle(false);
-    setdispalymedia(false);
-    setdisplayregform(false);
-    setregstyle(false);
-    setappdata(false);
-    setdefaultstyle(false);
-    setstyle(false);
-
-    setattendance(false);
-    setattendancestyle(false);
-    setpendingfeesstyle(false);
-    setdefaulttoggle(false);
-    settogglepaymentdue(false);
-    settoggleapplicants(false);
-    setevent(false);
-    seteventstyle(false);
-
-    setabout(false);
-    setaboutstyle(false);
-    setinstrument(true);
-    setinstrumentstyle(true);
-    setsocial(false);
-    setsocialstyle(false);
-
-    setTimeout(() => {
-      setloading(false);
-    }, 2000);
-  };
-
-  const handlesocial = () => {
+  const handlewebsitemenu = () => {
     setloading(true);
     setbatchmenustyle(false);
     setbatchmenu(false);
@@ -710,9 +585,10 @@ function AcademyDashboard() {
     setaboutstyle(false);
     setinstrument(false);
     setinstrumentstyle(false);
-    setsocial(true);
-    setsocialstyle(true);
+    setsocial(false);
+    setsocialstyle(false);
 
+    setwebcontentmenu(true);
     setTimeout(() => {
       setloading(false);
     }, 2000);
@@ -855,89 +731,6 @@ function AcademyDashboard() {
           </Button>
 
           <Divider />
-          <Button
-            style={{
-              margin: "10px",
-              width: "200px",
-              color: mediastyle ? "blue" : "white",
-              backgroundColor: mediastyle ? "white" : "#283255",
-            }}
-            onClick={() => {
-              handlemedia();
-            }}
-          >
-            Add Media
-          </Button>
-
-          <Divider />
-
-          {/* events  */}
-          <Button
-            style={{
-              margin: "10px",
-              width: "200px",
-              color: eventstyle ? "blue" : "white",
-              backgroundColor: eventstyle ? "white" : "#283255",
-            }}
-            onClick={() => {
-              handleevent();
-            }}
-          >
-            Add Events
-          </Button>
-
-          <Divider />
-
-          {/* About us  */}
-          <Button
-            style={{
-              margin: "10px",
-              width: "200px",
-              color: aboutstyle ? "blue" : "white",
-              backgroundColor: aboutstyle ? "white" : "#283255",
-            }}
-            onClick={() => {
-              handleabout();
-            }}
-          >
-            Add About us
-          </Button>
-
-          <Divider />
-
-          {/* Add Instruments  */}
-          <Button
-            style={{
-              margin: "10px",
-              width: "200px",
-              color: instrumentstyle ? "blue" : "white",
-              backgroundColor: instrumentstyle ? "white" : "#283255",
-            }}
-            onClick={() => {
-              handleinstrument();
-            }}
-          >
-            Add Instruments
-          </Button>
-
-          <Divider />
-
-          {/* Add Social Media Link  */}
-          <Button
-            style={{
-              margin: "10px",
-              width: "200px",
-              color: socialstyle ? "blue" : "white",
-              backgroundColor: socialstyle ? "white" : "#283255",
-            }}
-            onClick={() => {
-              handlesocial();
-            }}
-          >
-            Add Social Links
-          </Button>
-
-          <Divider />
 
           {/* Batch Management option  */}
           <Button
@@ -952,6 +745,21 @@ function AcademyDashboard() {
             }}
           >
             Batch Management
+          </Button>
+
+          {/* Website Management option  */}
+          <Button
+            style={{
+              margin: "10px",
+              width: "200px",
+              color: webcontentmenu ? "blue" : "white",
+              backgroundColor: webcontentmenu ? "white" : "#283255",
+            }}
+            onClick={() => {
+              handlewebsitemenu();
+            }}
+          >
+            Website Content
           </Button>
 
           <Divider />
@@ -1017,6 +825,14 @@ function AcademyDashboard() {
               <>
                 <Box style={{ margin: "20px" }}>
                   <Batchmenu />
+                </Box>
+              </>
+            )}
+
+            {webcontentmenu && (
+              <>
+                <Box>
+                  <WebContentMenu />
                 </Box>
               </>
             )}

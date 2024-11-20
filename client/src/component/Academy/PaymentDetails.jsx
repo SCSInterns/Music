@@ -75,7 +75,7 @@ function PaymentDetails({ data }) {
               key={row.name}
               sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
             >
-              <TableCell align="left">{row.enrollmentDate}</TableCell>
+              <TableCell align="left">{row.paymentDate}</TableCell>
               <TableCell align="left">{row.amount}</TableCell>
               <TableCell align="left">{row.course}</TableCell>
               <TableCell align="left">{row.paymentmode}</TableCell>

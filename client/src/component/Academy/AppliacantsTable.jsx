@@ -54,6 +54,7 @@ const ApplicantsTable = ({ users }) => {
     studentid: "",
     username: "",
   });
+  const [paymentstatsdetails, setpaymentstatsdetails] = useState({});
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [actiontoggle, setactiontoggle] = useState(true);
   const [toggleqr, settoggleqr] = useState(false);
@@ -162,9 +163,33 @@ const ApplicantsTable = ({ users }) => {
     }
   };
 
+  const paymentstats = async (studentid) => {
+    const url = "http://localhost:5000/api/auth/getpaymentstats";
+
+    const token = Token();
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        Authorization: `${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        studentid: studentid,
+        academyname: academyname,
+        role: role,
+      }),
+    });
+    if (response.ok) {
+      const data = await response.json();
+      setpaymentstatsdetails(data);
+    }
+  };
+
   useEffect(() => {
     if (data) {
+      console.log(data._id);
       batchdetails(data._id);
+      paymentstats(data._id);
     }
   }, [data]);
 
@@ -412,6 +437,16 @@ const ApplicantsTable = ({ users }) => {
   const handleClose = () => {
     setToggle(false);
     setData(null);
+    setbatchdata({});
+    setpaymentstatsdetails({});
+    settoggleinstallment(false);
+    settogglebatch(false);
+    setstudentid("");
+    setpaymnetaddbox(false);
+    setinstallmentstate({ studentid: "", username: "" });
+    setactiontoggle(false);
+    setrecordsheet([]);
+    setpaymentstatsdetails({});
   };
 
   const handleinstallment = async (id) => {
@@ -604,11 +639,38 @@ const ApplicantsTable = ({ users }) => {
                         )}
                       </Grid>
 
-                      {/* Fees */}
-                      <Typography sx={{ marginTop: "20px" }}>
-                        <strong> Fees </strong> :{" "}
-                        {data.additionalFields.fees || "N/A"}
+                      <Typography
+                        sx={{ marginTop: "20px", fontWeight: "bold" }}
+                      >
+                        Payment Stats :
                       </Typography>
+
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                        }}
+                      >
+                        <Typography sx={{ marginTop: "20px" }}>
+                          <strong> Advance Amount </strong> :{" "}
+                          {paymentstatsdetails.advanceamount || "N/A"}
+                        </Typography>
+                        <Typography sx={{ marginTop: "20px" }}>
+                          <strong> Due Amount </strong> :{" "}
+                          {paymentstatsdetails.dueamount || "N/A"}
+                        </Typography>
+
+                        <Typography sx={{ marginTop: "20px" }}>
+                          <strong> Next Installment </strong> :{" "}
+                          {paymentstatsdetails.nextpaymentdate || "N/A"}
+                        </Typography>
+
+                        {/* Fees */}
+                        <Typography sx={{ marginTop: "20px" }}>
+                          <strong> Fees </strong> :{" "}
+                          {data.additionalFields.fees || "N/A"}
+                        </Typography>
+                      </div>
 
                       {/* <Divider sx={{ marginTop: "30px", marginBottom: "20px"}} />  */}
                     </div>
@@ -864,7 +926,9 @@ const ApplicantsTable = ({ users }) => {
 
                       <Typography>
                         <strong>Installment Date </strong>:{" "}
-                        {data.installementDate}
+                        {paymentstatsdetails.nextpaymentdate !== " "
+                          ? paymentstatsdetails.nextpaymentdate
+                          : "Yet to set"}
                       </Typography>
 
                       <Typography>

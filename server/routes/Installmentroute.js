@@ -11,5 +11,6 @@ router.post('/getpaymnetdue' , authenticate.authenticatetoken , Installment.geti
 router.post('/paymentreminder',authenticate.authenticatetoken , Payment.calculatePaymentDueDates)
 router.put('/addlatestdue',authenticate.authenticatetoken , Installment.handlelatestpaymnetdue)
 router.post('/getsubscriptiondetails',authenticate.authenticatetoken , Installment.getUserSubscriptionDetails)
+router.post('/getpaymentstats' , authenticate.authenticatetoken , Installment.getpaymentstats)
 
 module.exports = router

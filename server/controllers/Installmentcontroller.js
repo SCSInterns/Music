@@ -1,5 +1,6 @@
 const Installement = require("../models/Installment")
 const Paymnetdue = require("../models/PaymentDues")
+const Form = require("../models/Form")
 const Token = require('../models/Token');
 
 const addMonths = (date, months) => {
@@ -7,6 +8,17 @@ const addMonths = (date, months) => {
     d.setMonth(d.getMonth() + months);
     return d;
 };
+
+function extractDay(fullDate) {
+    const [day] = fullDate.split('-');
+    return parseInt(day, 10);
+}
+
+function extractMonthAndYear(fullDate) {
+    const [, month, year] = fullDate.split('-');
+    return `${month}-${year}`;
+}
+
 
 const convertAndAddMonths = (dateStr, monthsToAdd) => {
     const [day, month, year] = dateStr.split('-');
@@ -22,11 +34,26 @@ const convertAndAddMonths = (dateStr, monthsToAdd) => {
 };
 
 
+// completed  
 
 const handlenextinstallmentdate = async (req, res) => {
     try {
         const { studentId } = req.params;
-        const { academyname, course, amount, role, studentname, enrollmentDate, paymentmode, studentemail } = req.body
+        const { academyname, course, amount, role, studentname, paymentmode, enrollmentDate, studentemail } = req.body
+
+
+        // enroll date should be inserted from the date of status acceptance not in body 
+
+        const student = await Form.findOne({ _id: studentId })
+
+        let installmentDate
+
+        if (student) {
+            installmentDate = student.installementDate
+        }
+        else {
+            return res.status(404).json({ msg: "Student is not accepted by academy " })
+        }
 
         // Helper function to extract month and year from DD-MM-YYYY format
         const extractMonthYear = (dateStr) => {
@@ -43,17 +70,21 @@ const handlenextinstallmentdate = async (req, res) => {
             // Loop through each existing installment and check for a month-year match with enrollmentDate
             for (let installment of existingInstallments) {
                 const paymentDateParts = extractMonthYear(installment.enrollmentDate);
-                
+
                 if (paymentDateParts.month === enrollmentDateParts.month && paymentDateParts.year === enrollmentDateParts.year) {
                     return res.status(400).json({ msg: "Enrollment date and an existing payment date fall in the same month. Consistency error in monthly installments." });
                 }
             }
         }
-        
-        const dateStr = enrollmentDate;
+
+        const nextpaymentday = extractDay(installmentDate)
+        const monthandyear = extractMonthAndYear(enrollmentDate)
+
+        const newdate = `${nextpaymentday}-${monthandyear}`
+        const dateStr = newdate;
         const monthsToAdd = 1;
         const nextPaymentDate = convertAndAddMonths(dateStr, monthsToAdd);
-        
+
         if (role === "Admin") {
             const Newuser = await new Installement({
                 studentId: studentId,
@@ -61,8 +92,9 @@ const handlenextinstallmentdate = async (req, res) => {
                 studentname: studentname,
                 course: course,
                 amount: amount,
-                enrollmentDate: enrollmentDate,
+                enrollmentDate: installmentDate,
                 nextPaymentDate: nextPaymentDate,
+                paymentDate: enrollmentDate,
                 paymentmode: paymentmode,
                 studentemail: studentemail
             })
@@ -130,6 +162,7 @@ const getinfoofpendingpayments = async (req, res) => {
 
 }
 
+// changes - next payment date should be acc to intallment date 
 
 const handlelatestpaymnetdue = async (req, res) => {
     try {
@@ -142,7 +175,23 @@ const handlelatestpaymnetdue = async (req, res) => {
                 academyname: academyname
             })
 
-            const dateStr = paymentdate;
+            const student = await Form.findOne({
+                _id: studentid
+            })
+
+            if (!student) {
+                return res.status(404).json({ msg: "No student found " })
+            }
+
+            const installmentdate = student.installementDate
+
+            const nextpaymentday = extractDay(installmentdate)
+
+            const monthandyear = extractMonthAndYear(paymentdate)
+
+            const newdate = `${nextpaymentday}-${monthandyear}`
+
+            const dateStr = newdate;
             const monthsToAdd = 1;
 
             const nextpaymentdate = convertAndAddMonths(dateStr, monthsToAdd);
@@ -152,7 +201,8 @@ const handlelatestpaymnetdue = async (req, res) => {
                 const updateduser = {
                     ...req.body,
                     paymentdate: paymentdate,
-                    nextpaymentdate: nextpaymentdate
+                    nextpaymentdate: nextpaymentdate,
+                    installmentdate: installmentdate
                 };
 
                 const updatedinfo = await Paymnetdue.findByIdAndUpdate(response._id, { $set: updateduser }, { new: true })
@@ -215,7 +265,32 @@ const getUserSubscriptionDetails = async (req, res) => {
     }
 };
 
+// get the details of user in due model for accessing the due amount , advance amount , etc  
+
+const getpaymentstats = async (req, res) => {
+    try {
+
+        const { role, academyname, studentid } = req.body
+
+        if (role === "Admin") {
+
+            const student = await Paymnetdue.findOne({ academyname: academyname, studentid: studentid })
+
+            if (!student) {
+                return res.status(404).json({ msg: "No records found " })
+            }
+
+            return res.status(200).json(student)
+
+        } else {
+            res.status(401).json({ msg: "Unauthorized Access" })
+        }
+    } catch (error) {
+        res.status(500).json({ message: 'Server not supported', error });
+    }
+}
 
 
 
-module.exports = { handlenextinstallmentdate, getinfoofinstallment, getinfoofpendingpayments, handlelatestpaymnetdue, getUserSubscriptionDetails }
+
+module.exports = { handlenextinstallmentdate, getinfoofinstallment, getinfoofpendingpayments, handlelatestpaymnetdue, getUserSubscriptionDetails , getpaymentstats}
