@@ -63,30 +63,11 @@ function AcademyDashboard() {
   const [loading, setloading] = useState(false);
   const [defaulttoggle, setdefaulttoggle] = useState(false);
   const [passpaymentdetails, setpasspaymentdetails] = useState([]);
-  const [dispalymedia, setdispalymedia] = useState(false);
-  const [mediastyle, setmediastyle] = useState(false);
-
-  const [eventstyle, seteventstyle] = useState(false);
-  const [event, setevent] = useState(false);
-
-  const [about, setabout] = useState(false);
-  const [aboutstyle, setaboutstyle] = useState(false);
-
-  const [social, setsocial] = useState(false);
-  const [socialstyle, setsocialstyle] = useState(false);
-
-  const [instrument, setinstrument] = useState(false);
-  const [instrumentstyle, setinstrumentstyle] = useState(false);
-
-  const [contentmenu, setcontentmenu] = useState(false);
   const [formmenu, setformmenu] = useState(false);
-
   const [batchmenu, setbatchmenu] = useState(false);
   const [batchmenustyle, setbatchmenustyle] = useState(false);
-
   const [attendance, setattendance] = useState(false);
   const [attendancestyle, setattendancestyle] = useState(false);
-
   const [webcontentmenu, setwebcontentmenu] = useState(false);
 
   const handleOpen = () => setOpen(true);
@@ -145,23 +126,14 @@ function AcademyDashboard() {
     setloading(true);
     setdisplayregform(false);
     setregstyle(false);
-    setdispalymedia(false);
     setappdata(false);
     setdefaultstyle(false);
     setstyle(false);
-    setmediastyle(false);
     setpendingfeesstyle(false);
     setdefaulttoggle(false);
     settogglepaymentdue(false);
     settoggleapplicants(false);
-    setevent(false);
-    seteventstyle(false);
-    setabout(false);
-    setaboutstyle(false);
-    setinstrument(false);
-    setinstrumentstyle(false);
-    setsocial(false);
-    setsocialstyle(false);
+
     setbatchmenustyle(false);
     setbatchmenu(false);
     setwebcontentmenu(false);
@@ -177,23 +149,14 @@ function AcademyDashboard() {
     setloading(true);
     setdisplayregform(true);
     setregstyle(true);
-    setdispalymedia(false);
     setappdata(false);
     setdefaultstyle(false);
     setstyle(false);
-    setmediastyle(false);
     setpendingfeesstyle(false);
     setdefaulttoggle(false);
     settogglepaymentdue(false);
     settoggleapplicants(false);
-    setevent(false);
-    seteventstyle(false);
-    setabout(false);
-    setaboutstyle(false);
-    setinstrument(false);
-    setinstrumentstyle(false);
-    setsocial(false);
-    setsocialstyle(false);
+
     setbatchmenustyle(false);
     setbatchmenu(false);
     setwebcontentmenu(false);
@@ -218,22 +181,13 @@ function AcademyDashboard() {
     setregstyle(false);
     setappdata(false);
     setdefaultstyle(false);
-    setdispalymedia(false);
     setstyle(false);
     setdefaultstyle(true);
-    setmediastyle(false);
     setpendingfeesstyle(false);
     setdefaulttoggle(false);
     settogglepaymentdue(false);
     settoggleapplicants(false);
-    setevent(false);
-    seteventstyle(false);
-    setabout(false);
-    setaboutstyle(false);
-    setinstrument(false);
-    setinstrumentstyle(false);
-    setsocial(false);
-    setsocialstyle(false);
+
     setbatchmenustyle(false);
     setbatchmenu(false);
     setwebcontentmenu(false);
@@ -251,22 +205,13 @@ function AcademyDashboard() {
     setregstyle(false);
     setappdata(false);
     setdefaultstyle(false);
-    setdispalymedia(false);
     setstyle(false);
     setdefaultstyle(false);
-    setmediastyle(false);
     setpendingfeesstyle(false);
     setdefaulttoggle(false);
     settogglepaymentdue(false);
     settoggleapplicants(false);
-    setevent(false);
-    seteventstyle(false);
-    setabout(false);
-    setaboutstyle(false);
-    setinstrument(false);
-    setinstrumentstyle(false);
-    setsocial(false);
-    setsocialstyle(false);
+
     setbatchmenustyle(true);
     setwebcontentmenu(false);
     setattendance(false);
@@ -362,21 +307,13 @@ function AcademyDashboard() {
     settoggleapplicants(true);
     setstyle(true);
     setregstyle(false);
-    setdispalymedia(false);
-    setevent(false);
-    seteventstyle(false);
+
     settogglebutton(false);
     setdefaultstyle(false);
     setdefaulttoggle(false);
-    setmediastyle(false);
     setdisplayregform(false);
     setpendingfeesstyle(false);
-    setabout(false);
-    setaboutstyle(false);
-    setinstrument(false);
-    setinstrumentstyle(false);
-    setsocial(false);
-    setsocialstyle(false);
+
     setbatchmenustyle(false);
     setbatchmenu(false);
     setwebcontentmenu(false);
@@ -448,11 +385,6 @@ function AcademyDashboard() {
     }
   };
 
-  const scrollToSection = (id) => {
-    const section = document.getElementById(id);
-    section?.scrollIntoView({ behavior: "smooth" });
-  };
-
   function getCurrentDate() {
     const today = new Date();
     const day = String(today.getDate()).padStart(2, "0");
@@ -467,18 +399,10 @@ function AcademyDashboard() {
     setpendingfeesstyle(true);
     setregstyle(false);
     setdefaulttoggle(false);
-    setevent(false);
-    seteventstyle(false);
-    setdispalymedia(false);
-    setmediastyle(false);
+
     setdefaultstyle(false);
     settogglepaymentdue(true);
-    setabout(false);
-    setaboutstyle(false);
-    setinstrument(false);
-    setinstrumentstyle(false);
-    setsocial(false);
-    setsocialstyle(false);
+
     setstyle(false);
     setbatchmenustyle(false);
     setwebcontentmenu(false);
@@ -512,20 +436,6 @@ function AcademyDashboard() {
         toast.success("Payment Details Fetch Success");
       }, 2000);
     }
-  };
-
-  const getDynamicHeaders = () => {
-    if (appdata.length > 0) {
-      const firstApplicant = appdata[0];
-      return Object.keys(firstApplicant).filter(
-        (key) =>
-          key !== "_id" &&
-          key !== "__v" &&
-          key !== "academy_name" &&
-          key !== "role"
-      );
-    }
-    return [];
   };
 
   const handleSubmit = async () => {
@@ -564,8 +474,6 @@ function AcademyDashboard() {
     setloading(true);
     setbatchmenustyle(false);
     setbatchmenu(false);
-    setmediastyle(false);
-    setdispalymedia(false);
     setdisplayregform(false);
     setregstyle(false);
     setappdata(false);
@@ -578,15 +486,6 @@ function AcademyDashboard() {
     setdefaulttoggle(false);
     settogglepaymentdue(false);
     settoggleapplicants(false);
-    setevent(false);
-    seteventstyle(false);
-
-    setabout(false);
-    setaboutstyle(false);
-    setinstrument(false);
-    setinstrumentstyle(false);
-    setsocial(false);
-    setsocialstyle(false);
 
     setwebcontentmenu(true);
     setTimeout(() => {
@@ -813,14 +712,6 @@ function AcademyDashboard() {
               </>
             )}
 
-            {event && (
-              <>
-                <Box style={{ margin: "20px" }}>
-                  <Events />
-                </Box>
-              </>
-            )}
-
             {batchmenu && (
               <>
                 <Box style={{ margin: "20px" }}>
@@ -837,34 +728,10 @@ function AcademyDashboard() {
               </>
             )}
 
-            {about && (
-              <>
-                <Box style={{ margin: "20px" }}>
-                  <Aboutus />
-                </Box>
-              </>
-            )}
-
-            {social && (
-              <>
-                <Box style={{ margin: "20px" }}>
-                  <SocialLinks />
-                </Box>
-              </>
-            )}
-
             {attendance && (
               <>
                 <Box style={{ margin: "20px" }}>
                   <QrScan />
-                </Box>
-              </>
-            )}
-
-            {instrument && (
-              <>
-                <Box style={{ margin: "20px" }}>
-                  <Instruments />
                 </Box>
               </>
             )}
@@ -1140,12 +1007,6 @@ function AcademyDashboard() {
                 >
                   Submit
                 </Button>
-              </>
-            )}
-
-            {dispalymedia && (
-              <>
-                <MediaMenu />
               </>
             )}
 

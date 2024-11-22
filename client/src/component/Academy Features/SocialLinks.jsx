@@ -120,7 +120,7 @@ function SocialLinks() {
       <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
         <InstagramIcon
           fontSize="large"
-          sx={{ color: "#3B8FF3", marginRight: "20px" }}
+          sx={{ color: "#0d1b2a", marginRight: "20px" }}
         />
         <TextField
           label="Instagram"
@@ -136,7 +136,7 @@ function SocialLinks() {
       <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
         <YouTubeIcon
           fontSize="large"
-          sx={{ color: "#3B8FF3", marginRight: "20px" }}
+          sx={{ color: "#0d1b2a", marginRight: "20px" }}
         />
         <TextField
           label="YouTube"
@@ -152,7 +152,7 @@ function SocialLinks() {
       <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
         <WhatsAppIcon
           fontSize="large"
-          sx={{ color: "#3B8FF3", marginRight: "20px" }}
+          sx={{ color: "#0d1b2a", marginRight: "20px" }}
         />
         <TextField
           label="WhatsApp"
@@ -168,7 +168,7 @@ function SocialLinks() {
       <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
         <FacebookIcon
           fontSize="large"
-          sx={{ color: "#3B8FF3", marginRight: "20px" }}
+          sx={{ color: "#0d1b2a", marginRight: "20px" }}
         />
         <TextField
           label="Facebook"
@@ -184,7 +184,7 @@ function SocialLinks() {
       <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
         <EmailIcon
           fontSize="large"
-          sx={{ color: "#3B8FF3", marginRight: "20px" }}
+          sx={{ color: "#0d1b2a", marginRight: "20px" }}
         />
         <TextField
           label="Mail"
@@ -198,9 +198,8 @@ function SocialLinks() {
 
       <Button
         variant="contained"
-        color="primary"
         onClick={handleSubmit}
-        sx={{ width: "200px", margin: "auto" }}
+        sx={{ width: "200px", margin: "auto", backgroundColor: "#0d1b2a" }}
       >
         Save Links
       </Button>

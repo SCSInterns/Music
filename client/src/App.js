@@ -33,6 +33,7 @@ import UserLogin from './component/User/Login';
 import SetPassword from './component/User/SetPassword';
 import Profile from './component/User/Profile';
 import AutomatedAttendance from './component/Academy/AutomatedAttendance'
+import NewAdminDashboard from './component/Academy/NewAdminDashboard';
 
 
 function App() {
@@ -64,6 +65,7 @@ function App() {
           {verified && (role === "Admin") ?
             <>
               <Route path={'/:academyname/admin/dashboard'} element={<AcademyDashboard />}></Route>
+              <Route path={'/:academyname/admin/newdashboard'} element={<NewAdminDashboard />}></Route>
               <Route path={'/:academyname/admin/regform'} element={<AcademyRegistration />}></Route>
               <Route path={'/:academyname/admin/feesdetails'} element={<PaymentDetails />}></Route>
               <Route path={'/:academyname/attendance'} element={<AutomatedAttendance />}></Route>
@@ -76,6 +78,8 @@ function App() {
               <Route path='/admin/dashboard' element={<Navigate to='/admin/login' />}></Route>
               <Route path={'/:academyname/attendance'} element={<AcademyLogin />}></Route>
             </>}
+
+
 
           {/* path='' */}
 

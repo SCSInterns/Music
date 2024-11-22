@@ -9,6 +9,8 @@ import {
   Paper,
   Typography,
   Button,
+  Box,
+  Grid,
 } from "@mui/material";
 import Token from "../Token/Token";
 import { toast } from "react-toastify";
@@ -20,6 +22,7 @@ function PendingFeesTable({ data }) {
   const [formatdate, setformatdate] = useState("");
   const [filtereddata, setfiltereddata] = useState([]);
   const [loading, setloading] = useState(false);
+
   const formatedDate = (date) => {
     const [year, month, day] = date.split("-");
     setformatdate(`${day}-${month}-${year}`);
@@ -83,11 +86,13 @@ function PendingFeesTable({ data }) {
     });
 
     if (response.ok) {
-      toast.success(" Email send successfully ");
+      toast.success(" Email sent successfully ");
     } else {
       toast.error(" Error sending email ");
     }
   };
+
+  console.log(filtereddata);
 
   return (
     <>
@@ -102,52 +107,43 @@ function PendingFeesTable({ data }) {
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
-            backgroundColor: "rgba(255, 255, 255,0.9)",
+            backgroundColor: "rgba(255, 255, 255, 0.9)",
             zIndex: 9999,
           }}
         >
-          <>
-            <Loader />
-          </>
+          <Loader />
         </div>
       )}
-      <div>
-        <Typography
-          sx={{
-            marginBottom: "20px",
-            marginTop: "-20px",
-            alignContent: "left",
-            display: "flex",
-          }}
-        >
-          Payment Date :
-          <div style={{ marginLeft: "10px" }}>
+      <Box sx={{ padding: "20px", marginTop: "20px" }}>
+        <Grid container spacing={2} alignItems="center">
+          <Grid item xs={12} md={6}>
+            <Typography sx={{ marginBottom: "15px" }}>Payment Date:</Typography>
             <input
               type="date"
               id="datePicker"
               name="datePicker"
+              style={{ width: "100%", padding: "10px", fontSize: "16px" }}
               onChange={(e) => setdate(e.target.value)}
-            ></input>
-          </div>
-          <Button
-            variant="contained"
-            sx={{ marginLeft: "50px" }}
-            onClick={() => {
-              handlecustomisedate(formatdate, academyname, role);
-            }}
-          >
-            Submit
-          </Button>
-        </Typography>
-      </div>
-      <div>
+            />
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <Button
+              variant="contained"
+              sx={{ width: "20%", height: "40px", marginTop: "30px" }}
+              onClick={() => handlecustomisedate(formatdate, academyname, role)}
+            >
+              Submit
+            </Button>
+          </Grid>
+        </Grid>
+      </Box>
+      <Box sx={{ padding: "20px" }}>
         <TableContainer
           component={Paper}
           sx={{
             border: "2px solid black",
             padding: "3px",
-            marginLeft: "-30px",
-            width: "950px",
+            overflowX: "auto",
           }}
         >
           <Table aria-label="pending fees table">
@@ -160,11 +156,11 @@ function PendingFeesTable({ data }) {
                 <TableCell>Payment Mode</TableCell>
                 <TableCell>Last Payment Date</TableCell>
                 <TableCell>Next Installment Date</TableCell>
-                <TableCell>Send Reminder </TableCell>
+                <TableCell>Send Reminder</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {(filtereddata.length > 0 ? filtereddata : data).length > 0 ? (
+              {filtereddata.length > 0 && data.length > 0 ? (
                 (filtereddata.length > 0 ? filtereddata : data).map((row) => (
                   <TableRow key={row._id}>
                     <TableCell>{row.studentname}</TableCell>
@@ -202,7 +198,7 @@ function PendingFeesTable({ data }) {
             </TableBody>
           </Table>
         </TableContainer>
-      </div>
+      </Box>
     </>
   );
 }

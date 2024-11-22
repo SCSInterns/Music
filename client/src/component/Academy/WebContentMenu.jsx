@@ -18,7 +18,7 @@ const TopNavbar = () => {
 
   return (
     <div>
-      <nav className="bg-white text-black p-4 shadow-md">
+      <nav className="bg-white text-black p-3 shadow-md">
         <div className="flex justify-between items-center">
           <ul className="flex space-x-3">
             {menuItems.map((item) => (
