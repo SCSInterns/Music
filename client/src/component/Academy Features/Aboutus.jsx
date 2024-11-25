@@ -89,143 +89,83 @@ function About() {
 
   return (
     <>
-      <h2 style={{ fontWeight: "bold" }}>Add About Your Academy</h2>
-      <Divider sx={{ marginBottom: "20px", marginTop: "20px" }} />
+      <div className="p-6">
+        <h2 className="text-2xl font-bold text-center">
+          Add About Your Academy
+        </h2>
+        <Divider sx={{ my: 4 }} />
 
-      <div style={{ display: "flex", marginTop: "60px" }}>
-        <div>
-          <div
-            style={{
-              height: "300px",
-              width: "300px",
-              marginTop: "10px",
-              marginBottom: "20px",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              border: "2px dashed black",
-              borderRadius: "10px",
-              position: "relative",
-            }}
-          >
-            {imageUrl ? (
-              <div style={{ position: "relative" }}>
-                <img
-                  src={imageUrl}
-                  alt="Selected"
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "cover",
-                    borderRadius: "10px",
-                  }}
-                />
-                <button
-                  onClick={handleRemoveImage}
-                  style={{
-                    position: "absolute",
-                    top: "10px",
-                    right: "10px",
-                    backgroundColor: "red",
-                    color: "white",
-                    border: "none",
-                    borderRadius: "50%",
-                    padding: "5px",
-                    cursor: "pointer",
-                  }}
+        <Box
+          className="grid grid-cols-1 lg:grid-cols-2 gap-6"
+          sx={{ alignItems: "flex-start" }}
+        >
+          {/* Left Section: Image Upload */}
+          <Box className="flex flex-col items-center">
+            <Box className="w-72 h-72 flex justify-center items-center border-2 border-dashed border-gray-500 rounded-lg relative">
+              {imageUrl ? (
+                <div className="relative w-full h-full">
+                  <img
+                    src={imageUrl}
+                    alt="Selected"
+                    className="w-full h-full object-cover rounded-lg"
+                  />
+                  <button
+                    onClick={handleRemoveImage}
+                    className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-2"
+                  >
+                    X
+                  </button>
+                </div>
+              ) : (
+                <label
+                  htmlFor="image-upload"
+                  className="flex flex-col items-center cursor-pointer text-gray-700"
                 >
-                  X
-                </button>
-              </div>
-            ) : (
-              <label
-                htmlFor="image-upload"
-                style={{
-                  cursor: "pointer",
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  color: "black",
-                }}
-              >
-                <input
-                  id="image-upload"
-                  type="file"
-                  accept="image/*"
-                  style={{ display: "none" }}
-                  onChange={handleImageChange}
-                />
-                <p>Click to upload an image</p>
-              </label>
-            )}
-          </div>
-
-          {selectedImage ? (
-            <Button variant="contained" onClick={handlesubmit}>
-              Upload
-            </Button>
-          ) : (
-            <Button variant="contained" onClick={handlesubmit} disabled>
-              Upload
-            </Button>
-          )}
-        </div>
-
-        <div>
-          <div>
-            <Box
-              component="form"
-              sx={{
-                "& > :not(style)": { m: 1, width: "600px", marginLeft: "20px" },
-              }}
-              noValidate
-              autoComplete="off"
-            >
-              <TextField
-                label="About Description"
-                multiline
-                rows={12}
-                sx={{ marginTop: "15px" }}
-                variant="outlined"
-                value={eventdesc}
-                fullWidth
-                onChange={(e) => handledescchange(e.target.value)}
-              />
+                  <input
+                    id="image-upload"
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={handleImageChange}
+                  />
+                  <p>Click to upload an image</p>
+                </label>
+              )}
             </Box>
-          </div>
-        </div>
-      </div>
+            <Button
+              variant="contained"
+              onClick={handlesubmit}
+              disabled={!imageUrl}
+              sx={{ marginTop: "15px" }}
+            >
+              Upload
+            </Button>
+          </Box>
 
-      <div
-        style={{
-          marginTop: "30px",
-          float: "right",
-          marginRight: "20px",
-          marginBottom: "20px",
-        }}
-      >
-        {imageUrl && eventdesc ? (
+          {/* Right Section: Description Form */}
+          <Box>
+            <TextField
+              label="About Description"
+              multiline
+              rows={12}
+              fullWidth
+              variant="outlined"
+              value={eventdesc}
+              onChange={(e) => handledescchange(e.target.value)}
+            />
+          </Box>
+        </Box>
+
+        {/* Submit Button */}
+        <Box className="mt-6 flex justify-center">
           <Button
             variant="contained"
-            onClick={() => {
-              handlefinalsubmit();
-            }}
+            onClick={handlefinalsubmit}
+            disabled={!imageUrl || !eventdesc}
           >
             Submit
           </Button>
-        ) : (
-          <>
-            <Button
-              variant="contained"
-              disabled
-              onClick={() => {
-                handlefinalsubmit();
-              }}
-            >
-              Submit
-            </Button>
-          </>
-        )}
+        </Box>
       </div>
     </>
   );

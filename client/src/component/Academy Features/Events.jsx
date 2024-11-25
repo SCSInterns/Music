@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Divider, TextField, Button, Box } from "@mui/material";
+import { Divider, TextField, Button, Box, Grid } from "@mui/material";
 import { toast } from "react-toastify";
 import Token from "../Token/Token";
 
@@ -118,209 +118,192 @@ function Events() {
 
   return (
     <>
-      <h2 style={{ fontWeight: "bold" }}>Add Your Academy Events Details</h2>
+      <h2 style={{ fontWeight: "bold", textAlign: "center" }}>
+        Add Your Academy Events Details
+      </h2>
       <Divider sx={{ marginBottom: "20px", marginTop: "20px" }} />
 
-      <div style={{ display: "flex", marginTop: "60px" }}>
-        <div>
-          <div
-            style={{
-              height: "300px",
-              width: "300px",
-              marginTop: "90px",
-              marginBottom: "20px",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              border: "2px dashed black",
-              borderRadius: "10px",
-              position: "relative",
-            }}
-          >
-            {imageUrl ? (
-              <div style={{ position: "relative" }}>
-                <img
-                  src={imageUrl}
-                  alt="Selected"
+      <div style={{ marginTop: "60px" }}>
+        <Grid container spacing={4} justifyContent="center">
+          {/* Image Upload Section */}
+          <Grid item xs={12} sm={6} md={4}>
+            <div
+              style={{
+                height: "300px",
+                width: "100%",
+                maxWidth: "300px",
+                margin: "0 auto",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                border: "2px dashed black",
+                borderRadius: "10px",
+                position: "relative",
+              }}
+            >
+              {imageUrl ? (
+                <div
                   style={{
+                    position: "relative",
                     width: "100%",
                     height: "100%",
-                    objectFit: "cover",
-                    borderRadius: "10px",
-                  }}
-                />
-                <button
-                  onClick={handleRemoveImage}
-                  style={{
-                    position: "absolute",
-                    top: "10px",
-                    right: "10px",
-                    backgroundColor: "red",
-                    color: "white",
-                    border: "none",
-                    borderRadius: "50%",
-                    padding: "5px",
-                    cursor: "pointer",
                   }}
                 >
-                  X
-                </button>
-              </div>
-            ) : (
-              <label
-                htmlFor="image-upload"
-                style={{
-                  cursor: "pointer",
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  color: "black",
-                }}
-              >
-                <input
-                  id="image-upload"
-                  type="file"
-                  accept="image/*"
-                  style={{ display: "none" }}
-                  onChange={handleImageChange}
-                />
-                <p>Click to upload an image</p>
-              </label>
-            )}
-          </div>
+                  <img
+                    src={imageUrl}
+                    alt="Selected"
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover",
+                      borderRadius: "10px",
+                    }}
+                  />
+                  <button
+                    onClick={handleRemoveImage}
+                    style={{
+                      position: "absolute",
+                      top: "10px",
+                      right: "10px",
+                      backgroundColor: "red",
+                      color: "white",
+                      border: "none",
+                      borderRadius: "50%",
+                      padding: "5px",
+                      cursor: "pointer",
+                    }}
+                  >
+                    X
+                  </button>
+                </div>
+              ) : (
+                <label
+                  htmlFor="image-upload"
+                  style={{
+                    cursor: "pointer",
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    color: "black",
+                  }}
+                >
+                  <input
+                    id="image-upload"
+                    type="file"
+                    accept="image/*"
+                    style={{ display: "none" }}
+                    onChange={handleImageChange}
+                  />
+                  <p>Click to upload an image</p>
+                </label>
+              )}
+            </div>
 
-          {selectedImage ? (
-            <Button variant="contained" onClick={handlesubmit}>
+            <Button
+              variant="contained"
+              fullWidth
+              onClick={handlesubmit}
+              disabled={!selectedImage}
+              sx={{ marginTop: 2 }}
+            >
               Upload
             </Button>
-          ) : (
-            <Button variant="contained" onClick={handlesubmit} disabled>
-              Upload
-            </Button>
-          )}
-        </div>
+          </Grid>
 
-        <div>
-          <div>
+          {/* Event Details Section */}
+          <Grid item xs={12} sm={6} md={8}>
             <Box
               component="form"
               sx={{
-                "& > :not(style)": { m: 1, width: "600px", marginLeft: "20px" },
+                display: "flex",
+                flexDirection: "column",
+                gap: 2,
+                "& > :not(style)": { m: 1, width: "100%" },
               }}
               noValidate
               autoComplete="off"
             >
+              {/* Event Title */}
               <TextField
                 id="outlined-basic"
                 label="Event Name"
                 variant="outlined"
                 value={eventtitle}
-                onChange={(e) => {
-                  handlechange(e.target.value);
+                onChange={(e) => handlechange(e.target.value)}
+              />
+
+              {/* Date and Time */}
+              <Box
+                sx={{
+                  display: "flex",
+                  gap: 2,
+                  flexDirection: { xs: "column", sm: "row" },
                 }}
+              >
+                <TextField
+                  label="Date"
+                  type="date"
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  variant="outlined"
+                  value={eventdate}
+                  onChange={(e) => handledatechange(e.target.value)}
+                  fullWidth
+                />
+                <TextField
+                  label="Time"
+                  type="time"
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  value={eventtime}
+                  variant="outlined"
+                  onChange={(e) => handletimechange(e.target.value)}
+                  fullWidth
+                />
+              </Box>
+
+              {/* Location */}
+              <TextField
+                label="Location"
+                value={eventlocation}
+                variant="outlined"
+                fullWidth
+                onChange={(e) => handlelocchange(e.target.value)}
+              />
+
+              {/* Event Description */}
+              <TextField
+                label="Event Description"
+                multiline
+                rows={8}
+                variant="outlined"
+                value={eventdesc}
+                fullWidth
+                onChange={(e) => handledescchange(e.target.value)}
               />
             </Box>
-          </div>
-
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              gap: 2,
-              margin: "20px",
-            }}
-          >
-            <div style={{ display: "flex" }}>
-              {/* Date Input */}
-              <TextField
-                label="Date"
-                type="date"
-                InputLabelProps={{
-                  shrink: true,
-                }}
-                variant="outlined"
-                value={eventdate}
-                onChange={(e) => handledatechange(e.target.value)}
-                fullWidth
-                sx={{ marginRight: "10px" }}
-              />
-
-              {/* Time Input */}
-              <TextField
-                label="Time"
-                type="time"
-                InputLabelProps={{
-                  shrink: true,
-                }}
-                value={eventtime}
-                variant="outlined"
-                onChange={(e) => handletimechange(e.target.value)}
-                fullWidth
-                sx={{ marginLeft: "10px" }}
-              />
-            </div>
-
-            {/* Location Input */}
-            <TextField
-              label="Location"
-              value={eventlocation}
-              variant="outlined"
-              fullWidth
-              onChange={(e) => handlelocchange(e.target.value)}
-            />
-          </Box>
-          <div
-            style={{
-              height: "300px",
-              width: "600px",
-              marginLeft: "20px",
-            }}
-          >
-            <TextField
-              label="Event Description"
-              multiline
-              rows={8}
-              sx={{ marginTop: "15px" }}
-              variant="outlined"
-              value={eventdesc}
-              fullWidth
-              onChange={(e) => handledescchange(e.target.value)}
-            />
-          </div>
-        </div>
+          </Grid>
+        </Grid>
       </div>
 
-      <div
-        style={{
-          marginTop: "30px",
-          float: "right",
-          marginRight: "20px",
-          marginBottom: "50px",
+      {/* Submit Button */}
+      <Box
+        sx={{
+          marginTop: 4,
+          display: "flex",
+          justifyContent: "center",
         }}
       >
-        {imageUrl && eventtitle && eventdesc ? (
-          <Button
-            variant="contained"
-            onClick={() => {
-              handlefinalsubmit();
-            }}
-          >
-            Submit
-          </Button>
-        ) : (
-          <>
-            <Button
-              variant="contained"
-              disabled
-              onClick={() => {
-                handlefinalsubmit();
-              }}
-            >
-              Submit
-            </Button>
-          </>
-        )}
-      </div>
+        <Button
+          variant="contained"
+          disabled={!imageUrl || !eventtitle || !eventdesc}
+          onClick={handlefinalsubmit}
+        >
+          Submit
+        </Button>
+      </Box>
     </>
   );
 }

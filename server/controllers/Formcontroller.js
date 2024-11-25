@@ -76,7 +76,7 @@ const handleapplicantdata = async (req, res) => {
     const response = await Form.find({
       academy_name: academyname,
       role: 'User',
-      status: { $in: ['Accept', 'To be updated'] }
+      status: { $in: ['Accept', 'To be updated', 'Reject'] }
     })
 
 
@@ -159,8 +159,8 @@ const handleinstallment = async (req, res) => {
     };
     if (user && user.status === "Accept") {
       const updatedinfo = await Form.findByIdAndUpdate(req.params.id, { $set: updateduser })
-      
-     // create the default entry in installment with empty field for relieve error  
+
+      // create the default entry in installment with empty field for relieve error  
 
 
 

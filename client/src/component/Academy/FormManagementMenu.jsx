@@ -1,23 +1,24 @@
 import React, { useState } from "react";
 import BatchManagement from "./BatchManagement";
-import ParticularBatches from "./ParticularBatches";
-import Timetable from "./TimeTable";
+import RegForm from "./AcademyRegistration";
+import DynamicForm from "./DynamicForm";
 
 const TopNavbar = () => {
-  const [activeContent, setActiveContent] = useState("Insert Batch Details");
+  const [activeContent, setActiveContent] = useState(
+    "Create Registartion Form"
+  );
 
   const menuItems = [
     {
-      name: "Insert Batch Details",
-      key: "Insert Batch Details",
-      component: <BatchManagement />,
+      name: "Create Registartion Form",
+      key: "Create Registartion Form",
+      component: <DynamicForm />,
     },
     {
-      name: "Add Specific Details",
-      key: "Add Specific Details",
-      component: <ParticularBatches />,
+      name: "View Registartion Form",
+      key: "View Registartion Form",
+      component: <RegForm />,
     },
-    { name: " Time Table", key: "Time Table", component: <Timetable /> },
   ];
 
   return (

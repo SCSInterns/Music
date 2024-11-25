@@ -26,6 +26,8 @@ import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
 import Content from "./WebContentMenu";
 import Batchmenu from "./Batchmenu";
 import Loader from "../Loader/Loader";
+import FormManagementMenu from "./FormManagementMenu";
+import ApplicantsListMenu from "./ApplicantsListMenu";
 
 const Sidebar = () => {
   const academyname = sessionStorage.getItem("academyname");
@@ -131,7 +133,7 @@ const Sidebar = () => {
     {
       text: "Applicants Data",
       icon: <FolderSharedIcon />,
-      component: <ApplicantsTable users={appdata} />,
+      component: <ApplicantsListMenu users={appdata} />,
     },
 
     {
@@ -141,8 +143,8 @@ const Sidebar = () => {
     },
     {
       text: "Form Management",
-      icon: <SummarizeIcon />,
-      component: <InsertDriveFileIcon data={passpaymentdetails} />,
+      icon: <InsertDriveFileIcon />,
+      component: <FormManagementMenu />,
     },
   ];
 

@@ -160,7 +160,7 @@ function PendingFeesTable({ data }) {
               </TableRow>
             </TableHead>
             <TableBody>
-              {filtereddata.length > 0 && data.length > 0 ? (
+              {filtereddata.length > 0 ? (
                 (filtereddata.length > 0 ? filtereddata : data).map((row) => (
                   <TableRow key={row._id}>
                     <TableCell>{row.studentname}</TableCell>

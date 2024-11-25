@@ -62,6 +62,12 @@ const BatchSelectionModal = ({ open, onClose, data }) => {
     setSelectedInstrument("");
   };
 
+  const handleclose = () => {
+    setSelectedInstrument("");
+    setSelectedBatch("");
+    onClose();
+  };
+
   const handleInstrumentChange = (event) => {
     setSelectedInstrument(event.target.value);
   };
@@ -99,7 +105,7 @@ const BatchSelectionModal = ({ open, onClose, data }) => {
   };
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="xs" fullWidth>
+    <Dialog open={open} onClose={handleclose} maxWidth="xs" fullWidth>
       <DialogTitle>Assign User to Batch</DialogTitle>
       <DialogContent dividers>
         {/* Batch Selection */}
@@ -140,7 +146,7 @@ const BatchSelectionModal = ({ open, onClose, data }) => {
         )}
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose} color="secondary">
+        <Button onClick={handleclose} color="secondary">
           Cancel
         </Button>
         <Button onClick={handleSubmit} variant="contained" color="primary">

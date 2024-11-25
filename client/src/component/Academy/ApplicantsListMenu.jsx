@@ -1,23 +1,34 @@
 import React, { useState } from "react";
-import BatchManagement from "./BatchManagement";
-import ParticularBatches from "./ParticularBatches";
-import Timetable from "./TimeTable";
+import ApplicantsTable from "./AppliacantsTable";
+import NewAppliantsTable from "./NewApplicantsTable";
 
-const TopNavbar = () => {
-  const [activeContent, setActiveContent] = useState("Insert Batch Details");
+const TopNavbar = ({ users }) => {
+  const newRequests = users.filter((item) => item.status === "To be updated");
+  const acceptedRequests = users.filter((item) => item.status === "Accept");
+  const rejectedRequests = users.filter((item) => item.status === "Reject");
+
+  console.log(" newRequests ", newRequests);
+  console.log(" acceptedRequests ", acceptedRequests);
+  console.log(" rejectedRequests ", rejectedRequests);
+
+  const [activeContent, setActiveContent] = useState("Accepted Applicants");
 
   const menuItems = [
     {
-      name: "Insert Batch Details",
-      key: "Insert Batch Details",
-      component: <BatchManagement />,
+      name: "Accepted Applicants",
+      key: "Accepted Applicants",
+      component: <NewAppliantsTable users={acceptedRequests} />,
     },
     {
-      name: "Add Specific Details",
-      key: "Add Specific Details",
-      component: <ParticularBatches />,
+      name: "Rejected Applicants",
+      key: "Rejected Applicants",
+      component: <NewAppliantsTable users={rejectedRequests} />,
     },
-    { name: " Time Table", key: "Time Table", component: <Timetable /> },
+    {
+      name: "New Request",
+      key: "New Request",
+      component: <NewAppliantsTable users={newRequests} />,
+    },
   ];
 
   return (

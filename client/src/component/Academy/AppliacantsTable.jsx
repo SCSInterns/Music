@@ -530,9 +530,9 @@ const ApplicantsTable = ({ users }) => {
       <TableContainer
         component={Paper}
         sx={{
-          width: "90%",
+          width: "100%",
           margin: "auto",
-          marginTop: "100px",
+          marginTop: "20px",
           marginBottom: "50px",
         }}
       >
@@ -543,7 +543,7 @@ const ApplicantsTable = ({ users }) => {
                 <TableCell>Name</TableCell>
                 <TableCell>Email</TableCell>
                 <TableCell>Mobile No</TableCell>
-                <TableCell>Next Payment Due </TableCell>
+                <TableCell>Starting Date</TableCell>
                 <TableCell>Batch</TableCell>
                 <TableCell>More Info</TableCell>
               </TableRow>
@@ -556,20 +556,7 @@ const ApplicantsTable = ({ users }) => {
                   <TableCell>
                     {user.additionalFields.formdata?.MobileNo}
                   </TableCell>
-                  <TableCell>
-                    {expirydate[user._id] !== undefined &&
-                    (user.status !== "Reject" ||
-                      user.status !== "To be updated") ? (
-                      <span>
-                        <strong>{expirydate[user._id]}</strong> days left
-                      </span>
-                    ) : (
-                      <span>
-                        {" "}
-                        <strong>Not Applicable</strong>
-                      </span>
-                    )}
-                  </TableCell>
+                  <TableCell>{user.installementDate}</TableCell>
 
                   <TableCell>
                     <Button
