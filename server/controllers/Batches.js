@@ -138,11 +138,8 @@ const updateBatchSpecs = async (mainBatch, newBatchesCount) => {
     }
 
     if (existingSpecs.length < neededSpecsCount) {
-        const existingBatchNumbers = new Set(existingSpecs.map(spec => parseInt(spec.batchname.split('-Batch')[1].split('-Class')[0])));
-
         let batchCounter = 1;
         let classCounter = 1;
-
         while (existingSpecs.length < neededSpecsCount) {
             const batchName = `${academyname}-Batch${batchCounter}-Class${classCounter}`;
             const specExists = existingSpecs.some(spec => spec.batchname === batchName);

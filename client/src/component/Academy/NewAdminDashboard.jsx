@@ -112,6 +112,10 @@ const Sidebar = () => {
     }
   };
 
+  const handleapplicantslist = () => {
+    handleApplicants();
+  };
+
   useEffect(() => {
     handleApplicants();
     handleFees();
@@ -133,7 +137,12 @@ const Sidebar = () => {
     {
       text: "Applicants Data",
       icon: <FolderSharedIcon />,
-      component: <ApplicantsListMenu users={appdata} />,
+      component: (
+        <ApplicantsListMenu
+          users={appdata}
+          handleapplicantslist={handleapplicantslist}
+        />
+      ),
     },
 
     {
@@ -217,6 +226,7 @@ const Sidebar = () => {
               position: "absolute",
               top: 0,
               left: 0,
+              marginRight: "20px",
               margin: 2,
               color: mobileOpen ? "#0d1b2a" : "#0d1b2a",
               display: { xs: "block", sm: "none" },

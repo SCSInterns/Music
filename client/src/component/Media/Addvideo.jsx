@@ -89,46 +89,46 @@ export default function Addvideo() {
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
-            backgroundColor: "rgba(255, 255, 255,0.9)",
+            backgroundColor: "rgba(255, 255, 255, 0.9)",
             zIndex: 9999,
           }}
         >
-          <>
-            <Loader />
-          </>
+          <Loader />
         </div>
       )}
 
       {toggle && (
-        <>
-          <div style={{ display: "flex", flexDirection: "column" }}>
-            <Box
-              component="form"
-              sx={{
-                "& > :not(style)": { m: 1, width: "100ch" },
-                marginTop: "100px",
-              }}
-              noValidate
-              autoComplete="off"
-            >
-              <TextField
-                id="outlined-basic"
-                label="link"
-                variant="outlined"
-                onChange={(e) => setvideolink(e.target.value)}
-              />
-            </Box>
-            <Typography sx={{ color: "#283255", marginTop: "20px" }}>
-              {" "}
-              Please insert youtube video link above{" "}
-            </Typography>
-          </div>
+        <div className="flex flex-col items-center justify-center p-4 space-y-6">
+          <Box
+            component="form"
+            sx={{
+              "& > :not(style)": { m: 1, width: "100%" },
+              maxWidth: "600px",
+              width: "100%",
+              marginTop: "50px",
+            }}
+            noValidate
+            autoComplete="off"
+          >
+            <TextField
+              id="outlined-basic"
+              label="YouTube Link"
+              variant="outlined"
+              fullWidth
+              onChange={(e) => setvideolink(e.target.value)}
+            />
+          </Box>
+          <Typography sx={{ color: "#283255", textAlign: "center" }}>
+            Please insert a YouTube video link above
+          </Typography>
+
           <Button
             variant="contained"
-            sx={{ float: "right", marginRight: "20px" }}
-            onClick={() => {
-              handlesubmit();
+            sx={{
+              maxWidth: "200px",
+              width: "100%",
             }}
+            onClick={handlesubmit}
           >
             Upload
           </Button>
@@ -136,11 +136,11 @@ export default function Addvideo() {
           {data.link && (
             <div
               style={{
-                width: "640px",
-                height: "360px",
-                margin: "auto",
-                marginTop: "70px",
-                marginBottom: "70px",
+                width: "100%",
+                maxWidth: "640px",
+                aspectRatio: "16/9",
+                marginTop: "40px",
+                marginBottom: "40px",
               }}
             >
               <iframe
@@ -151,25 +151,27 @@ export default function Addvideo() {
                 frameBorder="0"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen
+                className="rounded-lg shadow-md"
               ></iframe>
             </div>
           )}
 
-          <Button
-            variant="contained"
-            onClick={() => handleback()}
-            sx={{ float: "right", marginRight: "30px", marginBottom: "30px" }}
-          >
-            Back
-          </Button>
-        </>
+          <div className="flex justify-end w-full">
+            <Button
+              variant="contained"
+              onClick={handleback}
+              sx={{
+                maxWidth: "150px",
+                marginRight: "20px",
+              }}
+            >
+              Back
+            </Button>
+          </div>
+        </div>
       )}
 
-      {menutoggle && (
-        <>
-          <MediaMenu />
-        </>
-      )}
+      {menutoggle && <MediaMenu />}
     </>
   );
 }

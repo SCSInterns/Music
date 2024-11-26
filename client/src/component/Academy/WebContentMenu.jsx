@@ -17,18 +17,19 @@ const TopNavbar = () => {
   ];
 
   return (
-    <div>
-      <nav className="bg-white text-black p-3 shadow-md">
+    <div className="min-h-screen bg-gray-50">
+      {/* Navigation Bar */}
+      <nav className="bg-white text-black p-3 shadow-md sticky top-0 z-10">
         <div className="flex justify-between items-center">
           <ul className="flex space-x-3">
             {menuItems.map((item) => (
               <li key={item.key}>
                 <button
                   onClick={() => setActiveContent(item.key)}
-                  className={`px-4 py-2 border-b-2 ${
+                  className={`px-4 py-2 border-b-2 transition-colors duration-300 ${
                     activeContent === item.key
-                      ? "border-blue-500 text-blue-500"
-                      : "border-transparent"
+                      ? "border-blue-500 text-blue-500 font-semibold"
+                      : "border-transparent hover:border-gray-300"
                   }`}
                 >
                   {item.name}
@@ -39,11 +40,14 @@ const TopNavbar = () => {
         </div>
       </nav>
 
+      {/* Content Section */}
       <div className="p-5">
         {menuItems.map(
           (item) =>
             activeContent === item.key && (
-              <div key={item.key}>{item.component}</div>
+              <div key={item.key} className="fade-in">
+                {item.component}
+              </div>
             )
         )}
       </div>

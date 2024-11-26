@@ -35,7 +35,6 @@ function PaymentDetails({ data }) {
     if (response.ok) {
       const data = await response.json();
       setInstallmentData(data);
-      toast.success("Installment Info Fetch Success");
     } else {
       toast.error("Failed to fetch Installment info ");
     }

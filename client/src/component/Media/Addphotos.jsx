@@ -114,7 +114,7 @@ const MultipleImageUpload = () => {
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
-            backgroundColor: "rgba(255, 255, 255,0.9)",
+            backgroundColor: "rgba(255, 255, 255, 0.9)",
             zIndex: 9999,
           }}
         >
@@ -123,13 +123,17 @@ const MultipleImageUpload = () => {
       )}
 
       {toggle && (
-        <Box>
+        <Box className="flex flex-col items-center px-4 space-y-6">
           <Box
             {...getRootProps()}
             p={2}
             border="2px dashed #ccc"
             textAlign="center"
-            sx={{ margin: "100px" }}
+            sx={{
+              margin: "50px auto",
+              maxWidth: "600px",
+              width: "100%",
+            }}
           >
             <input {...getInputProps()} />
             <Typography>
@@ -138,7 +142,9 @@ const MultipleImageUpload = () => {
           </Box>
 
           {files.length > 0 && (
-            <Typography>{files.length} file(s) selected</Typography>
+            <Typography>
+              <strong>{files.length}</strong> file(s) selected
+            </Typography>
           )}
 
           <Button
@@ -146,45 +152,48 @@ const MultipleImageUpload = () => {
             color="primary"
             onClick={handleUpload}
             disabled={loading || files.length === 0}
+            sx={{ maxWidth: "200px", width: "100%" }}
           >
             {loading ? <CircularProgress size={24} /> : "Upload Images"}
           </Button>
 
-          <Box mt={2}>
+          <Box
+            mt={2}
+            className="flex flex-wrap justify-center items-center space-y-4"
+          >
             {uploadedUrls.map((url, index) => (
               <img
                 key={index}
                 src={url}
                 alt={`Uploaded ${index}`}
+                className="rounded-md shadow-md"
                 style={{
                   maxWidth: "300px",
                   marginRight: "10px",
-                  margin: "auto",
-                  padding: "10px",
-                }} // Add styles to limit image size
+                  marginBottom: "10px",
+                }}
               />
             ))}
           </Box>
 
           {uploadedUrls.length > 0 && (
-            <>
-              <div style={{ marginTop: "50px" }}>
-                <Button
-                  variant="contained"
-                  onClick={() => handleadditiontodb(uploadedUrls)}
-                  disabled={loading || uploadedUrls.length === 0}
-                >
-                  Submit
-                </Button>
-              </div>
-            </>
+            <div className="mt-6 flex justify-center">
+              <Button
+                variant="contained"
+                onClick={() => handleadditiontodb(uploadedUrls)}
+                disabled={loading || uploadedUrls.length === 0}
+                sx={{ maxWidth: "200px", width: "100%" }}
+              >
+                Submit
+              </Button>
+            </div>
           )}
 
           <Button
             variant="contained"
             onClick={handleBack}
             sx={{
-              float: "right",
+              alignSelf: "flex-end",
               marginRight: "30px",
               marginBottom: "30px",
               marginTop: "30px",

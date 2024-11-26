@@ -116,7 +116,7 @@ const Addlogo = () => {
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
-            backgroundColor: "rgba(255, 255, 255,0.9)",
+            backgroundColor: "rgba(255, 255, 255, 0.9)",
             zIndex: 9999,
           }}
         >
@@ -124,30 +124,30 @@ const Addlogo = () => {
         </div>
       )}
 
-      <div className="flex flex-col items-center justify-center mt-10 space-y-4">
+      <div className="flex flex-col items-center justify-center mt-10 space-y-6 px-4">
         {defaulttoggle && (
           <>
             {selectedImage ? (
-              <div className="relative">
+              <div className="relative w-64 h-64">
                 <img
                   src={imageUrl}
                   alt="Selected"
-                  className="w-64 h-64 object-cover rounded-lg shadow-md"
+                  className="w-full h-full object-cover rounded-lg shadow-md"
                 />
                 <button
                   onClick={handleRemoveImage}
-                  className="absolute top-0 right-0 p-1 bg-red-500 rounded-full text-white"
+                  className="absolute top-2 right-2 p-2 bg-red-500 rounded-full text-white hover:bg-red-700 transition"
                 >
                   X
                 </button>
               </div>
             ) : (
               <div className="w-64 h-64 flex items-center justify-center border-2 border-dashed border-gray-400 rounded-lg">
-                <p className="text-gray-500">No image selected</p>
+                <p className="text-gray-500 text-center">No image selected</p>
               </div>
             )}
 
-            <label className="cursor-pointer bg-blue-950 text-white px-4 py-2 rounded-md shadow-md hover:bg-blue-700">
+            <label className="cursor-pointer bg-blue-950 text-white px-4 py-2 rounded-md shadow-md hover:bg-blue-700 transition">
               Choose Image
               <input
                 type="file"
@@ -159,17 +159,17 @@ const Addlogo = () => {
 
             <button
               onClick={handlesubmit}
-              className="bg-green-500 text-white px-4 py-2 rounded-md shadow-md hover:bg-green-400"
+              className="bg-green-500 text-white px-4 py-2 rounded-md shadow-md hover:bg-green-400 transition"
             >
               Upload
             </button>
 
-            <div style={{ marginLeft: "700px" }}>
+            <div className="w-full flex justify-end mt-4">
               <Button
                 variant="contained"
                 onClick={handleBack}
                 sx={{
-                  marginRight: "30px",
+                  marginRight: "20px",
                   marginBottom: "30px",
                   marginTop: "30px",
                 }}
@@ -180,11 +180,11 @@ const Addlogo = () => {
 
             {imageUrl && (
               <>
-                <div className="mt-4">
+                <div className="mt-4 text-center">
                   <p className="text-gray-700">Uploaded Image URL:</p>
                   <a
                     href={imageUrl}
-                    className="text-blue-500"
+                    className="text-blue-500 break-all"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
@@ -192,22 +192,19 @@ const Addlogo = () => {
                   </a>
                 </div>
 
-                <div>
+                <div className="flex justify-center my-6">
                   <img
                     src={`${imageUrl}?w=200&h=200`}
                     alt="Resized Image"
-                    width={300}
-                    height={300}
-                    style={{
-                      marginBottom: "50px",
-                    }}
+                    className="w-60 h-60 object-cover"
                   />
                 </div>
 
-                <div style={{ marginBottom: "30px" }}>
+                <div className="flex justify-center mb-6">
                   <Button
                     variant="contained"
                     onClick={() => handlelogostoring()}
+                    className="w-full sm:w-auto"
                   >
                     Submit
                   </Button>

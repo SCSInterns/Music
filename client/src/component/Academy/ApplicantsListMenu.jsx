@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import ApplicantsTable from "./AppliacantsTable";
 import NewAppliantsTable from "./NewApplicantsTable";
 
-const TopNavbar = ({ users }) => {
+const TopNavbar = ({ users, handleapplicantslist }) => {
   const newRequests = users.filter((item) => item.status === "To be updated");
   const acceptedRequests = users.filter((item) => item.status === "Accept");
   const rejectedRequests = users.filter((item) => item.status === "Reject");
@@ -17,17 +17,32 @@ const TopNavbar = ({ users }) => {
     {
       name: "Accepted Applicants",
       key: "Accepted Applicants",
-      component: <NewAppliantsTable users={acceptedRequests} />,
+      component: (
+        <NewAppliantsTable
+          users={acceptedRequests}
+          handleapplicantslist={handleapplicantslist}
+        />
+      ),
     },
     {
       name: "Rejected Applicants",
       key: "Rejected Applicants",
-      component: <NewAppliantsTable users={rejectedRequests} />,
+      component: (
+        <NewAppliantsTable
+          users={rejectedRequests}
+          handleapplicantslist={handleapplicantslist}
+        />
+      ),
     },
     {
       name: "New Request",
       key: "New Request",
-      component: <NewAppliantsTable users={newRequests} />,
+      component: (
+        <NewAppliantsTable
+          users={newRequests}
+          handleapplicantslist={handleapplicantslist}
+        />
+      ),
     },
   ];
 

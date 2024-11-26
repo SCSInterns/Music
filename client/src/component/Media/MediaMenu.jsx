@@ -56,13 +56,13 @@ const MediaMenu = () => {
             style={{
               display: "flex",
               alignItems: "center",
-              justifyContent: "space-around",
-              marginTop: "100px",
+              justifyContent: "center",
+              marginTop: "50px",
             }}
           >
             <div style={styles.gridContainer}>
               {icons.map((iconData, index) => {
-                const IconComponent = iconData.component; // Extract the component
+                const IconComponent = iconData.component;
                 return (
                   <div
                     key={index}
@@ -115,21 +115,24 @@ const MediaMenu = () => {
 const styles = {
   gridContainer: {
     display: "grid",
-    gridTemplateColumns: "repeat(3, 1fr)",
-    gap: "100px", // Space between icons
+    gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))",
+    gap: "20px",
+    width: "90%",
+    maxWidth: "1200px",
+    margin: "0 auto",
   },
   iconWrapper: {
-    width: "150px",
-    height: "150px",
-    aspectRatio: "1 / 1", // Ensures the icon container has a square aspect ratio
+    width: "100px",
+    height: "100px",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
     border: "2px solid #283255",
     padding: "10px",
+    borderRadius: "10px",
   },
   icon: {
-    fontSize: "100px", // Icon size, can be adjusted
+    fontSize: "60px",
     color: "#0d1b2a",
   },
 };

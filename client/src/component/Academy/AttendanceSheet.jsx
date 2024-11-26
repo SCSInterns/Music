@@ -1,7 +1,7 @@
 import React from "react";
 import { MaterialReactTable } from "material-react-table";
 import { CSVLink } from "react-csv";
-import { Button } from "@mui/material";
+import { Button, Box } from "@mui/material";
 import { jsPDF } from "jspdf";
 import { FaFileCsv } from "react-icons/fa6";
 import { FaFilePdf } from "react-icons/fa6";
@@ -62,11 +62,12 @@ function AttendanceTable({ records }) {
 
   return (
     <>
-      <div style={{ float: "right" }}>
+      <Box display="flex" justifyContent="flex-end" gap={2} mb={2}>
         <Button
           variant="contained"
           color="primary"
-          style={{ marginRight: "10px" }}
+          startIcon={<FaFileCsv size={20} />}
+          sx={{ bgcolor: "#0d1b2a" }}
         >
           <CSVLink
             data={records}
@@ -74,14 +75,21 @@ function AttendanceTable({ records }) {
             filename="attendance_records.csv"
             style={{ color: "white", textDecoration: "none" }}
           >
-            <FaFileCsv size={20} />
+            Export CSV
           </CSVLink>
         </Button>
-        <Button variant="contained" color="secondary" onClick={exportToPDF}>
-          <FaFilePdf size={20} />
+
+        <Button
+          variant="contained"
+          color="secondary"
+          startIcon={<FaFilePdf size={20} />}
+          sx={{ bgcolor: "#0d1b2a" }}
+          onClick={exportToPDF}
+        >
+          Export PDF
         </Button>
-      </div>
-      <div style={{ marginTop: "80px" }}>
+      </Box>
+      <div style={{ marginTop: "20px" }}>
         <MaterialReactTable columns={columns} data={records} />
       </div>
     </>
