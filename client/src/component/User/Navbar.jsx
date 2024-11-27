@@ -29,7 +29,7 @@ const Example = () => {
     },
     {
       name: "Gallery",
-      href: "gallery",
+      href: `/${academyname}/Gallery`,
       title: "Gallery",
     },
     {
@@ -159,7 +159,7 @@ const Example = () => {
                 <div className="hidden sm:ml-6 sm:block">
                   <div className="flex space-x-4 items-center">
                     {navigation.map((item) =>
-                      item.name === "Events" ? (
+                      item.name === "Events" || item.name === "Gallery" ? (
                         <a
                           key={item.name}
                           href={item.href}
@@ -178,7 +178,8 @@ const Example = () => {
                           onClick={() => {
                             if (
                               currentPath.includes("event") ||
-                              currentPath.includes("registrationform")
+                              currentPath.includes("registrationform") ||
+                              currentPath.includes("Gallery")
                             ) {
                               window.location.href = `/${academyname}`;
                             } else {
@@ -270,7 +271,7 @@ const Example = () => {
               style={{ background: "#020617" }}
             >
               {navigation.map((item) =>
-                item.name === "Events" ? (
+                item.name === "Events" || item.name === "Gallery" ? (
                   <a
                     key={item.name}
                     href={item.href}
@@ -289,7 +290,8 @@ const Example = () => {
                     onClick={() => {
                       if (
                         currentPath.includes("event") ||
-                        currentPath.includes("registrationform")
+                        currentPath.includes("registrationform") ||
+                        currentPath.includes("Gallery")
                       ) {
                         window.location.href = `/${academyname}`;
                       } else {

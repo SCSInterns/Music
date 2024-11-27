@@ -2,6 +2,7 @@ const Installement = require("../models/Installment")
 const Paymnetdue = require("../models/PaymentDues")
 const Form = require("../models/Form")
 const Token = require('../models/Token');
+const Due = require("../models/PaymentDues");
 
 const addMonths = (date, months) => {
     const d = new Date(date);
@@ -41,7 +42,6 @@ const handlenextinstallmentdate = async (req, res) => {
         const { studentId } = req.params;
         const { academyname, course, amount, role, studentname, paymentmode, enrollmentDate, studentemail } = req.body
 
-
         // enroll date should be inserted from the date of status acceptance not in body 
 
         const student = await Form.findOne({ _id: studentId })
@@ -67,9 +67,10 @@ const handlenextinstallmentdate = async (req, res) => {
         if (existingInstallments.length > 0) {
             const enrollmentDateParts = extractMonthYear(enrollmentDate);
 
-            // Loop through each existing installment and check for a month-year match with enrollmentDate
             for (let installment of existingInstallments) {
-                const paymentDateParts = extractMonthYear(installment.enrollmentDate);
+                const paymentDateParts = extractMonthYear(installment.paymentDate);
+
+                console.log(installment.enrollmentDate)
 
                 if (paymentDateParts.month === enrollmentDateParts.month && paymentDateParts.year === enrollmentDateParts.year) {
                     return res.status(400).json({ msg: "Enrollment date and an existing payment date fall in the same month. Consistency error in monthly installments." });
@@ -293,4 +294,4 @@ const getpaymentstats = async (req, res) => {
 
 
 
-module.exports = { handlenextinstallmentdate, getinfoofinstallment, getinfoofpendingpayments, handlelatestpaymnetdue, getUserSubscriptionDetails , getpaymentstats}
+module.exports = { handlenextinstallmentdate, getinfoofinstallment, getinfoofpendingpayments, handlelatestpaymnetdue, getUserSubscriptionDetails, getpaymentstats }

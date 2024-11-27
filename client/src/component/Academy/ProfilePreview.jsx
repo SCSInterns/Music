@@ -24,14 +24,23 @@ function ProfilePreview({
   paymentstats,
   batchdetails,
   recordsheet,
+  updatepaymentstats,
 }) {
   const [activeTab, setActiveTab] = useState("Add Payment");
+
+  console.log(updatepaymentstats);
 
   const menuItems = [
     {
       name: "Add Payment",
       key: "Add Payment",
-      component: <PaymentBox data={data} paymentstatsdetails={paymentstats} />,
+      component: (
+        <PaymentBox
+          data={data}
+          paymentstatsdetails={paymentstats}
+          updatepaymentstats={updatepaymentstats}
+        />
+      ),
     },
     {
       name: "Payment History",

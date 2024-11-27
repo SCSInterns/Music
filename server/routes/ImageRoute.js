@@ -1,7 +1,7 @@
 const express = require('express');
 const multer = require('multer');
 const authenicate = require('../controllers/Authenticate')
-const { storage, Gallerystorage, EventStorage, AboutStorage, InstrumentStorage, MentorsStorage } = require('../controllers/ImageController');
+const { storage, Gallerystorage, EventStorage, AboutStorage, InstrumentStorage, MentorsStorage, BannersStorage } = require('../controllers/ImageController');
 const gallery = require('../controllers/GalleryController')
 const instrument = require('../controllers/Instrumentc')
 const router = express.Router();
@@ -19,6 +19,8 @@ const instrumentUpload = multer({ storage: InstrumentStorage })
 
 const profileUpload = multer({ storage: MentorsStorage })
 
+const bannerUpload = multer({ storage: BannersStorage })
+
 // API route to upload an image
 router.post('/uploadlogo', upload.fields([{ name: 'logo', maxCount: 1 }]), async (req, res) => {
     const uploadedFile = req.files['logo'][0]; // Access the uploaded file
@@ -26,6 +28,16 @@ router.post('/uploadlogo', upload.fields([{ name: 'logo', maxCount: 1 }]), async
 });
 
 router.post("/uploadgalleryphotos", galleryUpload.array("images", 10), (req, res) => {
+    try {
+        const urls = req.files.map((file) => file.path);
+        res.json({ urls });
+    } catch (error) {
+        console.error("Error uploading to Cloudinary", error);
+        res.status(500).json({ error: "Upload failed" });
+    }
+});
+
+router.post("/uploadbannerphotos", bannerUpload.array("images", 5), (req, res) => {
     try {
         const urls = req.files.map((file) => file.path);
         res.json({ urls });
@@ -82,6 +94,7 @@ router.post('/uploadabout', authenicate.authenticatetoken, gallery.handleabout)
 router.post('/uploadinstrument', authenicate.authenticatetoken, instrument.handleInstrument)
 router.post('/addmentors', authenicate.authenticatetoken, gallery.handleMentors)
 router.post('/addstats', authenicate.authenticatetoken, gallery.handlestats)
+router.put('/addbanner', authenicate.authenticatetoken, gallery.saveBanners)
 
 
 module.exports = router;

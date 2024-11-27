@@ -22,7 +22,7 @@ import { toast } from 'react-toastify';
 import { useEffect } from 'react';
 import AcademyRegistration from './component/Academy/AcademyRegistration';
 import PaymentDetails from './component/Academy/PaymentDetails';
-import Gallery from './component/User/Gallery';
+import Banner from './component/User/Banner';
 import Error from './component/User/Error';
 import About from './component/User/About';
 import Event from './component/User/Event';
@@ -34,6 +34,7 @@ import SetPassword from './component/User/SetPassword';
 import Profile from './component/User/Profile';
 import AutomatedAttendance from './component/Academy/AutomatedAttendance'
 import NewAdminDashboard from './component/Academy/NewAdminDashboard';
+import GalleryPage from './component/User/Gallery';
 
 
 function App() {
@@ -85,8 +86,9 @@ function App() {
 
           {/* public routes  */}
           <Route path='/:academyname' element={<Home />} />
-          <Route path='/:academyname/gallery' element={<Gallery />} />
+          <Route path='/:academyname/Banner' element={<Banner />} />
           <Route path='/:academyname/about' element={<About />} />
+          <Route path='/:academyname/Gallery' element={<GalleryPage />} />
           <Route path='/:academyname/event' element={<Event />} />
           <Route path='/:academyname/registrationform' element={<Form />} />
           <Route path='/:academyname/instrument' element={<Instrument />} />

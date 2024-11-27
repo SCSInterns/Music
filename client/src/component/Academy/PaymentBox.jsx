@@ -11,7 +11,7 @@ import {
 import Token from "../Token/Token";
 import { toast } from "react-toastify";
 
-const PaymentBox = ({ data, paymentstatsdetails }) => {
+const PaymentBox = ({ data, paymentstatsdetails, updatepaymentstats }) => {
   const academyname = sessionStorage.getItem("academyname");
   const role = sessionStorage.getItem("role");
 
@@ -84,6 +84,9 @@ const PaymentBox = ({ data, paymentstatsdetails }) => {
     });
 
     if (response.ok) {
+      const data = await response.json();
+      console.log(data);
+      updatepaymentstats(data);
       toast.success("Latest Payment Due Updated");
     } else {
       toast.error("Error Updating latest Due Date ");
@@ -147,7 +150,7 @@ const PaymentBox = ({ data, paymentstatsdetails }) => {
         toast.error("Payment Details Updation Failed ");
       }
     } catch (error) {
-      toast.error("Network error");
+      toast.error("Network error", error);
     }
   };
 
@@ -215,6 +218,7 @@ const PaymentBox = ({ data, paymentstatsdetails }) => {
             type="date"
             id="datePicker"
             name="datePicker"
+            value={paymentdate}
             onChange={(e) => setpaymentdate(e.target.value)}
             style={{
               padding: "10px",

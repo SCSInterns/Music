@@ -73,6 +73,15 @@ function ApplicantsTable({ users, handleapplicantslist }) {
     });
   };
 
+  const updatepaymnetstats = async (data) => {
+    console.log(data);
+    paymentstatsdetails.nextpaymentdate = data.nextpaymentdate;
+    paymentstatsdetails.advanceamount = data.advanceamount;
+    paymentstatsdetails.dueamount = data.dueamount;
+  };
+
+  console.log(paymentstatsdetails);
+
   const paymentstats = async (studentid) => {
     const url = "http://localhost:5000/api/auth/getpaymentstats";
 
@@ -325,6 +334,7 @@ function ApplicantsTable({ users, handleapplicantslist }) {
           paymentstats={paymentstatsdetails}
           batchdetails={batchdata}
           recordsheet={recordsheet}
+          updatepaymentstats={updatepaymnetstats}
         />
       </div>
 

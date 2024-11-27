@@ -4,6 +4,9 @@ import Events from "../Academy Features/Events";
 import About from "../Academy Features/Aboutus";
 import Instrument from "../Academy Features/Instruments";
 import SocialLinks from "../Academy Features/SocialLinks";
+import AddBanners from "../Media/AddBanners";
+import AddMentors from "../Media/AddMentors";
+import AddStats from "../Media/AddStats";
 
 const TopNavbar = () => {
   const [activeContent, setActiveContent] = useState("Media");
@@ -14,6 +17,9 @@ const TopNavbar = () => {
     { name: "About", key: "About", component: <About /> },
     { name: "Instrument", key: "Instrument", component: <Instrument /> },
     { name: "Social Links", key: "Social", component: <SocialLinks /> },
+    { name: "Banners", key: "Banners", component: <AddBanners /> },
+    { name: "Mentors", key: "Mentors", component: <AddMentors /> },
+    { name: "Stats", key: "Stats", component: <AddStats /> },
   ];
 
   return (

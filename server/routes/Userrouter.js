@@ -15,6 +15,7 @@ router.post('/getacademydetails', user.academydetails)
 router.post('/getsociallinks', user.sociallinks)
 router.post('/getmentors', user.getmentors)
 router.post('/getstats', user.getstats)
+router.post('/getbanner', user.getbanner)
 
 
 module.exports = router;

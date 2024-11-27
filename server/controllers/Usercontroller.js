@@ -8,6 +8,7 @@ const Video = require('../models/Video')
 const Mentors = require("../models/Mentors")
 const Stats = require("../models/Stats")
 const Musicacademy = require('../models/MusicAcademy')
+const Banner = require('../models/Banner')
 
 // get the logo for navbar 
 const fetchlogo = async (req, res) => {
@@ -271,6 +272,20 @@ const getstats = async (req, res) => {
     }
 }
 
+// get the banner images 
+
+const getbanner = async (req, res) => {
+    const { academyname } = req.body
+    const response = await Banner.findOne({ academyname: academyname })
+
+    if (response) {
+        res.status(200).json(response)
+    }
+    else {
+        res.status(404).json({ msg: 'No images found' })
+    }
+}
 
 
-module.exports = { fetchlogo, setsociallinks, getimages, getabout, getinstruments, getevents, knowmore, getvideos, academydetails, sociallinks, getmentors, getstats }
+
+module.exports = { fetchlogo, setsociallinks, getimages, getabout, getinstruments, getevents, knowmore, getvideos, academydetails, sociallinks, getmentors, getstats, getbanner }

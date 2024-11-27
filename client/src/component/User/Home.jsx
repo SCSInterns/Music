@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 import Navbar from "./Navbar";
 import Slider from "./Slider";
 import IntroText from "./IntroText";
-import Gallery from "./Gallery";
+import Banner from "./Banner";
 import About from "./About";
 import Instrument from "./Instrument";
 import Video from "./Video";
@@ -54,34 +54,36 @@ function Home() {
 
   return (
     <>
-      <div className="overflow-x-hidden">
+      <div className="overflow-x-hidden flex flex-col min-h-screen">
         <Navbar />
 
-        <section id="gallery" className="h-screen">
-          <Gallery />
-        </section>
+        <div className="grid grid-cols-1 gap-10">
+          <section id="banner" className="h-screen">
+            <Banner />
+          </section>
 
-        <section id="about" className="h-screen">
-          <About />
-        </section>
+          <section id="about" className="h-screen">
+            <About />
+          </section>
 
-        <section id="instrument" className="h-screen">
-          <Instrument />
-        </section>
+          <section id="instrument" className="h-screen">
+            <Instrument />
+          </section>
 
-        <section id="video" className="h-screen">
-          <Video />
-        </section>
+          <section id="video" className="h-screen">
+            <Video />
+          </section>
 
-        <section id="stats" className="h-screen">
-          <Stats />
-        </section>
+          <section id="stats" className="h-screen">
+            <Stats />
+          </section>
 
-        <section id="mentor" className="h-screen">
-          <Mentor />
-        </section>
+          <section id="mentor" className="h-screen">
+            <Mentor />
+          </section>
+        </div>
 
-        <Footer />
+        <Footer className="mt-auto" />
       </div>
     </>
   );

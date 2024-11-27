@@ -3,6 +3,7 @@ const Event = require("../models/Event")
 const About = require("../models/About")
 const Stats = require("../models/Stats")
 const Mentor = require("../models/Mentors")
+const Banner = require("../models/Banner")
 
 const saveImageUrls = async (req, res) => {
     try {
@@ -236,5 +237,58 @@ const handleMentors = async (req, res) => {
 }
 
 
+// Banners  
+const saveBanners = async (req, res) => {
+    try {
+        const { academyName, imageUrls } = req.body;
 
-module.exports = { saveImageUrls, handleevents, handleabout, handlestats, handleMentors }
+        if (!academyName || !Array.isArray(imageUrls)) {
+            return res.status(400).json({ message: "Academy name and image URLs are required" });
+        }
+
+        if (imageUrls.length > 5) {
+            return res.status(400).json({ message: "Maximum limit of 5 images reached" });
+        }
+
+        let academyEntry = await Banner.findOne({ academyname: academyName });
+
+        if (academyEntry) {
+
+            const count = academyEntry.imageUrls.length
+            const newcount = imageUrls.length
+
+            if (count + newcount > 5) {
+                // Update existing entry
+                academyEntry.imageUrls = imageUrls;
+                await academyEntry.save();
+                return res.status(200).json({ message: "Banner Images updated successfully", academyEntry });
+            }
+            else {
+                // add with previous entries 
+                academyEntry.imageUrls = [...academyEntry.imageUrls, ...imageUrls];
+                await academyEntry.save();
+                return res.status(200).json({ message: "Banner Images updated successfully", academyEntry });
+            }
+
+
+        } else {
+            // Create new entry
+            const newImageEntry = new Banner({
+                academyname: academyName,
+                imageUrls,
+            });
+
+            const savedImage = await newImageEntry.save();
+            return res.status(201).json({ message: "Banner Images updated successfully", savedImage });
+        }
+    } catch (error) {
+        console.error("Error saving or updating Banner image URLs:", error);
+        res.status(500).json({ message: "Failed to save or  update details" });
+    }
+};
+
+
+
+
+
+module.exports = { saveImageUrls, handleevents, handleabout, handlestats, handleMentors, saveBanners }
