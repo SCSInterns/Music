@@ -30,6 +30,10 @@ function ProfilePreview({
 
   console.log(updatepaymentstats);
 
+  const switchToPaymentHistory = () => {
+    setActiveTab("Payment History");
+  };
+
   const menuItems = [
     {
       name: "Add Payment",
@@ -39,6 +43,7 @@ function ProfilePreview({
           data={data}
           paymentstatsdetails={paymentstats}
           updatepaymentstats={updatepaymentstats}
+          switchToPaymentHistory={switchToPaymentHistory}
         />
       ),
     },

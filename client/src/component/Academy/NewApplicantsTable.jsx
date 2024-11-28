@@ -327,6 +327,7 @@ function ApplicantsTable({ users, handleapplicantslist }) {
         </Button>
 
         <ProfilePreview
+          key={paymentstats}
           open={toggle}
           onClose={handletoggleclose}
           data={data}

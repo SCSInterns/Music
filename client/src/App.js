@@ -65,8 +65,7 @@ function App() {
 
           {verified && (role === "Admin") ?
             <>
-              <Route path={'/:academyname/admin/dashboard'} element={<AcademyDashboard />}></Route>
-              <Route path={'/:academyname/admin/newdashboard'} element={<NewAdminDashboard />}></Route>
+              <Route path={'/:academyname/admin/dashboard'} element={<NewAdminDashboard />}></Route>
               <Route path={'/:academyname/admin/regform'} element={<AcademyRegistration />}></Route>
               <Route path={'/:academyname/admin/feesdetails'} element={<PaymentDetails />}></Route>
               <Route path={'/:academyname/attendance'} element={<AutomatedAttendance />}></Route>

@@ -3,6 +3,7 @@ const Paymnetdue = require("../models/PaymentDues")
 const Form = require("../models/Form")
 const Token = require('../models/Token');
 const Due = require("../models/PaymentDues");
+const Handlepaymentstats = require('./Handlepaymentstats')
 
 const addMonths = (date, months) => {
     const d = new Date(date);
@@ -69,9 +70,6 @@ const handlenextinstallmentdate = async (req, res) => {
 
             for (let installment of existingInstallments) {
                 const paymentDateParts = extractMonthYear(installment.paymentDate);
-
-                console.log(installment.enrollmentDate)
-
                 if (paymentDateParts.month === enrollmentDateParts.month && paymentDateParts.year === enrollmentDateParts.year) {
                     return res.status(400).json({ msg: "Enrollment date and an existing payment date fall in the same month. Consistency error in monthly installments." });
                 }
@@ -207,7 +205,7 @@ const handlelatestpaymnetdue = async (req, res) => {
                 };
 
                 const updatedinfo = await Paymnetdue.findByIdAndUpdate(response._id, { $set: updateduser }, { new: true })
-
+                Handlepaymentstats.totalduemanual(updatedinfo)
                 if (updatedinfo) {
                     res.status(200).json(updatedinfo)
                 }

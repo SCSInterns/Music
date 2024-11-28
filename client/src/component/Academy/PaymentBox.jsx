@@ -11,7 +11,12 @@ import {
 import Token from "../Token/Token";
 import { toast } from "react-toastify";
 
-const PaymentBox = ({ data, paymentstatsdetails, updatepaymentstats }) => {
+const PaymentBox = ({
+  data,
+  paymentstatsdetails,
+  updatepaymentstats,
+  switchToPaymentHistory,
+}) => {
   const academyname = sessionStorage.getItem("academyname");
   const role = sessionStorage.getItem("role");
 
@@ -87,6 +92,7 @@ const PaymentBox = ({ data, paymentstatsdetails, updatepaymentstats }) => {
       const data = await response.json();
       console.log(data);
       updatepaymentstats(data);
+      switchToPaymentHistory();
       toast.success("Latest Payment Due Updated");
     } else {
       toast.error("Error Updating latest Due Date ");

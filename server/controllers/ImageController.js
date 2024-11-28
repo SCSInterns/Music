@@ -88,4 +88,15 @@ const BannersStorage = new CloudinaryStorage({
   },
 });
 
-module.exports = { cloudinary, storage, Gallerystorage, EventStorage, AboutStorage, InstrumentStorage, MentorsStorage, BannersStorage };
+const QrStorage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: async (req, file) => {
+    return {
+      folder: 'Qrcode',
+      public_id: file.originalname.split('.')[0],
+      allowed_formats: ['jpg', 'png', 'jpeg'],
+    };
+  },
+});
+
+module.exports = { cloudinary, storage, Gallerystorage, EventStorage, AboutStorage, InstrumentStorage, MentorsStorage, BannersStorage, QrStorage };

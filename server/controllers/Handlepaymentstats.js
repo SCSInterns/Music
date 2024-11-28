@@ -83,4 +83,35 @@ const totaldue = async () => {
     }
 };
 
-module.exports = { totaldue };
+const totalduemanual = async (record) => {
+    console.log(record)
+
+    const fees = record.amount;
+    const paymentdate = record.paymentdate;
+    const currentdate = getCurrentDate();
+
+    const months = calculateMonthDifference(currentdate, paymentdate);
+
+    if (months === 0) {
+        record.dueamount = 0;
+        record.advanceamount = 0;
+
+        await record.save()
+    }
+
+    if (months > 0) {
+        const advancepayment = Math.abs(months) * fees;
+        record.advanceamount = Math.abs(advancepayment);
+        record.dueamount = 0;
+        await record.save();
+    }
+
+    if (months < 0) {
+        const pendingfeesamount = months * fees;
+        record.dueamount = Math.abs(pendingfeesamount);
+        record.advanceamount = 0;
+        await record.save();
+    }
+}
+
+module.exports = { totaldue, totalduemanual };

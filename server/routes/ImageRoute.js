@@ -1,7 +1,7 @@
 const express = require('express');
 const multer = require('multer');
 const authenicate = require('../controllers/Authenticate')
-const { storage, Gallerystorage, EventStorage, AboutStorage, InstrumentStorage, MentorsStorage, BannersStorage } = require('../controllers/ImageController');
+const { storage, Gallerystorage, EventStorage, AboutStorage, InstrumentStorage, MentorsStorage, BannersStorage, QrStorage } = require('../controllers/ImageController');
 const gallery = require('../controllers/GalleryController')
 const instrument = require('../controllers/Instrumentc')
 const router = express.Router();
@@ -21,10 +21,22 @@ const profileUpload = multer({ storage: MentorsStorage })
 
 const bannerUpload = multer({ storage: BannersStorage })
 
+const qrUpload = multer({ storage: QrStorage })
+
 // API route to upload an image
 router.post('/uploadlogo', upload.fields([{ name: 'logo', maxCount: 1 }]), async (req, res) => {
-    const uploadedFile = req.files['logo'][0]; // Access the uploaded file
+    const uploadedFile = req.files['logo'][0];
     res.json({ imageUrl: uploadedFile.path, imageId: uploadedFile.filename });
+});
+
+router.post('/uploadqr', qrUpload.single('picture'), (req, res) => {
+    try {
+        const uploadedFile = req.file;
+        res.json({ imageUrl: uploadedFile.path, imageId: uploadedFile.filename });
+    } catch (error) {
+        console.error("Error uploading to Cloudinary", error);
+        res.status(500).json({ error: "Upload failed" });
+    }
 });
 
 router.post("/uploadgalleryphotos", galleryUpload.array("images", 10), (req, res) => {

@@ -19,6 +19,7 @@ import QrScan from "./QrScan";
 import ReportIcon from "@mui/icons-material/Assessment";
 import FolderSharedIcon from "@mui/icons-material/FolderShared";
 import SummarizeIcon from "@mui/icons-material/Summarize";
+import PaymentsIcon from "@mui/icons-material/Payments";
 import ApplicantsTable from "./AppliacantsTable";
 import PendingFeesTable from "./PendingFeesTable";
 import PendingActionsIcon from "@mui/icons-material/PendingActions";
@@ -28,6 +29,7 @@ import Batchmenu from "./Batchmenu";
 import Loader from "../Loader/Loader";
 import FormManagementMenu from "./FormManagementMenu";
 import ApplicantsListMenu from "./ApplicantsListMenu";
+import PaymentMenu from "../AcademyPayment/PaymentMenu";
 
 const Sidebar = () => {
   const academyname = sessionStorage.getItem("academyname");
@@ -68,7 +70,6 @@ const Sidebar = () => {
       setTimeout(() => {
         setloading(false);
         setappdata(data);
-        toast.success("Details Fetch Success");
       }, 2000);
     } else {
       toast.error("Error fetching details");
@@ -107,7 +108,6 @@ const Sidebar = () => {
       setTimeout(() => {
         setloading(false);
         setpasspaymentdetails(data);
-        toast.success("Payment Details Fetch Success");
       }, 2000);
     }
   };
@@ -130,7 +130,11 @@ const Sidebar = () => {
       component: <Content />,
     },
 
-    { text: "Batch Menu", icon: <ReportIcon />, component: <Batchmenu /> },
+    {
+      text: "Batch Management",
+      icon: <ReportIcon />,
+      component: <Batchmenu />,
+    },
 
     { text: "Attendance", icon: <GroupsIcon />, component: <QrScan /> },
 
@@ -154,6 +158,11 @@ const Sidebar = () => {
       text: "Form Management",
       icon: <InsertDriveFileIcon />,
       component: <FormManagementMenu />,
+    },
+    {
+      text: "Payment Managemnet",
+      icon: <PaymentsIcon />,
+      component: <PaymentMenu />,
     },
   ];
 
