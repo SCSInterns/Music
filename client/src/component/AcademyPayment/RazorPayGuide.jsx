@@ -2,6 +2,7 @@ import React from "react";
 import Fab from "@mui/material/Fab";
 import PhoneIcon from "@mui/icons-material/Phone";
 import Tooltip from "@mui/material/Tooltip";
+import { Button } from "@mui/material";
 
 const VideoPlayer = () => {
   const videoId = "Dej6YePFSMU";
@@ -28,26 +29,39 @@ const VideoPlayer = () => {
         ></iframe>
       </div>
 
-      <Tooltip title="Help Center" sx={{}}>
-        <a href={`tel:${phoneNumber}`} target="_self">
-          <Fab
-            color="secondary"
-            size="small"
-            aria-label="call"
-            sx={{
-              position: "fixed",
-              bottom: 80,
-              padding: "5px",
-              right: 30,
-              backgroundColor: "#0d1b2a",
-              "&:hover": {
-                backgroundColor: "#0d1b2a",
+      <Tooltip
+        title="Help Center"
+        placement="bottom"
+        PopperProps={{
+          modifiers: [
+            {
+              name: "offset",
+              options: {
+                offset: [0, 100],
               },
-            }}
-          >
-            <PhoneIcon />
-          </Fab>
-        </a>
+            },
+          ],
+        }}
+      >
+        <Fab
+          component="a"
+          href={`tel:${phoneNumber}`}
+          target="_self"
+          color="secondary"
+          size="small"
+          aria-label="call"
+          sx={{
+            position: "fixed",
+            bottom: 80,
+            right: 30,
+            backgroundColor: "#0d1b2a",
+            "&:hover": {
+              backgroundColor: "#0d1b2a",
+            },
+          }}
+        >
+          <PhoneIcon />
+        </Fab>
       </Tooltip>
     </>
   );

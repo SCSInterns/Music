@@ -163,10 +163,6 @@ const handleinstallment = async (req, res) => {
       const updatedinfo = await Form.findByIdAndUpdate(req.params.id, { $set: updateduser })
 
       // create the default entry in installment with empty field for relieve error  
-
-
-
-
       res.status(200).json({ msg: "Installement updated successfully ", updatedinfo })
     }
     else {
@@ -246,6 +242,7 @@ const handlelogo = async (req, res) => {
 
 }
 
+// inserting qr 
 const handleqr = async (req, res) => {
   try {
     const { link, role, academyname } = req.body
@@ -283,5 +280,23 @@ const handleqr = async (req, res) => {
 
 }
 
+// fetching qr for payment 
 
-module.exports = { handledynamicform, getform, savedata, handleapplicantdata, finddatabyid, handlestatus, handleinstallment, verifyyoutubelink, handlelogo, handleqr }
+const fetchqr = async (req, res) => {
+  try {
+    const { academyname } = req.body
+    const response = await Qrcode.findOne({ academyname: academyname })
+
+    if (response) {
+      res.status(200).json(response.link)
+    }
+    else {
+      res.status(404).json({ msg: 'No qr found' })
+    }
+  } catch (error) {
+    res.status(500).json({ message: 'Server not supported', error });
+  }
+}
+
+
+module.exports = { handledynamicform, getform, savedata, handleapplicantdata, finddatabyid, handlestatus, handleinstallment, verifyyoutubelink, handlelogo, handleqr, fetchqr }

@@ -12,13 +12,9 @@ import Navbar from "./Navbar";
 import Footer from "./Footer";
 import Token from "../Token/Token";
 import Cover from "../../static/Images/Profilecover.jpeg";
-import Paymnettable from "./Paymnettable";
-import ProfileAbout from "./ProfileAbout";
 import { Fab } from "@mui/material";
-import { useNavigate } from "react-router-dom";
 import SupportAgentIcon from "@mui/icons-material/SupportAgent";
-import BatchProfile from "./BatchProfile";
-import Qrcode from "./Qrcode";
+import ProfileMenu from "./ProfileMenu";
 
 function Profile() {
   const [sociallinks, setsociallinks] = useState("");
@@ -51,13 +47,7 @@ function Profile() {
   }, [academyname]);
 
   const token = Token();
-  const navigate = useNavigate();
   const id = sessionStorage.getItem("Userid");
-
-  const [togglepayment, settogglepayment] = useState(false);
-  const [toggleabout, settoggleabout] = useState(true);
-  const [toggleBatch, settoggleBatch] = useState(false);
-  const [toggleqr, settoggleqr] = useState(false);
 
   const [data, setData] = useState({});
   const [paymnetdata, setpaymnetdata] = useState({});
@@ -193,34 +183,6 @@ function Profile() {
     );
   }
 
-  const handletoggleabout = () => {
-    settoggleabout(true);
-    settogglepayment(false);
-    settoggleBatch(false);
-    settoggleqr(false);
-  };
-
-  const handlebatchtoggle = () => {
-    settoggleBatch(true);
-    settoggleabout(false);
-    settogglepayment(false);
-    settoggleqr(false);
-  };
-
-  const handlepaymenttoggle = () => {
-    settoggleabout(false);
-    settogglepayment(true);
-    settoggleBatch(false);
-    settoggleqr(false);
-  };
-
-  const handleqr = () => {
-    settoggleabout(false);
-    settogglepayment(false);
-    settoggleBatch(false);
-    settoggleqr(true);
-  };
-
   return (
     <>
       <Navbar />
@@ -271,68 +233,12 @@ function Profile() {
             </Typography>
           </div>
 
-          <div
-            style={{
-              backgroundColor: "#f9fafb",
-              padding: "10px",
-              display: "flex",
-              marginTop: "20px",
-            }}
-          >
-            <Button
-              style={{
-                backgroundColor: toggleabout ? "#9C27B0" : "transparent",
-                color: toggleabout ? "#fff" : "#000",
-                border: "1px solid #ccc",
-              }}
-              onClick={() => handletoggleabout()}
-            >
-              Account Info
-            </Button>
-            <Button
-              style={{
-                marginLeft: "10px",
-                backgroundColor: togglepayment ? "#9C27B0" : "transparent",
-                color: togglepayment ? "#fff" : "#000",
-                border: "1px solid #ccc",
-              }}
-              onClick={() => handlepaymenttoggle()}
-            >
-              Payment Info
-            </Button>
-
-            <Button
-              style={{
-                marginLeft: "10px",
-                backgroundColor: toggleBatch ? "#9C27B0" : "transparent",
-                color: toggleBatch ? "#fff" : "#000",
-                border: "1px solid #ccc",
-              }}
-              onClick={() => handlebatchtoggle()}
-            >
-              Batch Info
-            </Button>
-
-            <Button
-              style={{
-                marginLeft: "10px",
-                backgroundColor: toggleqr ? "#9C27B0" : "transparent",
-                color: toggleqr ? "#fff" : "#000",
-                border: "1px solid #ccc",
-              }}
-              onClick={() => handleqr()}
-            >
-              Attendance Qr code
-            </Button>
-          </div>
-
-          {toggleabout && <ProfileAbout data={data} />}
-
-          {togglepayment && <Paymnettable info={paymnetdata} />}
-
-          {toggleBatch && <BatchProfile details={batchdata} />}
-
-          {toggleqr && <Qrcode qrcode={qrCodeData} />}
+          <ProfileMenu
+            data={data}
+            info={paymnetdata}
+            details={batchdata}
+            qrcode={qrCodeData}
+          />
         </Card>
       </Box>
 
