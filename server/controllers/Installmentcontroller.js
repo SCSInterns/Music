@@ -36,14 +36,11 @@ const convertAndAddMonths = (dateStr, monthsToAdd) => {
 };
 
 
-// completed  
 
 const handlenextinstallmentdate = async (req, res) => {
     try {
         const { studentId } = req.params;
         const { academyname, course, amount, role, studentname, paymentmode, enrollmentDate, studentemail } = req.body
-
-        // enroll date should be inserted from the date of status acceptance not in body 
 
         const student = await Form.findOne({ _id: studentId })
 
@@ -161,7 +158,6 @@ const getinfoofpendingpayments = async (req, res) => {
 
 }
 
-// changes - next payment date should be acc to intallment date 
 
 const handlelatestpaymnetdue = async (req, res) => {
     try {
@@ -292,4 +288,4 @@ const getpaymentstats = async (req, res) => {
 
 
 
-module.exports = { handlenextinstallmentdate, getinfoofinstallment, getinfoofpendingpayments, handlelatestpaymnetdue, getUserSubscriptionDetails, getpaymentstats }
+module.exports = { handlenextinstallmentdate, getinfoofinstallment, getinfoofpendingpayments, handlelatestpaymnetdue, getUserSubscriptionDetails, getpaymentstats, extractDay, extractMonthAndYear, convertAndAddMonths }

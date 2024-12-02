@@ -107,6 +107,17 @@ export default function QRPaymentPage({ data }) {
                   >
                     Scan QR code to make payment
                   </Typography>
+
+                  <Typography
+                    variant="body2"
+                    color="textSecondary"
+                    sx={{ marginTop: "20px" }}
+                  >
+                    You've to pay.
+                  </Typography>
+                  <Typography variant="h4" fontWeight="bold" mt={1}>
+                    ₹ {data.dueamount}
+                  </Typography>
                 </Box>
               </Paper>
             </Grid>
@@ -123,7 +134,7 @@ export default function QRPaymentPage({ data }) {
                   Payment Details
                 </Typography>
 
-                <Grid container spacing={2}>
+                <Grid container spacing={3} sx={{ marginTop: "20px" }}>
                   <Grid item xs={12}>
                     <TextField
                       fullWidth
@@ -147,17 +158,8 @@ export default function QRPaymentPage({ data }) {
                       label="Payment Date"
                       variant="outlined"
                       required
-                      type="datetime-local"
+                      type="date"
                       InputLabelProps={{ shrink: true }}
-                    />
-                  </Grid>
-                  <Grid item xs={12}>
-                    <TextField
-                      fullWidth
-                      label="Additional Notes"
-                      variant="outlined"
-                      multiline
-                      rows={4}
                     />
                   </Grid>
                   <Grid item xs={12}>
@@ -175,6 +177,19 @@ export default function QRPaymentPage({ data }) {
                     >
                       Submit Payment Details
                     </Button>
+
+                    <Box
+                      sx={{
+                        marginTop: 3,
+                        backgroundColor: "#ffffff",
+                        borderRadius: "8px",
+                        padding: 2,
+                      }}
+                    >
+                      <Typography variant="body2" fontWeight="medium">
+                        Fees Reciept will be emailed within 2 business days.
+                      </Typography>
+                    </Box>
                   </Grid>
                 </Grid>
               </Paper>

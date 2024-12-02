@@ -34,55 +34,21 @@ export default function PaymentForm({ data }) {
 
           <Box
             component="form"
-            sx={{ display: "flex", flexDirection: "column", gap: 3 }}
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              gap: 3,
+              alignItems: "center",
+            }}
           >
-            <Box>
-              <Typography variant="body2" color="textSecondary" gutterBottom>
-                Card number
-              </Typography>
-              <Box sx={{ position: "relative" }}>
-                <TextField
-                  id="card"
-                  placeholder="9870 8880 8880 8880"
-                  fullWidth
-                  InputProps={{
-                    startAdornment: (
-                      <Box
-                        sx={{
-                          position: "absolute",
-                          left: "10px",
-                          top: "50%",
-                          transform: "translateY(-50%)",
-                          pointerEvents: "none",
-                        }}
-                      >
-                        <CreditCard style={{ color: "#9e9e9e" }} />
-                      </Box>
-                    ),
-                    sx: { pl: 5 },
-                  }}
-                />
-              </Box>
-            </Box>
-
-            <Grid container spacing={2}>
-              <Grid item xs={6}>
-                <Typography variant="body2" color="textSecondary" gutterBottom>
-                  Expiry
-                </Typography>
-                <TextField id="expiry" placeholder="MM / YY" fullWidth />
-              </Grid>
-              <Grid item xs={6}>
-                <Typography variant="body2" color="textSecondary" gutterBottom>
-                  CVC
-                </Typography>
-                <TextField id="cvc" placeholder="CVC" fullWidth />
-              </Grid>
-            </Grid>
+            <Button
+              variant="contained"
+              size="medium"
+              sx={{ marginTop: "100px" }}
+            >
+              Proceed For Payment
+            </Button>
           </Box>
-          <Button variant="contained" size="medium" sx={{ marginTop: "20px" }}>
-            Pay now
-          </Button>
         </Grid>
 
         {/* Right Column - Payment Summary */}
@@ -103,10 +69,6 @@ export default function PaymentForm({ data }) {
                   {
                     title: "Student Name : ",
                     text: `${data.studentname}`,
-                  },
-                  {
-                    title: "Student Id : ",
-                    text: `${data.studentid}`,
                   },
                   {
                     title: "Course : ",
@@ -149,11 +111,11 @@ export default function PaymentForm({ data }) {
                     marginTop: 3,
                     backgroundColor: "#ffffff",
                     borderRadius: "8px",
-                    padding: 2,
+                    padding: 1,
                   }}
                 >
                   <Typography variant="body2" fontWeight="medium">
-                    The invoice will be emailed within 2 business days.
+                    Fees Reciept will be emailed within 2 business days.
                   </Typography>
                 </Box>
               </Box>

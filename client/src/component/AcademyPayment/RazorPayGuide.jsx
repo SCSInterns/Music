@@ -29,20 +29,7 @@ const VideoPlayer = () => {
         ></iframe>
       </div>
 
-      <Tooltip
-        title="Help Center"
-        placement="bottom"
-        PopperProps={{
-          modifiers: [
-            {
-              name: "offset",
-              options: {
-                offset: [0, 100],
-              },
-            },
-          ],
-        }}
-      >
+      <Tooltip title="Help Center" placement="bottom">
         <Fab
           component="a"
           href={`tel:${phoneNumber}`}

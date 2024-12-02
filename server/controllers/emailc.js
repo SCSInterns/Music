@@ -1,6 +1,9 @@
 const nodemailer = require('nodemailer');
 const dotenv = require("dotenv")
 const Logo = require("../models/Logo")
+const Feesreciept = require("./FeesRecieptc")
+const fs = require('fs/promises');
+
 dotenv.config()
 
 const pass = process.env.APP_PWD
@@ -175,4 +178,46 @@ const welcome = async (email, username, academyname, password, role) => {
     }
 }
 
-module.exports = { sendMail, sendpaymentmail, sendcustomnodi, welcome };
+async function sendInvoiceEmail(email, invoiceData) {
+
+    const academylogo = await Logo.findOne({ academyname: invoiceData.academyName })
+    const logo = await academylogo.link
+
+    const invoicePath = await Feesreciept.generateInvoice(invoiceData, logo);
+    const mailOptions = {
+        from: process.env.MAIL,
+        to: email,
+        subject: `Your Fees Receipt from ${invoiceData.academyName} Music Academy`,
+        html: `
+        <div style="font-family: Arial, sans-serif; color: #333;">
+            <h2>Thank you for your payment!</h2>
+            <p>Dear ${invoiceData.name},</p>
+            <p>Attached is the receipt for your payment to ${invoiceData.academyName} Music Academy.</p>
+            <p>If you have any questions, feel free to contact us.</p>
+            <p>Best regards,<br>${invoiceData.academyName} Music Academy</p>
+        </div>
+        `,
+        attachments: [
+            {
+                filename: 'FeesReceipt.pdf',
+                path: invoicePath,
+            },
+        ],
+    };
+
+    transporter.sendMail(mailOptions, async (error, info) => {
+        if (error) {
+            console.log('Error sending email:', error);
+        } else {
+            console.log('Email sent:', info.response);
+        }
+
+        try {
+            await fs.unlink(invoicePath);
+        } catch (deleteError) {
+            console.error('Error deleting file:', deleteError);
+        }
+    });
+}
+
+module.exports = { sendMail, sendpaymentmail, sendcustomnodi, welcome, sendInvoiceEmail };
