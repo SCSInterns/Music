@@ -1,0 +1,119 @@
+import React, { useState } from "react";
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  TextField,
+} from "@mui/material";
+import Token from "../Token/Token";
+import { toast } from "react-toastify";
+
+const StatusFormModal = ({ open, onClose, studentData, onstatusChange }) => {
+  const [selectedStatus, setSelectedStatus] = useState("");
+  const academyname = sessionStorage.getItem("academyname");
+  const role = sessionStorage.getItem("role");
+  const token = Token();
+
+  console.log(studentData);
+
+  const handleStatusChange = (event) => {
+    setSelectedStatus(event.target.value);
+  };
+
+  const handleClose = () => {
+    setSelectedStatus("");
+    onClose();
+  };
+
+  const handleSubmit = async (status, id) => {
+    const url = `http://localhost:5000/api/auth/updatestatus/${id}`;
+    const token = Token();
+    const response = await fetch(url, {
+      method: "PUT",
+      headers: {
+        Authorization: `${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ status: status }),
+    });
+
+    if (response.ok) {
+      toast.success("Status updated successfully");
+      onClose();
+      onstatusChange();
+    } else {
+      toast.error("Status updation failed ");
+    }
+  };
+
+  return (
+    <>
+      <Dialog open={open} onClose={handleClose} maxWidth="xs" fullWidth>
+        <DialogTitle>Update Student Status</DialogTitle>
+        <DialogContent dividers>
+          {/* Student Name */}
+          <TextField
+            fullWidth
+            margin="normal"
+            label="Student Name"
+            value={studentData.name}
+            disabled
+          />
+
+          {/* Student Email */}
+          <TextField
+            fullWidth
+            margin="normal"
+            label="Student Email"
+            value={studentData.email}
+            disabled
+          />
+
+          {/* Course */}
+          <TextField
+            fullWidth
+            margin="normal"
+            label="Course"
+            value={studentData.course}
+            disabled
+          />
+
+          {/* Status Selection */}
+          <FormControl fullWidth margin="normal">
+            <InputLabel>Select Status</InputLabel>
+            <Select
+              value={selectedStatus}
+              onChange={handleStatusChange}
+              label="Select Status"
+            >
+              <MenuItem value="Accept">Accept</MenuItem>
+              <MenuItem value="Reject">Reject</MenuItem>
+            </Select>
+          </FormControl>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose} color="secondary">
+            Cancel
+          </Button>
+          <Button
+            onClick={() => {
+              handleSubmit(selectedStatus, studentData.id);
+            }}
+            variant="contained"
+            color="primary"
+          >
+            Update Status
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </>
+  );
+};
+
+export default StatusFormModal;

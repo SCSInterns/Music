@@ -21,11 +21,15 @@ async function generateInvoice(data, logo) {
 
 
     doc.moveDown()
+    doc.moveDown()
+    doc.moveDown()
         .text(`Name: ${data.name}`, 50, 150)
         .text(`Email: ${data.email}`, 50, 180)
         .text(`Course: ${data.course}`, 50, 195)
         .text(`Receipt Number: ${data.receiptNumber}`, 300, 150)
         .text(`Date of Payment: ${data.dateOfPayment}`, 300, 165);
+
+    drawTable(doc, 50, 320, data.paymentTableData);
 
 
     doc.moveDown()
@@ -47,6 +51,48 @@ async function generateInvoice(data, logo) {
 
     doc.end();
     return filePath;
+}
+
+
+function drawTable(doc, x, y, tableData) {
+    const cellPadding = 5;
+    const rowHeight = 20;
+    const columnWidths = [100, 100, 100, 100];
+
+    // Draw header row
+    const headers = tableData.headers;
+    let currentX = x;
+    let currentY = y;
+
+    doc.fontSize(10).fillColor('black');
+    headers.forEach((header, index) => {
+        doc.rect(currentX, currentY, columnWidths[index], rowHeight)
+            .fillAndStroke('#d3d3d3')
+            .stroke();
+        doc.text(header, currentX + cellPadding, currentY + cellPadding, {
+            width: columnWidths[index] - cellPadding * 2,
+            align: 'center',
+        });
+        currentX += columnWidths[index];
+    });
+
+    currentY += rowHeight;
+    currentX = x;
+
+    // Draw rows
+    tableData.rows.forEach(row => {
+        headers.forEach((_, index) => {
+            doc.rect(currentX, currentY, columnWidths[index], rowHeight)
+                .stroke();
+            doc.text(row[index], currentX + cellPadding, currentY + cellPadding, {
+                width: columnWidths[index] - cellPadding * 2,
+                align: 'center',
+            });
+            currentX += columnWidths[index];
+        });
+        currentY += rowHeight;
+        currentX = x;
+    });
 }
 
 

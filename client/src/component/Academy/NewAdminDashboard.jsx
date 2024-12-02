@@ -30,6 +30,8 @@ import Loader from "../Loader/Loader";
 import FormManagementMenu from "./FormManagementMenu";
 import ApplicantsListMenu from "./ApplicantsListMenu";
 import PaymentMenu from "../AcademyPayment/PaymentMenu";
+import AccountBalanceIcon from "@mui/icons-material/AccountBalance";
+import PaymentRequest from "./PaymentRequest";
 
 const Sidebar = () => {
   const academyname = sessionStorage.getItem("academyname");
@@ -163,6 +165,11 @@ const Sidebar = () => {
       text: "Payment Managemnet",
       icon: <PaymentsIcon />,
       component: <PaymentMenu />,
+    },
+    {
+      text: "Payment Requests",
+      icon: <AccountBalanceIcon />,
+      component: <PaymentRequest />,
     },
   ];
 

@@ -15,5 +15,6 @@ router.post('/getsubscriptiondetails', authenticate.authenticatetoken, Installme
 router.post('/getpaymentstats', authenticate.authenticatetoken, Installment.getpaymentstats)
 router.post('/submitmanualpayment', authenticate.authenticatetoken, PaymentRequest.handlenewrequest)
 router.post('/verifymanualpayment', authenticate.authenticatetoken, PaymentRequest.handlestatusofpayment)
+router.post('/getnewpaymentrequest', authenticate.authenticatetoken, PaymentRequest.fetchnewrequest)
 
 module.exports = router

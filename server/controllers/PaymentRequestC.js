@@ -156,4 +156,31 @@ const handlestatusofpayment = async (req, res) => {
     }
 }
 
-module.exports = { handlenewrequest, handlestatusofpayment }
+// get the details of new requests 
+
+const fetchnewrequest = async (req, res) => {
+    try {
+
+        const { academyname, role } = req.body
+
+        if (role === "Admin") {
+
+            const entries = await PaymentRequest.find({ academyname: academyname })
+
+            if (entries) {
+                return res.status(200).json(entries)
+            }
+            else {
+                return res.status(404).json({ msg: "No Entries Found " })
+            }
+
+        } else {
+            return res.status(401).json({ msg: "Unauthoruzed Access " })
+        }
+
+    } catch (error) {
+        res.status(500).json({ message: 'Server not supported', error });
+    }
+}
+
+module.exports = { handlenewrequest, handlestatusofpayment, fetchnewrequest }
