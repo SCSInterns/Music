@@ -32,11 +32,12 @@ import ApplicantsListMenu from "./ApplicantsListMenu";
 import PaymentMenu from "../AcademyPayment/PaymentMenu";
 import AccountBalanceIcon from "@mui/icons-material/AccountBalance";
 import PaymentRequest from "./PaymentRequest";
+import { io } from "socket.io-client";
 
 const Sidebar = () => {
   const academyname = sessionStorage.getItem("academyname");
   const role = sessionStorage.getItem("role");
-
+  const socket = React.useRef(null);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [activeComponent, setActiveComponent] = useState("Website Content");
 
@@ -117,6 +118,20 @@ const Sidebar = () => {
   const handleapplicantslist = () => {
     handleApplicants();
   };
+
+  const startSocket = () => {
+    socket.current.on("newData", (newEntry) => {
+      setappdata((prevEntries) => [newEntry, ...prevEntries]);
+    });
+  };
+  useEffect(() => {
+    socket.current = io("http://localhost:5000");
+    startSocket();
+    return () => {
+      socket.current.off("newData");
+      socket.current.disconnect();
+    };
+  }, []);
 
   useEffect(() => {
     handleApplicants();

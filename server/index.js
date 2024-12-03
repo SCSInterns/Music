@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const dotenv = require("dotenv");
 const http = require('http');
+const Razorpay = require('razorpay');
 const { Server } = require('socket.io');
 
 dotenv.config();
@@ -10,6 +11,10 @@ const port = process.env.PORT || 5000;
 
 const muser = encodeURIComponent(process.env.MONGO_USERNAME);
 const mpass = encodeURIComponent(process.env.MONGO_PASSWORD);
+
+const rid = encodeURIComponent(process.env.RAZORPAY_KEY_ID);
+const rkey = encodeURIComponent(process.env.RAZORPAY_SECRET_KEY);
+
 
 const path = `mongodb+srv://${muser}:${mpass}@musicacademy.o2ko5b4.mongodb.net/?retryWrites=true&w=majority&appName=MusicAcademy `
 
@@ -23,6 +28,13 @@ const io = new Server(server, {
     },
 });
 module.exports = { io };
+
+const razorpayInstance = new Razorpay({
+    key_id: rid,
+    key_secret: rkey,
+});
+
+module.exports = { razorpayInstance }
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

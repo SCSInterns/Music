@@ -4,7 +4,7 @@ const authenticate = require('../controllers/Authenticate')
 const Installment = require('../controllers/Installmentcontroller')
 const Payment = require('../controllers/PaymentDuec')
 const PaymentRequest = require("../controllers/PaymentRequestC")
-
+const RazorPayOrder = require("../controllers/RazorPayPayment")
 
 router.post('/addpaymentdetails/:studentId', authenticate.authenticatetoken, Installment.handlenextinstallmentdate)
 router.post('/getinfoinstallment', authenticate.authenticatetoken, Installment.getinfoofinstallment)
@@ -16,5 +16,6 @@ router.post('/getpaymentstats', authenticate.authenticatetoken, Installment.getp
 router.post('/submitmanualpayment', authenticate.authenticatetoken, PaymentRequest.handlenewrequest)
 router.post('/verifymanualpayment', authenticate.authenticatetoken, PaymentRequest.handlestatusofpayment)
 router.post('/getnewpaymentrequest', authenticate.authenticatetoken, PaymentRequest.fetchnewrequest)
+router.post('/createrazorpayorder', authenticate.authenticatetoken, RazorPayOrder.createOrder)
 
 module.exports = router

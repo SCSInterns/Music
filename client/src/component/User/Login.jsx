@@ -82,7 +82,7 @@ function Login() {
                 >
                   <div className="relative">
                     <input
-                      autoComplete="off"
+                      autoComplete="on"
                       id="email"
                       name="email"
                       type="text"
@@ -101,7 +101,7 @@ function Login() {
                   </div>
                   <div className="relative">
                     <input
-                      autoComplete="off"
+                      autoComplete="on"
                       id="password"
                       name="password"
                       type="password"

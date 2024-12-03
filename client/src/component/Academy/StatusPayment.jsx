@@ -31,16 +31,21 @@ const StatusFormModal = ({ open, onClose, studentData, onstatusChange }) => {
     onClose();
   };
 
-  const handleSubmit = async (status, id) => {
-    const url = `http://localhost:5000/api/auth/updatestatus/${id}`;
-    const token = Token();
+  const handleSubmit = async (id, status, date) => {
+    const url = "http://localhost:5000/api/auth/verifymanualpayment";
     const response = await fetch(url, {
-      method: "PUT",
+      method: "POST",
       headers: {
         Authorization: `${token}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ status: status }),
+      body: JSON.stringify({
+        role: role,
+        academyname: academyname,
+        studentId: id,
+        status: status,
+        paymentdate: date,
+      }),
     });
 
     if (response.ok) {
@@ -51,11 +56,10 @@ const StatusFormModal = ({ open, onClose, studentData, onstatusChange }) => {
       toast.error("Status updation failed ");
     }
   };
-
   return (
     <>
       <Dialog open={open} onClose={handleClose} maxWidth="xs" fullWidth>
-        <DialogTitle>Update Student Status</DialogTitle>
+        <DialogTitle>Update Payment Status</DialogTitle>
         <DialogContent dividers>
           {/* Student Name */}
           <TextField
@@ -66,21 +70,21 @@ const StatusFormModal = ({ open, onClose, studentData, onstatusChange }) => {
             disabled
           />
 
-          {/* Student Email */}
-          <TextField
-            fullWidth
-            margin="normal"
-            label="Student Email"
-            value={studentData.email}
-            disabled
-          />
-
           {/* Course */}
           <TextField
             fullWidth
             margin="normal"
             label="Course"
             value={studentData.course}
+            disabled
+          />
+
+          {/* Payment Date  */}
+          <TextField
+            fullWidth
+            margin="normal"
+            label="Payment Date"
+            value={studentData.paymentdate}
             disabled
           />
 
@@ -103,7 +107,11 @@ const StatusFormModal = ({ open, onClose, studentData, onstatusChange }) => {
           </Button>
           <Button
             onClick={() => {
-              handleSubmit(selectedStatus, studentData.id);
+              handleSubmit(
+                studentData.id,
+                selectedStatus,
+                studentData.paymentdate
+              );
             }}
             variant="contained"
             color="primary"

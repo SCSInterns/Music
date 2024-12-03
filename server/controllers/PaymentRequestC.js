@@ -4,6 +4,7 @@ const Due = require("../models/PaymentDues")
 const InstallmentController = require("./Installmentcontroller")
 const Handlepaymentstats = require("./Handlepaymentstats")
 const Email = require("./emailc")
+const { io } = require('../index')
 
 function generateReceiptNumber() {
     const prefix = '#';
@@ -33,6 +34,7 @@ const handlenewrequest = async (req, res) => {
         const savedentry = await newentry.save()
 
         if (savedentry) {
+            io.emit('newPayment', savedentry);
             return res.status(200).json(savedentry)
         }
         else {
@@ -96,7 +98,7 @@ const handlestatusofpayment = async (req, res) => {
                                 studentemail: savedInfo.studentemail,
                                 course: savedInfo.course,
                                 amount: savedInfo.amount,
-                                paymentmode: savedInfo.amount,
+                                paymentmode: savedInfo.paymentmode,
                                 paymentdate: savedInfo.paymentDate,
                                 nextpaymentdate: nextPaymentDate,
                                 studentid: savedInfo.studentId,
@@ -114,14 +116,28 @@ const handlestatusofpayment = async (req, res) => {
                                 const recieptno = generateReceiptNumber()
 
                                 const invoiceData = {
-                                    name: updatedPaymentDue.studentname,
-                                    email: updatedPaymentDue.studentemail,
-                                    course: updatedPaymentDue.course,
-                                    receiptNumber: recieptno,
-                                    dateOfPayment: updatedPaymentDue.paymentdate,
-                                    amount: savedInfo.amount,
-                                    academyName: updatedPaymentDue.academyname,
+                                    name: updatedPaymentDue.studentname || "N/A",
+                                    email: updatedPaymentDue.studentemail || "N/A",
+                                    course: updatedPaymentDue.course || "N/A",
+                                    receiptNumber: recieptno || "N/A",
+                                    dateOfPayment: updatedPaymentDue.paymentdate || "N/A",
+                                    amount: savedInfo.amount || 0,
+                                    academyName: updatedPaymentDue.academyname || "N/A",
+                                    enrollmentDate: updatedPaymentDue.installmentdate || "N/A",
+                                    paymentMethod: "Online (Manual)",
+                                    paymentTableData: {
+                                        headers: ["Date", "Particulars", "Amount Paid", "NextPaymentDate"],
+                                        rows: [
+                                            [
+                                                savedInfo.paymentDate || "N/A",
+                                                "Monthly Fees",
+                                                `Rs. ${savedInfo.amount || 0}`,
+                                                savedInfo.nextPaymentDate || "N/A",
+                                            ],
+                                        ],
+                                    },
                                 };
+
 
                                 Email.sendInvoiceEmail(updatedPaymentDue.studentemail, invoiceData);
 

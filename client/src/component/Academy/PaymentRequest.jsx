@@ -6,8 +6,11 @@ import "jspdf-autotable";
 import { toast } from "react-toastify";
 import AccountBoxRoundedIcon from "@mui/icons-material/AccountBoxRounded";
 import StatusPayment from "./StatusPayment";
+import Loader from "../Loader/Loader";
+import { io } from "socket.io-client";
 
 function PaymentRequest() {
+  const socket = React.useRef(null);
   const academyname = sessionStorage.getItem("academyname");
   const role = sessionStorage.getItem("role");
   const token = Token();
@@ -19,6 +22,7 @@ function PaymentRequest() {
     id: "",
     paymentdate: "",
   });
+  const [loading, setloading] = useState(false);
 
   const handlestatus = (row) => {
     settogglestatusmodal(true);
@@ -31,6 +35,7 @@ function PaymentRequest() {
   };
 
   const handleList = async () => {
+    setloading(true);
     let url = "http://localhost:5000/api/auth/getnewpaymentrequest";
     const response = await fetch(url, {
       method: "POST",
@@ -43,11 +48,11 @@ function PaymentRequest() {
         role: role,
       }),
     });
-
     const data = await response.json();
     if (Array.isArray(data)) {
       setTimeout(() => {
         setdata(data);
+        setloading(false);
       }, 2000);
     } else {
       toast.error("Error fetching details");
@@ -59,6 +64,20 @@ function PaymentRequest() {
   useEffect(() => {
     handleList();
   }, [academyname]);
+
+  const startSocket = () => {
+    socket.current.on("newPayment", (newEntry) => {
+      setdata((prevEntries) => [newEntry, ...prevEntries]);
+    });
+  };
+  useEffect(() => {
+    socket.current = io("http://localhost:5000");
+    startSocket();
+    return () => {
+      socket.current.off("newPayment");
+      socket.current.disconnect();
+    };
+  }, []);
 
   const columns = [
     {
@@ -100,6 +119,27 @@ function PaymentRequest() {
 
   return (
     <>
+      {loading && (
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100vw",
+            height: "100vh",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            backgroundColor: "rgba(255, 255, 255,0.9)",
+            zIndex: 9999,
+          }}
+        >
+          <>
+            <Loader />
+          </>
+        </div>
+      )}
+
       <div>
         <p style={{ fontSize: "20px", fontWeight: "bold" }}>
           {" "}
@@ -112,12 +152,12 @@ function PaymentRequest() {
           Open Status Selection
         </Button>
 
-        {/* <StatusPayment
+        <StatusPayment
           open={togglestatusmodal}
           onClose={() => settogglestatusmodal(false)}
-          //   studentData={statusdetails}
-          //   onstatusChange={handleapplicantslist}
-        /> */}
+          studentData={statusdetails}
+          onstatusChange={handleList}
+        />
       </div>
       <div style={{ marginTop: "20px" }}>
         <MaterialReactTable columns={columns} data={data} />

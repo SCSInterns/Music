@@ -19,7 +19,6 @@ function Paymnettable({ info }) {
           margin: "auto",
           marginTop: "30px",
           marginBottom: "30px",
-          
         }}
       >
         <Typography
@@ -28,8 +27,8 @@ function Paymnettable({ info }) {
           sx={{
             fontFamily: "ubuntu",
             color: "#9C27B0",
-            marginBottom: "16px", 
-            padding : '10px'
+            marginBottom: "16px",
+            padding: "10px",
           }}
         >
           Payment Info
@@ -61,7 +60,9 @@ function Paymnettable({ info }) {
                 key={row.name}
                 sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
               >
-                <TableCell align="left">{row.enrollmentDate}</TableCell>
+                <TableCell align="left">
+                  {row.paymentDate ? row.paymentDate : "N/A"}
+                </TableCell>
                 <TableCell align="left">{row.amount}</TableCell>
                 <TableCell align="left">{row.course}</TableCell>
                 <TableCell align="left">{row.paymentmode}</TableCell>
