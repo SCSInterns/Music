@@ -27,7 +27,8 @@ const io = new Server(server, {
         methods: ["GET", "POST"],
     },
 });
-module.exports = { io };
+
+module.exports = { io }
 
 const razorpayInstance = new Razorpay({
     key_id: rid,
@@ -35,6 +36,7 @@ const razorpayInstance = new Razorpay({
 });
 
 module.exports = { razorpayInstance }
+
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

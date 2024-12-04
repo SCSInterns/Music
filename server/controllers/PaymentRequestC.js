@@ -41,6 +41,7 @@ const handlenewrequest = async (req, res) => {
             return res.status(404).json({ msg: "Error saving details" })
         }
     } catch (error) {
+        console.log(error)
         res.status(500).json({ msg: 'Server not supported', error });
     }
 }
@@ -153,9 +154,11 @@ const handlestatusofpayment = async (req, res) => {
                             }
                         }
                     } else {
-                        // mail template for rejected mail 
 
-                        return res.status(200).json({ msg: "Either Status is rejected or error to save installment " })
+                        // mail template for rejected mail 
+                        await Email.paymentfailed(updatedPayment.academyname, updatedPayment.studentemail, updatedPayment.paymentDate, updatedPayment.amount)
+                        await PaymentRequest.findByIdAndDelete(paymententry._id);
+                        return res.status(200).json({ msg: "Payment Status Updated to Failed" })
                     }
                 } else {
                     return res.status(404).json({ msg: "Error Saving Status " })
@@ -199,4 +202,4 @@ const fetchnewrequest = async (req, res) => {
     }
 }
 
-module.exports = { handlenewrequest, handlestatusofpayment, fetchnewrequest }
+module.exports = { handlenewrequest, handlestatusofpayment, fetchnewrequest, generateReceiptNumber }

@@ -11,11 +11,11 @@ import {
 } from "@mui/material";
 import Token from "../Token/Token";
 import Loader from "../Loader/Loader";
+import { toast } from "react-toastify";
 
 export default function PaymentForm({ data }) {
   console.log(data);
-
-  const [orderid, setorderid] = useState("");
+  const rkey = process.env.RAZORPAY_SECRET_KEY;
   const [loading, setloading] = useState(false);
 
   const generateorder = async () => {
@@ -36,11 +36,122 @@ export default function PaymentForm({ data }) {
     });
 
     if (response.ok) {
+      const data = await response.json();
+
       setTimeout(() => {
         setloading(false);
-        setorderid(response.orderid);
+        handlePayment(data);
       }, 2000);
     }
+  };
+
+  const formatDate = (date) => {
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const year = date.getFullYear();
+    return `${day}-${month}-${year}`;
+  };
+
+  const handlePayment = async (orderdata) => {
+    const options = {
+      key: rkey,
+      amount: orderdata.amount,
+      currency: "INR",
+      name: `${orderdata.academyname} Music Academy`,
+      description: "Monthly Fees Payment",
+      image:
+        "https://i.pinimg.com/736x/f2/b9/87/f2b9874c4adae66d0dc58743d33c1130.jpg",
+      order_id: orderdata.razorpayOrderId,
+      handler: async function (response) {
+        const verificationData = {
+          paymentId: response.razorpay_payment_id,
+          orderId: response.razorpay_order_id,
+          signature: response.razorpay_signature,
+          studentId: data.studentid,
+          academyName: data.academyname,
+          studentName: data.studentname,
+          course: data.course,
+          amount: data.amount,
+          enrollmentDate: data.installmentdate,
+          email: data.studentemail,
+          paymentDate: formatDate(new Date()),
+          role: "Admin",
+        };
+
+        const url = "http://localhost:5000/api/auth/verifyrazorpayorder";
+        setloading(true);
+        const token = Token();
+        const responsepayment = await fetch(url, {
+          method: "POST",
+          headers: {
+            Authorization: `${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            verificationData: verificationData,
+          }),
+        });
+
+        if (responsepayment.ok) {
+          setloading(false);
+          toast.success(" Payment Details Send SuccessFully ");
+        } else {
+          toast.error("Error Saving Payment Details ");
+        }
+      },
+      prefill: {
+        name: data.studentname,
+        email: data.studentemail,
+      },
+      notes: {
+        studentId: data.studentid,
+        academyName: data.academyname,
+        studentName: data.studentname,
+        course: data.course,
+        amount: data.amount,
+        enrollmentDate: data.installmentdate,
+        email: data.studentemail,
+        paymentDate: formatDate(new Date()),
+      },
+      theme: {
+        color: "#020617",
+      },
+    };
+
+    const rzp = new window.Razorpay(options);
+
+    rzp.on("payment.failed", async function (response) {
+      rzp.close();
+      if (!response.razorpay_payment_id || !response.razorpay_signature) {
+        const url = "http://localhost:5000/api/auth/failedpayment";
+        const token = Token();
+        const response = await fetch(url, {
+          method: "POST",
+          headers: {
+            Authorization: `${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            studentid: data.studentid,
+            orderid: orderdata.razorpayOrderId,
+            academyname: data.academyname,
+            email: data.studentemail,
+            paymentdate: formatDate(new Date()),
+            amount: data.amount,
+          }),
+        });
+
+        if (response.ok) {
+          toast.error("Payment failed. Please try again.");
+        } else {
+          toast.error(" Payment Submission Failed ");
+        }
+        setloading(false);
+        return;
+      }
+    });
+
+    rzp.open();
   };
 
   return (

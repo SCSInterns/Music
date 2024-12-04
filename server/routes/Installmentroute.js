@@ -17,5 +17,7 @@ router.post('/submitmanualpayment', authenticate.authenticatetoken, PaymentReque
 router.post('/verifymanualpayment', authenticate.authenticatetoken, PaymentRequest.handlestatusofpayment)
 router.post('/getnewpaymentrequest', authenticate.authenticatetoken, PaymentRequest.fetchnewrequest)
 router.post('/createrazorpayorder', authenticate.authenticatetoken, RazorPayOrder.createOrder)
+router.post('/verifyrazorpayorder', authenticate.authenticatetoken, RazorPayOrder.verifypayment)
+router.post('/failedpayment', authenticate.authenticatetoken, RazorPayOrder.rejectpayment)
 
 module.exports = router

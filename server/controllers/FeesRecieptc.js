@@ -51,9 +51,9 @@ async function generateInvoice(data, logo) {
         .fill('#e8f4fa')
         .stroke('#000000');
     doc.fillColor('#000000')
-        .text('Payment Method:', 55, 302)
+        .text('Payment Method :', 55, 302)
         .text(`${data.paymentMethod || 'Online (Manual)'}`, 150, 302)
-        .text('Total Amount (Rs):', 300, 302)
+        .text('Total Amount :', 300, 302)
         .text(`Rs. ${data.amount}`, 400, 302);
 
     doc.moveDown(2);
