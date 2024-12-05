@@ -4,7 +4,7 @@ const Due = require("../models/PaymentDues")
 const InstallmentController = require("./Installmentcontroller")
 const Handlepaymentstats = require("./Handlepaymentstats")
 const Email = require("./emailc")
-const { io } = require('../index')
+const { socketIOSingleton } = require("../socket-factory")
 
 function generateReceiptNumber() {
     const prefix = '#';
@@ -34,7 +34,7 @@ const handlenewrequest = async (req, res) => {
         const savedentry = await newentry.save()
 
         if (savedentry) {
-            io.emit('newPayment', savedentry);
+            socketIOSingleton.emit('newPayment', savedentry);
             return res.status(200).json(savedentry)
         }
         else {

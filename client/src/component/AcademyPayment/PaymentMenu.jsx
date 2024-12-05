@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import QrDetails from "./QrDetails";
 import Razorpay from "./Razorpay";
 import RazorPayGuide from "./RazorPayGuide";
+import GmailCred from "./GmailCred";
 
 const TopNavbar = () => {
   const [activeContent, setActiveContent] = useState("Insert Payment Qr");
@@ -21,6 +22,11 @@ const TopNavbar = () => {
       name: "Razor Pay Guide",
       key: "Razor Pay Guide",
       component: <RazorPayGuide />,
+    },
+    {
+      name: "Insert Google App Details",
+      key: "Insert Google App Details",
+      component: <GmailCred />,
     },
   ];
 

@@ -122,6 +122,18 @@ export default function PaymentForm({ data }) {
 
     rzp.on("payment.failed", async function (response) {
       rzp.close();
+
+      setTimeout(() => {
+        const razorpayIframe = document.querySelector("iframe");
+        const razorpayOverlay = document.querySelector(".razorpay-container");
+
+        if (razorpayIframe) razorpayIframe.remove();
+        if (razorpayOverlay) razorpayOverlay.remove();
+
+        document.body.style.overflow = "auto";
+        document.body.style.pointerEvents = "auto";
+      }, 500);
+
       if (!response.razorpay_payment_id || !response.razorpay_signature) {
         const url = "http://localhost:5000/api/auth/failedpayment";
         const token = Token();

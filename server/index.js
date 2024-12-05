@@ -3,8 +3,7 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const dotenv = require("dotenv");
 const http = require('http');
-const Razorpay = require('razorpay');
-const { Server } = require('socket.io');
+const { socketIOFactory } = require("./socket-factory.js")
 
 dotenv.config();
 const port = process.env.PORT || 5000;
@@ -12,30 +11,30 @@ const port = process.env.PORT || 5000;
 const muser = encodeURIComponent(process.env.MONGO_USERNAME);
 const mpass = encodeURIComponent(process.env.MONGO_PASSWORD);
 
-const rid = encodeURIComponent(process.env.RAZORPAY_KEY_ID);
-const rkey = encodeURIComponent(process.env.RAZORPAY_SECRET_KEY);
-
-
 const path = `mongodb+srv://${muser}:${mpass}@musicacademy.o2ko5b4.mongodb.net/?retryWrites=true&w=majority&appName=MusicAcademy `
 
 
 const app = express();
+
 const server = http.createServer(app);
-const io = new Server(server, {
-    cors: {
-        origin: "http://localhost:3000",
-        methods: ["GET", "POST"],
-    },
-});
 
-module.exports = { io }
+(async () => {
+    try {
+        const ioInstance = await socketIOFactory(server);
+        ioInstance.on('connection', (socket) => {
+            console.log('Admin connected:', socket.id);
 
-const razorpayInstance = new Razorpay({
-    key_id: rid,
-    key_secret: rkey,
-});
-
-module.exports = { razorpayInstance }
+            socket.on('disconnect', () => {
+                console.log('Admin disconnected:', socket.id);
+            });
+        });
+        server.listen(port, () => {
+            console.log(`Server started on port ${port}`);
+        });
+    } catch (error) {
+        console.error("Error initializing Socket.IO:", error);
+    }
+})();
 
 
 app.use(express.json());
@@ -86,21 +85,6 @@ app.use('/api/auth', batches)
 const qrcode = require('./routes/Qrcoderoute')
 app.use('/api/auth', qrcode)
 
-// Socket.IO connection
-io.on('connection', (socket) => {
-    console.log('Admin connected:', socket.id);
-
-    socket.on('disconnect', () => {
-        console.log('Admin disconnected:', socket.id);
-    });
-});
-
-
-
 app.get('/', (req, res) => {
     res.send("Hello World");
-});
-
-server.listen(port, () => {
-    console.log(`Server started on ${port}`);
 });

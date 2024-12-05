@@ -4,8 +4,8 @@ const youtubeUrl = require('youtube-url');
 const Video = require('../models/Video')
 const Logo = require('../models/Logo')
 const Qrcode = require("../models/AcademyQr")
-const { io } = require('../index');
 const AcademyQr = require('../models/AcademyQr');
+const { socketIOSingleton } = require("../socket-factory")
 
 // form addition 
 const handledynamicform = async (req, res) => {
@@ -58,7 +58,7 @@ const savedata = async (req, res) => {
   })
 
   const response = await newform.save();
-  io.emit('newData', response);
+  socketIOSingleton.emit('newData', response);
 
   if (response) {
     res.status(200).json(response)

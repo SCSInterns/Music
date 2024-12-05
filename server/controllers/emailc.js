@@ -11,37 +11,37 @@ const pass = process.env.APP_PWD;
 const user = process.env.MAIL;
 
 const transporter = nodemailer.createTransport({
-    service: "gmail",
-    auth: {
-        user: `${user}`,
-        pass: `${pass}`,
-    },
+  service: "gmail",
+  auth: {
+    user: `${user}`,
+    pass: `${pass}`,
+  },
 });
 
 const sendMail = async (email, otp) => {
-    const mailOptions = {
-        from: process.env.MAIL,
-        to: email,
-        subject: "Your OTP Code For Music Academy Application ",
-        text: `Your OTP code is ${otp}. It will expire in 5 minutes.`,
-    };
+  const mailOptions = {
+    from: process.env.MAIL,
+    to: email,
+    subject: "Your OTP Code For Music Academy Application ",
+    text: `Your OTP code is ${otp}. It will expire in 5 minutes.`,
+  };
 
-    try {
-        let info = await transporter.sendMail(mailOptions);
-        console.log("Email sent: " + info.response);
-        return info;
-    } catch (error) {
-        console.error("Error sending email:", error);
-        throw error;
-    }
+  try {
+    let info = await transporter.sendMail(mailOptions);
+    console.log("Email sent: " + info.response);
+    return info;
+  } catch (error) {
+    console.error("Error sending email:", error);
+    throw error;
+  }
 };
 
 const sendpaymentmail = async (email, amount, name, academyname) => {
-    const mailOptions = {
-        from: process.env.MAIL,
-        to: email,
-        subject: "Reminder for payment",
-        text: ` Please pay your pending fees of music academy course . 
+  const mailOptions = {
+    from: process.env.MAIL,
+    to: email,
+    subject: "Reminder for payment",
+    text: ` Please pay your pending fees of music academy course . 
 
            Find your details here :- 
            Student Name - ${name} 
@@ -53,28 +53,28 @@ const sendpaymentmail = async (email, amount, name, academyname) => {
            Thank you , 
            ${academyname} Music Academy 
         `,
-    };
+  };
 
-    try {
-        let info = await transporter.sendMail(mailOptions);
-        console.log("Email sent: " + info.response);
-        return info;
-    } catch (error) {
-        console.error("Error sending email:", error);
-        throw error;
-    }
+  try {
+    let info = await transporter.sendMail(mailOptions);
+    console.log("Email sent: " + info.response);
+    return info;
+  } catch (error) {
+    console.error("Error sending email:", error);
+    throw error;
+  }
 };
 
 // payment custom button nodification
 
 const sendcustomnodi = async (req, res) => {
-    const { email, amount, name, academyname, role } = req.body;
+  const { email, amount, name, academyname, role } = req.body;
 
-    const mailOptions = {
-        from: process.env.MAIL,
-        to: email,
-        subject: "Reminder for payment",
-        text: ` Please pay your pending fees of music academy course . 
+  const mailOptions = {
+    from: process.env.MAIL,
+    to: email,
+    subject: "Reminder for payment",
+    text: ` Please pay your pending fees of music academy course . 
 
            Find your details here :- 
            Student Name - ${name} 
@@ -86,38 +86,38 @@ const sendcustomnodi = async (req, res) => {
            Thank you , 
            ${academyname} Music Academy 
         `,
-    };
+  };
 
-    try {
-        if (role === "Admin") {
-            let info = await transporter.sendMail(mailOptions);
-            console.log("Email sent: " + info.response);
+  try {
+    if (role === "Admin") {
+      let info = await transporter.sendMail(mailOptions);
+      console.log("Email sent: " + info.response);
 
-            if (info) {
-                res.status(200).json({ msg: " Email send success " });
-            } else {
-                res.status(404).json({ msg: " Email sending failed " });
-            }
-        } else {
-            res.status(401).json({ msg: "Unauthorized Access" });
-        }
-    } catch (error) {
-        console.error("Error sending email:", error);
-        throw error;
+      if (info) {
+        res.status(200).json({ msg: " Email send success " });
+      } else {
+        res.status(404).json({ msg: " Email sending failed " });
+      }
+    } else {
+      res.status(401).json({ msg: "Unauthorized Access" });
     }
+  } catch (error) {
+    console.error("Error sending email:", error);
+    throw error;
+  }
 };
 
 // email for pin and welcoming new user
 
 const welcome = async (email, username, academyname, password, role) => {
-    const academylogo = await Logo.findOne({ academyname: academyname });
-    const logolink = await academylogo.link;
+  const academylogo = await Logo.findOne({ academyname: academyname });
+  const logolink = await academylogo.link;
 
-    const mailOptions = {
-        from: process.env.MAIL,
-        to: email,
-        subject: `Welcome to ${academyname} Music Academy`,
-        html: `
+  const mailOptions = {
+    from: process.env.MAIL,
+    to: email,
+    subject: `Welcome to ${academyname} Music Academy`,
+    html: `
         <div style="font-family: Arial, sans-serif; color: #333;">
             <div style="text-align: center; margin-bottom: 20px;">
                 <img src=${logolink} alt="Academy Logo" width="150"/>
@@ -154,31 +154,31 @@ const welcome = async (email, username, academyname, password, role) => {
             <p style="text-align: center; color: #aaa; margin-top: 20px;">&copy; ${academyname}, All rights reserved.</p>
         </div>
         `,
-    };
+  };
 
-    try {
-        if (role === "Admin") {
-            let info = await transporter.sendMail(mailOptions);
-            return info;
-        }
-    } catch (error) {
-        console.error("Error sending email:", error);
-        throw error;
+  try {
+    if (role === "Admin") {
+      let info = await transporter.sendMail(mailOptions);
+      return info;
     }
+  } catch (error) {
+    console.error("Error sending email:", error);
+    throw error;
+  }
 };
 
 async function sendInvoiceEmail(email, invoiceData) {
-    const academylogo = await Logo.findOne({
-        academyname: invoiceData.academyName,
-    });
-    const logo = await academylogo.link;
+  const academylogo = await Logo.findOne({
+    academyname: invoiceData.academyName,
+  });
+  const logo = await academylogo.link;
 
-    const invoicePath = await Feesreciept.generateInvoice(invoiceData, logo);
-    const mailOptions = {
-        from: process.env.MAIL,
-        to: email,
-        subject: `Your Fees Receipt from ${invoiceData.academyName} Music Academy`,
-        html: `
+  const invoicePath = await Feesreciept.generateInvoice(invoiceData, logo);
+  const mailOptions = {
+    from: process.env.MAIL,
+    to: email,
+    subject: `Your Fees Receipt from ${invoiceData.academyName} Music Academy`,
+    html: `
         <div style="font-family: Arial, sans-serif; color: #333;">
             <h2>Thank you for your payment!</h2>
             <p>Dear ${invoiceData.name},</p>
@@ -187,41 +187,41 @@ async function sendInvoiceEmail(email, invoiceData) {
             <p>Best regards,<br>${invoiceData.academyName} Music Academy</p>
         </div>
         `,
-        attachments: [
-            {
-                filename: "FeesReceipt.pdf",
-                path: invoicePath,
-            },
-        ],
-    };
+    attachments: [
+      {
+        filename: "FeesReceipt.pdf",
+        path: invoicePath,
+      },
+    ],
+  };
 
-    transporter.sendMail(mailOptions, async (error, info) => {
-        if (error) {
-            console.log("Error sending email:", error);
-        } else {
-            console.log("Email sent:", info.response);
-        }
+  transporter.sendMail(mailOptions, async (error, info) => {
+    if (error) {
+      console.log("Error sending email:", error);
+    } else {
+      console.log("Email sent:", info.response);
+    }
 
-        try {
-            await fs.unlink(invoicePath);
-        } catch (deleteError) {
-            console.error("Error deleting file:", deleteError);
-        }
-    });
+    try {
+      await fs.unlink(invoicePath);
+    } catch (deleteError) {
+      console.error("Error deleting file:", deleteError);
+    }
+  });
 }
 
 const paymentfailed = async (academyname, email, paymentdate, amount) => {
-    const links = await SocialLinks.findOne({ academyname: academyname });
-    const mailid = links.mail;
-    const academylogo = await Logo.findOne({ academyname: academyname });
-    const logolink = academylogo.link;
-    const altname = `${academyname} Music Academy`;
-    const retrypayment = `http://localhost:3000/${academyname}/login`;
-    const mailOptions = {
-        from: process.env.MAIL,
-        to: email,
-        subject: `There was a problem with your payment`,
-        html: `
+  const links = await SocialLinks.findOne({ academyname: academyname });
+  const mailid = links.mail;
+  const academylogo = await Logo.findOne({ academyname: academyname });
+  const logolink = academylogo.link;
+  const altname = `${academyname} Music Academy`;
+  const retrypayment = `http://localhost:3000/${academyname}/login`;
+  const mailOptions = {
+    from: process.env.MAIL,
+    to: email,
+    subject: `There was a problem with your payment`,
+    html: `
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -248,7 +248,7 @@ const paymentfailed = async (academyname, email, paymentdate, amount) => {
       padding: 20px;
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      justify-content: space-evenly;
     }
     .header h1 {
       margin: 0;
@@ -313,12 +313,12 @@ const paymentfailed = async (academyname, email, paymentdate, amount) => {
   <div class="email-container">
     <div class="header">
       <img src="${logolink}" alt="logo" style="max-height: 50px; margin-right: 10px;">
-      <h1 class="heading">${altname}</h1>
+      <h3 class="heading">${altname}</h3>
     </div>
     <div class="content">
-      <h2>Oh no, your payment failed</h2>
+      <h2>Oh no, your payment failed </h2>
       <p>Don't worry. We'll try your payment again over the next few days.</p>
-      <p>To continue enjoying ${altname}, you may need to update your payment details.</p>
+      <p>To continue enjoying at ${altname}, you may need to update your payment details.</p>
     </div>
     <div class="table-container">
       <h3>Failed Payment Details</h3>
@@ -348,22 +348,22 @@ const paymentfailed = async (academyname, email, paymentdate, amount) => {
 </body>
 </html>
 `,
-    };
+  };
 
-    try {
-        let info = await transporter.sendMail(mailOptions);
-        return info;
-    } catch (error) {
-        console.error("Error sending email:", error);
-        throw error;
-    }
+  try {
+    let info = await transporter.sendMail(mailOptions);
+    return info;
+  } catch (error) {
+    console.error("Error sending email:", error);
+    throw error;
+  }
 };
 
 module.exports = {
-    sendMail,
-    sendpaymentmail,
-    sendcustomnodi,
-    welcome,
-    sendInvoiceEmail,
-    paymentfailed
+  sendMail,
+  sendpaymentmail,
+  sendcustomnodi,
+  welcome,
+  sendInvoiceEmail,
+  paymentfailed
 };

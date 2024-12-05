@@ -1,4 +1,4 @@
-const { razorpayInstance } = require("../index");
+const razorpayInstance = require("../razorpay-initial");
 const RazorPayOrder = require("../models/RazorPayOrder");
 const Due = require("../models/PaymentDues")
 const InstallmentController = require("./Installmentcontroller")
@@ -6,6 +6,7 @@ const Installement = require("../models/Installment")
 const Handlepaymentstats = require("./Handlepaymentstats")
 const Email = require("./emailc")
 const PaymentRequestC = require("./PaymentRequestC")
+const Razorpayintial = require("../razorpay-initial")
 
 // create the order 
 const createOrder = async (req, res) => {
@@ -19,11 +20,14 @@ const createOrder = async (req, res) => {
             });
         }
 
+        const razorpayInstance = await Razorpayintial.getRazorpayInstance(academyname);
+
         const options = {
             amount: amount * 100,
             currency: 'INR',
             receipt: `receipt_${Date.now()}`,
         };
+
 
         const order = await razorpayInstance.orders.create(options);
 

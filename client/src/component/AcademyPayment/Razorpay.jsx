@@ -1,22 +1,46 @@
-import React from "react";
+import React, { useState } from "react";
 import { Box, TextField, Button } from "@mui/material";
+import Token from "../Token/Token";
+import { toast } from "react-toastify";
 
 const Razorpay = () => {
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const formData = new FormData(event.target);
-    const data = {
-      field1: formData.get("field1"),
-      field2: formData.get("field2"),
-    };
-    console.log("Form Data:", data);
+  const [id, setid] = useState("");
+  const [key, setkey] = useState("");
+  const token = Token();
+  const academyname = sessionStorage.getItem("academyname");
+  const role = sessionStorage.getItem("role");
+
+  const handleSubmit = async () => {
+    const url = "http://localhost:5000/api/auth/addrazorpaycreds";
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        Authorization: `${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        academyname: academyname,
+        role: role,
+        id: id,
+        key: key,
+      }),
+    });
+
+    if (response.ok) {
+      setid("");
+      setkey("");
+      toast.success("Creds Saved Success");
+    } else {
+      setid("");
+      setkey("");
+      toast.error("Creds Saving Failed ");
+    }
   };
 
   return (
     <>
       <Box
         component="form"
-        onSubmit={handleSubmit}
         sx={{
           display: "flex",
           flexDirection: "column",
@@ -31,6 +55,7 @@ const Razorpay = () => {
           label="RAZORPAY_KEY_ID"
           name="RAZORPAY_KEY_ID"
           variant="outlined"
+          onChange={(e) => setid(e.target.value)}
           fullWidth
           required
         />
@@ -38,13 +63,16 @@ const Razorpay = () => {
           label="RAZORPAY_SECRET_KEY"
           name="RAZORPAY_SECRET_KEY"
           variant="outlined"
+          onChange={(e) => setkey(e.target.value)}
           fullWidth
           required
           sx={{ marginTop: "20px" }}
         />
       </Box>
       <Button
-        type="submit"
+        onClick={() => {
+          handleSubmit();
+        }}
         variant="contained"
         color="primary"
         sx={{ marginTop: "20px" }}
