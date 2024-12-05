@@ -1,5 +1,6 @@
 const Cred = require("../models/RazorPayCred")
 const crypto = require('crypto');
+const MCred = require("../models/GoogleAppCred")
 
 const aes_key = process.env.AES_KEY
 
@@ -58,6 +59,73 @@ const storecred = async (req, res) => {
     }
 }
 
+
+const storemailcred = async (req, res) => {
+    try {
+
+        const { academyname, role, mail, password } = req.body
+
+        if (role === "Admin") {
+
+            const existing = await MCred.findOne({ academyname: academyname })
+
+            const encrpytmail = encrypt(mail)
+            const encryptpwd = encrypt(password)
+
+            if (existing) {
+
+                existing.mail = encrpytmail
+                existing.app_password = encryptpwd
+
+                const response = await existing.save()
+
+                if (response) {
+                    return res.status(200).json({ msg: "Creds Updated Successfully" })
+
+                } else {
+                    return res.status(404).json({ msg: "Error Updating Creds to db" })
+                }
+
+            } else {
+                const newcreds = new MCred({
+                    academyname: academyname,
+                    mail: encrpytmail,
+                    app_password: encryptpwd
+                })
+
+                const response = await newcreds.save()
+
+                if (response) {
+                    return res.status(200).json({ msg: "Creds Saved Successfully" })
+
+                } else {
+                    return res.status(404).json({ msg: "Error Saving Creds to db" })
+                }
+            }
+
+        } else {
+            return res.status(401).json({ msg: "Unauthorized Acccess" })
+        }
+
+    } catch (error) {
+        res.status(500).json({ message: 'Server not supported', error });
+    }
+}
+
+const retrivemailcred = async (academyname) => {
+    try {
+        const creds = await MCred.findOne({ academyname: academyname })
+
+        if (creds) {
+            const mail = decrypt(creds.mail)
+            return { mail }
+        }
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+
 const retrivecred = async (academyname) => {
     try {
         const creds = await Cred.findOne({ academyname: academyname })
@@ -72,6 +140,45 @@ const retrivecred = async (academyname) => {
     }
 }
 
+
+
+const retriveid = async (req, res) => {
+    try {
+        const { academyname } = req.body
+        const creds = await Cred.findOne({ academyname: academyname })
+
+        if (creds) {
+            const id = decrypt(creds.razorpay_id)
+            return res.status(200).json(id)
+        } else {
+            return res.status(404).json({ msg: "Credentials Not Found " })
+        }
+
+
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({ msg: "Internal Server Error" })
+    }
+}
+
+const retrivemail = async (req, res) => {
+    try {
+        const { academyname } = req.body
+        const creds = await MCred.findOne({ academyname: academyname })
+
+        if (creds) {
+            const id = decrypt(creds.mail)
+            return res.status(200).json(id)
+        } else {
+            return res.status(404).json({ msg: "Credentials Not Found " })
+        }
+
+
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({ msg: "Internal Server Error" })
+    }
+}
 
 
 const ENCRYPTION_KEY = aes_key;
@@ -96,4 +203,4 @@ function decrypt(text) {
 }
 
 
-module.exports = { storecred, retrivecred }
+module.exports = { storecred, retrivecred, retriveid, storemailcred, retrivemailcred, retrivemail }

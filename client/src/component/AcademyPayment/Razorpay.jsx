@@ -55,6 +55,7 @@ const Razorpay = () => {
           label="RAZORPAY_KEY_ID"
           name="RAZORPAY_KEY_ID"
           variant="outlined"
+          value={id}
           onChange={(e) => setid(e.target.value)}
           fullWidth
           required
@@ -63,6 +64,7 @@ const Razorpay = () => {
           label="RAZORPAY_SECRET_KEY"
           name="RAZORPAY_SECRET_KEY"
           variant="outlined"
+          value={key}
           onChange={(e) => setkey(e.target.value)}
           fullWidth
           required

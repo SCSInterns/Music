@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Check, CreditCard } from "lucide-react";
 import {
   Box,
@@ -15,8 +15,36 @@ import { toast } from "react-toastify";
 
 export default function PaymentForm({ data }) {
   console.log(data);
-  const rkey = process.env.RAZORPAY_SECRET_KEY;
   const [loading, setloading] = useState(false);
+  const academyname = sessionStorage.getItem("Academy");
+  const token = Token();
+  const [razorid, setrazorid] = useState("");
+  const rkey = razorid;
+
+  const getrazorpayid = async (academyname) => {
+    const url = "http://localhost:5000/api/auth/getrazorpayid";
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        Authorization: `${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        academyname: academyname,
+      }),
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      setrazorid(data);
+    } else {
+      toast.error("Error Fetching Creds ");
+    }
+  };
+
+  useEffect(() => {
+    getrazorpayid(academyname);
+  }, [academyname]);
 
   const generateorder = async () => {
     const url = "http://localhost:5000/api/auth/createrazorpayorder";
