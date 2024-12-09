@@ -35,6 +35,7 @@ import Profile from './component/User/Profile';
 import AutomatedAttendance from './component/Academy/AutomatedAttendance'
 import NewAdminDashboard from './component/Academy/NewAdminDashboard';
 import GalleryPage from './component/User/Gallery';
+import LandingPage from './component/Business Website/LandingPage';
 
 
 function App() {
@@ -80,9 +81,6 @@ function App() {
             </>}
 
 
-
-          {/* path='' */}
-
           {/* public routes  */}
           <Route path='/:academyname' element={<Home />} />
           <Route path='/:academyname/Banner' element={<Banner />} />
@@ -97,6 +95,11 @@ function App() {
           <Route path='/:academyname/userprofile' element={<Profile />} />
 
           <Route path='/error' element={<Error />} />
+
+
+          {/* Business Website  */}
+
+          <Route path='/business' element={<LandingPage />} />
 
         </Routes>
       </Router>

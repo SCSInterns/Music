@@ -5,10 +5,51 @@ import { toast } from "react-toastify";
 
 const GmailCred = () => {
   const [mail, setmail] = useState("");
+  const [otp, setOtp] = useState("");
   const [pwd, setpwd] = useState("");
+  const [otpSent, setOtpSent] = useState(false);
+  const [otpVerified, setOtpVerified] = useState(false);
   const token = Token();
   const academyname = sessionStorage.getItem("academyname");
   const role = sessionStorage.getItem("role");
+
+  const sendOtp = async () => {
+    const url = "http://localhost:5000/api/auth/send-otp";
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        Authorization: `${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email: mail }),
+    });
+
+    if (response.ok) {
+      setOtpSent(true);
+      toast.success("OTP sent to your email.");
+    } else {
+      toast.error("Failed to send OTP. Please try again.");
+    }
+  };
+
+  const verifyOtp = async () => {
+    const url = "http://localhost:5000/api/auth/verify-otp";
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        Authorization: `${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email: mail, otp }),
+    });
+
+    if (response.ok) {
+      setOtpVerified(true);
+      toast.success("OTP verified successfully.");
+    } else {
+      toast.error("Invalid OTP. Please try again.");
+    }
+  };
 
   const handleSubmit = async () => {
     const url = "http://localhost:5000/api/auth/addgooglecreds";
@@ -29,11 +70,12 @@ const GmailCred = () => {
     if (response.ok) {
       setmail("");
       setpwd("");
-      toast.success("Creds Saved Success");
+      setOtp("");
+      setOtpSent(false);
+      setOtpVerified(false);
+      toast.success("Credentials saved successfully.");
     } else {
-      setmail("");
-      setpwd("");
-      toast.error("Creds Saving Failed ");
+      toast.error("Failed to save credentials.");
     }
   };
 
@@ -59,28 +101,65 @@ const GmailCred = () => {
           onChange={(e) => setmail(e.target.value)}
           fullWidth
           required
+          disabled={otpSent}
         />
-        <TextField
-          label="App Password"
-          name="App Password"
-          variant="outlined"
-          value={pwd}
-          onChange={(e) => setpwd(e.target.value)}
-          fullWidth
-          required
-          sx={{ marginTop: "20px" }}
-        />
+        {!otpSent && (
+          <Button
+            onClick={sendOtp}
+            variant="contained"
+            color="primary"
+            sx={{ marginTop: "20px" }}
+          >
+            Send OTP
+          </Button>
+        )}
+
+        {otpSent && !otpVerified && (
+          <>
+            <TextField
+              label="OTP"
+              name="OTP"
+              variant="outlined"
+              value={otp}
+              onChange={(e) => setOtp(e.target.value)}
+              fullWidth
+              required
+            />
+            <Button
+              onClick={verifyOtp}
+              variant="contained"
+              color="primary"
+              sx={{ marginTop: "20px" }}
+            >
+              Verify OTP
+            </Button>
+          </>
+        )}
+
+        {otpVerified && (
+          <TextField
+            label="App Password"
+            name="App Password"
+            variant="outlined"
+            value={pwd}
+            onChange={(e) => setpwd(e.target.value)}
+            fullWidth
+            required
+            sx={{ marginTop: "20px" }}
+          />
+        )}
       </Box>
-      <Button
-        onClick={() => {
-          handleSubmit();
-        }}
-        variant="contained"
-        color="primary"
-        sx={{ marginTop: "20px" }}
-      >
-        Submit
-      </Button>
+
+      {otpVerified && (
+        <Button
+          onClick={handleSubmit}
+          variant="contained"
+          color="primary"
+          sx={{ marginTop: "20px" }}
+        >
+          Submit
+        </Button>
+      )}
     </>
   );
 };

@@ -138,28 +138,16 @@ function Payment({ data }) {
               Pay Now
             </Button>
           ) : (
-            // <Typography
-            //   style={{
-            //     margin: "20px",
-            //     fontSize: "1rem",
-            //     color: "#9C27B0",
-            //     fontFamily: "ubuntu",
-            //   }}
-            // >
-            //   All your payments are clear!
-            // </Typography>
-            <Button
-              size="large"
-              variant="contained"
-              onClick={() => handlebox()}
-              sx={{
-                backgroundColor: "#9C27B0",
-                color: "white",
-                marginTop: "20px",
+            <Typography
+              style={{
+                margin: "20px",
+                fontSize: "1rem",
+                color: "#9C27B0",
+                fontFamily: "ubuntu",
               }}
             >
-              Pay Now
-            </Button>
+              All your payments are clear!
+            </Typography>
           )}
         </>
       )}
