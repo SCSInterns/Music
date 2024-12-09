@@ -118,7 +118,8 @@ const retrivemailcred = async (academyname) => {
 
         if (creds) {
             const mail = decrypt(creds.mail)
-            return { mail }
+            const pwd = decrypt(creds.app_password)
+            return { mail, pwd }
         }
     } catch (error) {
         console.log(error)

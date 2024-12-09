@@ -39,7 +39,7 @@ const Sidebar = () => {
   const role = sessionStorage.getItem("role");
   const socket = React.useRef(null);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [activeComponent, setActiveComponent] = useState("Website Content");
+  const [activeComponent, setActiveComponent] = useState("Applicants Data");
 
   const [loading, setloading] = useState(false);
   const handleDrawerToggle = () => {
@@ -142,20 +142,6 @@ const Sidebar = () => {
 
   const menuItems = [
     {
-      text: "Website Content",
-      icon: <DashboardIcon />,
-      component: <Content />,
-    },
-
-    {
-      text: "Batch Management",
-      icon: <ReportIcon />,
-      component: <Batchmenu />,
-    },
-
-    { text: "Attendance", icon: <GroupsIcon />, component: <QrScan /> },
-
-    {
       text: "Applicants Data",
       icon: <FolderSharedIcon />,
       component: (
@@ -165,7 +151,13 @@ const Sidebar = () => {
         />
       ),
     },
+    {
+      text: "Batch Management",
+      icon: <ReportIcon />,
+      component: <Batchmenu />,
+    },
 
+    { text: "Attendance", icon: <GroupsIcon />, component: <QrScan /> },
     {
       text: "Pending Fees",
       icon: <PendingActionsIcon />,
@@ -185,6 +177,11 @@ const Sidebar = () => {
       text: "Payment Requests",
       icon: <AccountBalanceIcon />,
       component: <PaymentRequest />,
+    },
+    {
+      text: "Website Content",
+      icon: <DashboardIcon />,
+      component: <Content />,
     },
   ];
 

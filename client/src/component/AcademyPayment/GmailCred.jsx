@@ -52,8 +52,8 @@ const GmailCred = () => {
         }}
       >
         <TextField
-          label="MAIL"
-          name="MAIL"
+          label="Mail"
+          name="Mail"
           value={mail}
           variant="outlined"
           onChange={(e) => setmail(e.target.value)}

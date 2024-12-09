@@ -4,23 +4,48 @@ const Logo = require("../models/Logo");
 const Feesreciept = require("./FeesRecieptc");
 const fs = require("fs/promises");
 const SocialLinks = require("../models/SocialLinks");
+const Credentials = require("./RazorPayAcademyCred")
 
 dotenv.config();
 
-const pass = process.env.APP_PWD;
-const user = process.env.MAIL;
+const retriveacademygooglecred = async (academyname) => {
 
-const transporter = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: `${user}`,
-    pass: `${pass}`,
-  },
-});
+  const details = await Credentials.retrivemailcred(academyname)
 
-const sendMail = async (email, otp) => {
+  if (details) {
+    const mailid = details.mail
+    const pwd = details.pwd
+
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: `${mailid}`,
+        pass: `${pwd}`,
+      },
+    });
+    return { transporter, mailid, pwd }
+  } else {
+    throw new Error("Academy email credentials not found.");
+  }
+}
+
+
+const sendAcademyMail = async (email, otp) => {
+
+  const pass = process.env.APP_PWD;
+  const user = process.env.MAIL;
+
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: `${user}`,
+      pass: `${pass}`,
+    },
+  });
+
+
   const mailOptions = {
-    from: process.env.MAIL,
+    from: user,
     to: email,
     subject: "Your OTP Code For Music Academy Application ",
     text: `Your OTP code is ${otp}. It will expire in 5 minutes.`,
@@ -36,9 +61,37 @@ const sendMail = async (email, otp) => {
   }
 };
 
-const sendpaymentmail = async (email, amount, name, academyname) => {
+const sendMail = async (email, otp, academyname) => {
+
+  const googlecred = await retriveacademygooglecred(academyname)
+
+  const frommail = googlecred.mailid
+
   const mailOptions = {
-    from: process.env.MAIL,
+    from: frommail,
+    to: email,
+    subject: "Your OTP Code For Music Academy Application ",
+    text: `Your OTP code is ${otp}. It will expire in 5 minutes.`,
+  };
+
+  try {
+    let info = await googlecred.transporter.sendMail(mailOptions);
+    console.log("Email sent: " + info.response);
+    return info;
+  } catch (error) {
+    console.error("Error sending email:", error);
+    throw error;
+  }
+};
+
+const sendpaymentmail = async (email, amount, name, academyname) => {
+
+  const googlecred = await retriveacademygooglecred(academyname)
+
+  const frommail = googlecred.mailid
+
+  const mailOptions = {
+    from: frommail,
     to: email,
     subject: "Reminder for payment",
     text: ` Please pay your pending fees of music academy course . 
@@ -56,7 +109,7 @@ const sendpaymentmail = async (email, amount, name, academyname) => {
   };
 
   try {
-    let info = await transporter.sendMail(mailOptions);
+    let info = await googlecred.transporter.sendMail(mailOptions);
     console.log("Email sent: " + info.response);
     return info;
   } catch (error) {
@@ -70,8 +123,12 @@ const sendpaymentmail = async (email, amount, name, academyname) => {
 const sendcustomnodi = async (req, res) => {
   const { email, amount, name, academyname, role } = req.body;
 
+  const googlecred = await retriveacademygooglecred(academyname)
+
+  const frommail = googlecred.mailid
+
   const mailOptions = {
-    from: process.env.MAIL,
+    from: frommail,
     to: email,
     subject: "Reminder for payment",
     text: ` Please pay your pending fees of music academy course . 
@@ -90,7 +147,7 @@ const sendcustomnodi = async (req, res) => {
 
   try {
     if (role === "Admin") {
-      let info = await transporter.sendMail(mailOptions);
+      let info = await googlecred.transporter.sendMail(mailOptions);
       console.log("Email sent: " + info.response);
 
       if (info) {
@@ -113,8 +170,12 @@ const welcome = async (email, username, academyname, password, role) => {
   const academylogo = await Logo.findOne({ academyname: academyname });
   const logolink = await academylogo.link;
 
+  const googlecred = await retriveacademygooglecred(academyname)
+
+  const frommail = googlecred.mailid
+
   const mailOptions = {
-    from: process.env.MAIL,
+    from: frommail,
     to: email,
     subject: `Welcome to ${academyname} Music Academy`,
     html: `
@@ -158,7 +219,7 @@ const welcome = async (email, username, academyname, password, role) => {
 
   try {
     if (role === "Admin") {
-      let info = await transporter.sendMail(mailOptions);
+      let info = await googlecred.transporter.sendMail(mailOptions);
       return info;
     }
   } catch (error) {
@@ -173,9 +234,13 @@ async function sendInvoiceEmail(email, invoiceData) {
   });
   const logo = await academylogo.link;
 
+  const googlecred = await retriveacademygooglecred(invoiceData.academyName)
+
+  const frommail = googlecred.mailid
+
   const invoicePath = await Feesreciept.generateInvoice(invoiceData, logo);
   const mailOptions = {
-    from: process.env.MAIL,
+    from: frommail,
     to: email,
     subject: `Your Fees Receipt from ${invoiceData.academyName} Music Academy`,
     html: `
@@ -195,7 +260,7 @@ async function sendInvoiceEmail(email, invoiceData) {
     ],
   };
 
-  transporter.sendMail(mailOptions, async (error, info) => {
+  googlecred.transporter.sendMail(mailOptions, async (error, info) => {
     if (error) {
       console.log("Error sending email:", error);
     } else {
@@ -217,8 +282,13 @@ const paymentfailed = async (academyname, email, paymentdate, amount) => {
   const logolink = academylogo.link;
   const altname = `${academyname} Music Academy`;
   const retrypayment = `http://localhost:3000/${academyname}/login`;
+
+  const googlecred = await retriveacademygooglecred(academyname)
+
+  const frommail = googlecred.mailid
+
   const mailOptions = {
-    from: process.env.MAIL,
+    from: frommail,
     to: email,
     subject: `There was a problem with your payment`,
     html: `
@@ -351,7 +421,7 @@ const paymentfailed = async (academyname, email, paymentdate, amount) => {
   };
 
   try {
-    let info = await transporter.sendMail(mailOptions);
+    let info = await googlecred.transporter.sendMail(mailOptions);
     return info;
   } catch (error) {
     console.error("Error sending email:", error);
@@ -365,5 +435,7 @@ module.exports = {
   sendcustomnodi,
   welcome,
   sendInvoiceEmail,
-  paymentfailed
+  paymentfailed,
+  sendAcademyMail,
+  retriveacademygooglecred
 };

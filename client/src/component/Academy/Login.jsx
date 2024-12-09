@@ -32,8 +32,7 @@ function Signup() {
       return;
     }
 
-    const url =
-      "http://localhost:5000/api/auth/send-otp";
+    const url = "http://localhost:5000/api/auth/send-otp";
     const response = await fetch(url, {
       method: "POST",
       headers: {
@@ -57,8 +56,7 @@ function Signup() {
 
   const handleVerifyOtp = async (e) => {
     e.preventDefault();
-    const url =
-      "http://localhost:5000/api/auth/verify-otp";
+    const url = "http://localhost:5000/api/auth/verify-otp";
     const response = await fetch(url, {
       method: "POST",
       headers: {

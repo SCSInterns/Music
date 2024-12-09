@@ -19,7 +19,6 @@ const PaymentBox = ({
 }) => {
   const academyname = sessionStorage.getItem("academyname");
   const role = sessionStorage.getItem("role");
-
   const [paymentdate, setpaymentdate] = useState("");
   const [paymentmode, setpaymentmode] = useState("");
   const [paymentdetails, setpaymentdetails] = useState({
@@ -197,10 +196,10 @@ const PaymentBox = ({
           <strong>Installment Amount</strong>: {data.additionalFields.fees}
         </Typography>
         <Typography>
-          <strong> Installment Date</strong>:
-          {paymentstatsdetails.nextpaymentdate !== " "
+          <strong> Installment Date</strong>:{" "}
+          {paymentstatsdetails.nextpaymentdate
             ? paymentstatsdetails.nextpaymentdate
-            : "Yet to set"}
+            : data.installementDate}
         </Typography>
       </Box>
 

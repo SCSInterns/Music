@@ -22,6 +22,8 @@ const createOrder = async (req, res) => {
 
         const razorpayInstance = await Razorpayintial.getRazorpayInstance(academyname);
 
+        console.log(razorpayInstance)
+
         const options = {
             amount: amount * 100,
             currency: 'INR',

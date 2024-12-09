@@ -7,6 +7,17 @@ const Qrcode = require("../models/AcademyQr")
 const AcademyQr = require('../models/AcademyQr');
 const { socketIOSingleton } = require("../socket-factory")
 
+
+function formatDate(timestamp) {
+  const date = new Date(timestamp);
+  const day = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const year = date.getFullYear();
+
+  return `${day}-${month}-${year}`;
+}
+
+
 // form addition 
 const handledynamicform = async (req, res) => {
   try {
@@ -134,7 +145,12 @@ const handlestatus = async (req, res) => {
     };
     if (user) {
       const updatedinfo = await Form.findByIdAndUpdate(req.params.id, { $set: updateduser })
-
+      if (updatedinfo.status === "Accept") {
+        const timestampnow = new Date
+        const installmentdate = formatDate(timestampnow)
+        updatedinfo.installementDate = installmentdate
+        await updatedinfo.save()
+      }
       res.status(200).json({ msg: "Status updated successfully ", updatedinfo })
     }
     else {

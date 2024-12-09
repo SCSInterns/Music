@@ -148,6 +148,24 @@ function ProfilePreview({
                             </tr>
                           )
                         )}
+                        <tr>
+                          <td
+                            style={{
+                              padding: "8px",
+                              borderBottom: "1px solid #ddd",
+                            }}
+                          >
+                            <strong>{"Enrollment Date"}</strong>
+                          </td>
+                          <td
+                            style={{
+                              padding: "8px",
+                              borderBottom: "1px solid #ddd",
+                            }}
+                          >
+                            {data.installementDate}
+                          </td>
+                        </tr>
                       </tbody>
                     </table>
                   </div>

@@ -3,6 +3,7 @@ import QrDetails from "./QrDetails";
 import Razorpay from "./Razorpay";
 import RazorPayGuide from "./RazorPayGuide";
 import GmailCred from "./GmailCred";
+import GoogleGuide from "./GoogleGuide";
 
 const TopNavbar = () => {
   const [activeContent, setActiveContent] = useState("Insert Payment Qr");
@@ -27,6 +28,11 @@ const TopNavbar = () => {
       name: "Insert Google App Details",
       key: "Insert Google App Details",
       component: <GmailCred />,
+    },
+    {
+      name: "Google Guide",
+      key: "Google Guide",
+      component: <GoogleGuide />,
     },
   ];
 

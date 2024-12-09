@@ -32,7 +32,7 @@ function ForgotPassword() {
 
     setLoading(true);
 
-    const url = "http://localhost:5000/api/auth/send-otp";
+    const url = "http://localhost:5000/api/auth/send-customotp";
     try {
       const response = await fetch(url, {
         method: "POST",
@@ -41,6 +41,7 @@ function ForgotPassword() {
         },
         body: JSON.stringify({
           email,
+          academyname,
         }),
       });
 

@@ -1,4 +1,4 @@
-const {sendMail} = require('./emailc');
+const { sendMail, sendAcademyMail } = require('./emailc');
 const { storeOTP, verifyOTP } = require('./Otpc');
 
 
@@ -6,11 +6,23 @@ const sendotp = async (req, res) => {
     const { email } = req.body;
     try {
         const otp = await storeOTP(email);
-        await sendMail(email, otp);
+        await sendAcademyMail(email, otp);
         res.status(200).send('OTP sent successfully');
     } catch (error) {
         res.status(500).json({ message: 'Error sending OTP', error });
-        throw error ; 
+        throw error;
+    }
+}
+
+const sendcustomotp = async (req, res) => {
+    const { email, academyname } = req.body;
+    try {
+        const otp = await storeOTP(email);
+        await sendMail(email, otp, academyname);
+        res.status(200).send('OTP sent successfully');
+    } catch (error) {
+        res.status(500).json({ message: 'Error sending OTP', error });
+        throw error;
     }
 }
 
@@ -31,5 +43,5 @@ const verifyotp = async (req, res) => {
 
 
 module.exports = {
-    sendotp, verifyotp
+    sendotp, verifyotp, sendcustomotp
 }; 
