@@ -211,6 +211,19 @@ function Signup() {
                   {otpSent ? "Verify OTP" : "Send OTP"}
                 </button>
               </div>
+
+              <div className="mt-8">
+                <h4>
+                  {" "}
+                  Don't have an account yet?{" "}
+                  <span>
+                    <a href="/academyregform" style={{ color: "#4b5563" }}>
+                      Sign up
+                    </a>
+                  </span>
+                  .
+                </h4>
+              </div>
               <div className="mt-4 flex items-center justify-between"></div>
             </form>
             <p className="text-red-500 text-center mt-4">{msg}</p>

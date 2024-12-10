@@ -16,8 +16,11 @@ export default function CtaSection() {
           <Button
             size="lg"
             variant="contained"
-            className="text-primary hover:bg-background/90"
-            sx={{ backgroundColor: "#0d1b2a" }}
+            className="text-primary"
+            sx={{
+              backgroundColor: "#0d1b2a",
+              ":hover": { backgroundColor: "#ffff", color: "#0d1b2a" },
+            }}
           >
             <a href="/academyregform" target="blank">
               Start Free Trial
@@ -28,7 +31,7 @@ export default function CtaSection() {
             variant="outline"
             className="bg-transparent border-primary-foreground text-primary-foreground hover:bg-primary-foreground hover:text-primary"
           >
-            Contact Us
+            <a href="#demo">Book Demo</a>
           </Button>
         </div>
       </div>

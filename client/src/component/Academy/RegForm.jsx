@@ -214,8 +214,19 @@ function Signup() {
               >
                 Next
               </button>
+              <div className="mt-4">
+                <h4>
+                  {" "}
+                  Already have an account?{" "}
+                  <span>
+                    <a href="/admin/login" style={{ color: "#4b5563" }}>
+                      Log in
+                    </a>
+                  </span>
+                  .
+                </h4>
+              </div>
             </div>
-            <div className="mt-4 flex items-center justify-between"></div>
           </div>
         </div>
       </div>

@@ -1,10 +1,10 @@
 import {
   Calendar,
-  TrendingUp,
+  LayoutTemplate,
   CreditCard,
   Users,
-  BookOpen,
-  Headphones,
+  BriefcaseBusiness,
+  Table,
 } from "lucide-react";
 
 const features = [
@@ -27,19 +27,19 @@ const features = [
       "A scheduling and batch management feature that allows you to create and assign batch timetables, ensuring efficient class organization and smooth coordination among instructors and students.",
   },
   {
-    icon: BookOpen,
+    icon: LayoutTemplate,
     title: "Website Pilot",
     description:
       "A no-code platform to build and manage a dynamic website for your academy. Customize your online presence without the need for coding knowledge, showcasing your services, faculty, and class schedules.",
   },
   {
-    icon: Headphones,
+    icon: Table,
     title: "Attendance Ease",
     description:
       "An innovative attendance system that uses QR codes for daily check-ins, simplifying the process of recording attendance and maintaining accurate attendance records for each student.",
   },
   {
-    icon: Calendar,
+    icon: BriefcaseBusiness,
     title: "White Labeling",
     description:
       "A powerful customization option that allows academies to use their own branded email IDs, personalized receipts, and payment reminders, creating a professional and cohesive experience for students and staff.",
@@ -59,7 +59,7 @@ export default function Features() {
               key={index}
               className="bg-white p-6 rounded-lg shadow-lg transition-transform hover:scale-105 duration-300 border"
             >
-              <div className="flex items-center justify-center gap-3 w-full mb-4 ">
+              <div className="flex items-center justify-center gap-3 w-full mb-4 min-h-[50px] ">
                 <feature.icon className=" size-8 text-primary" />
                 <h3 className="text-xl font-semibold">{feature.title}</h3>
               </div>

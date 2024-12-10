@@ -7,19 +7,37 @@ import Pricing from "./SubComponents/Pricing";
 import About from "./SubComponents/About";
 import CtaSection from "./SubComponents/Cta";
 import Footer from "./SubComponents/Footer";
+import Demo from "./SubComponents/Demo";
 
 export default function Home() {
   return (
     <div className="min-h-screen bg-background">
       <Header />
       <main>
-        <Hero />
-        <Features />
-        <Stats />
-        <Testimonials />
-        <Pricing />
-        <About />
-        <CtaSection />
+        <section id="hero">
+          <Hero />
+        </section>
+        <section id="#features">
+          <Features />
+        </section>
+        <section id="stats">
+          <Stats />
+        </section>
+        <section id="testimonials">
+          <Testimonials />
+        </section>
+        <section id="pricing">
+          <Pricing />
+        </section>
+        <section id="cta">
+          <CtaSection />
+        </section>
+        <section id="about">
+          <About />
+        </section>
+        <section id="demo">
+          <Demo />
+        </section>
       </main>
       <Footer />
     </div>

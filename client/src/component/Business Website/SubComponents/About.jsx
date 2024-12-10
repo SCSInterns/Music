@@ -8,7 +8,7 @@ export default function About() {
           <img
             src={ImageUi}
             alt="MusicVista team in a music academy setting"
-            className="rounded-lg shadow-xl"
+            // className="rounded-lg shadow-xl"
             width={600}
             height={400}
           />

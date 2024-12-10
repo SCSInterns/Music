@@ -18,7 +18,7 @@ export default function PricingDetails() {
   ];
 
   return (
-    <div className="max-w-5xl mx-auto p-8 py-10">
+    <div className="max-w-5xl mx-auto p-8 py-20">
       <h2 className="text-3xl font-bold mb-12 text-center text-gray-800">
         Why Wait? Join Today and Experience the Best!
       </h2>
