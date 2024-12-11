@@ -56,6 +56,7 @@ export default function Testimonials() {
           modules={[Pagination, Autoplay]}
           spaceBetween={30}
           slidesPerView={1}
+          loop
           autoplay={{ delay: 3000 }}
           pagination={{ clickable: true }}
           breakpoints={{
@@ -65,7 +66,7 @@ export default function Testimonials() {
         >
           {testimonials.map((testimonial, index) => (
             <SwiperSlide key={index} className="mb-20">
-              <div className="min-w-[300px] max-w-sm mx-auto h-64 rounded overflow-hidden shadow-lg bg-white p-6 flex flex-col justify-between">
+              <div className="min-w-[300px] rounded-lg max-w-sm mx-auto h-64 border overflow-hidden shadow-lg bg-white p-6 flex flex-col justify-between">
                 <Quote className="h-8 w-8 text-primary mb-4" />
                 <p className="mb-4 italic line-clamp-4">{testimonial.quote}</p>
                 <div>

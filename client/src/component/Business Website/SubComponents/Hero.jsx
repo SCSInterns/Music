@@ -4,7 +4,7 @@ import ImageUi from "../../../static/Images/Ui1.png";
 
 export default function Hero() {
   return (
-    <section className="relative py-1 px-8 md:px-6 lg:px-8 overflow-hidden bg-white text-black">
+    <section className="relative py-1 pb-10 px-8 md:px-6 lg:px-8 overflow-hidden bg-white text-black">
       <div className="max-w-6xl mx-auto flex flex-col lg:flex-row items-center">
         {/* Left Column */}
         <div className="lg:w-1/2 mb-12 lg:mb-0">

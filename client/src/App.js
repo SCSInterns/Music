@@ -36,6 +36,7 @@ import AutomatedAttendance from './component/Academy/AutomatedAttendance'
 import NewAdminDashboard from './component/Academy/NewAdminDashboard';
 import GalleryPage from './component/User/Gallery';
 import LandingPage from './component/Business Website/LandingPage';
+import NewSuperAdminDashboard from './component/SuperAdmin/NewSuperAdminDashboard'
 
 
 function App() {
@@ -53,7 +54,7 @@ function App() {
           {/* Superadmin routes  */}
           {verified && (role === "Superadmin") ?
             <>
-              <Route path='/superadmin/dashboard' element={<Inquiry />} />
+              <Route path='/superadmin/dashboard' element={<NewSuperAdminDashboard />} />
               <Route path='/superadmin/accepotedapplication' element={<AcceptedApplication />} />
             </> :
             <>

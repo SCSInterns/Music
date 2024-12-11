@@ -18,22 +18,28 @@ export default function Header() {
           Features
         </a>
         <a
-          href="#pricing"
-          className="text-sm font-medium hover:text-primary transition-colors"
-        >
-          Pricing
-        </a>
-        <a
           href="#testimonials"
           className="text-sm font-medium hover:text-primary transition-colors"
         >
           Testimonials
         </a>
         <a
+          href="#pricing"
+          className="text-sm font-medium hover:text-primary transition-colors"
+        >
+          Pricing
+        </a>
+        <a
           href="#about"
           className="text-sm font-medium hover:text-primary transition-colors"
         >
           About Us
+        </a>
+        <a
+          href="#demo"
+          className="text-sm font-medium hover:text-primary transition-colors"
+        >
+          Book Demo
         </a>
       </nav>
       <Button

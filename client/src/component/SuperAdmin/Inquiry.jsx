@@ -4,8 +4,21 @@ import { useNavigate } from "react-router-dom";
 import Email from "../SuperAdminEmail/SuperAdminEmail";
 import Token from "../Token/Token";
 import PreviewIcon from "@mui/icons-material/Preview";
-import { Modal, Box, Typography, Button, TextField, Grid } from "@mui/material";
-import Divider from "@mui/material/Divider";
+import {
+  Modal,
+  Box,
+  Typography,
+  Button,
+  TextField,
+  Grid,
+  Divider,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+} from "@mui/material";
 import { toast } from "react-toastify";
 
 function Dashboard() {
@@ -34,6 +47,16 @@ function Dashboard() {
     username: "",
     password: "",
   });
+
+  const style = {
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    bgcolor: "background.paper",
+    boxShadow: 24,
+    p: 4,
+  };
 
   const inputChange = (e) => {
     const { name, value } = e.target;
@@ -223,69 +246,41 @@ function Dashboard() {
 
   return (
     <>
-      <Dashboardsidebar />
       <div style={{ textAlign: "center" }}>Dashboard</div>
-      <table
-        className="min-w-half leading-normal"
-        style={{ marginLeft: "350px", marginTop: "50px" }}
-      >
-        <thead>
-          <tr>
-            <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-              Academy Name
-            </th>
-            <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-              Address
-            </th>
-            <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-              City
-            </th>
-            <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-              State
-            </th>
-            <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-              Pincode
-            </th>
-            <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-              Contact No
-            </th>
-            <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-              Preview
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          {academy.map((item) => (
-            <tr key={item._id}>
-              <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                {item.academy_name}
-              </td>
-              <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                {item.academy_address}
-              </td>
-              <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                {item.academy_city}
-              </td>
-              <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                {item.academy_state}
-              </td>
-              <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                {item.academy_pincode}
-              </td>
-              <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                {item.academy_contactno}
-              </td>
-              <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                <button
-                  onClick={() => handlePreview(item._id, item.academy_name)}
-                >
-                  <PreviewIcon />
-                </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <TableContainer sx={{ maxHeight: 400, marginTop: "50px" }}>
+        <Table stickyHeader>
+          <TableHead>
+            <TableRow>
+              <TableCell>Academy Name</TableCell>
+              <TableCell>Address</TableCell>
+              <TableCell>City</TableCell>
+              <TableCell>State</TableCell>
+              <TableCell>Pincode</TableCell>
+              <TableCell>Contact No</TableCell>
+              <TableCell>Preview</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {academy.map((item) => (
+              <TableRow key={item._id}>
+                <TableCell>{item.academy_name}</TableCell>
+                <TableCell>{item.academy_address}</TableCell>
+                <TableCell>{item.academy_city}</TableCell>
+                <TableCell>{item.academy_state}</TableCell>
+                <TableCell>{item.academy_pincode}</TableCell>
+                <TableCell>{item.academy_contactno}</TableCell>
+                <TableCell>
+                  <button
+                    onClick={() => handlePreview(item._id, item.academy_name)}
+                  >
+                    <PreviewIcon />
+                  </button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
 
       <Modal
         open={open}
@@ -539,15 +534,3 @@ function Dashboard() {
 }
 
 export default Dashboard;
-
-const style = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: 600,
-  height: 400,
-  bgcolor: "background.paper",
-  boxShadow: 24,
-  p: 2,
-};

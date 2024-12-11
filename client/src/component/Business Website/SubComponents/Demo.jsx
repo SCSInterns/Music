@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Button, Grid, TextField, Typography, Box, Paper } from "@mui/material";
 import Image from "../../../static/Images/SalesSvg.svg";
+import { toast } from "react-toastify";
 
 export default function ScheduleDemo() {
   const [formValues, setFormValues] = useState({
@@ -8,7 +9,7 @@ export default function ScheduleDemo() {
     phone: "",
     email: "",
     city: "",
-    restaurantName: "",
+    academyName: "",
   });
   const [errors, setErrors] = useState({});
 
@@ -48,24 +49,53 @@ export default function ScheduleDemo() {
       newErrors.city = "City must be at least 2 characters";
     }
 
-    if (!formValues.restaurantName) {
-      newErrors.restaurantName = "Restaurant name is required";
-    } else if (formValues.restaurantName.length < 2) {
-      newErrors.restaurantName =
-        "Restaurant name must be at least 2 characters";
+    if (!formValues.academyName) {
+      newErrors.academyName = "Academy name is required";
+    } else if (formValues.academyName.length < 2) {
+      newErrors.academyName = "Academy name must be at least 2 characters";
     }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   }
 
-  function handleSubmit(event) {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     if (validateForm()) {
       console.log(formValues);
-      // Add further submission logic here
+      const url = "http://localhost:5000/api/superadmin/savedemoinquiry";
+
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: formValues.name,
+          academyname: formValues.academyName,
+          phoneno: formValues.phone,
+          city: formValues.city,
+          email: formValues.email,
+        }),
+      });
+
+      const data = await response.json();
+      const message = data.msg;
+
+      if (response.ok) {
+        toast.success(message);
+      } else {
+        toast.error(message);
+      }
+      setFormValues({
+        name: "",
+        phone: "",
+        email: "",
+        city: "",
+        academyName: "",
+      });
     }
-  }
+  };
 
   return (
     <Box className="container mx-auto px-4 py-16">
@@ -138,10 +168,10 @@ export default function ScheduleDemo() {
                 variant="outlined"
                 margin="normal"
                 name="academyName"
-                value={formValues.restaurantName}
+                value={formValues.academyName}
                 onChange={handleChange}
-                error={!!errors.restaurantName}
-                helperText={errors.restaurantName}
+                error={!!errors.academyName}
+                helperText={errors.academyName}
               />
               <Button
                 type="submit"
