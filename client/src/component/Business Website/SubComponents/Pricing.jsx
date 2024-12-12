@@ -3,7 +3,7 @@ import { Check } from "lucide-react";
 export default function PricingDetails() {
   const plans = [
     {
-      name: "Basic",
+      name: "Advance",
       price: "₹ 4000 ",
       description: "Perfect for your musical journey",
       features: [
@@ -35,8 +35,8 @@ export default function PricingDetails() {
           <p className="text-gray-700 text-center mb-6">
             {plans[0].description}
           </p>
-          <button className="px-8 py-2 rounded-full bg-black text-white hover:bg-black/90 transition-colors shadow-lg transform hover:scale-105">
-            Sign up
+          <button className="px-6 py-2 rounded-full bg-black text-white hover:bg-black/90 transition-colors shadow-lg transform hover:scale-105">
+            <a href="http://localhost:3000/academyregform">Sign up</a>
           </button>
         </div>
 

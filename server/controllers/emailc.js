@@ -429,6 +429,197 @@ const paymentfailed = async (academyname, email, paymentdate, amount) => {
   }
 };
 
+const onboardingmail = async (academyname, email, name) => {
+
+  const pass = process.env.APP_PWD;
+  const user = process.env.MAIL;
+
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: `${user}`,
+      pass: `${pass}`,
+    },
+  });
+
+  const mailOptions = {
+    from: user,
+    to: email,
+    subject: `Transform Your ${academyname} Music Academy Experience Today! 🎶`,
+    html: `
+      <!DOCTYPE html>
+<html>
+
+<head>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .email-container {
+            max-width: 700px;
+            margin: 30px auto;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(90deg, #4caf50, #008cba);
+            color: #ffffff;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 28px;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .content h2 {
+            color: #333333;
+            font-size: 22px;
+            margin-top: 0;
+        }
+
+        .features {
+            margin: 20px 0;
+        }
+
+        .feature {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .feature img {
+            width: 24px;
+            margin-right: 15px;
+        }
+
+        .cta-button {
+            display: inline-block;
+            margin: 30px auto;
+            padding: 15px 25px;
+            background-color: #4caf50;
+            color: #ffffff;
+            font-size: 16px;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        .cta-button:hover {
+            background-color: #388e3c;
+        }
+
+        .image-banner {
+            width: 100%;
+            height: auto;
+        }
+
+        .footer {
+            text-align: center;
+            background-color: #f9f9f9;
+            padding: 15px;
+            font-size: 14px;
+            color: #777777;
+            border-top: 1px solid #dddddd;
+        }
+
+        .footer strong {
+            color: #333333;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="email-container">
+        <!-- Header Section -->
+        <div class="header">
+            <h1>Welcome to a New Era of Music Academy Management  🎶</h1>
+        </div>
+
+        <!-- Image Banner -->
+        <img src="https://images.unsplash.com/photo-1511379938547-c1f69419868d?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Music Academy Banner" class="image-banner">
+
+        <!-- Content Section -->
+        <div class="content">
+            <p>Dear ${name} ,</p>
+            <p>Take your academy to the next level with Team SoftCoding Solution, Ahmedabad! We provide you with the perfect tools to manage your academy efficiently and effectively.</p>
+
+            <h2>Why Choose Our Advance Package (₹4000/year)?</h2>
+            <div class="features">
+                <div class="feature">
+                     <span style="margin-right: 10px;">✅</span>
+                    <span><strong>  Student Hub:</strong> Centralize student data effortlessly.</span>
+                </div>
+                <div class="feature">
+                     <span style="margin-right: 10px;">✅</span>
+                    <span><strong>  Pay Wise:</strong> Simplify fee management like never before.</span>
+                </div>
+                <div class="feature">
+                     <span style="margin-right: 10px;">✅</span>
+                    <span><strong>  Class Flow:</strong> Organize and manage classes seamlessly.</span>
+                </div>
+                <div class="feature">
+                     <span style="margin-right: 10px;">✅</span>
+                    <span><strong>  Website Pilot:</strong> Give your academy a digital edge.</span>
+                </div>
+                <div class="feature">
+                     <span style="margin-right: 10px;">✅</span>
+                    <span><strong>  Attendance Ease:</strong> Simplify attendance tracking for teachers and students.</span>
+                </div>
+                <div class="feature">
+                     <span style="margin-right: 10px;">✅</span>
+                    <span><strong>  White Labeling:</strong> Build your academy’s unique brand.</span>
+                </div>
+            </div>
+
+            <p><strong>Ready to Transform?</strong></p>
+            <p>Click below to get started now and join hundreds of academies already making a difference!</p>
+
+            <!-- Call to Action Button -->
+            <div style="text-align: center;" >
+            <a href="http://localhost:3000/business#pricing" class="cta-button">Sign Up Now</a>
+            </div>
+        </div>
+
+        <!-- Footer Section -->
+        <div class="footer">
+            <p>Warm Regards,</p>
+            <p><strong>Team SoftCoding Solution, Ahmedabad</strong></p>
+            <p><em>Empowering Your Academy, Note by Note.</em></p>
+        </div>
+    </div>
+</body>
+
+</html>
+    
+    ` ,
+  }
+
+
+  try {
+    let info = await transporter.sendMail(mailOptions);
+    return info;
+  } catch (error) {
+    console.error("Error sending email:", error);
+    throw error;
+  }
+
+
+}
+
 module.exports = {
   sendMail,
   sendpaymentmail,
@@ -437,5 +628,6 @@ module.exports = {
   sendInvoiceEmail,
   paymentfailed,
   sendAcademyMail,
-  retriveacademygooglecred
+  retriveacademygooglecred,
+  onboardingmail
 };

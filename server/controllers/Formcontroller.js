@@ -315,4 +315,4 @@ const fetchqr = async (req, res) => {
 }
 
 
-module.exports = { handledynamicform, getform, savedata, handleapplicantdata, finddatabyid, handlestatus, handleinstallment, verifyyoutubelink, handlelogo, handleqr, fetchqr }
+module.exports = { handledynamicform, getform, savedata, handleapplicantdata, finddatabyid, handlestatus, handleinstallment, verifyyoutubelink, handlelogo, handleqr, fetchqr, formatDate }

@@ -14,5 +14,6 @@ router.get('/detailsofadminbyid/:id', authenticate.authenticatetoken, superadmin
 router.post('/filterforaccess', authenticate.authenticatetoken, superadminauthc.statusFilter)
 router.post('/savedemoinquiry', Demo.savedemodata)
 router.post('/getdemodata', authenticate.authenticatetoken, Demo.getdemodata)
+router.post("/handledemostatus", authenticate.authenticatetoken, Demo.handledemostatus)
 
 module.exports = router;

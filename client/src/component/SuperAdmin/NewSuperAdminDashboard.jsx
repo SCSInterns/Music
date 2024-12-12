@@ -17,11 +17,14 @@ import DashboardIcon from "@mui/icons-material/Dashboard";
 import GroupsIcon from "@mui/icons-material/Groups";
 import ReportIcon from "@mui/icons-material/Assessment";
 import FolderSharedIcon from "@mui/icons-material/FolderShared";
+import PersonAddAltIcon from "@mui/icons-material/PersonAddAlt";
 import SummarizeIcon from "@mui/icons-material/Summarize";
 import PaymentsIcon from "@mui/icons-material/Payments";
 import Loader from "../Loader/Loader";
 import Inquiry from "./Inquiry";
 import { io } from "socket.io-client";
+import DemoInquiry from "./DemoInquiry";
+import DemoMenu from "./DemoMenu";
 
 const Sidebar = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -37,6 +40,11 @@ const Sidebar = () => {
       text: "New Inquiry",
       icon: <FolderSharedIcon />,
       component: <Inquiry />,
+    },
+    {
+      text: "Demo Inquiry",
+      icon: <PersonAddAltIcon />,
+      component: <DemoMenu />,
     },
   ];
 
@@ -153,7 +161,6 @@ const Sidebar = () => {
           {drawerContent}
         </Drawer>
 
-        {/* Dynamic Component Rendering */}
         <Box
           sx={{
             flex: 1,

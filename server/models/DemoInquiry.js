@@ -21,6 +21,15 @@ const DemoInquiry = new mongoose.Schema({
         type: String,
         required: true,
     },
+    date: {
+        type: String,
+        required: true,
+    },
+    status: {
+        type: String,
+        required: true,
+        default: "Pending"
+    },
 
 });
 
