@@ -1,7 +1,11 @@
 const Razorpay = require('razorpay');
 const RazorPayM = require('./models/RazorPayCred');
 const RazorPayAcademyCred = require("./controllers/RazorPayAcademyCred")
+const dotenv = require("dotenv");
+dotenv.config();
 
+const sr_id = process.env.RAZORPAY_KEY_ID
+const sr_key = process.env.RAZORPAY_SECRET_KEY
 
 const getRazorpayInstance = async (academyname) => {
     try {
@@ -27,4 +31,21 @@ const getRazorpayInstance = async (academyname) => {
     }
 };
 
-module.exports = { getRazorpayInstance };
+
+const superadminrazorpaycred = async () => {
+    try {
+        const razorpayInstance = new Razorpay({
+            key_id: sr_id,
+            key_secret: sr_key,
+        });
+
+        return razorpayInstance;
+
+
+    } catch (error) {
+        console.error('Error fetching Razorpay credentials:', error);
+        throw error;
+    }
+}
+
+module.exports = { getRazorpayInstance, superadminrazorpaycred };

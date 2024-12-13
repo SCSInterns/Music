@@ -4,18 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import LooksOneOutlinedIcon from "@mui/icons-material/LooksOneOutlined";
 import LooksTwoOutlinedIcon from "@mui/icons-material/LooksTwoOutlined";
 import Looks3Icon from "@mui/icons-material/Looks3";
-import {
-  TextField,
-  RadioGroup,
-  FormControlLabel,
-  Radio,
-  Button,
-  Box,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-} from "@mui/material";
+import Looks4OutlinedIcon from "@mui/icons-material/Looks4Outlined";
 
 function Signup() {
   const [signup, setsignup] = useState({
@@ -26,8 +15,6 @@ function Signup() {
   const [otpSent, setOtpSent] = useState(false);
   const [otpVerified, setOtpVerified] = useState(false);
   const [msg, setmsg] = useState("");
-  const [paymentOption, setPaymentOption] = useState("");
-  const [isPopupOpen, setIsPopupOpen] = useState(false);
   const navigate = useNavigate();
   const { id } = useParams();
   const inputChange = (e) => {
@@ -36,19 +23,6 @@ function Signup() {
       ...prev,
       [name]: value,
     }));
-  };
-
-  const handlePaymentOptionChange = (e) => {
-    const selectedOption = e.target.value;
-    setPaymentOption(selectedOption);
-
-    if (selectedOption === "payNow") {
-      setIsPopupOpen(true);
-    }
-  };
-
-  const handleClosePopup = () => {
-    setIsPopupOpen(false);
   };
 
   const setacademyname = async () => {
@@ -141,7 +115,7 @@ function Signup() {
 
           if (signupResponse.ok) {
             toast.success("Signup Successful");
-            navigate("/admin/login");
+            navigate(`/subscriptionpayment/${id}`);
           } else {
             setmsg("Signup failed.");
             toast.error("Signup failed.");
@@ -178,26 +152,21 @@ function Signup() {
             </p>
             <div className="mt-4 flex items-center justify-between">
               <span className="border-b w-1/5 lg:w-1/4"></span>
-              <a
-                href="#"
-                className="text-xs text-center text-gray-500 uppercase"
-              >
+              <p className="text-xs text-center text-gray-500 uppercase">
                 <LooksOneOutlinedIcon fontSize="large" />
-              </a>
+              </p>
               <span className="border-b w-1/5 lg:w-1/4"></span>
-              <a
-                href="#"
-                className="text-xs text-center text-gray-500 uppercase"
-              >
+              <p className="text-xs text-center text-gray-500 uppercase">
                 <LooksTwoOutlinedIcon fontSize="large" />
-              </a>
+              </p>
               <span className="border-b w-1/5 lg:w-1/4"></span>
-              <a
-                href="#"
-                className="text-xs text-center text-gray-500 uppercase"
-              >
+              <p className="text-xs text-center text-gray-500 uppercase">
                 <Looks3Icon fontSize="large" />
-              </a>
+              </p>
+              <span className="border-b w-1/5 lg:w-1/4"></span>
+              <p className="text-xs text-center text-gray-500 uppercase">
+                <Looks4OutlinedIcon fontSize="large" />
+              </p>
               <span className="border-b w-1/5 lg:w-1/4"></span>
             </div>
 
@@ -222,52 +191,6 @@ function Signup() {
                     readOnly
                   />
                 </div>
-
-                <div className="mt-4">
-                  <label
-                    className="block text-gray-700 text-sm font-bold mb-2"
-                    style={{ textAlign: "left" }}
-                  >
-                    Payment Options
-                  </label>
-                  <div className=" flex align-center  text-gray-700 justify-evenly bg-gray-200  border border-gray-300 rounded">
-                    <RadioGroup
-                      value={paymentOption}
-                      onChange={(e) => setPaymentOption(e.target.value)}
-                      sx={{
-                        mb: 1,
-                        display: "flex",
-                        flexDirection: "row",
-                        alignItems: "center",
-                        marginTop: "5px",
-                      }}
-                    >
-                      <FormControlLabel
-                        value="payNow"
-                        control={<Radio />}
-                        label="Pay Now"
-                      />
-                      <FormControlLabel
-                        value="payLater"
-                        control={<Radio />}
-                        label="Pay Later"
-                      />
-                    </RadioGroup>
-                  </div>
-                </div>
-
-                <Dialog open={isPopupOpen} onClose={handleClosePopup}>
-                  <DialogTitle>Pay Now</DialogTitle>
-                  <DialogContent>
-                    <p>Please proceed with your payment details.</p>
-                  </DialogContent>
-                  <DialogActions>
-                    <Button onClick={handleClosePopup}>Cancel</Button>
-                    <Button onClick={() => alert("Proceeding with payment...")}>
-                      Proceed
-                    </Button>
-                  </DialogActions>
-                </Dialog>
 
                 <div className="mt-4">
                   <div className="flex justify-between">

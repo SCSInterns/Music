@@ -37,6 +37,7 @@ import NewAdminDashboard from './component/Academy/NewAdminDashboard';
 import GalleryPage from './component/User/Gallery';
 import LandingPage from './component/Business Website/LandingPage';
 import NewSuperAdminDashboard from './component/SuperAdmin/NewSuperAdminDashboard'
+import AcademySubscriptionPayment from './component/Academy/AcademySubscriptionPayment';
 
 
 function App() {
@@ -77,6 +78,7 @@ function App() {
               <Route path='/academysignup/:id' element={<Signup />}></Route>
               <Route path='/admin/login' element={<AcademyLogin />}></Route>
               <Route path='/personaldetails/:id' element={<PersonalDetails />} ></Route>
+              <Route path='/subscriptionpayment/:id' element={<AcademySubscriptionPayment />} ></Route>
               <Route path='/admin/dashboard' element={<Navigate to='/admin/login' />}></Route>
               <Route path={'/:academyname/attendance'} element={<AcademyLogin />}></Route>
             </>}

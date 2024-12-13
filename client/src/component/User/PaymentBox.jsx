@@ -59,7 +59,7 @@ export default function PaymentForm({ data }) {
       body: JSON.stringify({
         studentid: data.studentid,
         academyname: data.academyname,
-        amount: 1,
+        amount: data.dueamount,
       }),
     });
 

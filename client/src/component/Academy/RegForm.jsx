@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import LooksOneIcon from "@mui/icons-material/LooksOne";
 import LooksTwoOutlinedIcon from "@mui/icons-material/LooksTwoOutlined";
 import Looks3OutlinedIcon from "@mui/icons-material/Looks3Outlined";
+import Looks4OutlinedIcon from "@mui/icons-material/Looks4Outlined";
 
 function Signup() {
   const [academydetails, setacademydetails] = useState({
@@ -102,26 +103,21 @@ function Signup() {
             </p>
             <div className="mt-4 flex items-center justify-between">
               <span className="border-b w-1/5 lg:w-1/4"></span>
-              <a
-                href="#"
-                className="text-xs text-center text-gray-500 uppercase"
-              >
+              <p className="text-xs text-center text-gray-500 uppercase">
                 <LooksOneIcon fontSize="large" />
-              </a>
+              </p>
               <span className="border-b w-1/5 lg:w-1/4"></span>
-              <a
-                href="#"
-                className="text-xs text-center text-gray-500 uppercase"
-              >
+              <p className="text-xs text-center text-gray-500 uppercase">
                 <LooksTwoOutlinedIcon fontSize="large" />
-              </a>
+              </p>
               <span className="border-b w-1/5 lg:w-1/4"></span>
-              <a
-                href="#"
-                className="text-xs text-center text-gray-500 uppercase"
-              >
+              <p className="text-xs text-center text-gray-500 uppercase">
                 <Looks3OutlinedIcon fontSize="large" />
-              </a>
+              </p>
+              <span className="border-b w-1/5 lg:w-1/4"></span>
+              <p className="text-xs text-center text-gray-500 uppercase">
+                <Looks4OutlinedIcon fontSize="large" />
+              </p>
               <span className="border-b w-1/5 lg:w-1/4"></span>
             </div>
             <div className="mt-4">

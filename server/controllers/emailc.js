@@ -5,6 +5,7 @@ const Feesreciept = require("./FeesRecieptc");
 const fs = require("fs/promises");
 const SocialLinks = require("../models/SocialLinks");
 const Credentials = require("./RazorPayAcademyCred")
+const SubscriptionR = require("./SubscriptionRecieptc")
 
 dotenv.config();
 
@@ -616,8 +617,97 @@ const onboardingmail = async (academyname, email, name) => {
     console.error("Error sending email:", error);
     throw error;
   }
+}
 
 
+const sendsubscriptioninvoice = async (req, res) => {
+  try {
+
+    const sampleData = {
+      providerName: "SoftCoding Solutions",
+      providerAddress1: "518 Solaris Business Hub Near Bhuyangdev Cross Road, Sola Rd,",
+      providerAddress2: "opp. Parshwanath Jain mandir, Ahmedabad, Gujarat 380061",
+      providerContact: "support@softcodingsolutions.com",
+      buyerName: "John Doe",
+      buyerAddress: "5678 Main Street, City Center, Mumbai, Maharashtra",
+      invoiceNumber: "INV-2024001",
+      issueDate: "2024-12-13",
+      dueDate: "2024-12-20",
+      totalAmount: 5000,
+      paymentMethod: "Online (Credit Card)",
+      plans: [
+        { name: "Basic Plan", cost: 2000 },
+        { name: "Premium Plan", cost: 3000 }
+      ],
+      paymentDetails: {
+        headers: ['Sr No', 'Feature', 'Description'],
+        rows: [
+          ['1', 'Basic Plan', 2000],
+          ['2', 'Premium Plan', 3000],
+          ['3', 'Processing Fee', 500],
+          ['4', 'Special Discount', 500]
+        ]
+      }
+    };
+
+
+    const logoPath = "https://lh3.googleusercontent.com/p/AF1QipOKiWafyjeg7pCukBEsq_JyEIb5PCtEKTCPCl5m=s1360-w1360-h1020";
+
+    const { email } = req.body
+
+    const pass = process.env.APP_PWD;
+    const user = process.env.MAIL;
+
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: `${user}`,
+        pass: `${pass}`,
+      },
+    });
+
+    const generatedinvoice = await SubscriptionR.generateInvoice(sampleData, logoPath)
+
+    const mailOptions = {
+      from: user,
+      to: email,
+      subject: `Your Invoice from Softcoding Solutions `,
+      html: `
+          <div style="font-family: Arial, sans-serif; color: #333;">
+              <h2>Thank you for your payment!</h2>
+              <p>Dear ${sampleData.buyerName},</p>
+              <p>Attached is the receipt for your payment to ${sampleData.providerName} .</p>
+              <p>If you have any questions, feel free to contact us.</p>
+              <p>Best regards,<br>${sampleData.providerName} </p>
+          </div>
+          `,
+      attachments: [
+        {
+          filename: "Invoice.pdf",
+          path: generatedinvoice,
+        },
+      ],
+    };
+
+    transporter.sendMail(mailOptions, async (error, info) => {
+      if (error) {
+        console.log("Error sending email:", error);
+      } else {
+        console.log("Email sent:", info.response);
+      }
+
+      try {
+        await fs.unlink(generatedinvoice);
+        return res.status(200).json({ msg: "Sent" })
+      } catch (deleteError) {
+        console.error("Error deleting file:", deleteError);
+      }
+    });
+
+  } catch (error) {
+    console.error("Error sending email:", error);
+    throw error;
+  }
 }
 
 module.exports = {
@@ -629,5 +719,6 @@ module.exports = {
   paymentfailed,
   sendAcademyMail,
   retriveacademygooglecred,
-  onboardingmail
+  onboardingmail,
+  sendsubscriptioninvoice
 };

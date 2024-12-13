@@ -441,6 +441,24 @@ function Dashboard() {
                       }}
                     />
                     <TextField
+                      label="paymentstatus"
+                      value={admin[0].paymentstatus || ""}
+                      fullWidth
+                      margin="normal"
+                      InputProps={{
+                        readOnly: true,
+                      }}
+                    />
+                    <TextField
+                      label="renewaldate"
+                      value={admin[0].renewaldate || ""}
+                      fullWidth
+                      margin="normal"
+                      InputProps={{
+                        readOnly: true,
+                      }}
+                    />
+                    <TextField
                       label="Access"
                       value={admin[0].academy_access || ""}
                       fullWidth

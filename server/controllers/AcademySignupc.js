@@ -3,6 +3,23 @@ const Token = require('../models/Token');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const MusicAcademy = require('../models/MusicAcademy')
+const RazorpayCred = require("../razorpay-initial")
+const RazorPayOrder = require("../models/Supbscription")
+
+
+function getOneYearLaterDate() {
+    const today = new Date();
+    const nextYear = new Date(today);
+
+    nextYear.setFullYear(today.getFullYear() + 1);
+
+    const day = String(nextYear.getDate()).padStart(2, '0');
+    const month = String(nextYear.getMonth() + 1).padStart(2, '0');
+    const year = nextYear.getFullYear();
+
+    return `${day}-${month}-${year}`;
+}
+
 
 // Academy Signup Controller
 const academy_signup = async (req, res) => {
@@ -111,8 +128,147 @@ const preventconflict = async (academyname) => {
 
 }
 
+
+// payment options setup in academy reg form 
+
+const handlepaymentaddition = async (req, res) => {
+    try {
+
+        const { paymentoption, amount, adminid } = req.body;
+
+        const response = await Admin.findOne({ academy_id: adminid })
+
+        if (response) {
+
+            if (paymentoption === "Pay Now") {
+
+                // create razorpay order 
+                // make payment  
+
+                if (!amount || !adminid) {
+                    return res.status(400).json({
+                        success: false,
+                        error: 'Amount and admin ID are required'
+                    });
+                }
+
+                const razorpayInstance = await RazorpayCred.superadminrazorpaycred();
+
+
+                const options = {
+                    amount: amount * 100,
+                    currency: 'INR',
+                    receipt: `receipt_${Date.now()}`,
+                };
+
+                const order = await razorpayInstance.orders.create(options);
+
+                // saving order details in db 
+                const newOrder = new RazorPayOrder({
+                    academyname: response.academy_name,
+                    razorpayOrderId: order.id,
+                    adminId: adminid,
+                    amount: order.amount,
+                    status: 'created',
+                });
+
+                const data = await newOrder.save();
+
+                res.status(201).json(data);
+
+            } else {
+                response.paymentstatus === "Pay Later"
+                await response.save()
+
+                return res.status(200).json({ msg: "You Request is Accepted 🎉 " })
+            }
+        } else {
+            return res.status(404).json({ msg: "No academy found " })
+        }
+
+    } catch (error) {
+        res.status(500).json({ message: 'Server error', error });
+    }
+}
+
+const verifysubscriptionpayment = async (req, res) => {
+    try {
+
+        const { verificationData } = req.body
+
+
+        const order = await RazorPayOrder.findOne({
+            adminId: verificationData.adminId,
+            razorpayOrderId: verificationData.orderId
+        })
+
+        if (order) {
+            order.status = "Completed"
+            const update = await order.save()
+            const adminprofile = await Admin.findOne({ academy_id: verificationData.adminId })
+
+            console.log(adminprofile)
+
+            adminprofile.paymentstatus = "Paid"
+
+            adminprofile.renewaldate = getOneYearLaterDate()
+
+            // mail for invoice  
+
+            await adminprofile.save()
+
+            // deleting order  
+
+            await RazorPayOrder.findOneAndDelete({ adminId: adminprofile.academy_id, razorpayOrderId: update.razorpayOrderId })
+
+            return res.status(200).json({ msg: "Thank you for your payment 🤝 " })
+
+        } else {
+            return res.status(404).json({ msg: "Order Not Found " })
+        }
+
+    } catch (error) {
+        res.status(500).json({ message: 'Server error', error });
+    }
+}
+
+
+const rejectpayment = async (req, res) => {
+    try {
+
+        const { orderId, adminid, academyname } = req.body
+
+        const Order = await RazorPayOrder.findOne({
+            academyname: academyname,
+            adminId: adminid,
+            razorpayOrderId: orderId
+        })
+
+        if (Order) {
+
+            // payment fail msg 
+
+            // await Email.paymentfailed(academyname, email, paymentdate, amount)
+
+            await Order.deleteOne()
+
+            return res.status(200).json({ msg: "Mail Send and Order Deleted " })
+
+        } else {
+            return res.status(404).json({ msg: "Order Not Found" })
+        }
+
+    } catch (error) {
+        console.error("Error verifying Razorpay order:", error);
+        res.status(500).json({ success: false, error: 'Failed to veify Razorpay order', error });
+    }
+}
+
 module.exports = {
     academy_login,
     academy_signup,
-    academybyname
+    academybyname,
+    handlepaymentaddition,
+    verifysubscriptionpayment,
+    rejectpayment
 };
