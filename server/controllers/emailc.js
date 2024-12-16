@@ -620,7 +620,9 @@ const onboardingmail = async (academyname, email, name) => {
 }
 
 
-const sendsubscriptioninvoice = async (req, res) => {
+const sendsubscriptioninvoice = async (
+  email, name, academyaddress, invoiceno, issuedate, renewaldate
+) => {
   try {
 
     const sampleData = {
@@ -628,32 +630,35 @@ const sendsubscriptioninvoice = async (req, res) => {
       providerAddress1: "518 Solaris Business Hub Near Bhuyangdev Cross Road, Sola Rd,",
       providerAddress2: "opp. Parshwanath Jain mandir, Ahmedabad, Gujarat 380061",
       providerContact: "support@softcodingsolutions.com",
-      buyerName: "John Doe",
-      buyerAddress: "5678 Main Street, City Center, Mumbai, Maharashtra",
-      invoiceNumber: "INV-2024001",
-      issueDate: "2024-12-13",
-      dueDate: "2024-12-20",
-      totalAmount: 5000,
-      paymentMethod: "Online (Credit Card)",
-      plans: [
-        { name: "Basic Plan", cost: 2000 },
-        { name: "Premium Plan", cost: 3000 }
-      ],
-      paymentDetails: {
+      buyerName: name,
+      buyerAddress: academyaddress,
+      invoiceNumber: invoiceno,
+      issueDate: issuedate,
+      dueDate: renewaldate,
+      totalAmount: 4000,
+      paymentMethod: "Online (Razorpay)",
+      plans: {
+        headers: ['Payment Date', 'Amount', 'Payment Mode', 'Renewal Date'],
+        rows: [
+          [issuedate, '4000', 'Online (Razorpay)', renewaldate]
+        ]
+      },
+      featureDetails: {
         headers: ['Sr No', 'Feature', 'Description'],
         rows: [
-          ['1', 'Basic Plan', 2000],
-          ['2', 'Premium Plan', 3000],
-          ['3', 'Processing Fee', 500],
-          ['4', 'Special Discount', 500]
+          ['1', 'Student Hub', 'Centralized platform for student activities'],
+          ['2', 'Pay Wise', 'Manage fees and payments seamlessly'],
+          ['3', 'Class Flow', 'Streamlined class scheduling and management'],
+          ['4', 'Website Pilot', 'Customizable templates for school websites'],
+          ['5', 'Attendance Ease', 'Track and manage attendance easily'],
+          ['6', 'White Labeling', 'Branding solutions for your institution'],
         ]
+
       }
     };
 
 
     const logoPath = "https://lh3.googleusercontent.com/p/AF1QipOKiWafyjeg7pCukBEsq_JyEIb5PCtEKTCPCl5m=s1360-w1360-h1020";
-
-    const { email } = req.body
 
     const pass = process.env.APP_PWD;
     const user = process.env.MAIL;
@@ -698,12 +703,10 @@ const sendsubscriptioninvoice = async (req, res) => {
 
       try {
         await fs.unlink(generatedinvoice);
-        return res.status(200).json({ msg: "Sent" })
       } catch (deleteError) {
         console.error("Error deleting file:", deleteError);
       }
-    });
-
+    })
   } catch (error) {
     console.error("Error sending email:", error);
     throw error;

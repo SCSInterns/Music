@@ -2,9 +2,17 @@ const Admin = require('../models/Admin');
 const Token = require('../models/Token');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const Email = require("./emailc")
 const MusicAcademy = require('../models/MusicAcademy')
 const RazorpayCred = require("../razorpay-initial")
 const RazorPayOrder = require("../models/Supbscription")
+const Musicaddres = require("../models/MusicAcademy")
+const Receipt = require("./PaymentRequestC")
+
+function formatAddress(data) {
+    return `${data.academy_address}, ${data.academy_city}, ${data.academy_state} - ${data.academy_pincode}`;
+}
+
 
 
 function getOneYearLaterDate() {
@@ -20,6 +28,15 @@ function getOneYearLaterDate() {
     return `${day}-${month}-${year}`;
 }
 
+function getTodayDate() {
+    const today = new Date();
+
+    const day = String(today.getDate()).padStart(2, '0');
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const year = today.getFullYear();
+
+    return `${day}-${month}-${year}`;
+}
 
 // Academy Signup Controller
 const academy_signup = async (req, res) => {
@@ -213,7 +230,19 @@ const verifysubscriptionpayment = async (req, res) => {
 
             adminprofile.renewaldate = getOneYearLaterDate()
 
-            // mail for invoice  
+            // mail for invoice   
+
+            // academy address  
+
+            const address = await Musicaddres.findOne({ _id: adminprofile.academy_id })
+
+            const formatedAddress = formatAddress(address)
+
+            const receiptno = Receipt.generateReceiptNumber()
+
+            const paymentdate = getTodayDate()
+
+            await Email.sendsubscriptioninvoice(adminprofile.academy_email, `${adminprofile.academy_name} - Music Academy `, formatedAddress, receiptno, paymentdate, adminprofile.renewaldate)
 
             await adminprofile.save()
 
