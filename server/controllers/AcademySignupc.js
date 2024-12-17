@@ -8,9 +8,21 @@ const RazorpayCred = require("../razorpay-initial")
 const RazorPayOrder = require("../models/Supbscription")
 const Musicaddres = require("../models/MusicAcademy")
 const Receipt = require("./PaymentRequestC")
+const SubScriptionPayment = require("../models/SubscriptionPayment")
 
 function formatAddress(data) {
     return `${data.academy_address}, ${data.academy_city}, ${data.academy_state} - ${data.academy_pincode}`;
+}
+
+function extractYear(dateString) {
+    // Check if the date string is in the correct format
+    if (!/^\d{2}-\d{2}-\d{4}$/.test(dateString)) {
+        throw new Error("Invalid date format. Expected format: dd-mm-yyyy");
+    }
+
+    // Split the date string and return the year
+    const parts = dateString.split("-");
+    return parts[2];
 }
 
 
@@ -146,7 +158,7 @@ const preventconflict = async (academyname) => {
 }
 
 
-// payment options setup in academy reg form 
+// payment options setup in academy reg form  - razorpay 
 
 const handlepaymentaddition = async (req, res) => {
     try {
@@ -208,6 +220,110 @@ const handlepaymentaddition = async (req, res) => {
     }
 }
 
+const handlemanualsubscriptionpayment = async (req, res) => {
+    try {
+
+        const { academyname, role, adminid, paymentmode, paymentdate, amount } = req.body
+
+        if (role === "Superadmin") {
+
+            const currentyear = extractYear(paymentdate)
+
+            const existingInfo = await Admin.findOne({
+                academy_id: adminid,
+                academy_name: academyname
+            })
+
+            if (existingInfo && existingInfo.renewaldate !== "N/A") {
+                const renewaldate = existingInfo.renewaldate
+                const renewalyear = extractYear(renewaldate)
+
+                if (renewalyear !== currentyear
+                ) {
+                    return res.status(400).json({ msg: "The Renewal Year and Payment Date Conflicts " })
+                }
+
+                const nextpaymentdate = getOneYearLaterDate()
+
+                const newentry = SubScriptionPayment({
+                    academyname: academyname,
+                    adminId: adminid,
+                    paymentdate: paymentdate,
+                    nextpaymentdate: nextpaymentdate,
+                    paymentmode: paymentmode,
+                    amount: amount
+                })
+
+                await newentry.save()
+
+                // update stats  
+
+                existingInfo.renewaldate = nextpaymentdate
+
+                existingInfo.paymentstatus =
+                    "Paid"
+
+                await existingInfo.save()
+
+                // send mail 
+
+                const address = await Musicaddres.findOne({ _id: adminid })
+
+                const formatedAddress = formatAddress(address)
+
+                const receiptno = Receipt.generateReceiptNumber()
+
+
+                await Email.sendsubscriptioninvoice(existingInfo.academy_email, `${existingInfo.academy_name} - Music Academy `, formatedAddress, receiptno, paymentdate, existingInfo.renewaldate)
+
+                return res.status(200).json({ msg: "Payment Added" })
+
+            }
+            else {
+                const nextpaymentdate = getOneYearLaterDate()
+
+                const newentry = SubScriptionPayment({
+                    academyname: academyname,
+                    adminId: adminid,
+                    paymentdate: paymentdate,
+                    nextpaymentdate: nextpaymentdate,
+                    paymentmode: paymentmode,
+                    amount: amount
+                })
+
+                await newentry.save()
+
+                // update stats  
+
+                existingInfo.renewaldate = nextpaymentdate
+
+                await existingInfo.save()
+
+                // send mail 
+
+                const address = await Musicaddres.findOne({ _id: adminid })
+
+                const formatedAddress = formatAddress(address)
+
+                const receiptno = Receipt.generateReceiptNumber()
+
+
+                await Email.sendsubscriptioninvoice(existingInfo.academy_email, `${existingInfo.academy_name} - Music Academy `, formatedAddress, receiptno, paymentdate, existingInfo.renewaldate)
+
+                return res.status(200).json({ msg: "Payment Added" })
+            }
+
+        } else {
+            return res.status(401).json({ msg: "Unautorized Access" })
+        }
+
+    } catch (error) {
+        res.status(500).json({ message: 'Server error', error });
+
+    }
+}
+
+
 const verifysubscriptionpayment = async (req, res) => {
     try {
 
@@ -245,6 +361,17 @@ const verifysubscriptionpayment = async (req, res) => {
             await Email.sendsubscriptioninvoice(adminprofile.academy_email, `${adminprofile.academy_name} - Music Academy `, formatedAddress, receiptno, paymentdate, adminprofile.renewaldate)
 
             await adminprofile.save()
+
+            // inserting payment order  
+            const newentry = new SubScriptionPayment({
+                academyname: adminprofile.academy_name,
+                adminId: adminprofile.academy_id,
+                paymentdate: paymentdate,
+                nextpaymentdate: getOneYearLaterDate(),
+                paymentmode: "Razorpay",
+                amount: update.amount
+            })
+            await newentry.save()
 
             // deleting order  
 
@@ -293,11 +420,35 @@ const rejectpayment = async (req, res) => {
     }
 }
 
+const getinstallmentlist = async (req, res) => {
+    try {
+
+        const { role, academyname, adminid } = req.body
+
+        if (role === "Superadmin") {
+
+            const entrys = await SubScriptionPayment.find({
+                adminId: adminid,
+                academyname: academyname
+            })
+            return res.status(200).json(entrys)
+        } else {
+            return res.status(401).json({ msg: "Unauthorized Access" })
+        }
+
+    } catch (error) {
+        res.status(500).json({ message: 'Server error', error });
+
+    }
+}
+
 module.exports = {
     academy_login,
     academy_signup,
     academybyname,
     handlepaymentaddition,
     verifysubscriptionpayment,
-    rejectpayment
-};
+    rejectpayment,
+    handlemanualsubscriptionpayment,
+    getinstallmentlist
+}; 

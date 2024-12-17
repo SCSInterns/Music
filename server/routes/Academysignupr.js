@@ -9,5 +9,7 @@ router.post('/academybyname', academyauth.academybyname)
 router.post('/handlesubscriptionpayment', academyauth.handlepaymentaddition)
 router.post('/verifysubscriptionpayment', academyauth.verifysubscriptionpayment)
 router.post('/failedsubscriptionpayment', academyauth.rejectpayment)
+router.post('/handlemanualsubspayment', authenticate.authenticatetoken, academyauth.handlemanualsubscriptionpayment)
+router.post('/getsubspaymentlist', authenticate.authenticatetoken, academyauth.getinstallmentlist)
 
 module.exports = router;

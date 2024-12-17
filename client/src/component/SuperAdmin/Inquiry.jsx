@@ -19,7 +19,10 @@ import {
   TableHead,
   TableRow,
 } from "@mui/material";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { toast } from "react-toastify";
+import DetailedInfo from "./DetailedInfo";
+import { MaterialReactTable } from "material-react-table";
 
 function Dashboard() {
   const superadminemail = Email();
@@ -39,6 +42,46 @@ function Dashboard() {
   }, [admin.academy_access]);
 
   const navigate = useNavigate();
+
+  const columns = [
+    {
+      accessorKey: "academy_name",
+      header: "academy_name",
+      size: 100,
+    },
+    {
+      accessorKey: "academy_address",
+      header: "academy_address",
+      size: 300,
+    },
+    {
+      accessorKey: "academy_city",
+      header: "academy_city",
+      size: 100,
+    },
+    {
+      accessorKey: "contactno",
+      header: "contactno",
+      size: 100,
+    },
+    {
+      accessorKey: "More Info",
+      header: "More Info",
+      size: 100,
+      Cell: ({ row }) => (
+        <Button
+          sx={{ color: "#0d1b2a" }}
+          onClick={() => {
+            handlePreview(row.original._id, row.original.academy_name);
+          }}
+        >
+          <AccountCircleIcon />
+        </Button>
+      ),
+    },
+  ];
+
+  console.log(academy);
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -236,7 +279,6 @@ function Dashboard() {
 
       const academyData = await response.json();
       setAdmin(academyData); // Update admin details
-
       // Set modal data and open modal
       setOpen(true);
     } catch (error) {
@@ -246,41 +288,22 @@ function Dashboard() {
 
   return (
     <>
-      <div style={{ textAlign: "center" }}>Dashboard</div>
-      <TableContainer sx={{ maxHeight: 400, marginTop: "50px" }}>
-        <Table stickyHeader>
-          <TableHead>
-            <TableRow>
-              <TableCell>Academy Name</TableCell>
-              <TableCell>Address</TableCell>
-              <TableCell>City</TableCell>
-              <TableCell>State</TableCell>
-              <TableCell>Pincode</TableCell>
-              <TableCell>Contact No</TableCell>
-              <TableCell>Preview</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {academy.map((item) => (
-              <TableRow key={item._id}>
-                <TableCell>{item.academy_name}</TableCell>
-                <TableCell>{item.academy_address}</TableCell>
-                <TableCell>{item.academy_city}</TableCell>
-                <TableCell>{item.academy_state}</TableCell>
-                <TableCell>{item.academy_pincode}</TableCell>
-                <TableCell>{item.academy_contactno}</TableCell>
-                <TableCell>
-                  <button
-                    onClick={() => handlePreview(item._id, item.academy_name)}
-                  >
-                    <PreviewIcon />
-                  </button>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+      <div style={{ marginTop: "20px" }}>
+        <MaterialReactTable columns={columns} data={academy} />
+      </div>
+
+      {open && (
+        <DetailedInfo
+          details={details}
+          admin={admin}
+          handleClose={handleClose}
+          handlestatus={handlestatus}
+          open={open}
+          handlesharecred={handlesharecred}
+          inputChange={inputChange}
+          credsend={credsend}
+        />
+      )}
     </>
   );
 }

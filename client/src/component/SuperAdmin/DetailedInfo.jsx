@@ -1,6 +1,91 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import {
+  Modal,
+  Box,
+  Typography,
+  Button,
+  Grid,
+  Divider,
+  Collapse,
+  TextField,
+} from "@mui/material";
+import ProfileMenu from "./ProfileMenu";
+import StatusHandler from "./AcademyStatus";
+import CloseIcon from "@mui/icons-material/Close";
+import Token from "../Token/Token";
+import { toast } from "react-toastify";
 
-function DetailedInfo({ details, admin }) {
+function DetailedInfo({
+  details,
+  admin,
+  handleClose,
+  handlestatus,
+  open,
+  handlesharecred,
+  inputChange,
+  credsend,
+}) {
+  const style = {
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    bgcolor: "background.paper",
+    boxShadow: 24,
+    p: 4,
+    borderRadius: "8px",
+    width: "90%",
+    maxWidth: "1000px",
+  };
+
+  const renderTableRows = (data) => {
+    return data.map((field, index) => (
+      <tr key={index}>
+        <td style={{ padding: "8px", borderBottom: "1px solid #ddd" }}>
+          <strong>{field.label}</strong>
+        </td>
+        <td style={{ padding: "8px", borderBottom: "1px solid #ddd" }}>
+          {field.value || "N/A"}
+        </td>
+      </tr>
+    ));
+  };
+
+  const role = sessionStorage.getItem("role");
+
+  const [info, setinfo] = useState([]);
+
+  const fetchlist = async (academyname, academyid) => {
+    const url = `http://localhost:5000/api/auth/getsubspaymentlist`;
+
+    let token = Token();
+    try {
+      let response = await fetch(url, {
+        method: "POST",
+        headers: {
+          Authorization: `${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          academyname: academyname,
+          role: role,
+          adminid: academyid,
+        }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setinfo(data);
+      }
+    } catch (error) {
+      toast.error("Network error", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchlist(admin[0].academy_name, admin[0].academy_id);
+  }, [admin]);
+
   return (
     <>
       <Modal
@@ -9,263 +94,85 @@ function DetailedInfo({ details, admin }) {
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
-        <Box
-          sx={{
-            ...style,
-            maxHeight: "80vh",
-            overflowY: "auto",
-          }}
-        >
-          <Typography id="modal-modal-title" variant="h6" component="h2">
-            Academy Details
-          </Typography>
-
+        <Box sx={{ ...style, maxHeight: "80vh", overflowY: "auto" }}>
+          <div className="mb-5">
+            <Button
+              onClick={handleClose}
+              color="error"
+              sx={{ float: "right", paddingBottom: "5px" }}
+              variant="outlined"
+            >
+              <CloseIcon fontSize="medium" />
+            </Button>
+            <Typography
+              id="modal-modal-title"
+              variant="h5"
+              component="h2"
+              gutterBottom
+            >
+              Academy Details
+            </Typography>
+          </div>
           <Divider />
           <Box sx={{ mt: 2 }}>
             <Grid container spacing={2}>
+              {/* Left Column - Academy Data */}
               <Grid item xs={12} sm={6}>
-                <Typography variant="h6">Academy Data:</Typography>
-                <TextField
-                  label="ID"
-                  value={details._id || ""}
-                  fullWidth
-                  margin="normal"
-                  InputProps={{
-                    readOnly: true,
-                  }}
-                />
-                <TextField
-                  label="Name"
-                  value={details.academy_name || ""}
-                  fullWidth
-                  margin="normal"
-                  InputProps={{
-                    readOnly: true,
-                  }}
-                />
-                <TextField
-                  label="Address"
-                  value={details.academy_address || ""}
-                  fullWidth
-                  margin="normal"
-                  InputProps={{
-                    readOnly: true,
-                  }}
-                />
-                <TextField
-                  label="City"
-                  value={details.academy_city || ""}
-                  fullWidth
-                  margin="normal"
-                  InputProps={{
-                    readOnly: true,
-                  }}
-                />
-                <TextField
-                  label="State"
-                  value={details.academy_state || ""}
-                  fullWidth
-                  margin="normal"
-                  InputProps={{
-                    readOnly: true,
-                  }}
-                />
-                <TextField
-                  label="Pincode"
-                  value={details.academy_pincode || ""}
-                  fullWidth
-                  margin="normal"
-                  InputProps={{
-                    readOnly: true,
-                  }}
-                />
-                <TextField
-                  label="Contact No"
-                  value={details.academy_contactno || ""}
-                  fullWidth
-                  margin="normal"
-                  InputProps={{
-                    readOnly: true,
-                  }}
-                />
+                <Typography variant="h6" sx={{ mb: 1 }}>
+                  Academy Data
+                </Typography>
+                <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                  <tbody>
+                    {renderTableRows([
+                      { label: "Name", value: details.academy_name },
+                      { label: "Address", value: details.academy_address },
+                      { label: "City", value: details.academy_city },
+                      { label: "State", value: details.academy_state },
+                      { label: "Pincode", value: details.academy_pincode },
+                      { label: "Contact No", value: details.academy_contactno },
+                    ])}
+                  </tbody>
+                </table>
               </Grid>
 
+              {/* Right Column - Access Data */}
               <Grid item xs={12} sm={6}>
-                <Typography variant="h6">Personal Data:</Typography>
-                <TextField
-                  label="Name"
-                  value={details.name || ""}
-                  fullWidth
-                  margin="normal"
-                  InputProps={{
-                    readOnly: true,
-                  }}
-                />
-                <TextField
-                  label="Address"
-                  value={details.address || ""}
-                  fullWidth
-                  margin="normal"
-                  InputProps={{
-                    readOnly: true,
-                  }}
-                />
-                <TextField
-                  label="Contact no. "
-                  value={details.contactno || ""}
-                  fullWidth
-                  margin="normal"
-                  InputProps={{
-                    readOnly: true,
-                  }}
-                />
-                <Divider sx={{ marginTop: "10px" }} />
-                <Typography variant="h6" marginTop={2}>
-                  Access Data:
+                <Typography variant="h6" sx={{ mb: 1 }}>
+                  Access Data
                 </Typography>
                 {admin.length > 0 && (
-                  <>
-                    <TextField
-                      label="Academy Name"
-                      value={admin[0].academy_name || ""}
-                      fullWidth
-                      margin="normal"
-                      InputProps={{
-                        readOnly: true,
-                      }}
-                    />
-                    <TextField
-                      label="Username"
-                      value={admin[0].academy_username || ""}
-                      fullWidth
-                      margin="normal"
-                      InputProps={{
-                        readOnly: true,
-                      }}
-                    />
-                    <TextField
-                      label="Password"
-                      value={admin[0].academy_password || ""}
-                      fullWidth
-                      margin="normal"
-                      InputProps={{
-                        readOnly: true,
-                      }}
-                    />
-                    <TextField
-                      label="Email"
-                      value={admin[0].academy_email || ""}
-                      fullWidth
-                      margin="normal"
-                      InputProps={{
-                        readOnly: true,
-                      }}
-                    />
-                    <TextField
-                      label="paymentstatus"
-                      value={admin[0].paymentstatus || ""}
-                      fullWidth
-                      margin="normal"
-                      InputProps={{
-                        readOnly: true,
-                      }}
-                    />
-                    <TextField
-                      label="renewaldate"
-                      value={admin[0].renewaldate || ""}
-                      fullWidth
-                      margin="normal"
-                      InputProps={{
-                        readOnly: true,
-                      }}
-                    />
-                    <TextField
-                      label="Access"
-                      value={admin[0].academy_access || ""}
-                      fullWidth
-                      margin="normal"
-                      InputProps={{
-                        readOnly: true,
-                      }}
-                    />
-                    <TextField
-                      label="Url"
-                      value={admin[0].academy_url || ""}
-                      fullWidth
-                      margin="normal"
-                      InputProps={{
-                        readOnly: true,
-                      }}
-                    />
-
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-evenly",
-                        margin: "20px",
-                      }}
-                    >
-                      <Button
-                        variant="contained"
-                        onClick={() => handlestatus(admin[0]._id, "Accept")}
-                      >
-                        Accept
-                      </Button>
-                      <Button
-                        variant="contained"
-                        onClick={() => handlestatus(admin[0]._id, "Reject")}
-                      >
-                        Reject
-                      </Button>
-                    </div>
-                  </>
+                  <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                    <tbody>
+                      {renderTableRows([
+                        { label: "Academy Name", value: admin[0].academy_name },
+                        { label: "Email", value: admin[0].academy_email },
+                        {
+                          label: "Payment Status",
+                          value: admin[0].paymentstatus,
+                        },
+                        { label: "Renewal Date", value: admin[0].renewaldate },
+                        { label: "Access", value: admin[0].academy_access },
+                        { label: "URL", value: admin[0].academy_url },
+                      ])}
+                    </tbody>
+                  </table>
                 )}
               </Grid>
             </Grid>
 
-            {credsend ? (
-              <>
-                {" "}
-                <Typography style={{ marginTop: "30px" }}>
-                  Set Academy Credentials:
-                </Typography>
-                <div
-                  style={{
-                    display: "flex",
-                    marginTop: "20px",
-                    justifyContent: "space-evenly",
-                  }}
-                >
-                  <TextField
-                    name="username"
-                    label="Academy username"
-                    onChange={inputChange}
-                  />
-                  <TextField
-                    name="password"
-                    label="Academy password"
-                    onChange={inputChange}
-                  />
-                </div>
-                <div>
-                  <Button
-                    variant="contained"
-                    sx={{ margin: "40px" }}
-                    onClick={() =>
-                      handlesharecred(admin[0].academy_email, admin[0]._id)
-                    }
-                  >
-                    Send email
-                  </Button>
-                </div>
-              </>
-            ) : (
-              <div></div>
-            )}
+            <div className="mt-10">
+              <ProfileMenu
+                admin={admin}
+                handlestatus={handlestatus}
+                details={details}
+                renderTableRows={renderTableRows}
+                credsend={credsend}
+                inputChange={inputChange}
+                handlesharecred={handlesharecred}
+                info={info}
+              />
+            </div>
           </Box>
-          <Button onClick={handleClose} color="error" sx={{ mt: 2 }}>
-            Close
-          </Button>
         </Box>
       </Modal>
     </>

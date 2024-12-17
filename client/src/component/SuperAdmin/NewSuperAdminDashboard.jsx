@@ -28,7 +28,7 @@ import DemoMenu from "./DemoMenu";
 
 const Sidebar = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [activeComponent, setActiveComponent] = useState("Applicants Data");
+  const [activeComponent, setActiveComponent] = useState("Academy List");
 
   const [loading, setloading] = useState(false);
   const handleDrawerToggle = () => {
@@ -37,7 +37,7 @@ const Sidebar = () => {
 
   const menuItems = [
     {
-      text: "New Inquiry",
+      text: "Academy List",
       icon: <FolderSharedIcon />,
       component: <Inquiry />,
     },
