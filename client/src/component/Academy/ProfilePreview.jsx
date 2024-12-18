@@ -15,6 +15,7 @@ import BatchProfile from "./BatchProfile";
 import AttendanceManagement from "./AttendanceManagement";
 import AttendanceSheet from "./AttendanceSheet";
 import PaymentBox from "./PaymentBox";
+import CloseIcon from "@mui/icons-material/Close";
 
 function ProfilePreview({
   open,
@@ -81,9 +82,36 @@ function ProfilePreview({
       fullWidth
       maxWidth="xl"
     >
-      <DialogTitle id="preview-dialog-title" sx={{ fontWeight: "bold" }}>
-        Detailed Information
-      </DialogTitle>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
+        <DialogTitle
+          id="preview-dialog-title"
+          sx={{ fontWeight: "bold", margin: 0 }}
+        >
+          Detailed Information
+        </DialogTitle>
+
+        <DialogActions sx={{ margin: 0, padding: 0, marginRight: "10px" }}>
+          <Button
+            onClick={handleClose}
+            color="error"
+            sx={{
+              minWidth: "auto",
+              padding: 0,
+              margin: 0,
+            }}
+            variant="outlined"
+          >
+            <CloseIcon fontSize="medium" />
+          </Button>
+        </DialogActions>
+      </div>
+
       <DialogContent>
         <DialogContentText>
           {data ? (
@@ -259,11 +287,6 @@ function ProfilePreview({
           )}
         </DialogContentText>
       </DialogContent>
-      <DialogActions>
-        <Button onClick={handleClose} color="primary">
-          Close
-        </Button>
-      </DialogActions>
     </Dialog>
   );
 }

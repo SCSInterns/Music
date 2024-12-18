@@ -14,7 +14,7 @@ const TopNavbar = ({
   handlesharecred,
   info,
 }) => {
-  const [activeContent, setActiveContent] = useState("");
+  const [activeContent, setActiveContent] = useState("Add Payment");
 
   const menuItems = [
     {

@@ -84,7 +84,7 @@ function DetailedInfo({
 
   useEffect(() => {
     fetchlist(admin[0].academy_name, admin[0].academy_id);
-  }, [admin]);
+  }, []);
 
   return (
     <>

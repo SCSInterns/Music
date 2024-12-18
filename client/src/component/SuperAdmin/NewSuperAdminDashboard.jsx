@@ -75,6 +75,7 @@ const Sidebar = () => {
             sx={{
               backgroundColor:
                 activeComponent === item.text ? "#2e3b4e" : "transparent",
+              padding: 2,
             }}
           >
             <ListItemIcon sx={{ color: "#fff" }}>{item.icon}</ListItemIcon>

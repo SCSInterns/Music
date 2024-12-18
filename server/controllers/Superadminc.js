@@ -108,7 +108,7 @@ const academy_access = async (req, res) => {
             return res.status(404).json({ msg: 'Application not found' });
         }
 
-        return res.status(200).json({ msg: "Status updated successfully", updatedApplication });
+        return res.status(200).json(updatedApplication);
     } catch (error) {
         res.status(500).json({ message: 'Server not supported', error });
     }
@@ -126,7 +126,7 @@ const statusFilter = async (req, res) => {
         const response = await Academy.find({ academy_access: status })
 
         if (response) {
-          
+
             res.status(200).json(response)
         }
         else {
@@ -142,7 +142,7 @@ const statusFilter = async (req, res) => {
 
 const credsetup = async (req, res) => {
     try {
-        const { username, password , url  } = req.body
+        const { username, password, url } = req.body
 
         const finddetails = await Academy.findById(req.params.id);
 
@@ -156,7 +156,7 @@ const credsetup = async (req, res) => {
 
         const updatedApplication = await Academy.findByIdAndUpdate(
             req.params.id,
-            { $set: { academy_username: username, academy_password: hashedpwd , academy_url : url} },
+            { $set: { academy_username: username, academy_password: hashedpwd, academy_url: url } },
             { new: true }
         );
         console.log("Updated application:", updatedApplication);

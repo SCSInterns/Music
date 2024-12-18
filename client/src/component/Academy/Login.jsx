@@ -101,12 +101,14 @@ function Signup() {
       sessionStorage.setItem("accesstoken", `${data.accesstoken}`);
       sessionStorage.setItem("refreshtoken", `${data.refreshtoken}`);
       sessionStorage.setItem("academyname", `${data.academyname}`);
-
       const academyname = await sessionStorage.getItem("academyname");
       sessionStorage.setItem("role", "Admin");
 
       if (academyname) {
-        navigate(`/${academyname}/admin/dashboard`, { replace: true });
+        navigate(`/${academyname}/admin/dashboard`, {
+          replace: true,
+          state: { status: data.status, academyid: data.academyid },
+        });
         window.location.reload();
       }
     } else {

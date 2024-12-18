@@ -19,6 +19,7 @@ import QrScan from "./QrScan";
 import ReportIcon from "@mui/icons-material/Assessment";
 import FolderSharedIcon from "@mui/icons-material/FolderShared";
 import SummarizeIcon from "@mui/icons-material/Summarize";
+import CurrencyRupeeIcon from "@mui/icons-material/CurrencyRupee";
 import PaymentsIcon from "@mui/icons-material/Payments";
 import ApplicantsTable from "./AppliacantsTable";
 import PendingFeesTable from "./PendingFeesTable";
@@ -33,14 +34,14 @@ import PaymentMenu from "../AcademyPayment/PaymentMenu";
 import AccountBalanceIcon from "@mui/icons-material/AccountBalance";
 import PaymentRequest from "./PaymentRequest";
 import { io } from "socket.io-client";
+import Billing from "./BillingMenu";
+import { useLocation } from "react-router-dom";
 
 const Sidebar = () => {
   const academyname = sessionStorage.getItem("academyname");
   const role = sessionStorage.getItem("role");
   const socket = React.useRef(null);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [activeComponent, setActiveComponent] = useState("Applicants Data");
-
   const [loading, setloading] = useState(false);
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
@@ -140,6 +141,53 @@ const Sidebar = () => {
 
   console.log(appdata);
 
+  const location = useLocation();
+  const status = location.state?.status;
+  const academyid = location.state?.academyid;
+
+  const [activeComponent, setActiveComponent] = useState("");
+
+  const [info, setinfo] = useState([]);
+
+  const fetchlist = async (academyname, adminid) => {
+    const url = `http://localhost:5000/api/auth/getsubspaymentlist`;
+
+    let token = Token();
+    try {
+      let response = await fetch(url, {
+        method: "POST",
+        headers: {
+          Authorization: `${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          academyname: academyname,
+          role: "Superadmin",
+          adminid: adminid,
+        }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setinfo(data);
+      }
+    } catch (error) {
+      toast.error("Network error", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchlist("Sarswati", "675c08a0f856f8bc5bdf2c4f");
+  }, [academyname]);
+
+  useEffect(() => {
+    if (status === "Reject") {
+      setActiveComponent("Billing");
+    } else {
+      setActiveComponent("Applicants Data");
+    }
+  }, [status]);
+
   const menuItems = [
     {
       text: "Applicants Data",
@@ -150,38 +198,56 @@ const Sidebar = () => {
           handleapplicantslist={handleapplicantslist}
         />
       ),
+      disabled: status === "Accept" ? false : true,
     },
     {
       text: "Batch Management",
       icon: <ReportIcon />,
       component: <Batchmenu />,
+      disabled: status === "Accept" ? false : true,
     },
 
-    { text: "Attendance", icon: <GroupsIcon />, component: <QrScan /> },
+    {
+      text: "Attendance",
+      icon: <GroupsIcon />,
+      component: <QrScan />,
+      disabled: status === "Accept" ? false : true,
+    },
     {
       text: "Pending Fees",
       icon: <PendingActionsIcon />,
       component: <PendingFeesTable data={passpaymentdetails} />,
+      disabled: status === "Accept" ? false : true,
     },
     {
       text: "Form Management",
       icon: <InsertDriveFileIcon />,
       component: <FormManagementMenu />,
+      disabled: status === "Accept" ? false : true,
     },
     {
       text: "Payment Managemnet",
       icon: <PaymentsIcon />,
       component: <PaymentMenu />,
+      disabled: status === "Accept" ? false : true,
     },
     {
       text: "Payment Requests",
       icon: <AccountBalanceIcon />,
       component: <PaymentRequest />,
+      disabled: status === "Accept" ? false : true,
     },
     {
       text: "Website Content",
       icon: <DashboardIcon />,
       component: <Content />,
+      disabled: status === "Accept" ? false : true,
+    },
+    {
+      text: "Billing",
+      icon: <CurrencyRupeeIcon />,
+      component: <Billing academyid={academyid} info={info} />,
+      disabled: status === "Accept" ? false : false,
     },
   ];
 
@@ -209,6 +275,7 @@ const Sidebar = () => {
             button
             key={index}
             onClick={() => setActiveComponent(item.text)}
+            disabled={item.disabled}
             sx={{
               backgroundColor:
                 activeComponent === item.text ? "#2e3b4e" : "transparent",

@@ -26,19 +26,17 @@ function extractYear(dateString) {
 }
 
 
+function getOneYearLaterDate(newdate) {
+    const [day, month, year] = newdate.split('-').map(Number);
+    const parsedDate = new Date(year, month - 1, day);
+    parsedDate.setFullYear(parsedDate.getFullYear() + 1);
+    const resultDay = String(parsedDate.getDate()).padStart(2, '0');
+    const resultMonth = String(parsedDate.getMonth() + 1).padStart(2, '0');
+    const resultYear = parsedDate.getFullYear();
 
-function getOneYearLaterDate() {
-    const today = new Date();
-    const nextYear = new Date(today);
-
-    nextYear.setFullYear(today.getFullYear() + 1);
-
-    const day = String(nextYear.getDate()).padStart(2, '0');
-    const month = String(nextYear.getMonth() + 1).padStart(2, '0');
-    const year = nextYear.getFullYear();
-
-    return `${day}-${month}-${year}`;
+    return `${resultDay}-${resultMonth}-${resultYear}`;
 }
+
 
 function getTodayDate() {
     const today = new Date();
@@ -108,12 +106,12 @@ const academy_login = async (req, res) => {
 
     if (user) {
         const validPassword = await bcrypt.compare(academy_password, user.academy_password);
-        if (validPassword && (academy_username === user.academy_username) && (user.academy_access === "Accept")) {
+        if (validPassword && (academy_username === user.academy_username)) {
             const accesstoken = jwt.sign(user.toJSON(), process.env.SECRET_KEY, { expiresIn: '16h' });
             const refreshtoken = jwt.sign(user.toJSON(), process.env.REFRESH_KEY);
             const newToken = new Token({ token: refreshtoken });
             await newToken.save();
-            return res.status(200).json({ accesstoken, academyname: user.academy_name, refreshtoken });
+            return res.status(200).json({ accesstoken, academyname: user.academy_name, refreshtoken, status: user.academy_access, academyid: user.academy_id });
         } else {
             res.status(404).json({ message: "Invalid Credentials" });
         }
@@ -134,10 +132,7 @@ const academybyname = async (req, res) => {
     else {
         res.status(404).json({ msg: 'No user found ' })
     }
-
 }
-
-
 
 // random 3 digit genearator  
 
@@ -243,7 +238,7 @@ const handlemanualsubscriptionpayment = async (req, res) => {
                     return res.status(400).json({ msg: "The Renewal Year and Payment Date Conflicts " })
                 }
 
-                const nextpaymentdate = getOneYearLaterDate()
+                const nextpaymentdate = getOneYearLaterDate(renewaldate)
 
                 const newentry = SubScriptionPayment({
                     academyname: academyname,
@@ -280,7 +275,8 @@ const handlemanualsubscriptionpayment = async (req, res) => {
 
             }
             else {
-                const nextpaymentdate = getOneYearLaterDate()
+
+                const nextpaymentdate = getOneYearLaterDate(paymentdate)
 
                 const newentry = SubScriptionPayment({
                     academyname: academyname,
@@ -340,11 +336,16 @@ const verifysubscriptionpayment = async (req, res) => {
             const update = await order.save()
             const adminprofile = await Admin.findOne({ academy_id: verificationData.adminId })
 
-            console.log(adminprofile)
-
             adminprofile.paymentstatus = "Paid"
+            adminprofile.academy_access = "Accept"
 
-            adminprofile.renewaldate = getOneYearLaterDate()
+            if (adminprofile.renewaldate === "N/A") {
+                const currentDate = getTodayDate()
+                adminprofile.renewaldate = getOneYearLaterDate(currentDate)
+            } else {
+                const currentDate = adminprofile.renewaldate
+                adminprofile.renewaldate = getOneYearLaterDate(currentDate)
+            }
 
             // mail for invoice   
 
@@ -367,10 +368,11 @@ const verifysubscriptionpayment = async (req, res) => {
                 academyname: adminprofile.academy_name,
                 adminId: adminprofile.academy_id,
                 paymentdate: paymentdate,
-                nextpaymentdate: getOneYearLaterDate(),
+                nextpaymentdate: getOneYearLaterDate(paymentdate),
                 paymentmode: "Razorpay",
-                amount: update.amount
+                amount: 4000
             })
+
             await newentry.save()
 
             // deleting order  
@@ -378,7 +380,6 @@ const verifysubscriptionpayment = async (req, res) => {
             await RazorPayOrder.findOneAndDelete({ adminId: adminprofile.academy_id, razorpayOrderId: update.razorpayOrderId })
 
             return res.status(200).json({ msg: "Thank you for your payment 🤝 " })
-
         } else {
             return res.status(404).json({ msg: "Order Not Found " })
         }

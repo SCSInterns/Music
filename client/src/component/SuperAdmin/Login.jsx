@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
@@ -96,7 +96,15 @@ function Signup() {
       sessionStorage.setItem("refreshtoken", `${data.refreshtoken}`);
       sessionStorage.setItem("name", `${data.name}`);
       sessionStorage.setItem("role", "Superadmin");
-      navigate("/superadmin/dashboard");
+
+      const role = await sessionStorage.getItem("role");
+
+      if (role) {
+        navigate(`/superadmin/dashboard`, {
+          replace: true,
+        });
+        window.location.reload();
+      }
     } else {
       setMsg("Invalid credentials");
       toast.error("Invalid credentials");
