@@ -24,15 +24,22 @@ export default function PricingDetails({ id, admin }) {
     },
   ];
 
+  console.log(admin);
+  console.log(admin.renewaldate);
+
   useEffect(() => {
-    const validdate = admin.renewaldate || "N/A";
-    const [day, month, year] = validdate.split("-");
-    const renewalDate = new Date(`${month}-${day}-${year}`);
+    if (admin.renewaldate !== "N/A" && admin.renewaldate !== null) {
+      const validdate = admin.renewaldate || "N/A";
+      const [day, month, year] = validdate.split("-");
+      const renewalDate = new Date(`${month}-${day}-${year}`);
 
-    const currentDate = new Date();
+      const currentDate = new Date();
 
-    if (currentDate >= renewalDate) {
-      setButton(true);
+      if (currentDate >= renewalDate) {
+        setButton(true);
+      } else {
+        setButton(false);
+      }
     } else {
       setButton(false);
     }

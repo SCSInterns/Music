@@ -638,27 +638,12 @@ const sendsubscriptioninvoice = async (
       totalAmount: 4000,
       paymentMethod: "Online (Razorpay)",
       plans: {
-        headers: ['Payment Date', 'Amount', 'Payment Mode', 'Renewal Date'],
+        headers: ['Payment Date', 'Plan', 'Renewal Date', 'Amount', 'GST (INR)', 'SubTotal'],
         rows: [
-          [issuedate, '4000', 'Online (Razorpay)', renewaldate]
+          [issuedate, 'Advance', renewaldate, '3,280', '720', '4,000.00']
         ]
-      },
-      featureDetails: {
-        headers: ['Sr No', 'Feature', 'Description'],
-        rows: [
-          ['1', 'Student Hub', 'Centralized platform for student activities'],
-          ['2', 'Pay Wise', 'Manage fees and payments seamlessly'],
-          ['3', 'Class Flow', 'Streamlined class scheduling and management'],
-          ['4', 'Website Pilot', 'Customizable templates for school websites'],
-          ['5', 'Attendance Ease', 'Track and manage attendance easily'],
-          ['6', 'White Labeling', 'Branding solutions for your institution'],
-        ]
-
       }
     };
-
-
-    const logoPath = "https://lh3.googleusercontent.com/p/AF1QipOKiWafyjeg7pCukBEsq_JyEIb5PCtEKTCPCl5m=s1360-w1360-h1020";
 
     const pass = process.env.APP_PWD;
     const user = process.env.MAIL;
@@ -671,7 +656,7 @@ const sendsubscriptioninvoice = async (
       },
     });
 
-    const generatedinvoice = await SubscriptionR.generateInvoice(sampleData, logoPath)
+    const generatedinvoice = await SubscriptionR.generateInvoice(sampleData)
 
     const mailOptions = {
       from: user,

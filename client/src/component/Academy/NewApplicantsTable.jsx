@@ -14,6 +14,7 @@ import { toast } from "react-toastify";
 import ProfilePreview from "./ProfilePreview";
 import StatusFormModal from "./StatusForm";
 import AccountBoxRoundedIcon from "@mui/icons-material/AccountBoxRounded";
+import PreviewIcon from "@mui/icons-material/Preview";
 
 function ApplicantsTable({ users, handleapplicantslist }) {
   const [studentid, setstudentid] = useState("");
@@ -178,7 +179,6 @@ function ApplicantsTable({ users, handleapplicantslist }) {
           studentid: responseData._id,
           username: responseData.additionalFields.formdata?.Name,
         });
-        toast.success("Details Fetch Success");
         setToggle(true);
         if (responseData.status === "Accept") {
           settoggleinstallment(true);
@@ -262,7 +262,7 @@ function ApplicantsTable({ users, handleapplicantslist }) {
           disabled={row.original?.Status !== "Accept"}
           onClick={() => handlePreview(row.original.id)}
         >
-          <AccountCircleIcon />
+          <PreviewIcon />
         </Button>
       ),
     },

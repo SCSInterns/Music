@@ -52,6 +52,7 @@ const Team = () => {
           modules={[Navigation, Pagination, Autoplay]}
           spaceBetween={20}
           slidesPerView={3}
+          loop
           autoplay={{ delay: 3000 }}
           breakpoints={{
             640: { slidesPerView: 1 },

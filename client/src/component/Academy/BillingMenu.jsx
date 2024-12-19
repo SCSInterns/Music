@@ -10,8 +10,7 @@ const TopNavbar = ({ academyid, info }) => {
 
   const fetchadmindetailsbyid = async (id) => {
     try {
-      id = "675c08a0f856f8bc5bdf2c4f";
-      const url = `http://localhost:5000/api/superadmin/detailsofadminbyid/${id}`;
+      const url = `http://localhost:5000/api/superadmin/detailsofadminbyacademyid/${id}`;
       const token = Token();
       const response = await fetch(url, {
         method: "GET",

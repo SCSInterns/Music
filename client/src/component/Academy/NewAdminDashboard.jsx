@@ -177,7 +177,9 @@ const Sidebar = () => {
   };
 
   useEffect(() => {
-    fetchlist("Sarswati", "675c08a0f856f8bc5bdf2c4f");
+    if (academyname && academyid) {
+      fetchlist(academyname, academyid);
+    }
   }, [academyname]);
 
   useEffect(() => {

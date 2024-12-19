@@ -187,6 +187,22 @@ const admindetailsbyid = async (req, res) => {
     }
 }
 
+// get academy details by admin id 
+
+const admindetailsbyadminid = async (req, res) => {
+    try {
+        const response = await Academy.findOne({ academy_id: req.params.id })
+        if (response) {
+            res.status(200).json(response)
+        } else {
+            res.status(404).json({ msg: " No details found " })
+        }
+
+    } catch (error) {
+        res.status(500).json({ message: 'Server not supported', error });
+    }
+}
+
 module.exports = {
     superadmin_login,
     superadmin_signup,
@@ -195,5 +211,6 @@ module.exports = {
     getsuperinfo,
     credsetup,
     statusFilter,
-    admindetailsbyid
+    admindetailsbyid,
+    admindetailsbyadminid
 };

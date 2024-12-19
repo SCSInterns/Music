@@ -96,19 +96,12 @@ function ProfilePreview({
           Detailed Information
         </DialogTitle>
 
-        <DialogActions sx={{ margin: 0, padding: 0, marginRight: "10px" }}>
-          <Button
+        <DialogActions className="mr-4 !p-0 !w-fit">
+          <CloseIcon
             onClick={handleClose}
-            color="error"
-            sx={{
-              minWidth: "auto",
-              padding: 0,
-              margin: 0,
-            }}
-            variant="outlined"
-          >
-            <CloseIcon fontSize="medium" />
-          </Button>
+            className="hover:text-white hover:bg-red-500 !border !size-7 p-1 rounded-lg border-red-600 text-red-600 cursor-pointer"
+            fontSize="small"
+          />
         </DialogActions>
       </div>
 

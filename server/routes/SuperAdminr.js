@@ -11,6 +11,7 @@ router.post('/academydetails', authenticate.authenticatetoken, superadminauthc.g
 router.post('/superadmindetails', authenticate.authenticatetoken, superadminauthc.getsuperinfo)
 router.put('/academycredentials/:id', authenticate.authenticatetoken, superadminauthc.credsetup)
 router.get('/detailsofadminbyid/:id', authenticate.authenticatetoken, superadminauthc.admindetailsbyid)
+router.get('/detailsofadminbyacademyid/:id', authenticate.authenticatetoken, superadminauthc.admindetailsbyadminid)
 router.post('/filterforaccess', authenticate.authenticatetoken, superadminauthc.statusFilter)
 router.post('/savedemoinquiry', Demo.savedemodata)
 router.post('/getdemodata', authenticate.authenticatetoken, Demo.getdemodata)
