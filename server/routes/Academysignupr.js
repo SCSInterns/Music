@@ -13,5 +13,7 @@ router.post('/failedsubscriptionpayment', academyauth.rejectpayment)
 router.post('/handlemanualsubspayment', authenticate.authenticatetoken, academyauth.handlemanualsubscriptionpayment)
 router.post('/getsubspaymentlist', authenticate.authenticatetoken, academyauth.getinstallmentlist)
 router.post('/cancelsubscription', authenticate.authenticatetoken, cancelsubscription.cancelsubscription)
+router.post('/freetrialrequest', academyauth.freetrialrequest)
+router.post('/fetchfreelist', authenticate.authenticatetoken, academyauth.fetchfreelist)
 
 module.exports = router;

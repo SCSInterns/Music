@@ -20,10 +20,12 @@ import { toast } from "react-toastify";
 function AcademySubscriptionPayment() {
   const { id } = useParams();
   const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [freetrialpopup, setfreetrialpopup] = useState(false);
   const [paymentOption, setPaymentOption] = useState("");
   const [loading, setloading] = useState(false);
 
   const navigate = useNavigate();
+  const academyname = sessionStorage.getItem("academyname");
 
   const handlePaymentOptionChange = (e) => {
     const selectedOption = e.target.value;
@@ -32,10 +34,44 @@ function AcademySubscriptionPayment() {
     if (selectedOption === "payNow") {
       setIsPopupOpen(true);
     }
+
+    if (selectedOption === "freetrial") {
+      setfreetrialpopup(true);
+    }
   };
 
   const handleClosePopup = () => {
     setIsPopupOpen(false);
+  };
+
+  const handleFreeClosePopup = () => {
+    setfreetrialpopup(false);
+  };
+
+  const submitfreetrial = async (academyname) => {
+    const url = "http://localhost:5000/api/auth/freetrialrequest";
+    setloading(true);
+
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        academyname: academyname,
+      }),
+    });
+
+    if (response.ok) {
+      toast.success(
+        "Free Trial Request Submitted . Please click submit to proceed "
+      );
+      setfreetrialpopup(false);
+      setloading(false);
+    } else {
+      setfreetrialpopup(false);
+      toast.error("Kindly try again later");
+    }
   };
 
   const handlesubmit = () => {
@@ -105,9 +141,11 @@ function AcademySubscriptionPayment() {
         });
 
         if (responsepayment.ok) {
+          setIsPopupOpen(false);
           setloading(false);
-          toast.success(" Payment Details Send SuccessFully ");
+          toast.success(" Payment Success . Pls submit your application 🎉.");
         } else {
+          setIsPopupOpen(false);
           setloading(false);
           toast.error("Error Saving Payment Details ");
         }
@@ -160,6 +198,7 @@ function AcademySubscriptionPayment() {
         } else {
           toast.error(" Payment Submission Failed ");
         }
+        setIsPopupOpen(false);
         setloading(false);
         return;
       }
@@ -257,6 +296,11 @@ function AcademySubscriptionPayment() {
                       control={<Radio />}
                       label="Pay Later"
                     />
+                    <FormControlLabel
+                      value="freetrial"
+                      control={<Radio />}
+                      label="Free Trial"
+                    />
                   </RadioGroup>
                 </div>
               </div>
@@ -281,6 +325,19 @@ function AcademySubscriptionPayment() {
           <DialogActions>
             <Button onClick={handleClosePopup}>Cancel</Button>
             <Button onClick={() => generateorder()}>Proceed</Button>
+          </DialogActions>
+        </Dialog>
+
+        <Dialog open={freetrialpopup} onClose={handleFreeClosePopup}>
+          <DialogTitle>Free Trial</DialogTitle>
+          <DialogContent>
+            <p>You Will Get Seven Days of Free Trail.</p>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleFreeClosePopup}>Cancel</Button>
+            <Button onClick={() => submitfreetrial(academyname)}>
+              Proceed
+            </Button>
           </DialogActions>
         </Dialog>
       </div>

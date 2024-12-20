@@ -20,11 +20,13 @@ import FolderSharedIcon from "@mui/icons-material/FolderShared";
 import PersonAddAltIcon from "@mui/icons-material/PersonAddAlt";
 import SummarizeIcon from "@mui/icons-material/Summarize";
 import PaymentsIcon from "@mui/icons-material/Payments";
+import ThreePIcon from "@mui/icons-material/ThreeP";
 import Loader from "../Loader/Loader";
 import Inquiry from "./Inquiry";
 import { io } from "socket.io-client";
 import DemoInquiry from "./DemoInquiry";
 import DemoMenu from "./DemoMenu";
+import Freetrail from "./FreetrailMenu";
 
 const Sidebar = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -45,6 +47,11 @@ const Sidebar = () => {
       text: "Demo Inquiry",
       icon: <PersonAddAltIcon />,
       component: <DemoMenu />,
+    },
+    {
+      text: "Free Trial List",
+      icon: <ThreePIcon />,
+      component: <Freetrail />,
     },
   ];
 

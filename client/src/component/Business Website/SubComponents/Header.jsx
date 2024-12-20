@@ -50,9 +50,7 @@ export default function Header() {
         }}
       >
         {" "}
-        <a href="/admin/login" target="blank">
-          Log in
-        </a>
+        <a href="/admin/login">Log in</a>
       </Button>
     </header>
   );

@@ -621,7 +621,7 @@ const onboardingmail = async (academyname, email, name) => {
 
 
 const sendsubscriptioninvoice = async (
-  email, name, academyaddress, invoiceno, issuedate, renewaldate
+  email, name, academyaddress, invoiceno, issuedate, renewaldate, planname
 ) => {
   try {
 
@@ -640,7 +640,7 @@ const sendsubscriptioninvoice = async (
       plans: {
         headers: ['Payment Date', 'Plan', 'Renewal Date', 'Amount', 'GST (INR)', 'SubTotal'],
         rows: [
-          [issuedate, 'Advance', renewaldate, '3,280', '720', '4,000.00']
+          [issuedate, planname, renewaldate, '3,280', '720', '4,000.00']
         ]
       }
     };

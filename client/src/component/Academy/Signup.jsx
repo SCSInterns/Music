@@ -115,6 +115,8 @@ function Signup() {
 
           if (signupResponse.ok) {
             toast.success("Signup Successful");
+            const data = await signupResponse.json();
+            sessionStorage.setItem("academyname", data.academy_name);
             navigate(`/subscriptionpayment/${id}`);
           } else {
             setmsg("Signup failed.");

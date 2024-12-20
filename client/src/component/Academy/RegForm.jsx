@@ -15,9 +15,21 @@ function Signup() {
     academy_state: "",
     academy_pincode: "",
     academy_contactno: "",
+    academy_gstno: "",
   });
   const navigate = useNavigate();
   const [msg, setmsg] = useState("");
+
+  function validateGST(gstNumber) {
+    const gstRegex =
+      /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/;
+
+    if (!gstNumber || gstNumber.length !== 15) {
+      return false; // Must be exactly 15 characters
+    }
+
+    return gstRegex.test(gstNumber);
+  }
 
   const inputChange = (e) => {
     const { name, value } = e.target;
@@ -57,6 +69,14 @@ function Signup() {
       return;
     }
 
+    if (academydetails.academy_gstno !== "") {
+      if (!validateGST(academydetails.academy_gstno)) {
+        setmsg("Invalid GST Number");
+        toast.error("Invalid GST Number");
+        return;
+      }
+    }
+
     const response = await fetch(url, {
       method: "POST",
       headers: {
@@ -69,6 +89,7 @@ function Signup() {
         academy_state: academydetails.academy_state,
         academy_pincode: academydetails.academy_pincode,
         academy_contactno: academydetails.academy_contactno,
+        academy_gstno: academydetails.academy_gstno,
       }),
     });
 
@@ -199,6 +220,21 @@ function Signup() {
                 className="bg-gray-200 text-gray-700 focus:outline-none focus:shadow-outline border border-gray-300 rounded py-2 px-4 block w-full appearance-none"
                 type="text"
                 name="academy_contactno"
+                onChange={inputChange}
+              />
+            </div>
+
+            <div className="mt-4">
+              <div className="flex justify-between">
+                <label className="block text-gray-700 text-sm font-bold mb-2">
+                  GST No
+                </label>
+              </div>
+              <input
+                className="bg-gray-200 text-gray-700 focus:outline-none focus:shadow-outline border border-gray-300 rounded py-2 px-4 block w-full appearance-none"
+                type="text"
+                name="academy_gstno"
+                placeholder="Leave blank if you dont have any GST Number"
                 onChange={inputChange}
               />
             </div>

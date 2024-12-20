@@ -9,6 +9,7 @@ const RazorPayOrder = require("../models/Supbscription")
 const Musicaddres = require("../models/MusicAcademy")
 const Receipt = require("./PaymentRequestC")
 const SubScriptionPayment = require("../models/SubscriptionPayment")
+const { socketIOSingleton } = require("../socket-factory")
 
 function formatAddress(data) {
     return `${data.academy_address}, ${data.academy_city}, ${data.academy_state} - ${data.academy_pincode}`;
@@ -40,6 +41,17 @@ function getOneYearLaterDate(newdate) {
 
 function getTodayDate() {
     const today = new Date();
+
+    const day = String(today.getDate()).padStart(2, '0');
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const year = today.getFullYear();
+
+    return `${day}-${month}-${year}`;
+}
+
+function getDateAfterDays(days) {
+    const today = new Date();
+    today.setDate(today.getDate() + days);
 
     const day = String(today.getDate()).padStart(2, '0');
     const month = String(today.getMonth() + 1).padStart(2, '0');
@@ -269,7 +281,7 @@ const handlemanualsubscriptionpayment = async (req, res) => {
                 const receiptno = Receipt.generateReceiptNumber()
 
 
-                await Email.sendsubscriptioninvoice(existingInfo.academy_email, `${existingInfo.academy_name} - Music Academy `, formatedAddress, receiptno, paymentdate, existingInfo.renewaldate)
+                await Email.sendsubscriptioninvoice(existingInfo.academy_email, `${existingInfo.academy_name} - Music Academy `, formatedAddress, receiptno, paymentdate, existingInfo.renewaldate, "Advance")
 
                 return res.status(200).json({ msg: "Payment Added" })
 
@@ -304,7 +316,7 @@ const handlemanualsubscriptionpayment = async (req, res) => {
                 const receiptno = Receipt.generateReceiptNumber()
 
 
-                await Email.sendsubscriptioninvoice(existingInfo.academy_email, `${existingInfo.academy_name} - Music Academy `, formatedAddress, receiptno, paymentdate, existingInfo.renewaldate)
+                await Email.sendsubscriptioninvoice(existingInfo.academy_email, `${existingInfo.academy_name} - Music Academy `, formatedAddress, receiptno, paymentdate, existingInfo.renewaldate, "Advance")
 
                 return res.status(200).json({ msg: "Payment Added" })
             }
@@ -359,7 +371,7 @@ const verifysubscriptionpayment = async (req, res) => {
 
             const paymentdate = getTodayDate()
 
-            await Email.sendsubscriptioninvoice(adminprofile.academy_email, `${adminprofile.academy_name} - Music Academy `, formatedAddress, receiptno, paymentdate, adminprofile.renewaldate)
+            await Email.sendsubscriptioninvoice(adminprofile.academy_email, `${adminprofile.academy_name} - Music Academy `, formatedAddress, receiptno, paymentdate, adminprofile.renewaldate, "Advance")
 
             await adminprofile.save()
 
@@ -443,6 +455,98 @@ const getinstallmentlist = async (req, res) => {
     }
 }
 
+const freetrialrequest = async (req, res) => {
+    try {
+
+        const { academyname } = req.body
+
+        const existingInfo = await Admin.findOne({ academy_name: academyname })
+
+        if (existingInfo) {
+
+            existingInfo.paymentstatus = "Free Trial"
+            const sevenDaysLater = getDateAfterDays(7);
+
+            existingInfo.renewaldate = sevenDaysLater
+            socketIOSingleton.emit('newFreeTrialReq', existingInfo);
+            await existingInfo.save()
+            return res.status(200).json({ msg: "Request Submitted . " })
+
+        } else {
+            return res.status(404).json({ msg: "Details Not Found " })
+        }
+
+    } catch (error) {
+        res.status(500).json({ message: 'Server error', error });
+    }
+}
+
+// get free trial academy list 
+
+const fetchfreelist = async (req, res) => {
+    try {
+
+        const { role } = req.body
+
+        if (role === "Superadmin") {
+            const academylist = await Admin.find({ paymentstatus: "Free Trial" })
+
+            const detailedList = await Promise.all(
+                academylist.map(async (academy) => {
+                    const musicAcademyDetails = await MusicAcademy.findOne({ academy_name: academy.academy_name });
+
+                    return {
+                        accessDetails: academy,
+                        musicAcademyDetails: musicAcademyDetails || {},
+                    };
+                })
+            );
+
+            return res.status(200).json(detailedList)
+        } else {
+            return res.status(401).json({ msg: "Unauthorized Access" })
+        }
+    } catch (error) {
+        res.status(500).json({ message: 'Server error', error });
+    }
+}
+
+
+// start from here 
+
+const handlesubmitfreetrial = async (req, res) => {
+
+    try {
+
+        const { academyid, role } = req.body
+
+        if (role === "Superadmin") {
+
+            const existing = await Admin.findOne({ academy_id: academyid })
+            if (existing) {
+                existing.academy_access = "Accept"
+                const address = await Musicaddres.findOne({ _id: existing.academy_id })
+                const formatedAddress = formatAddress(address)
+                const receiptno = Receipt.generateReceiptNumber()
+
+                // send mail 
+                await Email.sendsubscriptioninvoice(existing.academy_email, `${existing.academy_name} - Music Academy `, formatedAddress, receiptno, "N/A", existing.renewaldate, "Free Trial")
+
+            } else {
+
+            }
+
+        } else {
+
+        }
+
+    } catch (error) {
+        res.status(500).json({ message: 'Server error', error });
+    }
+
+
+}
+
 module.exports = {
     academy_login,
     academy_signup,
@@ -451,5 +555,7 @@ module.exports = {
     verifysubscriptionpayment,
     rejectpayment,
     handlemanualsubscriptionpayment,
-    getinstallmentlist
+    getinstallmentlist,
+    freetrialrequest,
+    fetchfreelist
 }; 

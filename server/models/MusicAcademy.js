@@ -25,26 +25,31 @@ const adminschema = new Schema({
     academy_contactno: {
         type: String,
         required: true
-    } ,
-    name : 
+    },
+    name:
     {
-        type:String , 
-        required : true , 
-        default : "to be update  "
-    } , 
-    address : 
+        type: String,
+        required: true,
+        default: "to be update  "
+    },
+    address:
     {
-        type:String , 
-        required : true , 
-        default : "to be update "
-    } , 
-    contactno : 
+        type: String,
+        required: true,
+        default: "to be update "
+    },
+    contactno:
     {
-        type:String , 
-        required : true , 
-        default : " to be update "
+        type: String,
+        required: true,
+        default: " to be update "
+    },
+    academy_gstno:
+    {
+        type: String,
+        required: true
     }
-    
+
 });
 
 module.exports = mongoose.model('MusicAcademyDetails', adminschema);

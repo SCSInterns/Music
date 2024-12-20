@@ -15,7 +15,6 @@ import ProfilePreview from "./ProfilePreview";
 import StatusFormModal from "./StatusForm";
 import AccountBoxRoundedIcon from "@mui/icons-material/AccountBoxRounded";
 import PreviewIcon from "@mui/icons-material/Preview";
-
 function ApplicantsTable({ users, handleapplicantslist }) {
   const [studentid, setstudentid] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
