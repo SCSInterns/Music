@@ -11,17 +11,39 @@ import {
   MenuItem,
   Button,
 } from "@mui/material";
+import Token from "../Token/Token";
+import { toast } from "react-toastify";
 
-function StatusFormFreeTrial({ open, handleClose, id, name }) {
-  console.log(name);
-  console.log(id);
-  const [password, setPassword] = useState("");
+function StatusFormFreeTrial({ open, handleClose, id, name, onstatuschange }) {
   const [selectedStatus, setSelectedStatus] = useState("");
+  const role = sessionStorage.getItem("role");
 
-  const handleSubmit = () => {
-    console.log("Password:", password);
+  const token = Token();
+
+  const handleSubmit = async () => {
     console.log("Status:", selectedStatus);
 
+    const url = "http://localhost:5000/api/auth/freetrialsubmission";
+
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        Authorization: `${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        role: role,
+        academyid: id,
+        status: selectedStatus,
+      }),
+    });
+
+    if (response.ok) {
+      toast.success("Status Updated");
+    } else {
+      toast.error("Status Updation Failed");
+    }
+    onstatuschange();
     handleClose();
   };
 
@@ -36,16 +58,6 @@ function StatusFormFreeTrial({ open, handleClose, id, name }) {
           label="Username"
           value={name}
           inputProps={{ readonly: true }}
-        />
-
-        {/* Password Input */}
-        <TextField
-          fullWidth
-          margin="normal"
-          label="Password"
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
         />
 
         {/* Status Selection */}

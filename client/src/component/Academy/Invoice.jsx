@@ -70,7 +70,7 @@ function BillingDashboard({ info, admin }) {
   }
 
   useEffect(() => {
-    if (admin) {
+    if (admin && info.length > 0) {
       getacademydetails(admin.academy_name);
     }
   }, [admin]);
@@ -96,7 +96,11 @@ function BillingDashboard({ info, admin }) {
             <CardContent>
               <div className="flex items-center gap-2">
                 <Crown className="h-5 w-5 text-blue-500" />
-                <h1 className="font-bold text-xl">Advanced</h1>
+                <h1 className="font-bold text-xl">
+                  {admin.paymentstatus === "Free Trial"
+                    ? "Free Trial"
+                    : "Advanced"}
+                </h1>
               </div>
             </CardContent>
             <CardContent>

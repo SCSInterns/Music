@@ -621,7 +621,7 @@ const onboardingmail = async (academyname, email, name) => {
 
 
 const sendsubscriptioninvoice = async (
-  email, name, academyaddress, invoiceno, issuedate, renewaldate, planname
+  email, name, academyaddress, invoiceno, issuedate, renewaldate, planname, amount, gst, toatalamount
 ) => {
   try {
 
@@ -635,12 +635,12 @@ const sendsubscriptioninvoice = async (
       invoiceNumber: invoiceno,
       issueDate: issuedate,
       dueDate: renewaldate,
-      totalAmount: 4000,
+      totalAmount: toatalamount,
       paymentMethod: "Online (Razorpay)",
       plans: {
         headers: ['Payment Date', 'Plan', 'Renewal Date', 'Amount', 'GST (INR)', 'SubTotal'],
         rows: [
-          [issuedate, planname, renewaldate, '3,280', '720', '4,000.00']
+          [issuedate, planname, renewaldate, amount, gst, toatalamount]
         ]
       }
     };

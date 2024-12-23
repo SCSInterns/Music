@@ -4,6 +4,7 @@ import ActiveFreeTrial from "./ActiveFreeTrial";
 import Token from "../Token/Token";
 import { toast } from "react-toastify";
 import { io } from "socket.io-client";
+import CompletedFreeTrial from "./CompletedFreeTrial";
 
 const TopNavbar = () => {
   const [activeContent, setActiveContent] = useState("New Request");
@@ -38,6 +39,10 @@ const TopNavbar = () => {
     fetchfreelist();
   }, []);
 
+  const onstatuschange = () => {
+    fetchfreelist();
+  };
+
   useEffect(() => {
     socket.current = io("http://localhost:5000");
     socket.current.on("newFreeTrialReq", (newEntry) => {
@@ -61,12 +66,22 @@ const TopNavbar = () => {
     {
       name: "New Request",
       key: "New Request",
-      component: <NewFreetrial newRequests={newRequests} />,
+      component: (
+        <NewFreetrial
+          newRequests={newRequests}
+          onstatuschange={onstatuschange}
+        />
+      ),
     },
     {
       name: "Active Free Trial",
       key: "Active Free Trial",
       component: <ActiveFreeTrial activeRequest={activeRequest} />,
+    },
+    {
+      name: "Completed Free Trial",
+      key: "Completed Free Trial",
+      component: <CompletedFreeTrial activeRequest={activeRequest} />,
     },
   ];
 

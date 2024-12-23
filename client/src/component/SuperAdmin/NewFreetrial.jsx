@@ -19,7 +19,7 @@ import AccountBoxRoundedIcon from "@mui/icons-material/AccountBoxRounded";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import StatusFormFreeTrial from "./StatusFormFreeTrial";
 
-function NewFreetrial({ newRequests }) {
+function NewFreetrial({ newRequests, onstatuschange }) {
   const [toggle, setToggle] = useState(false);
   const [previewOpen, setPreviewOpen] = useState(false);
   const [id, setid] = useState("");
@@ -174,6 +174,7 @@ function NewFreetrial({ newRequests }) {
         handleClose={handleClose}
         id={id}
         name={name}
+        onstatuschange={onstatuschange}
       />
 
       <Dialog

@@ -10,9 +10,15 @@ const Musicaddres = require("../models/MusicAcademy")
 const Receipt = require("./PaymentRequestC")
 const SubScriptionPayment = require("../models/SubscriptionPayment")
 const { socketIOSingleton } = require("../socket-factory")
+const SendingCredentials = require("../controllers/SendingCredentials")
+
 
 function formatAddress(data) {
     return `${data.academy_address}, ${data.academy_city}, ${data.academy_state} - ${data.academy_pincode}`;
+}
+
+function generateRandomPassword() {
+    return Math.floor(100000 + Math.random() * 900000).toString();
 }
 
 function extractYear(dateString) {
@@ -270,6 +276,24 @@ const handlemanualsubscriptionpayment = async (req, res) => {
                 existingInfo.paymentstatus =
                     "Paid"
 
+
+                // update password and username  
+
+                existingInfo.academy_password = generateRandomPassword()
+                existingInfo.academy_username = existingInfo.academy_name
+
+
+                // send credentials mail 
+                await SendingCredentials.sendautocred(existingInfo.academy_email, existingInfo.academy_username, existingInfo.academy_password)
+
+                const salt = await bcrypt.genSalt();
+                const hashedpwd = await bcrypt.hash(existingInfo.academy_password, salt);
+
+                existingInfo.academy_password = hashedpwd
+
+
+                existingInfo.academy_url = `http://localhost:3000/${existingInfo.academy_name}`
+
                 await existingInfo.save()
 
                 // send mail 
@@ -281,7 +305,7 @@ const handlemanualsubscriptionpayment = async (req, res) => {
                 const receiptno = Receipt.generateReceiptNumber()
 
 
-                await Email.sendsubscriptioninvoice(existingInfo.academy_email, `${existingInfo.academy_name} - Music Academy `, formatedAddress, receiptno, paymentdate, existingInfo.renewaldate, "Advance")
+                await Email.sendsubscriptioninvoice(existingInfo.academy_email, `${existingInfo.academy_name} - Music Academy `, formatedAddress, receiptno, paymentdate, existingInfo.renewaldate, "Advance", "3,280", "720", "4,000")
 
                 return res.status(200).json({ msg: "Payment Added" })
 
@@ -316,7 +340,7 @@ const handlemanualsubscriptionpayment = async (req, res) => {
                 const receiptno = Receipt.generateReceiptNumber()
 
 
-                await Email.sendsubscriptioninvoice(existingInfo.academy_email, `${existingInfo.academy_name} - Music Academy `, formatedAddress, receiptno, paymentdate, existingInfo.renewaldate, "Advance")
+                await Email.sendsubscriptioninvoice(existingInfo.academy_email, `${existingInfo.academy_name} - Music Academy `, formatedAddress, receiptno, paymentdate, existingInfo.renewaldate, "Advance", "3,280", "720", "4,000")
 
                 return res.status(200).json({ msg: "Payment Added" })
             }
@@ -351,6 +375,23 @@ const verifysubscriptionpayment = async (req, res) => {
             adminprofile.paymentstatus = "Paid"
             adminprofile.academy_access = "Accept"
 
+            // update password and username  
+
+            adminprofile.academy_password = generateRandomPassword()
+            adminprofile.academy_username = adminprofile.academy_name
+
+
+            // send credentials mail 
+            await SendingCredentials.sendautocred(adminprofile.academy_email, adminprofile.academy_username, adminprofile.academy_password)
+
+            const salt = await bcrypt.genSalt();
+            const hashedpwd = await bcrypt.hash(adminprofile.academy_password, salt);
+
+            adminprofile.academy_password = hashedpwd
+
+
+            adminprofile.academy_url = `http://localhost:3000/${adminprofile.academy_name}`
+
             if (adminprofile.renewaldate === "N/A") {
                 const currentDate = getTodayDate()
                 adminprofile.renewaldate = getOneYearLaterDate(currentDate)
@@ -371,7 +412,7 @@ const verifysubscriptionpayment = async (req, res) => {
 
             const paymentdate = getTodayDate()
 
-            await Email.sendsubscriptioninvoice(adminprofile.academy_email, `${adminprofile.academy_name} - Music Academy `, formatedAddress, receiptno, paymentdate, adminprofile.renewaldate, "Advance")
+            await Email.sendsubscriptioninvoice(adminprofile.academy_email, `${adminprofile.academy_name} - Music Academy `, formatedAddress, receiptno, paymentdate, adminprofile.renewaldate, "Advance", "3,280", "720", "4,000")
 
             await adminprofile.save()
 
@@ -511,33 +552,61 @@ const fetchfreelist = async (req, res) => {
     }
 }
 
-
-// start from here 
+// submit free trial request  
 
 const handlesubmitfreetrial = async (req, res) => {
 
     try {
 
-        const { academyid, role } = req.body
+        const { academyid, role, status } = req.body
 
         if (role === "Superadmin") {
 
             const existing = await Admin.findOne({ academy_id: academyid })
             if (existing) {
+
+                if (status === "Reject") {
+                    existing.academy_access = "Reject"
+                    return res.status(200).json({ msg: "Request Rejected . " })
+                }
+
                 existing.academy_access = "Accept"
                 const address = await Musicaddres.findOne({ _id: existing.academy_id })
                 const formatedAddress = formatAddress(address)
                 const receiptno = Receipt.generateReceiptNumber()
 
-                // send mail 
-                await Email.sendsubscriptioninvoice(existing.academy_email, `${existing.academy_name} - Music Academy `, formatedAddress, receiptno, "N/A", existing.renewaldate, "Free Trial")
+                // update password and username  
 
+                existing.academy_password = generateRandomPassword()
+                existing.academy_username = existing.academy_name
+
+
+                // send credentials mail 
+                await SendingCredentials.sendautocred(existing.academy_email, existing.academy_username, existing.academy_password)
+
+                const salt = await bcrypt.genSalt();
+                const hashedpwd = await bcrypt.hash(existing.academy_password, salt);
+
+                existing.academy_password = hashedpwd
+
+                const sevenDaysLater = getDateAfterDays(7);
+
+                existing.renewaldate = sevenDaysLater
+
+                existing.academy_url = `http://localhost:3000/${existing.academy_name}`
+
+                await existing.save()
+
+                // send invoice mail 
+                await Email.sendsubscriptioninvoice(existing.academy_email, `${existing.academy_name} - Music Academy `, formatedAddress, receiptno, "N/A", existing.renewaldate, "Free Trial", "0", "0", "0")
+
+                return res.status(200).json({ msg: "Request Accepted  . " })
             } else {
-
+                return res.status(404).json({ msg: "Academy Not Found " })
             }
 
         } else {
-
+            return res.status(401).json({ msg: "Unauthorized Access" })
         }
 
     } catch (error) {
@@ -557,5 +626,6 @@ module.exports = {
     handlemanualsubscriptionpayment,
     getinstallmentlist,
     freetrialrequest,
-    fetchfreelist
+    fetchfreelist,
+    handlesubmitfreetrial
 }; 
