@@ -11,7 +11,8 @@ const Receipt = require("./PaymentRequestC")
 const SubScriptionPayment = require("../models/SubscriptionPayment")
 const { socketIOSingleton } = require("../socket-factory")
 const SendingCredentials = require("../controllers/SendingCredentials")
-
+const { redis } = require("../RedisInitalitation")
+const subscriptionreminder = require("./SubscriptionReminder")
 
 function formatAddress(data) {
     return `${data.academy_address}, ${data.academy_city}, ${data.academy_state} - ${data.academy_pincode}`;
@@ -109,6 +110,13 @@ const academy_signup = async (req, res) => {
         });
 
         const user = await newUser.save();
+
+        // adding data to redis  
+
+        const hashkey = "subscriptions"
+
+        await subscriptionreminder.calculateSubscriptionReminder(user, hashkey)
+
         res.status(200).json(user);
 
     } catch (error) {
@@ -296,6 +304,12 @@ const handlemanualsubscriptionpayment = async (req, res) => {
 
                 await existingInfo.save()
 
+                // change details in redis 
+
+                const hkey = "subscriptions"
+
+                await subscriptionreminder.updateAcademyDetails(existingInfo.academy_id, existingInfo.renewaldate, hkey)
+
                 // send mail 
 
                 const address = await Musicaddres.findOne({ _id: adminid })
@@ -330,6 +344,13 @@ const handlemanualsubscriptionpayment = async (req, res) => {
                 existingInfo.renewaldate = nextpaymentdate
 
                 await existingInfo.save()
+
+
+                // change details in redis 
+
+                const hkey = "subscriptions"
+
+                await subscriptionreminder.updateAcademyDetails(existingInfo.academy_id, existingInfo.renewaldate, hkey)
 
                 // send mail 
 
@@ -415,6 +436,13 @@ const verifysubscriptionpayment = async (req, res) => {
             await Email.sendsubscriptioninvoice(adminprofile.academy_email, `${adminprofile.academy_name} - Music Academy `, formatedAddress, receiptno, paymentdate, adminprofile.renewaldate, "Advance", "3,280", "720", "4,000")
 
             await adminprofile.save()
+
+            // change details in redis 
+
+            const hkey = "subscriptions"
+
+            await subscriptionreminder.updateAcademyDetails(adminprofile.academy_id, adminprofile.renewaldate, hkey)
+
 
             // inserting payment order  
             const newentry = new SubScriptionPayment({
@@ -511,6 +539,15 @@ const freetrialrequest = async (req, res) => {
             existingInfo.renewaldate = sevenDaysLater
             socketIOSingleton.emit('newFreeTrialReq', existingInfo);
             await existingInfo.save()
+
+
+            // change details in redis 
+
+            const hkey = "subscriptions"
+
+            await subscriptionreminder.updateAcademyDetails(existingInfo.academy_id, existingInfo.renewaldate, hkey)
+
+
             return res.status(200).json({ msg: "Request Submitted . " })
 
         } else {
@@ -596,6 +633,14 @@ const handlesubmitfreetrial = async (req, res) => {
                 existing.academy_url = `http://localhost:3000/${existing.academy_name}`
 
                 await existing.save()
+
+
+                // change details in redis 
+
+                const hkey = "subscriptions"
+
+                await subscriptionreminder.updateAcademyDetails(existing.academy_id, existing.renewaldate, hkey)
+
 
                 // send invoice mail 
                 await Email.sendsubscriptioninvoice(existing.academy_email, `${existing.academy_name} - Music Academy `, formatedAddress, receiptno, "N/A", existing.renewaldate, "Free Trial", "0", "0", "0")

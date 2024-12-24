@@ -15,7 +15,7 @@ export default function Hero() {
             Streamline operations, enhance student experiences, and orchestrate
             success with MusicVista.
           </p>
-          <Grid container justifyContent="center" alignItems="center">
+          <Grid container justifyContent="center" alignItems="center" gap={2}>
             <Grid item xs={12} md={5}>
               <Button
                 size="large"

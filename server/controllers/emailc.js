@@ -698,6 +698,143 @@ const sendsubscriptioninvoice = async (
   }
 }
 
+
+const renewalreminderemail = async (
+  academyname, duedate, amount, email
+) => {
+  const pass = process.env.APP_PWD;
+  const user = process.env.MAIL;
+
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: `${user}`,
+      pass: `${pass}`,
+    },
+  });
+
+  const mailOptions = {
+    from: user,
+    to: email,
+    subject: `🎵 Don't Miss a Beat! Your Music Vista Subscription is Due `,
+    html: ` 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subscription Reminder - Music Vista</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        .email-container {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+        }
+        .email-header {
+            text-align: center;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #ddd;
+        }
+        .email-header h1 {
+            color: #3f72af;
+        }
+        .email-body {
+            padding: 20px 0;
+        }
+        .features-list {
+            margin: 20px 0;
+            padding-left: 20px;
+        }
+        .features-list li {
+            margin: 5px 0;
+            font-size: 16px;
+        }
+        .payment-details {
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .payment-link {
+            color: #3f72af;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .footer {
+            font-size: 14px;
+            text-align: center;
+            color: #888;
+            padding-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="email-container">
+        <div class="email-header">
+            <h1>🎶 Reminder: Your Music Vista Subscription Renewal 🎶</h1>
+        </div>
+        <div class="email-body">
+            <p>Dear <strong>${academyname} - Music Academy </strong>,</p>
+            <p>We hope you're making the most of your <strong>Music Vista</strong> experience! Our platform is designed to bring harmony to your music academy, and we’re excited to continue being a part of your musical journey. 🎵</p>
+            
+            <p>This is a friendly reminder that your subscription is coming up for renewal soon. To keep the music flowing, please make sure your payment is completed by <strong>${duedate}</strong>.</p>
+
+            <h3>What’s waiting for you with Music Vista?</h3>
+            <ul class="features-list">
+                <li><strong>🎹 Student Hub</strong>: Your one-stop space for all class updates, schedules, and more!</li>
+                <li><strong>💸 Pay Wise</strong>: Simplified payment management for smooth transactions.</li>
+                <li><strong>🎶 Class Flow</strong>: Effortless class tracking and management, so you never miss a beat.</li>
+                <li><strong>🌐 Website Pilot</strong>: Showcase your academy’s brand online with a professional website.</li>
+                <li><strong>📈 Attendance Ease</strong>: Track student attendance in a snap!</li>
+                <li><strong>🔧 White Labeling</strong>: Fully customize the platform to reflect your academy’s unique identity.</li>
+            </ul>
+
+            <div class="payment-details">
+                <p><strong>Amount Due:</strong> ${amount}</p>
+                <p><strong>Due Date:</strong> ${duedate}</p>
+                <p>Ready to renew? Click the link below to complete your payment and keep the rhythm going:</p>
+                <p><a href="http://localhost:3000/business#pricing" class="payment-link">🔗 Complete Your Payment</a></p>
+            </div>
+
+            <p>If you have any questions or need assistance, our support team is just a click away. Reach out to us at <a href="mailto:sales@softcodingsolutions.com">sales@softcodingsolutions.com</a>.</p>
+
+            <p>Thank you for choosing <strong>Music Vista</strong>. We’re excited to help you compose a future full of melody, growth, and success!</p>
+        </div>
+
+        <div class="footer">
+            <p>🎶 Keep creating, keep learning, and keep playing! 🎶</p>
+            <p>&copy; 2024 Music Vista | All Rights Reserved</p>
+            <p><a href="http://localhost:3000/business">Visit our website</a></p>
+        </div>
+    </div>
+
+</body>
+</html>
+
+    `
+  }
+
+  try {
+    let info = await transporter.sendMail(mailOptions);
+    return info;
+  } catch (error) {
+    console.error("Error sending email:", error);
+    throw error;
+  }
+
+}
+
 module.exports = {
   sendMail,
   sendpaymentmail,
@@ -708,5 +845,6 @@ module.exports = {
   sendAcademyMail,
   retriveacademygooglecred,
   onboardingmail,
-  sendsubscriptioninvoice
+  sendsubscriptioninvoice,
+  renewalreminderemail
 };

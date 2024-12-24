@@ -4,6 +4,11 @@ const cors = require("cors");
 const dotenv = require("dotenv");
 const http = require('http');
 const { socketIOFactory } = require("./socket-factory.js")
+const { redis } = require("./RedisInitalitation.js")
+
+// for cron job  
+
+require("./controllers/SubscriptionReminder.js")
 
 dotenv.config();
 const port = process.env.PORT || 5000;
@@ -36,6 +41,9 @@ const server = http.createServer(app);
     }
 })();
 
+// Connect to Redis
+redis.on("connect", () => console.log("Redis connected"));
+redis.on("error", (err) => console.error("Redis connection error:", err));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

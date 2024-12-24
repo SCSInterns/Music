@@ -88,15 +88,6 @@ export default function Header() {
         >
           Book Demo
         </a>
-        <Button
-          variant="contained"
-          sx={{
-            backgroundColor: "#0d1b2a",
-            ":hover": { backgroundColor: "#ffff", color: "#0d1b2a" },
-          }}
-        >
-          <a href="/admin/login">Log in</a>
-        </Button>
       </nav>
 
       {/* Hamburger Menu (Visible only on Small Screens) */}
