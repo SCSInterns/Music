@@ -1,0 +1,114 @@
+import React, { useState } from "react";
+import { Search } from "lucide-react";
+import { Tabs, Tab, Box, Button, Input } from "@mui/material";
+import * as CityIcons from "../UiElements/CityIcons";
+import Hero from "../../../static/Images/Hero.png";
+
+const cities = [
+  { name: "Mumbai", icon: <CityIcons.MumbaiIcon /> },
+  { name: "Delhi", icon: <CityIcons.DelhiIcon /> },
+  { name: "Bengaluru", icon: <CityIcons.BengaluruIcon /> },
+  { name: "Hyderabad", icon: <CityIcons.HyderabadIcon /> },
+  { name: "Ahmedabad", icon: <CityIcons.AhmedabadIcon /> },
+  { name: "Chennai", icon: <CityIcons.ChennaiIcon /> },
+  { name: "Kolkata", icon: <CityIcons.KolkataIcon /> },
+  { name: "Pune", icon: <CityIcons.PuneIcon /> },
+];
+
+export default function CitySelector() {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [value, setValue] = useState(0); // For Tabs
+
+  const handleSearchByPincode = () => {
+    // Handle pincode search logic here
+    console.log(`Searching for pincode: ${searchQuery}`);
+  };
+
+  return (
+    <section
+      className="relative overflow-hidden bg-gradient-to-b from-primary/5 to-background py-20 bg-gray-50"
+      style={{ fontFamily: "roboto-slab" }}
+    >
+      <div className="container relative z-10 flex justify-center flex-col md:ml-10">
+        {/* Hero Section */}
+        <div className="flex justify-between items-center space-x-8 md:ml-20">
+          {/* Left Side: Content */}
+          <div className="flex-1 text-center md:text-center">
+            <h2 className="mb-4 text-4xl font-bold tracking-tight lg:text-5xl">
+              Find Your Academy Nearby
+            </h2>
+            <p className="text-lg text-muted-foreground">
+              Discover top-rated academies in your city. Enter your location or
+              choose from popular cities below.
+            </p>
+          </div>
+
+          {/* Right Side: Image */}
+          <div className="hidden sm:block">
+            <img src={Hero} alt="Hero Image" className="w-80 h-auto" />
+          </div>
+        </div>
+
+        {/* Tabs for Cities */}
+        <Tabs
+          value={value}
+          onChange={(event, newValue) => setValue(newValue)}
+          centered
+        >
+          <Tab
+            label="Popular Cities"
+            sx={{
+              color: "red",
+              borderColor: "red",
+            }}
+          />
+          <Tab
+            label="Find By Pincode"
+            sx={{
+              color: "red",
+              borderColor: "red",
+            }}
+          />
+        </Tabs>
+
+        {/* City Grid */}
+        {value === 0 && (
+          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-4 mt-10 max-h-[400px] overflow-y-auto p-2 space-x-2 lg:ml-20 w-full">
+            {cities.map((city) => (
+              <button
+                key={city.name}
+                onClick={() => console.log(`Selected city: ${city.name}`)}
+                className="flex flex-col items-center p-4 border rounded hover:bg-primary/5 hover:shadow-lg hover:scale-105 transition-all duration-300 ease-in-out"
+              >
+                {city.icon}
+                <span className="text-sm font-medium mt-3">{city.name}</span>
+              </button>
+            ))}
+          </div>
+        )}
+
+        {/* Pincode Search Box */}
+        {value === 1 && (
+          <div className="mt-10 flex flex-row items-center justify-center space-x-14 md:ml-20">
+            <Input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Enter 6-digit Pincode"
+              inputProps={{ maxLength: 6 }}
+              className="mb-4 w-96 border p-2 rounded-md"
+            />
+            <Button
+              variant="contained"
+              onClick={handleSearchByPincode}
+              disabled={searchQuery.length !== 6}
+              sx={{ height: "50px", marginBottom: "10px" }}
+            >
+              <Search />
+            </Button>
+          </div>
+        )}
+      </div>
+    </section>
+  );
+}

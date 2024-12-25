@@ -47,7 +47,7 @@ const adminschema = new Schema({
     academy_gstno:
     {
         type: String,
-        required: true
+        default: "N/A"
     }
 
 });

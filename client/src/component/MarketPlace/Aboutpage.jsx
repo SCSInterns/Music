@@ -1,19 +1,17 @@
 import React from "react";
 import Header from "./Subcomponents/Header";
-import Hero from "./Subcomponents/Hero";
 import Banners from "./Subcomponents/Banners";
 
-function Home() {
+function Aboutpage() {
   return (
     <>
       <Header />
 
-      <div className="">
-        <Hero />
+      <div>
         <Banners />
       </div>
     </>
   );
 }
 
-export default Home;
+export default Aboutpage;

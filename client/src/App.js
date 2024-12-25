@@ -38,7 +38,8 @@ import GalleryPage from './component/User/Gallery';
 import LandingPage from './component/Business Website/LandingPage';
 import NewSuperAdminDashboard from './component/SuperAdmin/NewSuperAdminDashboard'
 import AcademySubscriptionPayment from './component/Academy/AcademySubscriptionPayment';
-import MarketplaceHome from './component/MarketPlace/Home'
+import MarketplaceHome from './component/MarketPlace/Landingpage'
+import Aboutpage from './component/MarketPlace/Aboutpage';
 
 
 function App() {
@@ -108,6 +109,7 @@ function App() {
           {/* Marketplace */}
 
           <Route path="/" element={<MarketplaceHome />} />
+          <Route path="/About" element={<Aboutpage />} />
 
         </Routes>
       </Router>
