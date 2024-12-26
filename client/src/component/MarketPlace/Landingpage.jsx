@@ -4,6 +4,8 @@ import Hero from "./Subcomponents/Hero";
 import Cards from "./Subcomponents/Cards";
 import Location from "./Subcomponents/Location";
 import Works from "./Subcomponents/Works";
+import FeaturesSection from "./Subcomponents/Fetures";
+import Footer from "./Subcomponents/Footer";
 
 function Home() {
   return (
@@ -25,6 +27,14 @@ function Home() {
 
           <section id="works">
             <Works />
+          </section>
+
+          <section id="features">
+            <FeaturesSection />
+          </section>
+
+          <section id="footer">
+            <Footer />
           </section>
         </div>
       </main>

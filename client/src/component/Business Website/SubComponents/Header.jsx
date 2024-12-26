@@ -77,6 +77,12 @@ export default function Header() {
           Pricing
         </a>
         <a
+          href="/"
+          className="text-sm font-medium hover:text-primary transition-colors"
+        >
+          MarketPlace
+        </a>
+        <a
           href="#about"
           className="text-sm font-medium hover:text-primary transition-colors"
         >

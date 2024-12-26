@@ -23,6 +23,7 @@ export default function Header() {
         { text: "Academy", href: "#academylist" },
         { text: "Pricing", href: "#pricing" },
         { text: "About Us", href: "/About" },
+        { text: "Features", href: "#fetures" },
         { text: "Register Your Academy", href: "/business" },
       ].map((item) => (
         <ListItem button key={item.text} component="a" href={item.href}>
@@ -61,6 +62,12 @@ export default function Header() {
           className="text-sm font-medium hover:text-primary transition-colors"
         >
           About Us
+        </a>
+        <a
+          href="#features"
+          className="text-sm font-medium hover:text-primary transition-colors"
+        >
+          Features
         </a>
         <a
           href="/Business"

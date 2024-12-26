@@ -4,6 +4,7 @@ const user = require("../controllers/Usercontroller")
 const authenticate = require('../controllers/Authenticate')
 const Form = require("../controllers/Formcontroller")
 const ManualPayment = require("../controllers/HandleManualPayment")
+const PincodeFinderC = require("../controllers/PincodeFinderC")
 
 router.post('/getlogo', user.fetchlogo)
 router.post('/savesociallink', authenticate.authenticatetoken, user.setsociallinks)
@@ -20,6 +21,7 @@ router.post('/getstats', user.getstats)
 router.post('/getbanner', user.getbanner)
 router.post('/getqr', Form.fetchqr)
 router.post('/getpaymentstatsforusers', authenticate.authenticatetoken, ManualPayment.fetchpaymentsats)
-
+router.post("/getnearacademy", PincodeFinderC.PincodeFinderC)
+router.post('/getacademybycity', PincodeFinderC.CityFinderC)
 
 module.exports = router;

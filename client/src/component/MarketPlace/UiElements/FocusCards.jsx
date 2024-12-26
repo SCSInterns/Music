@@ -28,13 +28,15 @@ export const Card = React.memo(({ card, index, hovered, setHovered }) => (
           hovered === index ? "opacity-100" : "opacity-0"
         )}
       >
-        <div className="text-xl md:text-2xl font-medium bg-clip-text text-transparent bg-gradient-to-b from-neutral-50 to-neutral-200">
-          {card.title}
-        </div>
+        <div className="space-x-5">
+          <div className="text-xl md:text-2xl font-medium bg-clip-text text-transparent bg-gradient-to-b from-neutral-50 to-neutral-200">
+            {card.title}
+          </div>
 
-        <span className="mt-2 text-l md:text-xl font-small block bg-clip-text text-transparent bg-gradient-to-b from-neutral-50 to-neutral-200">
-          {card.location}
-        </span>
+          <div className="mt-2 text-l md:text-xl font-small block bg-clip-text text-transparent bg-gradient-to-b from-neutral-50 to-neutral-200 float-right right-0">
+            {card.location}
+          </div>
+        </div>
       </div>
     </div>
   </>
