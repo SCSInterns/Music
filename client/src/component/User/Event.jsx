@@ -11,7 +11,7 @@ function Event() {
   const navigate = useNavigate();
 
   const handleEvents = async () => {
-    const url = "http://localhost:5000/api/auth/getevents";
+    const url = "https://music-academy-e32v.onrender.com/api/auth/getevents";
 
     const response = await fetch(url, {
       method: "POST",

@@ -23,7 +23,7 @@ export default function Footer() {
   }
 
   const getlogo = async () => {
-    const url = "http://localhost:5000/api/auth/getlogo";
+    const url = "https://music-academy-e32v.onrender.com/api/auth/getlogo";
 
     const response = await fetch(url, {
       method: "POST",
@@ -42,7 +42,8 @@ export default function Footer() {
   };
 
   const getacademydetails = async () => {
-    const url = "http://localhost:5000/api/auth/getacademydetails";
+    const url =
+      "https://music-academy-e32v.onrender.com/api/auth/getacademydetails";
 
     const response = await fetch(url, {
       method: "POST",
@@ -62,7 +63,8 @@ export default function Footer() {
   };
 
   const getsociallinks = async () => {
-    const url = "http://localhost:5000/api/auth/getsociallinks";
+    const url =
+      "https://music-academy-e32v.onrender.com/api/auth/getsociallinks";
 
     const response = await fetch(url, {
       method: "POST",

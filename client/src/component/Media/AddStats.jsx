@@ -45,7 +45,7 @@ function AddStats() {
       Years_of_Operation: stats.exp,
     };
 
-    const url = "http://localhost:5000/api/auth/addstats";
+    const url = "https://music-academy-e32v.onrender.com/api/auth/addstats";
     const token = Token();
     try {
       const response = await fetch(url, {

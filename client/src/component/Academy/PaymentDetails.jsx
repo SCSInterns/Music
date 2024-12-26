@@ -16,7 +16,8 @@ function PaymentDetails({ data }) {
   const [installmentdata, setInstallmentData] = useState([]);
 
   const getdata = async (studentid, username) => {
-    const url = "http://localhost:5000/api/auth/getinfoinstallment";
+    const url =
+      "https://music-academy-e32v.onrender.com/api/auth/getinfoinstallment";
     const token = Token();
     const response = await fetch(url, {
       method: "POST",

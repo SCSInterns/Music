@@ -14,7 +14,7 @@ const Razorpay = () => {
   const role = sessionStorage.getItem("role");
 
   const sendOtp = async () => {
-    const url = "http://localhost:5000/api/auth/send-otp";
+    const url = "https://music-academy-e32v.onrender.com/api/auth/send-otp";
     const response = await fetch(url, {
       method: "POST",
       headers: {
@@ -33,7 +33,7 @@ const Razorpay = () => {
   };
 
   const verifyOtp = async () => {
-    const url = "http://localhost:5000/api/auth/verify-otp";
+    const url = "https://music-academy-e32v.onrender.com/api/auth/verify-otp";
     const response = await fetch(url, {
       method: "POST",
       headers: {
@@ -52,7 +52,8 @@ const Razorpay = () => {
   };
 
   const handleSubmit = async () => {
-    const url = "http://localhost:5000/api/auth/addrazorpaycreds";
+    const url =
+      "https://music-academy-e32v.onrender.com/api/auth/addrazorpaycreds";
     const response = await fetch(url, {
       method: "POST",
       headers: {

@@ -14,7 +14,8 @@ function AttendanceManagement({ data }) {
 
   const fetchBatchDetails = async (studentId) => {
     try {
-      const url = "http://localhost:5000/api/auth/getbatchdetail";
+      const url =
+        "https://music-academy-e32v.onrender.com/api/auth/getbatchdetail";
       const response = await fetch(url, {
         method: "POST",
         headers: {
@@ -44,7 +45,7 @@ function AttendanceManagement({ data }) {
 
   const generateQR = async (studentId, batchId) => {
     try {
-      const url = "http://localhost:5000/api/auth/generateqr";
+      const url = "https://music-academy-e32v.onrender.com/api/auth/generateqr";
       const response = await fetch(url, {
         method: "POST",
         headers: {
@@ -76,7 +77,7 @@ function AttendanceManagement({ data }) {
   const fetchOrGenerateQR = async (studentId) => {
     setIsLoading(true);
     try {
-      const url = "http://localhost:5000/api/auth/fetchqr";
+      const url = "https://music-academy-e32v.onrender.com/api/auth/fetchqr";
       const response = await fetch(url, {
         method: "POST",
         headers: {

@@ -19,7 +19,7 @@ function Home() {
   const [verified, setverified] = useState(false);
 
   const verifiedurl = async () => {
-    const url = `http://localhost:5000/api/auth/checkurl`;
+    const url = `https://music-academy-e32v.onrender.com/api/auth/checkurl`;
     const newurl = `http://localhost:3000/${academyname}`;
     const response = await fetch(url, {
       method: "POST",

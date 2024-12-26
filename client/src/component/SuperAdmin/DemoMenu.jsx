@@ -15,7 +15,8 @@ const TopNavbar = () => {
 
   const getData = async () => {
     try {
-      const url = "http://localhost:5000/api/superadmin/getdemodata";
+      const url =
+        "https://music-academy-e32v.onrender.com/api/superadmin/getdemodata";
       const response = await fetch(url, {
         method: "POST",
         headers: {
@@ -41,7 +42,7 @@ const TopNavbar = () => {
   }, []);
 
   useEffect(() => {
-    socket.current = io("http://localhost:5000");
+    socket.current = io("https://music-academy-e32v.onrender.com/");
     socket.current.on("newDemoInquiry", (newEntry) => {
       setInquiryData((prevEntries) => [newEntry, ...prevEntries]);
     });

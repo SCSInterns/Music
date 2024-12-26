@@ -15,7 +15,8 @@ function Instrument() {
   useEffect(() => {
     const fetchInstruments = async () => {
       try {
-        const url = "http://localhost:5000/api/auth/getinstrument";
+        const url =
+          "https://music-academy-e32v.onrender.com/api/auth/getinstrument";
 
         const response = await fetch(url, {
           method: "POST",

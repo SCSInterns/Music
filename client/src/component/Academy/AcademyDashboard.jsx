@@ -88,7 +88,7 @@ function AcademyDashboard() {
     console.log("hhheelllloooo");
   };
   useEffect(() => {
-    socket.current = io("http://localhost:5000");
+    socket.current = io("https://music-academy-e32v.onrender.com/");
     startSocket();
 
     return () => {
@@ -98,7 +98,7 @@ function AcademyDashboard() {
   }, []);
 
   const verifyurl = async () => {
-    const url = `http://localhost:5000/api/auth/verifyurl`;
+    const url = `https://music-academy-e32v.onrender.com/api/auth/verifyurl`;
     const token = Token();
     const response = await fetch(url, {
       method: "POST",
@@ -319,7 +319,7 @@ function AcademyDashboard() {
     setwebcontentmenu(false);
     setattendance(false);
     setattendancestyle(false);
-    let url = "http://localhost:5000/api/auth/getdata";
+    let url = "https://music-academy-e32v.onrender.com/api/auth/getdata";
     const token = Token();
     const response = await fetch(url, {
       method: "POST",
@@ -353,7 +353,8 @@ function AcademyDashboard() {
   console.log(appdata);
 
   const handlePastApplication = async () => {
-    let url = "http://localhost:5000/api/auth/getrejectedapplicant";
+    let url =
+      "https://music-academy-e32v.onrender.com/api/auth/getrejectedapplicant";
     const token = Token();
     const response = await fetch(url, {
       method: "POST",
@@ -410,7 +411,8 @@ function AcademyDashboard() {
     setattendancestyle(false);
     setbatchmenu(false);
     const todaydate = getCurrentDate();
-    const url = "http://localhost:5000/api/auth/getpaymnetdue";
+    const url =
+      "https://music-academy-e32v.onrender.com/api/auth/getpaymnetdue";
     const token = Token();
     const response = await fetch(url, {
       method: "POST",
@@ -447,7 +449,7 @@ function AcademyDashboard() {
       return acc;
     }, {});
 
-    let url = `http://localhost:5000/api/auth/academyregform`;
+    let url = `https://music-academy-e32v.onrender.com/api/auth/academyregform`;
     const token = Token();
     const response = await fetch(url, {
       method: "POST",

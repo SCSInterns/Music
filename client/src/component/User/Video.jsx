@@ -24,7 +24,7 @@ function Video() {
   }, [data]);
 
   const getvideolink = async () => {
-    const url = "http://localhost:5000/api/auth/getvideos";
+    const url = "https://music-academy-e32v.onrender.com/api/auth/getvideos";
 
     try {
       const response = await fetch(url, {

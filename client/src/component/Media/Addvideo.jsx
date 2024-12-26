@@ -35,7 +35,7 @@ export default function Addvideo() {
   const handlesubmit = async () => {
     setloading(true);
     // https://youtu.be/khUaF36F_SY
-    const url = "http://localhost:5000/api/auth/uploadvideo";
+    const url = "https://music-academy-e32v.onrender.com/api/auth/uploadvideo";
     const token = Token();
     const response = await fetch(url, {
       method: "POST",

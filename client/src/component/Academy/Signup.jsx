@@ -26,7 +26,7 @@ function Signup() {
   };
 
   const setacademyname = async () => {
-    const url = `http://localhost:5000/api/auth/preview/${id}`;
+    const url = `https://music-academy-e32v.onrender.com/api/auth/preview/${id}`;
 
     const response = await fetch(url, {
       method: "GET",
@@ -57,7 +57,7 @@ function Signup() {
       if (!otpSent) {
         // Send OTP to the provided email
         const response = await fetch(
-          "http://localhost:5000/api/auth/send-otp",
+          "https://music-academy-e32v.onrender.com/api/auth/send-otp",
           {
             method: "POST",
             headers: {
@@ -80,7 +80,7 @@ function Signup() {
       } else if (!otpVerified) {
         // Verify OTP
         const response = await fetch(
-          "http://localhost:5000/api/auth/verify-otp",
+          "https://music-academy-e32v.onrender.com/api/auth/verify-otp",
           {
             method: "POST",
             headers: {
@@ -100,7 +100,7 @@ function Signup() {
 
           // Complete signup
           const signupResponse = await fetch(
-            "http://localhost:5000/api/auth/academysignup",
+            "https://music-academy-e32v.onrender.com/api/auth/academysignup",
             {
               method: "POST",
               headers: {

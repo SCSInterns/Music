@@ -46,7 +46,8 @@ const MultipleImageUpload = () => {
     });
 
     try {
-      const url = "http://localhost:5000/api/auth/uploadgalleryphotos";
+      const url =
+        "https://music-academy-e32v.onrender.com/api/auth/uploadgalleryphotos";
       const response = await fetch(url, {
         method: "POST",
         body: formData,
@@ -78,7 +79,8 @@ const MultipleImageUpload = () => {
   };
 
   const handleadditiontodb = async (imageurl) => {
-    const url = "http://localhost:5000/api/auth/uploadgallerytodb";
+    const url =
+      "https://music-academy-e32v.onrender.com/api/auth/uploadgallerytodb";
     const token = Token();
     const response = await fetch(url, {
       method: "PUT",

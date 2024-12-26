@@ -42,7 +42,8 @@ const Banners = () => {
     });
 
     try {
-      const url = "http://localhost:5000/api/auth/uploadbannerphotos";
+      const url =
+        "https://music-academy-e32v.onrender.com/api/auth/uploadbannerphotos";
       const response = await fetch(url, {
         method: "POST",
         body: formData,
@@ -65,7 +66,7 @@ const Banners = () => {
   };
 
   const handleadditiontodb = async (imageurl) => {
-    const url = "http://localhost:5000/api/auth/addbanner";
+    const url = "https://music-academy-e32v.onrender.com/api/auth/addbanner";
     const token = Token();
     const response = await fetch(url, {
       method: "PUT",

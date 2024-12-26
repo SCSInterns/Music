@@ -55,7 +55,8 @@ function ParticularBatches() {
 
   const handlebatches = async () => {
     const token = Token();
-    const url = "http://localhost:5000/api/auth/getbatchesdetails";
+    const url =
+      "https://music-academy-e32v.onrender.com/api/auth/getbatchesdetails";
 
     const response = await fetch(url, {
       method: "POST",
@@ -95,7 +96,8 @@ function ParticularBatches() {
   const handleSaveChanges = async () => {
     handleSubmitDays();
 
-    const url = "http://localhost:5000/api/auth/updatebatchdetails";
+    const url =
+      "https://music-academy-e32v.onrender.com/api/auth/updatebatchdetails";
     const token = Token();
     const response = await fetch(url, {
       method: "PUT",

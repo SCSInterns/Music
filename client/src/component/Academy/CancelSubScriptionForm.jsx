@@ -50,7 +50,7 @@ export default function CancelSubscriptionForm({ open, handleClose }) {
       return;
     }
 
-    const url = "http://localhost:5000/api/auth/send-otp";
+    const url = "https://music-academy-e32v.onrender.com/api/auth/send-otp";
     const response = await fetch(url, {
       method: "POST",
       headers: {
@@ -71,7 +71,7 @@ export default function CancelSubscriptionForm({ open, handleClose }) {
   };
 
   const handleVerifyOtp = async () => {
-    const url = "http://localhost:5000/api/auth/verify-otp";
+    const url = "https://music-academy-e32v.onrender.com/api/auth/verify-otp";
     const response = await fetch(url, {
       method: "POST",
       headers: {
@@ -110,7 +110,7 @@ export default function CancelSubscriptionForm({ open, handleClose }) {
       return;
     }
 
-    const url = `http://localhost:5000/api/auth/cancelsubscription`;
+    const url = `https://music-academy-e32v.onrender.com/api/auth/cancelsubscription`;
 
     const response = await fetch(url, {
       method: "POST",

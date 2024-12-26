@@ -67,7 +67,8 @@ export default function QRPaymentPage({ data }) {
       return;
     }
 
-    const url = "http://localhost:5000/api/auth/submitmanualpayment";
+    const url =
+      "https://music-academy-e32v.onrender.com/api/auth/submitmanualpayment";
     const token = Token();
     const response = await fetch(url, {
       method: "POST",
@@ -90,7 +91,7 @@ export default function QRPaymentPage({ data }) {
   };
 
   const fetchQR = async () => {
-    const url = "http://localhost:5000/api/auth/getqr";
+    const url = "https://music-academy-e32v.onrender.com/api/auth/getqr";
 
     try {
       const token = Token();

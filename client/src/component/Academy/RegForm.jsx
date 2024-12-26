@@ -72,7 +72,7 @@ function Signup() {
     }));
   };
 
-  const url = "http://localhost:5000/api/auth/academyreg";
+  const url = "https://music-academy-e32v.onrender.com/api/auth/academyreg";
 
   const handlesubmit = async (e) => {
     e.preventDefault();

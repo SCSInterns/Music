@@ -63,7 +63,8 @@ export default function ScheduleDemo() {
     event.preventDefault();
     if (validateForm()) {
       console.log(formValues);
-      const url = "http://localhost:5000/api/superadmin/savedemoinquiry";
+      const url =
+        "https://music-academy-e32v.onrender.com/api/superadmin/savedemoinquiry";
 
       const response = await fetch(url, {
         method: "POST",

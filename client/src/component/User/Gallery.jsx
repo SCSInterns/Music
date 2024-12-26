@@ -11,7 +11,8 @@ const GalleryPage = () => {
   useEffect(() => {
     const fetchPhotos = async () => {
       try {
-        const url = "http://localhost:5000/api/auth/getimages";
+        const url =
+          "https://music-academy-e32v.onrender.com/api/auth/getimages";
         const response = await fetch(url, {
           method: "POST",
           headers: {

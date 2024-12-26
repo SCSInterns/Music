@@ -25,7 +25,7 @@ const StatusFormModal = ({ open, onClose, studentData, onstatusChange }) => {
     onClose();
   };
   const handleSubmit = async (status, id) => {
-    const url = `http://localhost:5000/api/superadmin/handledemostatus`;
+    const url = `https://music-academy-e32v.onrender.com/api/superadmin/handledemostatus`;
     const token = Token();
     const response = await fetch(url, {
       method: "POST",

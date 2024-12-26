@@ -55,7 +55,8 @@ function Events() {
     const formData = new FormData();
     formData.append("picture", selectedImage);
 
-    const url = "http://localhost:5000/api/auth/uploadeventimage";
+    const url =
+      "https://music-academy-e32v.onrender.com/api/auth/uploadeventimage";
 
     try {
       const response = await fetch(url, {
@@ -79,7 +80,7 @@ function Events() {
   };
 
   const handlefinalsubmit = async () => {
-    const url = "http://localhost:5000/api/auth/uploadevents";
+    const url = "https://music-academy-e32v.onrender.com/api/auth/uploadevents";
 
     const token = Token();
 

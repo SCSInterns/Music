@@ -39,7 +39,7 @@ function Timetable() {
   const [data, setdata] = useState([]);
 
   const getLogo = async () => {
-    const url = "http://localhost:5000/api/auth/getlogo";
+    const url = "https://music-academy-e32v.onrender.com/api/auth/getlogo";
 
     const response = await fetch(url, {
       method: "POST",
@@ -65,7 +65,8 @@ function Timetable() {
 
   const handleapplicants = async (id) => {
     const token = Token();
-    const url = "http://localhost:5000/api/auth/getapplicantslist";
+    const url =
+      "https://music-academy-e32v.onrender.com/api/auth/getapplicantslist";
 
     const response = await fetch(url, {
       method: "POST",
@@ -94,7 +95,8 @@ function Timetable() {
 
   const handlebatches = async () => {
     const token = Token();
-    const url = "http://localhost:5000/api/auth/getbatchesdetails";
+    const url =
+      "https://music-academy-e32v.onrender.com/api/auth/getbatchesdetails";
 
     const response = await fetch(url, {
       method: "POST",

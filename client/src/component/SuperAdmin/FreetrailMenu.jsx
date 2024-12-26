@@ -14,7 +14,8 @@ const TopNavbar = () => {
   const [data, setdata] = useState([]);
 
   const fetchfreelist = async () => {
-    const url = "http://localhost:5000/api/auth/fetchfreelist";
+    const url =
+      "https://music-academy-e32v.onrender.com/api/auth/fetchfreelist";
     const response = await fetch(url, {
       method: "POST",
       headers: {
@@ -44,7 +45,7 @@ const TopNavbar = () => {
   };
 
   useEffect(() => {
-    socket.current = io("http://localhost:5000");
+    socket.current = io("https://music-academy-e32v.onrender.com/");
     socket.current.on("newFreeTrialReq", (newEntry) => {
       setdata((prevEntries) => [newEntry, ...prevEntries]);
     });

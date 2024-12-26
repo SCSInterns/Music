@@ -54,7 +54,7 @@ const Sidebar = () => {
 
   const handleApplicants = async () => {
     settoggleapplicants(true);
-    let url = "http://localhost:5000/api/auth/getdata";
+    let url = "https://music-academy-e32v.onrender.com/api/auth/getdata";
     const response = await fetch(url, {
       method: "POST",
       headers: {
@@ -91,7 +91,8 @@ const Sidebar = () => {
 
   const handleFees = async () => {
     const todaydate = getCurrentDate();
-    const url = "http://localhost:5000/api/auth/getpaymnetdue";
+    const url =
+      "https://music-academy-e32v.onrender.com/api/auth/getpaymnetdue";
     const token = Token();
     const response = await fetch(url, {
       method: "POST",
@@ -126,7 +127,7 @@ const Sidebar = () => {
     });
   };
   useEffect(() => {
-    socket.current = io("http://localhost:5000");
+    socket.current = io("https://music-academy-e32v.onrender.com/");
     startSocket();
     return () => {
       socket.current.off("newData");
@@ -150,7 +151,7 @@ const Sidebar = () => {
   const [info, setinfo] = useState([]);
 
   const fetchlist = async (academyname, adminid) => {
-    const url = `http://localhost:5000/api/auth/getsubspaymentlist`;
+    const url = `https://music-academy-e32v.onrender.com/api/auth/getsubspaymentlist`;
 
     let token = Token();
     try {

@@ -38,7 +38,8 @@ function Instrument() {
     const formData = new FormData();
     formData.append("picture", selectedImage);
 
-    const url = "http://localhost:5000/api/auth/uploadintrumentimage";
+    const url =
+      "https://music-academy-e32v.onrender.com/api/auth/uploadintrumentimage";
 
     try {
       const response = await fetch(url, {
@@ -62,7 +63,8 @@ function Instrument() {
   };
 
   const handlefinalsubmit = async () => {
-    const url = "http://localhost:5000/api/auth/uploadinstrument";
+    const url =
+      "https://music-academy-e32v.onrender.com/api/auth/uploadinstrument";
 
     const token = Token();
 

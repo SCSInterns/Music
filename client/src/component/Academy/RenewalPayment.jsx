@@ -46,7 +46,8 @@ export default function PricingDetails({ id, admin }) {
   }, [admin.renewaldate]);
 
   const generateOrder = async () => {
-    const url = "http://localhost:5000/api/auth/handlesubscriptionpayment";
+    const url =
+      "https://music-academy-e32v.onrender.com/api/auth/handlesubscriptionpayment";
     setLoading(true);
 
     const response = await fetch(url, {
@@ -91,7 +92,8 @@ export default function PricingDetails({ id, admin }) {
           adminId: id,
         };
 
-        const url = "http://localhost:5000/api/auth/verifysubscriptionpayment";
+        const url =
+          "https://music-academy-e32v.onrender.com/api/auth/verifysubscriptionpayment";
         setLoading(true);
         const responsepayment = await fetch(url, {
           method: "POST",
@@ -142,7 +144,8 @@ export default function PricingDetails({ id, admin }) {
       }, 500);
 
       if (!response.razorpay_payment_id || !response.razorpay_signature) {
-        const url = "http://localhost:5000/api/auth/failedsubscriptionpayment";
+        const url =
+          "https://music-academy-e32v.onrender.com/api/auth/failedsubscriptionpayment";
         const response = await fetch(url, {
           method: "POST",
           headers: {

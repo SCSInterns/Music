@@ -99,7 +99,7 @@ function AcademyRegistration({ academyName, Role }) {
     if (academy) {
       academyname = academy;
     }
-    let url = "http://localhost:5000/api/auth/getform";
+    let url = "https://music-academy-e32v.onrender.com/api/auth/getform";
 
     try {
       const response = await fetch(url, {
@@ -179,7 +179,7 @@ function AcademyRegistration({ academyName, Role }) {
       return;
     }
 
-    let url = `http://localhost:5000/api/auth/savedata`;
+    let url = `https://music-academy-e32v.onrender.com/api/auth/savedata`;
 
     console.log(academyname, role);
     const response = await fetch(url, {
