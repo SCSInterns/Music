@@ -1,0 +1,31 @@
+services:
+  - type: web
+    name: nodejs-express-app
+    env: node
+    buildCommand: "npm install"
+    startCommand: "npm run start"
+    plan: free
+    branches:
+      production:
+        deploy: true
+    envVars:
+      - key: REDIS_HOST
+        value: redis
+      - key: REDIS_PORT
+        value: "6379"
+      - key: REDIS_PASSWORD
+        value: ${REDIS_PASSWORD}
+      - key: NODE_ENV
+        value: production
+    healthCheckPath: "/health"
+    timeout: 5s
+    autoDeploy: true
+
+  - type: redis
+    name: redis
+    plan: free
+    env: redis
+    autoDeploy: true
+    envVars:
+      - key: REDIS_PASSWORD
+        value: "your-redis-password"
