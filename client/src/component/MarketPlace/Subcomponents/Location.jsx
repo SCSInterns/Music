@@ -20,7 +20,6 @@ export default function CitySelector() {
   const [value, setValue] = useState(0); // For Tabs
 
   const handleSearchByPincode = () => {
-    // Handle pincode search logic here
     console.log(`Searching for pincode: ${searchQuery}`);
   };
 
@@ -29,11 +28,11 @@ export default function CitySelector() {
       className="relative overflow-hidden bg-gradient-to-b from-primary/5 to-background py-20 bg-gray-50"
       style={{ fontFamily: "roboto-slab" }}
     >
-      <div className="container relative z-10 flex justify-center flex-col md:ml-10">
+      <div className="container relative z-10 flex flex-col mx-auto items-center">
         {/* Hero Section */}
-        <div className="flex justify-between items-center space-x-8 md:ml-20">
+        <div className="flex flex-col lg:flex-row justify-center items-center space-y-8 lg:space-x-8">
           {/* Left Side: Content */}
-          <div className="flex-1 text-center md:text-center">
+          <div className="flex-1 text-center">
             <h2 className="mb-4 text-4xl font-bold tracking-tight lg:text-5xl">
               Find Your Academy Nearby
             </h2>
@@ -54,6 +53,7 @@ export default function CitySelector() {
           value={value}
           onChange={(event, newValue) => setValue(newValue)}
           centered
+          className="mt-10"
         >
           <Tab
             label="Popular Cities"
@@ -73,7 +73,7 @@ export default function CitySelector() {
 
         {/* City Grid */}
         {value === 0 && (
-          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-4 mt-10 max-h-[400px] overflow-y-auto p-2 space-x-2 lg:ml-20 w-full">
+          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-4 mt-10 max-h-[400px] overflow-y-auto p-2 w-full justify-center">
             {cities.map((city) => (
               <button
                 key={city.name}
@@ -89,20 +89,20 @@ export default function CitySelector() {
 
         {/* Pincode Search Box */}
         {value === 1 && (
-          <div className="mt-10 flex flex-row items-center justify-center space-x-14 md:ml-20">
+          <div className="mt-10 flex flex-row items-center justify-center space-x-4">
             <Input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Enter 6-digit Pincode"
               inputProps={{ maxLength: 6 }}
-              className="mb-4 w-96 border p-2 rounded-md"
+              className="w-96 border p-2 rounded-md"
             />
             <Button
               variant="contained"
               onClick={handleSearchByPincode}
               disabled={searchQuery.length !== 6}
-              sx={{ height: "50px", marginBottom: "10px" }}
+              sx={{ height: "50px" }}
             >
               <Search />
             </Button>

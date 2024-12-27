@@ -10,11 +10,11 @@ export function ImagesSliderDemo() {
   ];
   return (
     <>
-      <div className="flex flex-wrap">
+      <div className="flex flex-wrap py-10">
         <div className="w-full md:w-1/2 p-8">
           <p
-            className="text-justify md:text-justify font-roboto-slab mt-7"
-            style={{ fontFamily: "roboto-slab", fontSize: "25px" }}
+            className="text-center md:text-center font-roboto-slab mt-7 py-5 p-10 leading-10"
+            style={{ fontFamily: "roboto-slab", fontSize: "20px" }}
           >
             MusicVista is your ultimate destination for exploring and connecting
             with top music academies. Whether you're a beginner or a seasoned
