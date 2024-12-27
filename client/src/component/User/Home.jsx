@@ -20,7 +20,7 @@ function Home() {
 
   const verifiedurl = async () => {
     const url = `https://music-academy-e32v.onrender.com/api/auth/checkurl`;
-    const newurl = `http://localhost:3000/${academyname}`;
+    const newurl = `https://musicvista.netlify.app/${academyname}`;
     const response = await fetch(url, {
       method: "POST",
       headers: {

@@ -7,7 +7,7 @@ async function socketIOFactory(serverInstance) {
         socketIOSingleton = new Server(serverInstance,
             {
                 cors: {
-                    origin: "http://localhost:3000",
+                    origin: "https://musicvista.netlify.app/",
                     methods: ["GET", "POST"]
                 },
             }

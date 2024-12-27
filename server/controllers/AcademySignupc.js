@@ -300,7 +300,7 @@ const handlemanualsubscriptionpayment = async (req, res) => {
                 existingInfo.academy_password = hashedpwd
 
 
-                existingInfo.academy_url = `http://localhost:3000/${existingInfo.academy_name}`
+                existingInfo.academy_url = `https://musicvista.netlify.app/${existingInfo.academy_name}`
 
                 await existingInfo.save()
 
@@ -411,7 +411,7 @@ const verifysubscriptionpayment = async (req, res) => {
             adminprofile.academy_password = hashedpwd
 
 
-            adminprofile.academy_url = `http://localhost:3000/${adminprofile.academy_name}`
+            adminprofile.academy_url = `https://musicvista.netlify.app/${adminprofile.academy_name}`
 
             if (adminprofile.renewaldate === "N/A") {
                 const currentDate = getTodayDate()
@@ -630,7 +630,7 @@ const handlesubmitfreetrial = async (req, res) => {
 
                 existing.renewaldate = sevenDaysLater
 
-                existing.academy_url = `http://localhost:3000/${existing.academy_name}`
+                existing.academy_url = `https://musicvista.netlify.app/${existing.academy_name}`
 
                 await existing.save()
 

@@ -111,7 +111,7 @@ function Dashboard() {
 
   const setcredentials = async (id) => {
     const url = `https://music-academy-e32v.onrender.com/api/superadmin/academycredentials/${id}`;
-    const academyurl = `http://localhost:3000/${admin[0].academy_name}`;
+    const academyurl = `https://musicvista.netlify.app/${admin[0].academy_name}`;
     const token = Token();
     const response = await fetch(url, {
       method: "PUT",
