@@ -66,8 +66,7 @@ function SocialLinks() {
       mail: links.mail,
     };
 
-    const url =
-      "https://music-academy-e32v.onrender.com/api/auth/savesociallink";
+    const url = "http://localhost:5000/api/auth/savesociallink";
     const token = Token();
     try {
       const response = await fetch(url, {

@@ -44,7 +44,7 @@ const PaymentBox = ({ admin }) => {
 
     const formateddate = convertDateFormat(paymentdate);
 
-    const url = `https://music-academy-e32v.onrender.com/api/auth/handlemanualsubspayment`;
+    const url = `http://localhost:5000/api/auth/handlemanualsubspayment`;
 
     let token = Token();
     try {

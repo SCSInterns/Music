@@ -10,7 +10,7 @@ const TopNavbar = ({ academyid, info }) => {
 
   const fetchadmindetailsbyid = async (id) => {
     try {
-      const url = `https://music-academy-e32v.onrender.com/api/superadmin/detailsofadminbyacademyid/${id}`;
+      const url = `http://localhost:5000/api/superadmin/detailsofadminbyacademyid/${id}`;
       const token = Token();
       const response = await fetch(url, {
         method: "GET",

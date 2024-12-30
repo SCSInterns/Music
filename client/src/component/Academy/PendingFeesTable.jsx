@@ -36,8 +36,7 @@ function PendingFeesTable({ data }) {
   const role = sessionStorage.getItem("role");
 
   const handlecustomisedate = async (date, academyname, role) => {
-    const url =
-      "https://music-academy-e32v.onrender.com/api/auth/getpaymnetdue";
+    const url = "http://localhost:5000/api/auth/getpaymnetdue";
     const token = Token();
     const response = await fetch(url, {
       method: "POST",
@@ -67,8 +66,7 @@ function PendingFeesTable({ data }) {
   };
 
   const handlereminder = async (email, amount, name) => {
-    const url =
-      "https://music-academy-e32v.onrender.com/api/auth/sendpaymentreminder";
+    const url = "http://localhost:5000/api/auth/sendpaymentreminder";
     const token = Token();
 
     let response = await fetch(url, {

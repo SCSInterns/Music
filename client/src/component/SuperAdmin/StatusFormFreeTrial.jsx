@@ -23,8 +23,7 @@ function StatusFormFreeTrial({ open, handleClose, id, name, onstatuschange }) {
   const handleSubmit = async () => {
     console.log("Status:", selectedStatus);
 
-    const url =
-      "https://music-academy-e32v.onrender.com/api/auth/freetrialsubmission";
+    const url = "http://localhost:5000/api/auth/freetrialsubmission";
 
     const response = await fetch(url, {
       method: "POST",

@@ -36,8 +36,7 @@ function PaymentRequest() {
 
   const handleList = async () => {
     setloading(true);
-    let url =
-      "https://music-academy-e32v.onrender.com/api/auth/getnewpaymentrequest";
+    let url = "http://localhost:5000/api/auth/getnewpaymentrequest";
     const response = await fetch(url, {
       method: "POST",
       headers: {
@@ -72,7 +71,7 @@ function PaymentRequest() {
     });
   };
   useEffect(() => {
-    socket.current = io("https://music-academy-e32v.onrender.com/");
+    socket.current = io("http://localhost:5000/");
     startSocket();
     return () => {
       socket.current.off("newPayment");

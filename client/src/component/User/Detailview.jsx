@@ -11,8 +11,7 @@ function Detailview() {
   const eventId = id;
 
   const knowmoredetails = async (eventId) => {
-    const url =
-      "https://music-academy-e32v.onrender.com/api/auth/knowmoredetails";
+    const url = "http://localhost:5000/api/auth/knowmoredetails";
     const response = await fetch(url, {
       method: "POST",
       headers: {

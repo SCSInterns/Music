@@ -32,8 +32,7 @@ const StatusFormModal = ({ open, onClose, studentData, onstatusChange }) => {
   };
 
   const handleSubmit = async (id, status, date) => {
-    const url =
-      "https://music-academy-e32v.onrender.com/api/auth/verifymanualpayment";
+    const url = "http://localhost:5000/api/auth/verifymanualpayment";
     const response = await fetch(url, {
       method: "POST",
       headers: {

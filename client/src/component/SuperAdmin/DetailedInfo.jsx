@@ -56,7 +56,7 @@ function DetailedInfo({
   const [info, setinfo] = useState([]);
 
   const fetchlist = async (academyname, academyid) => {
-    const url = `https://music-academy-e32v.onrender.com/api/auth/getsubspaymentlist`;
+    const url = `http://localhost:5000/api/auth/getsubspaymentlist`;
 
     let token = Token();
     try {

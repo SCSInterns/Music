@@ -66,7 +66,7 @@ const PaymentBox = ({
     amount,
     course
   ) => {
-    const url = "https://music-academy-e32v.onrender.com/api/auth/addlatestdue";
+    const url = "http://localhost:5000/api/auth/addlatestdue";
     const token = Token();
     const response = await fetch(url, {
       method: "PUT",
@@ -111,7 +111,7 @@ const PaymentBox = ({
       return;
     }
 
-    const url = `https://music-academy-e32v.onrender.com/api/auth/addpaymentdetails/${id}`;
+    const url = `http://localhost:5000/api/auth/addpaymentdetails/${id}`;
 
     let token = Token();
     try {

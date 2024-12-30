@@ -42,7 +42,7 @@ const QRCodeUploadForm = () => {
     const formData = new FormData();
     formData.append("picture", selectedImage);
 
-    const url = "https://music-academy-e32v.onrender.com/api/auth/uploadqr";
+    const url = "http://localhost:5000/api/auth/uploadqr";
     try {
       setLoading(true);
       const response = await fetch(url, {
@@ -72,7 +72,7 @@ const QRCodeUploadForm = () => {
       return;
     }
 
-    const url = "https://music-academy-e32v.onrender.com/api/auth/uploadqrdata";
+    const url = "http://localhost:5000/api/auth/uploadqrdata";
     try {
       setLoading(true);
       const response = await fetch(url, {

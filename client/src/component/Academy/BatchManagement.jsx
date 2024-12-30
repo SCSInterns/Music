@@ -49,8 +49,7 @@ function BatchManagement() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const url =
-      "https://music-academy-e32v.onrender.com/api/auth/addbatchesinfo";
+    const url = "http://localhost:5000/api/auth/addbatchesinfo";
     const token = Token();
     const response = await fetch(url, {
       method: "POST",

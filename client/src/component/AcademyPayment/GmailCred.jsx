@@ -14,7 +14,7 @@ const GmailCred = () => {
   const role = sessionStorage.getItem("role");
 
   const sendOtp = async () => {
-    const url = "https://music-academy-e32v.onrender.com/api/auth/send-otp";
+    const url = "http://localhost:5000/api/auth/send-otp";
     const response = await fetch(url, {
       method: "POST",
       headers: {
@@ -33,7 +33,7 @@ const GmailCred = () => {
   };
 
   const verifyOtp = async () => {
-    const url = "https://music-academy-e32v.onrender.com/api/auth/verify-otp";
+    const url = "http://localhost:5000/api/auth/verify-otp";
     const response = await fetch(url, {
       method: "POST",
       headers: {
@@ -52,8 +52,7 @@ const GmailCred = () => {
   };
 
   const handleSubmit = async () => {
-    const url =
-      "https://music-academy-e32v.onrender.com/api/auth/addgooglecreds";
+    const url = "http://localhost:5000/api/auth/addgooglecreds";
     const response = await fetch(url, {
       method: "POST",
       headers: {

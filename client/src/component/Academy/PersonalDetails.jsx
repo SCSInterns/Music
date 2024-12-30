@@ -25,7 +25,7 @@ function Signup() {
     }));
   };
 
-  const url = `https://music-academy-e32v.onrender.com/api/auth/addpersonaldetail/${id}`;
+  const url = `http://localhost:5000/api/auth/addpersonaldetail/${id}`;
 
   const handlesubmit = async (e) => {
     e.preventDefault();

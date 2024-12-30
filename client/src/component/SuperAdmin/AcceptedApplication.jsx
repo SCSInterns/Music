@@ -15,7 +15,7 @@ function Dashboard() {
     const fetchAccessData = async () => {
       try {
         const token = Token();
-        const url = `https://music-academy-e32v.onrender.com/api/superadmin/filterforaccess`;
+        const url = `http://localhost:5000/api/superadmin/filterforaccess`;
         const response = await fetch(url, {
           method: "POST",
           headers: {

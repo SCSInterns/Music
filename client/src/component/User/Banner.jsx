@@ -11,7 +11,7 @@ function Gallery() {
   const queueSize = 4;
 
   const getimages = async () => {
-    const url = "https://music-academy-e32v.onrender.com/api/auth/getbanner";
+    const url = "http://localhost:5000/api/auth/getbanner";
     const response = await fetch(url, {
       method: "POST",
       headers: {

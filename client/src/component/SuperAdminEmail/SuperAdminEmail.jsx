@@ -10,7 +10,7 @@ function NewRequest() {
       try {
         const token = Token();
         console.log("Fetching superadmin details with token:", token);
-        const url = `https://music-academy-e32v.onrender.com/api/superadmin/superadmindetails`;
+        const url = `http://localhost:5000/api/superadmin/superadmindetails`;
         const response = await fetch(url, {
           method: "POST",
           headers: {

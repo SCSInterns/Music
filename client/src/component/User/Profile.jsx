@@ -22,8 +22,7 @@ function Profile() {
   const academyname = sessionStorage.getItem("Academy");
 
   const getsociallinks = async () => {
-    const url =
-      "https://music-academy-e32v.onrender.com/api/auth/getsociallinks";
+    const url = "http://localhost:5000/api/auth/getsociallinks";
 
     const response = await fetch(url, {
       method: "POST",
@@ -63,7 +62,7 @@ function Profile() {
   const [loading, setLoading] = useState(true);
 
   const fetchProfile = async () => {
-    const url = "https://music-academy-e32v.onrender.com/api/auth/fetchprofile";
+    const url = "http://localhost:5000/api/auth/fetchprofile";
 
     const response = await fetch(url, {
       method: "POST",
@@ -90,8 +89,7 @@ function Profile() {
   };
 
   const paymentinfo = async (id, name, role, academyname) => {
-    const url =
-      "https://music-academy-e32v.onrender.com/api/auth/getinfoinstallment";
+    const url = "http://localhost:5000/api/auth/getinfoinstallment";
 
     const response = await fetch(url, {
       method: "POST",
@@ -115,8 +113,7 @@ function Profile() {
 
   const batchdetails = async (id) => {
     console.log("Student Id :", id);
-    const url =
-      "https://music-academy-e32v.onrender.com/api/auth/getbatchdetail";
+    const url = "http://localhost:5000/api/auth/getbatchdetail";
 
     const response = await fetch(url, {
       method: "POST",
@@ -138,7 +135,7 @@ function Profile() {
 
   const fetchqr = async (studentId) => {
     try {
-      const url = "https://music-academy-e32v.onrender.com/api/auth/fetchqr";
+      const url = "http://localhost:5000/api/auth/fetchqr";
 
       const response = await fetch(url, {
         method: "POST",

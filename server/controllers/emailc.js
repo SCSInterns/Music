@@ -204,7 +204,7 @@ const welcome = async (email, username, academyname, password, role) => {
             </table>
             
             <p style="text-align: center; margin-top: 20px;">
-                <a href=${`https://musicvista.netlify.app/${academyname}/login`} style="display: inline-block; padding: 10px 20px; background-color: #004b87; color: white; text-decoration: none; border-radius: 5px;">Login Now</a>
+                <a href=${`http://localhost:5000/${academyname}/login`} style="display: inline-block; padding: 10px 20px; background-color: #004b87; color: white; text-decoration: none; border-radius: 5px;">Login Now</a>
             </p>
             
             <p>If you have any questions, feel free to reach out to us. We're here to help you succeed!</p>
@@ -282,7 +282,7 @@ const paymentfailed = async (academyname, email, paymentdate, amount) => {
   const academylogo = await Logo.findOne({ academyname: academyname });
   const logolink = academylogo.link;
   const altname = `${academyname} Music Academy`;
-  const retrypayment = `https://musicvista.netlify.app/${academyname}/login`;
+  const retrypayment = `http://localhost:5000/${academyname}/login`;
 
   const googlecred = await retriveacademygooglecred(academyname)
 
@@ -591,7 +591,7 @@ const onboardingmail = async (academyname, email, name) => {
 
             <!-- Call to Action Button -->
             <div style="text-align: center;" >
-            <a href="https://musicvista.netlify.app/business#pricing" class="cta-button">Sign Up Now</a>
+            <a href="http://localhost:5000/business#pricing" class="cta-button">Sign Up Now</a>
             </div>
         </div>
 
@@ -804,7 +804,7 @@ const renewalreminderemail = async (
                 <p><strong>Amount Due:</strong> ${amount}</p>
                 <p><strong>Due Date:</strong> ${duedate}</p>
                 <p>Ready to renew? Click the link below to complete your payment and keep the rhythm going:</p>
-                <p><a href="https://musicvista.netlify.app/business#pricing" class="payment-link">🔗 Complete Your Payment</a></p>
+                <p><a href="http://localhost:5000/business#pricing" class="payment-link">🔗 Complete Your Payment</a></p>
             </div>
 
             <p>If you have any questions or need assistance, our support team is just a click away. Reach out to us at <a href="mailto:sales@softcodingsolutions.com">sales@softcodingsolutions.com</a>.</p>
@@ -815,7 +815,7 @@ const renewalreminderemail = async (
         <div class="footer">
             <p>🎶 Keep creating, keep learning, and keep playing! 🎶</p>
             <p>&copy; 2024 Music Vista | All Rights Reserved</p>
-            <p><a href="https://musicvista.netlify.app/business">Visit our website</a></p>
+            <p><a href="http://localhost:5000/business">Visit our website</a></p>
         </div>
     </div>
 

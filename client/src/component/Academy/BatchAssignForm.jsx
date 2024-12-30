@@ -25,8 +25,7 @@ const BatchSelectionModal = ({ open, onClose, data }) => {
   useEffect(() => {
     const fetchBatches = async () => {
       try {
-        const url =
-          "https://music-academy-e32v.onrender.com/api/auth/getbatchesdetails";
+        const url = "http://localhost:5000/api/auth/getbatchesdetails";
         const token = Token();
         const response = await fetch(url, {
           method: "POST",
@@ -78,7 +77,7 @@ const BatchSelectionModal = ({ open, onClose, data }) => {
     console.log("Selected Batch ID:", selectedBatch);
     console.log("Selected Instrument ID:", selectedInstrument);
 
-    const url = "https://music-academy-e32v.onrender.com/api/auth/assignbatch";
+    const url = "http://localhost:5000/api/auth/assignbatch";
     const token = Token();
 
     const response = await fetch(url, {

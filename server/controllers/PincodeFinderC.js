@@ -1,5 +1,5 @@
 const MusicAcademy = require('../models/MusicAcademy');
-
+const Admin = require('../models/Admin');
 
 // find academy near pincodes  
 
@@ -32,31 +32,32 @@ function findAcademyNearby(userPincode, academies, rangeLimit = 5, max = 10) {
 
 
 // find by pincode  
-
 const PincodeFinderC = async (req, res) => {
-
     try {
+        const { pincode } = req.body;
 
-        const { pincode } = req.body
+        const academies = await MusicAcademy.find({});
 
-        const academy = await MusicAcademy.find({})
+        const acceptedAccessAcademies = await Admin.find({
+            academy_access: "Accept",
+            academy_name: { $in: academies.map(a => a.academy_name) },
+        });
 
-        // const musicacademylist = await MusicAcademy.find({ academy_pincode: pincode }) 
-        const musicacademylist = await findAcademyNearby(pincode, academy, 5, 10)
+        const acceptedAcademyNames = new Set(acceptedAccessAcademies.map(a => a.academy_name));
+        const filteredAcademies = academies.filter(a => acceptedAcademyNames.has(a.academy_name));
+
+        const musicacademylist = await findAcademyNearby(pincode, filteredAcademies, 5, 10);
 
         if (musicacademylist.length > 0) {
-
-            return res.status(200).json(musicacademylist)
-
+            return res.status(200).json(musicacademylist);
         } else {
-            return res.status(404).json({ message: 'No Music Academy found with this pincode' })
+            return res.status(404).json({ message: 'No Music Academy found with this pincode' });
         }
-
     } catch (error) {
-        return { message: 'Server not supported', error: error.message }
+        return res.status(500).json({ message: 'Server not supported', error: error.message });
     }
+};
 
-}
 
 // find by city 
 

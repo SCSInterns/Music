@@ -83,8 +83,7 @@ function ApplicantsTable({ users, handleapplicantslist }) {
   console.log(paymentstatsdetails);
 
   const paymentstats = async (studentid) => {
-    const url =
-      "https://music-academy-e32v.onrender.com/api/auth/getpaymentstats";
+    const url = "http://localhost:5000/api/auth/getpaymentstats";
 
     const token = Token();
     const response = await fetch(url, {
@@ -107,8 +106,7 @@ function ApplicantsTable({ users, handleapplicantslist }) {
 
   const batchdetails = async (id) => {
     console.log("Student Id :", id);
-    const url =
-      "https://music-academy-e32v.onrender.com/api/auth/getbatchdetail";
+    const url = "http://localhost:5000/api/auth/getbatchdetail";
     const token = Token();
     const response = await fetch(url, {
       method: "POST",
@@ -128,7 +126,7 @@ function ApplicantsTable({ users, handleapplicantslist }) {
   };
 
   const handleattendancerecord = async () => {
-    const url = "https://music-academy-e32v.onrender.com/api/auth/getrecords";
+    const url = "http://localhost:5000/api/auth/getrecords";
     const token = Token();
     const response = await fetch(url, {
       method: "POST",
@@ -157,7 +155,7 @@ function ApplicantsTable({ users, handleapplicantslist }) {
   }, [data && batchdata]);
 
   const handlePreview = async (id) => {
-    const url = `https://music-academy-e32v.onrender.com/api/auth/getdatabyid/${id}`;
+    const url = `http://localhost:5000/api/auth/getdatabyid/${id}`;
     let token = Token();
     let role = sessionStorage.getItem("role");
 

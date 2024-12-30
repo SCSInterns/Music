@@ -49,8 +49,7 @@ function AcademySubscriptionPayment() {
   };
 
   const submitfreetrial = async (academyname) => {
-    const url =
-      "https://music-academy-e32v.onrender.com/api/auth/freetrialrequest";
+    const url = "http://localhost:5000/api/auth/freetrialrequest";
     setloading(true);
 
     const response = await fetch(url, {
@@ -84,8 +83,7 @@ function AcademySubscriptionPayment() {
     navigate("/admin/login");
   };
   const generateorder = async () => {
-    const url =
-      "https://music-academy-e32v.onrender.com/api/auth/handlesubscriptionpayment";
+    const url = "http://localhost:5000/api/auth/handlesubscriptionpayment";
     setloading(true);
     const response = await fetch(url, {
       method: "POST",
@@ -130,8 +128,7 @@ function AcademySubscriptionPayment() {
           adminId: orderdata.adminId,
         };
 
-        const url =
-          "https://music-academy-e32v.onrender.com/api/auth/verifysubscriptionpayment";
+        const url = "http://localhost:5000/api/auth/verifysubscriptionpayment";
         setloading(true);
         const responsepayment = await fetch(url, {
           method: "POST",
@@ -183,8 +180,7 @@ function AcademySubscriptionPayment() {
       }, 500);
 
       if (!response.razorpay_payment_id || !response.razorpay_signature) {
-        const url =
-          "https://music-academy-e32v.onrender.com/api/auth/failedsubscriptionpayment";
+        const url = "http://localhost:5000/api/auth/failedsubscriptionpayment";
         const response = await fetch(url, {
           method: "POST",
           headers: {

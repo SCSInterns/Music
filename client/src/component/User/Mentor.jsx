@@ -13,7 +13,7 @@ const Team = () => {
 
   useEffect(() => {
     const handlementors = async () => {
-      const url = "https://music-academy-e32v.onrender.com/api/auth/getmentors";
+      const url = "http://localhost:5000/api/auth/getmentors";
 
       const response = await fetch(url, {
         method: "POST",

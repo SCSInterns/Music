@@ -56,7 +56,7 @@ const Example = () => {
   };
 
   const getLogo = async () => {
-    const url = "https://music-academy-e32v.onrender.com/api/auth/getlogo";
+    const url = "http://localhost:5000/api/auth/getlogo";
 
     const response = await fetch(url, {
       method: "POST",

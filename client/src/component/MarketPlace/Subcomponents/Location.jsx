@@ -3,6 +3,7 @@ import { Search } from "lucide-react";
 import { Tabs, Tab, Box, Button, Input } from "@mui/material";
 import * as CityIcons from "../UiElements/CityIcons";
 import Hero from "../../../static/Images/Hero.png";
+import { toast } from "react-toastify";
 
 const cities = [
   { name: "Mumbai", icon: <CityIcons.MumbaiIcon /> },
@@ -17,10 +18,30 @@ const cities = [
 
 export default function CitySelector() {
   const [searchQuery, setSearchQuery] = useState("");
-  const [value, setValue] = useState(0); // For Tabs
+  const [value, setValue] = useState(0);
+  const [data, setdata] = useState([]);
 
-  const handleSearchByPincode = () => {
+  const handleSearchByPincode = async () => {
     console.log(`Searching for pincode: ${searchQuery}`);
+
+    const url = "http://localhost:5000/api/auth/getnearacademy";
+
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        pincode: searchQuery,
+      }),
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      setdata(data);
+    } else {
+      toast.error("No Academy Found");
+    }
   };
 
   return (
@@ -89,7 +110,7 @@ export default function CitySelector() {
 
         {/* Pincode Search Box */}
         {value === 1 && (
-          <div className="mt-10 flex flex-row items-center justify-center space-x-4">
+          <div className="mt-10 flex flex-row items-center justify-center space-x-8">
             <Input
               type="text"
               value={searchQuery}
@@ -102,7 +123,7 @@ export default function CitySelector() {
               variant="contained"
               onClick={handleSearchByPincode}
               disabled={searchQuery.length !== 6}
-              sx={{ height: "50px" }}
+              sx={{ height: "40px", bgcolor: "red" }}
             >
               <Search />
             </Button>

@@ -109,7 +109,7 @@ function DynamicForm() {
       return acc;
     }, {});
 
-    let url = `https://music-academy-e32v.onrender.com/api/auth/academyregform`;
+    let url = `http://localhost:5000/api/auth/academyregform`;
     const token = Token();
     const response = await fetch(url, {
       method: "POST",

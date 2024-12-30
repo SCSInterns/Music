@@ -10,8 +10,7 @@ function Payment({ data }) {
   const [defaulttoggle, setdefaulttoggle] = useState(true);
 
   const paymentinfo = async (studentid) => {
-    const url =
-      "https://music-academy-e32v.onrender.com/api/auth/getpaymentstatsforusers";
+    const url = "http://localhost:5000/api/auth/getpaymentstatsforusers";
 
     const token = Token();
     const response = await fetch(url, {

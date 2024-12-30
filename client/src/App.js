@@ -40,6 +40,7 @@ import NewSuperAdminDashboard from './component/SuperAdmin/NewSuperAdminDashboar
 import AcademySubscriptionPayment from './component/Academy/AcademySubscriptionPayment';
 import MarketplaceHome from './component/MarketPlace/Landingpage'
 import Aboutpage from './component/MarketPlace/Aboutpage';
+import AcademyList from './component/MarketPlace/Subcomponents/AcaemyList';
 
 
 function App() {
@@ -110,6 +111,7 @@ function App() {
 
           <Route path="/" element={<MarketplaceHome />} />
           <Route path="/About" element={<Aboutpage />} />
+          <Route path="/Academy" element={<AcademyList />} />
 
         </Routes>
       </Router>

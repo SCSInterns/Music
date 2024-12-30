@@ -110,8 +110,8 @@ function Dashboard() {
   };
 
   const setcredentials = async (id) => {
-    const url = `https://music-academy-e32v.onrender.com/api/superadmin/academycredentials/${id}`;
-    const academyurl = `https://musicvista.netlify.app/${admin[0].academy_name}`;
+    const url = `http://localhost:5000/api/superadmin/academycredentials/${id}`;
+    const academyurl = `http://localhost:3000/${admin[0].academy_name}`;
     const token = Token();
     const response = await fetch(url, {
       method: "PUT",
@@ -135,7 +135,7 @@ function Dashboard() {
   };
 
   const handlesharecred = async (email, id) => {
-    const url = `https://music-academy-e32v.onrender.com/api/auth/sendcred`;
+    const url = `http://localhost:5000/api/auth/sendcred`;
     const token = Token();
     const response = await fetch(url, {
       method: "POST",
@@ -161,7 +161,7 @@ function Dashboard() {
 
   const handlestatus = async (id, status) => {
     try {
-      const url = `https://music-academy-e32v.onrender.com/api/superadmin/academyacess/${id}`;
+      const url = `http://localhost:5000/api/superadmin/academyacess/${id}`;
       const token = Token();
       const response = await fetch(url, {
         method: "PUT",
@@ -190,7 +190,7 @@ function Dashboard() {
 
   const fetchadmindetailsbyid = async (id) => {
     try {
-      const url = `https://music-academy-e32v.onrender.com/api/superadmin/detailsofadminbyid/${id}`;
+      const url = `http://localhost:5000/api/superadmin/detailsofadminbyid/${id}`;
       const token = Token();
       const response = await fetch(url, {
         method: "GET",
@@ -217,7 +217,7 @@ function Dashboard() {
     const fetchData = async () => {
       try {
         const token = Token();
-        const url = `https://music-academy-e32v.onrender.com/api/superadmin/academydetails`;
+        const url = `http://localhost:5000/api/superadmin/academydetails`;
         const response = await fetch(url, {
           method: "POST",
           headers: {
@@ -246,7 +246,7 @@ function Dashboard() {
       const token = Token();
 
       // Fetch preview details
-      let url = `https://music-academy-e32v.onrender.com/api/auth/preview/${id}`;
+      let url = `http://localhost:5000/api/auth/preview/${id}`;
       let response = await fetch(url, {
         method: "GET",
         headers: {
@@ -263,7 +263,7 @@ function Dashboard() {
       setDetails(previewData); // Update details
 
       // Fetch academy details by name
-      url = `https://music-academy-e32v.onrender.com/api/auth/academybyname`;
+      url = `http://localhost:5000/api/auth/academybyname`;
       response = await fetch(url, {
         method: "POST",
         headers: {

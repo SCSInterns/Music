@@ -37,8 +37,7 @@ const StatusFormModal = ({ open, onClose, studentData, onstatusChange }) => {
     role,
     studentname
   ) => {
-    const url =
-      "https://music-academy-e32v.onrender.com/api/auth/setcredentials";
+    const url = "http://localhost:5000/api/auth/setcredentials";
     const response = await fetch(url, {
       method: "POST",
       headers: {
@@ -59,7 +58,7 @@ const StatusFormModal = ({ open, onClose, studentData, onstatusChange }) => {
   };
 
   const handleSubmit = async (status, id) => {
-    const url = `https://music-academy-e32v.onrender.com/api/auth/updatestatus/${id}`;
+    const url = `http://localhost:5000/api/auth/updatestatus/${id}`;
     const token = Token();
     const response = await fetch(url, {
       method: "PUT",
