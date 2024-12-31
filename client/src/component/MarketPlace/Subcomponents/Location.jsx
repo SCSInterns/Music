@@ -4,6 +4,7 @@ import { Tabs, Tab, Box, Button, Input } from "@mui/material";
 import * as CityIcons from "../UiElements/CityIcons";
 import Hero from "../../../static/Images/Hero.png";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 const cities = [
   { name: "Mumbai", icon: <CityIcons.MumbaiIcon /> },
@@ -17,9 +18,42 @@ const cities = [
 ];
 
 export default function CitySelector() {
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [value, setValue] = useState(0);
-  const [data, setdata] = useState([]);
+
+  const handleserchbycity = async (city) => {
+    const url = "http://localhost:5000/api/auth/getacademybycity";
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        city: city,
+      }),
+    });
+
+    if (response.ok) {
+      const resdata = await response.json();
+      if (resdata.length > 0) {
+        navigate(`/Academy`, {
+          replace: true,
+          state: { list: resdata, name: city },
+        });
+      } else {
+        navigate(`/Academy`, {
+          replace: true,
+          state: { list: [] },
+        });
+      }
+    } else {
+      navigate(`/Academy`, {
+        replace: true,
+        state: { list: [] },
+      });
+    }
+  };
 
   const handleSearchByPincode = async () => {
     console.log(`Searching for pincode: ${searchQuery}`);
@@ -36,11 +70,26 @@ export default function CitySelector() {
       }),
     });
 
+    console.log(searchQuery);
+
     if (response.ok) {
-      const data = await response.json();
-      setdata(data);
+      const resdata = await response.json();
+      if (resdata.length > 0) {
+        navigate(`/Academy`, {
+          replace: true,
+          state: { list: resdata, name: "Near You" },
+        });
+      } else {
+        navigate(`/Academy`, {
+          replace: true,
+          state: { list: resdata },
+        });
+      }
     } else {
-      toast.error("No Academy Found");
+      navigate(`/Academy`, {
+        replace: true,
+        state: { list: [] },
+      });
     }
   };
 
@@ -98,7 +147,9 @@ export default function CitySelector() {
             {cities.map((city) => (
               <button
                 key={city.name}
-                onClick={() => console.log(`Selected city: ${city.name}`)}
+                onClick={() => {
+                  handleserchbycity(city.name);
+                }}
                 className="flex flex-col items-center p-4 border rounded hover:bg-primary/5 hover:shadow-lg hover:scale-105 transition-all duration-300 ease-in-out"
               >
                 {city.icon}
