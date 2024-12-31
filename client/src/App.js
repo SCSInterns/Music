@@ -41,6 +41,7 @@ import AcademySubscriptionPayment from './component/Academy/AcademySubscriptionP
 import MarketplaceHome from './component/MarketPlace/Landingpage'
 import Aboutpage from './component/MarketPlace/Aboutpage';
 import AcademyList from './component/MarketPlace/Subcomponents/AcaemyList';
+import AcademyTypeForm from './component/Academy/Aacademytype';
 
 
 function App() {
@@ -78,6 +79,7 @@ function App() {
             </> :
             <>
               <Route path='/academyregform' element={<RegForm />}></Route>
+              <Route path='/academytype/:id' element={<AcademyTypeForm />}></Route>
               <Route path='/academysignup/:id' element={<Signup />}></Route>
               <Route path='/admin/login' element={<AcademyLogin />}></Route>
               <Route path='/personaldetails/:id' element={<PersonalDetails />} ></Route>

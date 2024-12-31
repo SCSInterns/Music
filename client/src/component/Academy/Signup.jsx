@@ -3,8 +3,9 @@ import { toast } from "react-toastify";
 import { useNavigate, useParams } from "react-router-dom";
 import LooksOneOutlinedIcon from "@mui/icons-material/LooksOneOutlined";
 import LooksTwoOutlinedIcon from "@mui/icons-material/LooksTwoOutlined";
-import Looks3Icon from "@mui/icons-material/Looks3";
-import Looks4OutlinedIcon from "@mui/icons-material/Looks4Outlined";
+import Looks3OutlinedIcon from "@mui/icons-material/Looks3Outlined";
+import Looks4Icon from "@mui/icons-material/Looks4";
+import Looks5OutlinedIcon from "@mui/icons-material/Looks5Outlined";
 
 function Signup() {
   const [signup, setsignup] = useState({
@@ -163,11 +164,15 @@ function Signup() {
               </p>
               <span className="border-b w-1/5 lg:w-1/4"></span>
               <p className="text-xs text-center text-gray-500 uppercase">
-                <Looks3Icon fontSize="large" />
+                <Looks3OutlinedIcon fontSize="large" />
               </p>
               <span className="border-b w-1/5 lg:w-1/4"></span>
               <p className="text-xs text-center text-gray-500 uppercase">
-                <Looks4OutlinedIcon fontSize="large" />
+                <Looks4Icon fontSize="large" />
+              </p>
+              <span className="border-b w-1/5 lg:w-1/4"></span>
+              <p className="text-xs text-center text-gray-500 uppercase">
+                <Looks5OutlinedIcon fontSize="large" />
               </p>
               <span className="border-b w-1/5 lg:w-1/4"></span>
             </div>

@@ -56,6 +56,35 @@ const personaldetailsupdation = async (req, res) => {
     }
 }
 
+// put api for academy type details upadtion 
+
+const academytypedetailsupdation = async (req, res) => {
+    try {
+        const { type } = req.body;
+
+        const response = await MusicAcademy.findById(req.params.id);
+
+        if (response) {
+
+            const updatedApplication = await MusicAcademy.findByIdAndUpdate(
+                req.params.id,
+                { $set: { academy_type: type } },
+                { new: true }
+            )
+
+
+            if (!updatedApplication) {
+                return res.status(404).json({ msg: 'Application not found' });
+            }
+
+            return res.status(200).json({ msg: "Application updated successfully", updatedApplication });
+        }
+    } catch (error) {
+        res.status(500).json({ message: 'Server not supported', error });
+    }
+}
+
+
 
 // academy details by id  
 
@@ -132,8 +161,9 @@ const rejectedapplicants = async (req, res) => {
 module.exports = {
     academy_details,
     preview,
+    academytypedetailsupdation,
     personaldetailsupdation,
     handleurl,
-    verifyurl , 
+    verifyurl,
     rejectedapplicants
 };

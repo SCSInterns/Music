@@ -5,6 +5,7 @@ import LooksOneIcon from "@mui/icons-material/LooksOne";
 import LooksTwoOutlinedIcon from "@mui/icons-material/LooksTwoOutlined";
 import Looks3OutlinedIcon from "@mui/icons-material/Looks3Outlined";
 import Looks4OutlinedIcon from "@mui/icons-material/Looks4Outlined";
+import Looks5OutlinedIcon from "@mui/icons-material/Looks5Outlined";
 import { Country, State, City } from "country-state-city";
 
 function Signup() {
@@ -116,7 +117,7 @@ function Signup() {
     const data = await response.json();
     if (response.ok) {
       toast.success("Registration successful!");
-      navigate(`/personaldetails/${data._id}`);
+      navigate(`/academytype/${data._id}`);
     } else {
       toast.error("Registration failed.");
     }
@@ -155,6 +156,10 @@ function Signup() {
             <span className="border-b w-1/5 lg:w-1/4"></span>
             <p className="text-xs text-center text-gray-500 uppercase">
               <Looks4OutlinedIcon fontSize="large" />
+            </p>
+            <span className="border-b w-1/5 lg:w-1/4"></span>
+            <p className="text-xs text-center text-gray-500 uppercase">
+              <Looks5OutlinedIcon fontSize="large" />
             </p>
             <span className="border-b w-1/5 lg:w-1/4"></span>
           </div>

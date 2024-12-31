@@ -26,6 +26,12 @@ const adminschema = new Schema({
         type: String,
         required: true
     },
+    academy_type:
+    {
+        type: [String],
+        required: true,
+        default: "to be update"
+    },
     name:
     {
         type: String,

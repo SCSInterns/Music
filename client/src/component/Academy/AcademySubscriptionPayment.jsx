@@ -4,6 +4,8 @@ import Looks4Icon from "@mui/icons-material/Looks4";
 import LooksOneOutlinedIcon from "@mui/icons-material/LooksOneOutlined";
 import LooksTwoOutlinedIcon from "@mui/icons-material/LooksTwoOutlined";
 import Looks3OutlinedIcon from "@mui/icons-material/Looks3Outlined";
+import Looks4OutlinedIcon from "@mui/icons-material/Looks4Outlined";
+import Looks5Icon from "@mui/icons-material/Looks5";
 import Loader from "../Loader/Loader";
 import {
   RadioGroup,
@@ -262,7 +264,11 @@ function AcademySubscriptionPayment() {
                 </p>
                 <span className="border-b w-1/5 lg:w-1/4"></span>
                 <p className="text-xs text-center text-gray-500 uppercase">
-                  <Looks4Icon fontSize="large" />
+                  <Looks4OutlinedIcon fontSize="large" />
+                </p>
+                <span className="border-b w-1/5 lg:w-1/4"></span>
+                <p className="text-xs text-center text-gray-500 uppercase">
+                  <Looks5Icon fontSize="large" />
                 </p>
                 <span className="border-b w-1/5 lg:w-1/4"></span>
               </div>
