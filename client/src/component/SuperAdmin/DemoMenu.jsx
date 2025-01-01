@@ -41,7 +41,7 @@ const TopNavbar = () => {
   }, []);
 
   useEffect(() => {
-    socket.current = io("http://localhost:5000/");
+    socket.current = io("http://localhost:5000");
     socket.current.on("newDemoInquiry", (newEntry) => {
       setInquiryData((prevEntries) => [newEntry, ...prevEntries]);
     });

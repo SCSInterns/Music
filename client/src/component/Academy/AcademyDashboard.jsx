@@ -88,7 +88,7 @@ function AcademyDashboard() {
     console.log("hhheelllloooo");
   };
   useEffect(() => {
-    socket.current = io("http://localhost:5000/");
+    socket.current = io("http://localhost:5000");
     startSocket();
 
     return () => {

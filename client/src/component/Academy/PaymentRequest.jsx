@@ -71,7 +71,7 @@ function PaymentRequest() {
     });
   };
   useEffect(() => {
-    socket.current = io("http://localhost:5000/");
+    socket.current = io("http://localhost:5000");
     startSocket();
     return () => {
       socket.current.off("newPayment");

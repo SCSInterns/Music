@@ -44,7 +44,7 @@ const TopNavbar = () => {
   };
 
   useEffect(() => {
-    socket.current = io("http://localhost:5000/");
+    socket.current = io("http://localhost:5000");
     socket.current.on("newFreeTrialReq", (newEntry) => {
       setdata((prevEntries) => [newEntry, ...prevEntries]);
     });

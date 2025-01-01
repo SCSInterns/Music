@@ -36,6 +36,7 @@ import PaymentRequest from "./PaymentRequest";
 import { io } from "socket.io-client";
 import Billing from "./BillingMenu";
 import { useLocation } from "react-router-dom";
+import FormBuilder from "./DynamicForm/DynamicFormBuilder";
 
 const Sidebar = () => {
   const academyname = sessionStorage.getItem("academyname");
@@ -126,7 +127,7 @@ const Sidebar = () => {
     });
   };
   useEffect(() => {
-    socket.current = io("http://localhost:5000/");
+    socket.current = io("http://localhost:5000");
     startSocket();
     return () => {
       socket.current.off("newData");
@@ -231,6 +232,12 @@ const Sidebar = () => {
       text: "Payment Managemnet",
       icon: <PaymentsIcon />,
       component: <PaymentMenu />,
+      disabled: status === "Accept" ? false : true,
+    },
+    {
+      text: "Form Builder",
+      icon: <InsertDriveFileIcon />,
+      component: <FormBuilder />,
       disabled: status === "Accept" ? false : true,
     },
     {

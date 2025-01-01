@@ -7,7 +7,7 @@ async function socketIOFactory(serverInstance) {
         socketIOSingleton = new Server(serverInstance,
             {
                 cors: {
-                    origin: "http://localhost:5000/",
+                    origin: "http://localhost:3000",
                     methods: ["GET", "POST"]
                 },
             }
