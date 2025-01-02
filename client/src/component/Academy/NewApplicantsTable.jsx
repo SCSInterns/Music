@@ -15,6 +15,7 @@ import ProfilePreview from "./ProfilePreview";
 import StatusFormModal from "./StatusForm";
 import AccountBoxRoundedIcon from "@mui/icons-material/AccountBoxRounded";
 import PreviewIcon from "@mui/icons-material/Preview";
+
 function ApplicantsTable({ users, handleapplicantslist }) {
   const [studentid, setstudentid] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -193,12 +194,12 @@ function ApplicantsTable({ users, handleapplicantslist }) {
   };
 
   const transformedData = users.map((user) => ({
-    Name: user.additionalFields?.formdata?.Name || "N/A",
-    Email: user.additionalFields?.formdata?.Email || "N/A",
-    "Mobile No": user.additionalFields?.formdata?.MobileNo || "N/A",
-    "Starting Date": user.installementDate || "N/A",
-    Course: user.additionalFields?.formdata?.Courses || "N/A",
-    Batch: user.additionalFields?.formdata?.Courses || "N/A",
+    Name: user.additionalFields?.Name || "N/A",
+    Email: user.additionalFields?.Email || "N/A",
+    "Mobile No": user.additionalFields?.MobileNo || "N/A",
+    "Starting Date": user.installmentDate || "N/A",
+    Course: user.additionalFields?.Courses || "N/A",
+    Batch: user.additionalFields?.Courses || "N/A",
     "More Info": `${user.role}, ${user.status}`,
     id: user._id || "N/A",
     Status: user.status,

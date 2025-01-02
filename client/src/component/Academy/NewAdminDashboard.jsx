@@ -36,7 +36,7 @@ import PaymentRequest from "./PaymentRequest";
 import { io } from "socket.io-client";
 import Billing from "./BillingMenu";
 import { useLocation } from "react-router-dom";
-import FormBuilder from "./DynamicForm/DynamicFormBuilder";
+import DynamicFormMenu from "./DynamicForm/DynmaicFormMenu";
 
 const Sidebar = () => {
   const academyname = sessionStorage.getItem("academyname");
@@ -237,7 +237,7 @@ const Sidebar = () => {
     {
       text: "Form Builder",
       icon: <InsertDriveFileIcon />,
-      component: <FormBuilder />,
+      component: <DynamicFormMenu />,
       disabled: status === "Accept" ? false : true,
     },
     {

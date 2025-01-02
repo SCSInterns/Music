@@ -1,4 +1,5 @@
 const Form = require('../models/Form')
+const UserForm = require("../models/UserForm")
 const User = require('../models/User')
 const Mail = require('../controllers/emailc')
 const Token = require('../models/Token');
@@ -30,12 +31,11 @@ const setusercredentials = async (req, res) => {
             return res.status(409).json({ msg: "Password already exist " })
         }
 
-        const user = await Form.findOne({ academy_name: academyname, "additionalFields.formdata.Email": email })
+        const user = await UserForm.findOne({ academy_name: academyname, "additionalFields.Email": email })
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
-        const formData = user.additionalFields.get('formdata');
-        const foundStudentName = formData.Name;
+        const foundStudentName = user.additionalFields?.get('Name');
         const foundStatus = user.status;
 
         const password = generateRandomPin().toString()

@@ -1,4 +1,5 @@
 const Form = require('../models/Form')
+const UserForm = require('../models/UserForm')
 const Token = require('../models/Token');
 const youtubeUrl = require('youtube-url');
 const Video = require('../models/Video')
@@ -21,12 +22,13 @@ function formatDate(timestamp) {
 // form addition 
 const handledynamicform = async (req, res) => {
   try {
-    const { academyname, role, additionalFields, courses } = req.body;
+    const { academyname, role, additionalFields, formname } = req.body;
+    const formateddata = additionalFields.fields
     const academy = new Form({
       academy_name: academyname,
       role: role,
-      additionalFields,
-      courses
+      form_name: formname,
+      additionalFields: formateddata
     });
 
     await academy.save();
@@ -62,10 +64,14 @@ const getform = async (req, res) => {
 const savedata = async (req, res) => {
   const { academyname, role, userdetails } = req.body;
 
-  const newform = await new Form({
+  const formatteduserdetails = userdetails.formValues
+
+  const newform = await new UserForm({
     academy_name: academyname,
     role: role,
-    additionalFields: userdetails
+    additionalFields: formatteduserdetails,
+    form_name: "Registration Form",
+
   })
 
   const response = await newform.save();
@@ -86,7 +92,7 @@ const handleapplicantdata = async (req, res) => {
   const { academyname, role } = req.body;
 
   if (role == "Admin") {
-    const response = await Form.find({
+    const response = await UserForm.find({
       academy_name: academyname,
       role: 'User',
       status: { $in: ['Accept', 'To be updated', 'Reject'] }
@@ -112,7 +118,7 @@ const handleapplicantdata = async (req, res) => {
 const finddatabyid = async (req, res) => {
   try {
     const { role } = req.body
-    const user = await Form.findById(req.params.id)
+    const user = await UserForm.findById(req.params.id)
 
     if (user) {
 
@@ -137,18 +143,18 @@ const handlestatus = async (req, res) => {
 
   try {
     const { status } = req.body
-    const user = await Form.findById(req.params.id)
+    const user = await UserForm.findById(req.params.id)
 
     const updateduser = {
       ...req.body,
       status: status
     };
     if (user) {
-      const updatedinfo = await Form.findByIdAndUpdate(req.params.id, { $set: updateduser })
+      const updatedinfo = await UserForm.findByIdAndUpdate(req.params.id, { $set: updateduser })
       if (updatedinfo.status === "Accept") {
         const timestampnow = new Date
         const installmentdate = formatDate(timestampnow)
-        updatedinfo.installementDate = installmentdate
+        updatedinfo.installmentDate = installmentdate
         await updatedinfo.save()
       }
       res.status(200).json({ msg: "Status updated successfully ", updatedinfo })
@@ -170,7 +176,7 @@ const handleinstallment = async (req, res) => {
   try {
     const { date } = req.body
 
-    const user = await Form.findById(req.params.id)
+    const user = await UserForm.findById(req.params.id)
     const updateduser = {
       ...req.body,
       installementDate: date

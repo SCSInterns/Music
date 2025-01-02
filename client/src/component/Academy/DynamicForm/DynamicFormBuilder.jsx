@@ -1,6 +1,7 @@
+// Updated FormBuilder Component
 "use client";
 import { useState } from "react";
-import { Button, Card, CardContent } from "@mui/material";
+import { Button, Card, CardContent, TextField } from "@mui/material";
 import FieldDialog from "./DFormDialog";
 import {
   CheckSquare,
@@ -13,10 +14,18 @@ import {
   AlignJustify,
   Phone,
 } from "lucide-react";
+import Token from "../../Token/Token";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 export default function FormBuilder() {
   const [selectedFieldType, setSelectedFieldType] = useState(null);
   const [formConfig, setFormConfig] = useState({ fields: [] });
+  const [formName, setFormName] = useState("");
+
+  const academyname = sessionStorage.getItem("academyname");
+  const role = sessionStorage.getItem("role");
+  const navigate = useNavigate();
 
   const fieldTypes = [
     { type: "checkbox", icon: CheckSquare, label: "Checkbox" },
@@ -37,16 +46,68 @@ export default function FormBuilder() {
     setSelectedFieldType(null);
   };
 
-  const handleSubmit = () => {
-    console.log(formConfig);
+  console.log(formConfig);
 
-    const url = "http://localhost:5000/api/auth/savedata";
+  const token = Token();
 
-    // continue from here
+  const handleSubmit = async () => {
+    if (!formConfig.fields.some((field) => field.type === "email")) {
+      toast.error(
+        "You need to add an email field in the form for contact purposes."
+      );
+      return;
+    }
+
+    if (!formConfig.fields.some((field) => field.type === "mobile-no")) {
+      toast.error(
+        "You need to add a mobile number field in the form for contact purposes."
+      );
+      return;
+    }
+
+    if (!formName.trim()) {
+      toast.error("Form Name is required");
+      return;
+    }
+
+    const url = "http://localhost:5000/api/auth/academyregform";
+
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        Authorization: `${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        academyname: academyname,
+        role: role,
+        formname: formName.trim(),
+        additionalFields: formConfig,
+      }),
+    });
+
+    if (response.ok) {
+      setFormConfig({ fields: [] });
+      setFormName("");
+      toast.success("Form Created Successfully");
+    } else {
+      toast.error("Form Creation Failed");
+    }
   };
 
   return (
     <div className="container mx-auto p-6">
+      <div className="mb-6">
+        <TextField
+          label="Form Name"
+          variant="outlined"
+          fullWidth
+          value={formName}
+          onChange={(e) => setFormName(e.target.value)}
+          placeholder="Enter form name"
+        />
+      </div>
+
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-8">
         {fieldTypes.map(({ type, icon: Icon, label }) => (
           <Card
