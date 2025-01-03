@@ -11,6 +11,7 @@ import {
   Divider,
 } from "@mui/material";
 import { toast } from "react-toastify";
+import AddchartIcon from "@mui/icons-material/Addchart";
 import Token from "../Token/Token";
 import MenuIcon from "@mui/icons-material/Menu";
 import DashboardIcon from "@mui/icons-material/Dashboard";
@@ -37,6 +38,7 @@ import { io } from "socket.io-client";
 import Billing from "./BillingMenu";
 import { useLocation } from "react-router-dom";
 import DynamicFormMenu from "./DynamicForm/DynmaicFormMenu";
+import BatchMenuV2 from "./BatchManagement/BatchMenuV2";
 
 const Sidebar = () => {
   const academyname = sessionStorage.getItem("academyname");
@@ -222,20 +224,20 @@ const Sidebar = () => {
       component: <PendingFeesTable data={passpaymentdetails} />,
       disabled: status === "Accept" ? false : true,
     },
+    // {
+    //   text: "Form Management",
+    //   icon: <InsertDriveFileIcon />,
+    //   component: <FormManagementMenu />,
+    //   disabled: status === "Accept" ? false : true,
+    // },
     {
-      text: "Form Management",
-      icon: <InsertDriveFileIcon />,
-      component: <FormManagementMenu />,
-      disabled: status === "Accept" ? false : true,
-    },
-    {
-      text: "Payment Managemnet",
+      text: "Credentials Setup",
       icon: <PaymentsIcon />,
       component: <PaymentMenu />,
       disabled: status === "Accept" ? false : true,
     },
     {
-      text: "Form Builder",
+      text: "Form Builder 🆕",
       icon: <InsertDriveFileIcon />,
       component: <DynamicFormMenu />,
       disabled: status === "Accept" ? false : true,
@@ -256,6 +258,12 @@ const Sidebar = () => {
       text: "Billing",
       icon: <CurrencyRupeeIcon />,
       component: <Billing academyid={academyid} info={info} />,
+      disabled: status === "Accept" ? false : false,
+    },
+    {
+      text: "Batch Management 🆕",
+      icon: <AddchartIcon />,
+      component: <BatchMenuV2 />,
       disabled: status === "Accept" ? false : false,
     },
   ];
