@@ -9,6 +9,11 @@ const BatchDetailsSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    currentstudentcount:
+    {
+        type: Number,
+        default: 0,
+    },
     maximumstudents: {
         type: Number,
         required: true,
@@ -29,6 +34,7 @@ const BatchDetailsSchema = new mongoose.Schema({
         type: String,
         enum: ["Theory", "Practical", "Both"],
         required: true,
+        default: "Both",
     },
     schedule: [
         {
@@ -65,36 +71,3 @@ const BatchDetailsSchema = new mongoose.Schema({
 });
 
 module.exports = mongoose.model("BatchDetails", BatchDetailsSchema);
-
-// e.g
-
-// {
-//     "academyname": "Harmony Academy",
-//     "batchname": "String Master",
-//     "maximumstudents": 20,
-//     "course": "Music",
-//     "specificDetails": {
-//         "instruments": ["Guitar", "Tabla"]
-//     },
-//     "classtype": "Both",
-//     "schedule": [
-//         {
-//             "day": "Monday",
-//             "starttime": "4:00 PM",
-//             "endtime": "5:00 PM",
-//             "classtype": "Theory"
-//         },
-//         {
-//             "day": "Wednesday",
-//             "starttime": "5:00 PM",
-//             "endtime": "6:00 PM",
-//             "classtype": "Theory"
-//         },
-//         {
-//             "day": "Friday",
-//             "starttime": "5:00 PM",
-//             "endtime": "6:00 PM",
-//             "classtype": "Practical"
-//         }
-//     ]
-// }

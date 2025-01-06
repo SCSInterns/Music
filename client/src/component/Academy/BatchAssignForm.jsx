@@ -25,7 +25,7 @@ const BatchSelectionModal = ({ open, onClose, data }) => {
   useEffect(() => {
     const fetchBatches = async () => {
       try {
-        const url = "http://localhost:5000/api/auth/getbatchesdetails";
+        const url = "http://localhost:5000/api/auth/ngetbatchesdetails";
         const token = Token();
         const response = await fetch(url, {
           method: "POST",
@@ -44,10 +44,11 @@ const BatchSelectionModal = ({ open, onClose, data }) => {
         const batchDetails = data.map((batch) => ({
           id: batch._id,
           name: batch.batchname,
-          instruments: batch.instrument_types.map((instrument) => ({
-            id: instrument._id?.$oid || instrument._id, // Adjusted here
-            type: instrument.type, // Extract instrument type
-          })),
+          instruments: batch.specificDetails?.instruments?.map(
+            (instrument) => ({
+              type: instrument, // Extract instrument type
+            })
+          ),
         }));
         setBatches(batchDetails);
       } catch (error) {
@@ -72,12 +73,14 @@ const BatchSelectionModal = ({ open, onClose, data }) => {
     setSelectedInstrument(event.target.value);
   };
 
+  console.log(batches);
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     console.log("Selected Batch ID:", selectedBatch);
     console.log("Selected Instrument ID:", selectedInstrument);
 
-    const url = "http://localhost:5000/api/auth/assignbatch";
+    const url = "http://localhost:5000/api/auth/addusertobatch";
     const token = Token();
 
     const response = await fetch(url, {
@@ -97,7 +100,7 @@ const BatchSelectionModal = ({ open, onClose, data }) => {
 
     if (!response.ok) {
       const errorData = await response.json();
-      toast.error(errorData.msg || "An error occurred");
+      toast.error(errorData.message || "An error occurred");
     } else {
       toast.success("Student added to batch successfully ");
       onClose();

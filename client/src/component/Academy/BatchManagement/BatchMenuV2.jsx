@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import CreateBatch from "./CreateBatch";
+import ViewBatches from "./ViewBatches";
 
 const TopNavbar = () => {
   const [activeContent, setActiveContent] = useState("Create Batch");
@@ -9,6 +10,11 @@ const TopNavbar = () => {
       name: "Create Batch",
       key: "Create Batch",
       component: <CreateBatch />,
+    },
+    {
+      name: "View Batches",
+      key: "View Batches",
+      component: <ViewBatches />,
     },
   ];
 

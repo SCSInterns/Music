@@ -11,9 +11,14 @@ import {
   Checkbox,
   ListItemText,
   FormControlLabel,
+  Grid,
 } from "@mui/material";
 import { TimePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import dayjs from "dayjs";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { toast } from "react-toastify";
+import Token from "../../Token/Token";
+import DialogBox from "./DialogBox";
 
 const daysOfWeek = [
   "Monday",
@@ -32,9 +37,15 @@ const courseOptions = {
   Art: ["Painting", "Sculpture", "Sketching", "Pottery"],
 };
 
+const academyname = sessionStorage.getItem("academyname");
+const role = sessionStorage.getItem("role");
+const token = Token();
+
 const BatchDetailsForm = () => {
   const [formData, setFormData] = useState({
-    academyname: "",
+    academyname: academyname,
+    conflict: false,
+    role: role,
     batchname: "",
     maximumstudents: "",
     course: "",
@@ -48,29 +59,122 @@ const BatchDetailsForm = () => {
     schedule: [],
   });
 
+  const [dialogbox, setdialogbox] = useState(false);
+  const [msg, setmsg] = useState("");
+
+  console.log("HEloo....", formData);
+
   const handleChange = (field, value) => {
     setFormData({ ...formData, [field]: value });
   };
 
-  const handleScheduleChange = (day, type, value) => {
-    const updatedSchedule = formData.schedule.map((item) =>
-      item.day === day ? { ...item, [type]: value } : item
-    );
-    const dayExists = formData.schedule.some((item) => item.day === day);
-
-    if (!dayExists) {
-      updatedSchedule.push({
-        day,
-        starttime: "",
-        endtime: "",
-        classtype: "",
-      });
-    }
-
-    setFormData({ ...formData, schedule: updatedSchedule });
+  const onProceed = () => {
+    setFormData((prevData) => {
+      const updatedData = { ...prevData, conflict: true };
+      return updatedData;
+    });
+    setTimeout(() => {
+      handleSubmit();
+    }, 1000);
   };
 
-  const handleSubmit = () => {
+  const handleScheduleChange = (day, field, value) => {
+    setFormData((prevState) => {
+      const existingDay = prevState.schedule.find((item) => item.day === day);
+
+      const updatedSchedule = existingDay
+        ? prevState.schedule.map((item) =>
+            item.day === day
+              ? {
+                  ...item,
+                  [field]: value,
+                  ...(prevState.sameTimeForSelectedDays
+                    ? { starttime: "", endtime: "", classtype: "" }
+                    : {}),
+                }
+              : item
+          )
+        : [
+            ...prevState.schedule,
+            { day, [field]: value },
+            ...(prevState.sameTimeForSelectedDays
+              ? [{ starttime: "", endtime: "", classtype: "" }]
+              : []),
+          ];
+      return { ...prevState, schedule: updatedSchedule };
+    });
+  };
+
+  const convertData = (data) => {
+    const {
+      academyname,
+      conflict,
+      batchname,
+      maximumstudents,
+      course,
+      specificDetails,
+      classtype,
+      sameTimeForSelectedDays,
+      selectedDays,
+      globalStartTime,
+      globalEndTime,
+      globalClassType,
+      schedule,
+      role,
+    } = data;
+
+    const convertedSchedule = schedule.map((item) => {
+      if (sameTimeForSelectedDays) {
+        return {
+          day: item.day,
+          starttime: globalStartTime
+            ? formatTime(globalStartTime)
+            : item.starttime,
+          endtime: globalEndTime ? formatTime(globalEndTime) : item.endtime,
+          classtype: item.classtype || globalClassType,
+        };
+      } else {
+        return {
+          day: item.day,
+          starttime: item.starttime,
+          endtime: item.endtime,
+          classtype: item.classtype,
+        };
+      }
+    });
+
+    const filteredSchedule = selectedDays.length
+      ? convertedSchedule.filter((item) => selectedDays.includes(item.day))
+      : convertedSchedule;
+
+    const convertedSpecificDetails = {
+      instruments: specificDetails || [],
+    };
+
+    const result = {
+      academyname: academyname || "",
+      role: role || "",
+      batchname: batchname || "",
+      maximumstudents: maximumstudents || "",
+      course: course || "",
+      specificDetails: convertedSpecificDetails,
+      classtype: classtype || globalClassType,
+      sameTimeForSelectedDays,
+      schedule: filteredSchedule,
+      conflict: conflict,
+    };
+
+    return result;
+  };
+
+  const formatTime = (time) => {
+    const [hour, minute] = time.split(":");
+    const suffix = hour >= 12 ? "PM" : "AM";
+    const formattedHour = hour % 12 || 12;
+    return `${formattedHour}:${minute} ${suffix}`;
+  };
+
+  const handleSubmit = async () => {
     const submissionData = formData.sameTimeForSelectedDays
       ? {
           ...formData,
@@ -80,7 +184,9 @@ const BatchDetailsForm = () => {
                   day,
                   starttime: formData.globalStartTime,
                   endtime: formData.globalEndTime,
-                  classtype: formData.globalClassType,
+                  classtype:
+                    formData.schedule.find((item) => item.day === day)
+                      ?.classtype || formData.globalClassType,
                 }
               : formData.schedule.find((item) => item.day === day) || {
                   day,
@@ -90,9 +196,74 @@ const BatchDetailsForm = () => {
                 }
           ),
         }
-      : formData;
+      : {
+          ...formData,
+        };
 
-    console.log("Submitted Data: ", submissionData);
+    const formattedData = convertData(submissionData);
+
+    console.log("Submitted Data: ", formattedData);
+
+    if (
+      !formData.academyname ||
+      !formData.batchname ||
+      !formData.maximumstudents ||
+      !formData.course ||
+      formData.specificDetails?.instruments?.length === 0
+    ) {
+      return toast.error("Please fill all required fields.");
+    }
+
+    const url = "http://localhost:5000/api/auth/addbatchesnew";
+
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `${token}`,
+        },
+        body: JSON.stringify({
+          academyname: formattedData.academyname,
+          batchname: formattedData.batchname,
+          maximumstudents: formattedData.maximumstudents,
+          course: formattedData.course,
+          specificDetails: formattedData.specificDetails,
+          classtype: formattedData.classtype,
+          schedule: formattedData.schedule,
+          role: formattedData.role,
+          conflict: formattedData.conflict,
+        }),
+      });
+
+      if (response.ok) {
+        setdialogbox(false);
+        toast.success("Batch created successfully.");
+        setFormData({
+          academyname: academyname,
+          role: role,
+          batchname: "",
+          maximumstudents: "",
+          course: "",
+          specificDetails: [],
+          classtype: "",
+          sameTimeForSelectedDays: false,
+          selectedDays: [],
+          globalStartTime: "",
+          globalEndTime: "",
+          globalClassType: "",
+          schedule: [],
+        });
+      } else {
+        const data = await response.json();
+        if (response.status === 400) {
+          setmsg(data.message);
+          setdialogbox(true);
+        }
+      }
+    } catch (error) {
+      toast.error("Something went wrong. Please try again later.");
+    }
   };
 
   return (
@@ -199,16 +370,19 @@ const BatchDetailsForm = () => {
             <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
               <TimePicker
                 label="Start Time"
-                onChange={(value) =>
-                  handleChange("globalStartTime", value?.format("HH:mm"))
-                }
+                onChange={(value) => {
+                  handleChange(
+                    "globalStartTime",
+                    value?.clone().format("HH:mm")
+                  );
+                }}
                 renderInput={(props) => <TextField {...props} fullWidth />}
               />
               <TimePicker
                 label="End Time"
-                onChange={(value) =>
-                  handleChange("globalEndTime", value?.format("HH:mm"))
-                }
+                onChange={(value) => {
+                  handleChange("globalEndTime", value?.clone().format("HH:mm"));
+                }}
                 renderInput={(props) => <TextField {...props} fullWidth />}
               />
             </Box>
@@ -228,6 +402,54 @@ const BatchDetailsForm = () => {
           </FormControl>
         </>
       )}
+
+      {formData.sameTimeForSelectedDays &&
+        formData.globalClassType === "Both" && (
+          <>
+            <div className="mt-4">
+              <Typography variant="h6" sx={{ mb: 2 }}>
+                Assign Class Type for Each Selected Day
+              </Typography>
+              <Grid container spacing={2}>
+                {formData.selectedDays.map((day) => (
+                  <Grid item xs={12} sm={6} key={day}>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 2,
+                      }}
+                    >
+                      <Typography sx={{ minWidth: 100 }}>{day}</Typography>
+                      <FormControl sx={{ minWidth: 150 }}>
+                        <InputLabel id={`${day}-specific-class-type-label`}>
+                          Class Type
+                        </InputLabel>
+                        <Select
+                          labelId={`${day}-specific-class-type-label`}
+                          value={
+                            formData.schedule.find((item) => item.day === day)
+                              ?.classtype || ""
+                          }
+                          onChange={(e) =>
+                            handleScheduleChange(
+                              day,
+                              "classtype",
+                              e.target.value
+                            )
+                          }
+                        >
+                          <MenuItem value="Practical">Practical</MenuItem>
+                          <MenuItem value="Theory">Theory</MenuItem>
+                        </Select>
+                      </FormControl>
+                    </Box>
+                  </Grid>
+                ))}
+              </Grid>
+            </div>
+          </>
+        )}
 
       {!formData.sameTimeForSelectedDays &&
         daysOfWeek.map((day) => (
@@ -260,6 +482,15 @@ const BatchDetailsForm = () => {
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <TimePicker
                 label="Start Time"
+                value={
+                  formData.schedule.find((item) => item.day === day)?.starttime
+                    ? dayjs(
+                        formData.schedule.find((item) => item.day === day)
+                          ?.starttime,
+                        "HH:mm"
+                      )
+                    : null
+                }
                 onChange={(value) =>
                   handleScheduleChange(day, "starttime", value?.format("HH:mm"))
                 }
@@ -269,6 +500,15 @@ const BatchDetailsForm = () => {
               />
               <TimePicker
                 label="End Time"
+                value={
+                  formData.schedule.find((item) => item.day === day)?.endtime
+                    ? dayjs(
+                        formData.schedule.find((item) => item.day === day)
+                          ?.endtime,
+                        "HH:mm"
+                      )
+                    : null
+                }
                 onChange={(value) =>
                   handleScheduleChange(day, "endtime", value?.format("HH:mm"))
                 }
@@ -283,7 +523,8 @@ const BatchDetailsForm = () => {
               <Select
                 labelId={`${day}-class-type-label`}
                 value={
-                  formData.schedule.find((item) => item.day === day)?.classtype
+                  formData.schedule.find((item) => item.day === day)
+                    ?.classtype || ""
                 }
                 onChange={(e) =>
                   handleScheduleChange(day, "classtype", e.target.value)
@@ -306,6 +547,17 @@ const BatchDetailsForm = () => {
       >
         Submit
       </Button>
+
+      <DialogBox
+        open={dialogbox}
+        onClose={() => {
+          setdialogbox(false);
+        }}
+        onProceed={() => {
+          onProceed();
+        }}
+        message={msg}
+      />
     </Box>
   );
 };

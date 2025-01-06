@@ -1,52 +1,165 @@
 const Batch = require("../models/BatchN")
+const Form = require("../models/UserForm")
 
+// add batch 
 const BatchAddition = async (req, res) => {
-
     try {
-
         const { academyname, batchname, maximumstudents, course, specificDetails, classtype, schedule, role, conflict } = req.body;
+
+        const existingBatches = await Batch.find({ academyname });
+
+        if (existingBatches.length > 0) {
+            for (const batch of existingBatches) {
+                if (batch.batchname === batchname) {
+                    return res.status(403).json({ message: 'Batch already exists . Please choose a different name 😊 ' });
+                }
+            }
+        }
+
 
         if (role !== "Admin") {
             return res.status(401).json({ message: 'Unauthorized access' });
         }
 
-        const existingBatches = await Batch.find({ academyname: academyname })
+        if (conflict === false) {
+            const existingBatches = await Batch.find({ academyname });
 
-        if (!existingBatches) {
-            const newBatch = new Batch({
-                academyname: academyname,
-                batchname: batchname,
-                maximumstudents: maximumstudents,
-                course: course,
-                specificDetails: specificDetails,
-                classtype: classtype,
-                schedule: schedule,
-            })
+            if (existingBatches.length > 0) {
+                // Check for schedule conflicts
+                for (const newSchedule of schedule) {
+                    const { day, starttime, endtime } = newSchedule;
 
-            await newBatch.save();
+                    // Check each existing batch for schedule conflict
+                    for (const batch of existingBatches) {
+                        const conflictingSchedule = batch.schedule.find((existingSchedule) => {
+                            // Check if the day matches
+                            if (existingSchedule.day === day) {
+                                // Check if the times overlap
+                                const isConflict =
+                                    (starttime >= existingSchedule.starttime && starttime < existingSchedule.endtime) ||
+                                    (endtime > existingSchedule.starttime && endtime <= existingSchedule.endtime) ||
+                                    (starttime <= existingSchedule.starttime && endtime >= existingSchedule.endtime);
+                                return isConflict;
+                            }
+                            return false;
+                        });
 
-            return res.status(200).json({ message: 'Batch added successfully' })
-        }
-
-        // check conflict with existing batches
-
-        for (const ebatch of existingBatches) {
-            const ebatchschedule = ebatch.schedule
-
-            for (const day of ebatchschedule) {
-
+                        if (conflictingSchedule) {
+                            return res.status(400).json({ message: `Conflict found for ${day} between ${starttime} and ${endtime}` });
+                        }
+                    }
+                }
             }
         }
 
+        const newBatch = new Batch({
+            academyname,
+            batchname,
+            maximumstudents,
+            course,
+            specificDetails,
+            classtype,
+            schedule,
+        });
 
+        await newBatch.save();
 
-
+        return res.status(200).json({ message: 'Batch added successfully' });
 
     } catch (error) {
         res.status(500).json({ message: 'Server not supported', error });
     }
+};
+
+// assign batch 
+
+const BatchAssignment = async (req, res) => {
+    try {
+        const { batchid, studentid, conflict, instrumentName } = req.body;
+
+        const user = await Form.findOne({ _id: studentid });
+
+        const appliedintrument = user.additionalFields?.get("Courses")
 
 
+        if (!user) {
+            return res.status(404).json({ message: 'Student not found' });
+        }
+
+
+        if (user.batchid && user.batchid !== '') {
+            return res.status(403).json({ message: 'Batch already assigned' });
+        }
+
+        if (appliedintrument !== instrumentName) {
+            return res.status(403).json({
+                message: "User applied for diff instrument"
+            })
+        }
+
+
+        const batch = await Batch.findOne({ _id: batchid });
+
+        if (!batch) {
+            return res.status(404).json({ message: 'Batch not found' });
+        }
+
+        if (!batch.specificDetails.instruments.includes(instrumentName)) {
+            return res
+                .status(400)
+                .json({ message: `The instrument "${instrumentName}" is not available in this batch.` });
+        }
+
+        if (conflict === false) {
+            const currentCount = batch.currentstudentcount;
+
+            if (currentCount >= batch.maximumstudents) {
+                return res.status(403).json({ message: 'Batch is full' });
+            }
+        }
+
+
+        user.batchid = batch._id;
+        await user.save();
+
+
+        batch.currentstudentcount = batch.currentstudentcount + 1;
+        await batch.save();
+
+        return res.status(200).json({ message: 'Batch assigned successfully' });
+
+    } catch (error) {
+        return res.status(500).json({ message: 'Server not supported', error });
+    }
+};
+
+
+// get all details of particular batches  
+
+const getallbatches = async (req, res) => {
+    try {
+        const { academyname, role } = req.body
+
+        if (role === "Admin") {
+            const details = await Batch.find({ academyname: academyname })
+
+            if (details) {
+                res.status(200).json(details)
+            }
+            else {
+                res.status(404).json({ msg: "Details Not Found " })
+            }
+        }
+        else {
+            res.status(401).json({ msg: "Unauthorized Access" })
+        }
+
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: "Server error", error: error.message });
+    }
 }
 
-module.exports = { BatchAddition }
+
+
+module.exports = { BatchAddition, BatchAssignment, getallbatches }
