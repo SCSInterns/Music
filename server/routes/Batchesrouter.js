@@ -13,5 +13,7 @@ router.post('/getapplicantslist', authenticate.authenticatetoken, batches.handle
 router.post('/addbatchesnew', authenticate.authenticatetoken, newbatch.BatchAddition)
 router.post('/addusertobatch', authenticate.authenticatetoken, newbatch.BatchAssignment)
 router.post('/ngetbatchesdetails', authenticate.authenticatetoken, newbatch.getallbatches)
+router.post('/getbatchstudents', authenticate.authenticatetoken, newbatch.getbatchstudents)
+
 
 module.exports = router 

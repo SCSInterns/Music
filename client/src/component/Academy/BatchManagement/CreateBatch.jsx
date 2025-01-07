@@ -285,7 +285,7 @@ const BatchDetailsForm = () => {
         fullWidth
         label="Batch Name"
         value={formData.batchname}
-        onChange={(e) => handleChange("batchname", e.target.value)}
+        onChange={(e) => handleChange("batchname", e.target.value.trim())}
         sx={{ mb: 2 }}
       />
 
@@ -335,6 +335,7 @@ const BatchDetailsForm = () => {
       )}
 
       <FormControlLabel
+        className="mb-3"
         control={
           <Checkbox
             checked={formData.sameTimeForSelectedDays}
@@ -538,15 +539,16 @@ const BatchDetailsForm = () => {
           </Box>
         ))}
 
-      <Button
-        variant="contained"
-        color="primary"
-        fullWidth
-        onClick={handleSubmit}
-        sx={{ mt: 3 }}
-      >
-        Submit
-      </Button>
+      <div className="py-5">
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleSubmit}
+          sx={{ width: "100px", marginBottom: 2, float: "right" }}
+        >
+          Submit
+        </Button>
+      </div>
 
       <DialogBox
         open={dialogbox}

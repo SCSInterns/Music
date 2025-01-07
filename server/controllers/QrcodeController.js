@@ -2,9 +2,7 @@ const Qrcode = require("../models/Qrcode")
 const QR = require('qrcode');
 const Attendance = require("../models/Attendance")
 const Rollno = require("../controllers/RollnoController")
-
-
-
+const Form = require("../models/UserForm")
 
 function getInitials(str) {
     return str
@@ -134,6 +132,14 @@ const attendance = async (req, res) => {
             });
 
             await attendanceRecord.save();
+
+            const studentprofile = await Form.findOne({ _id: studentid })
+
+            if (studentprofile) {
+
+                studentprofile.attendance = studentprofile.attendance + 1
+                await studentprofile.save()
+            }
 
             return res.status(201).json({ message: "Attendance logged successfully", attendanceRecord });
         } else {

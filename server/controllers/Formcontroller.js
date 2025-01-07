@@ -150,7 +150,8 @@ const handlestatus = async (req, res) => {
       status: status
     };
     if (user) {
-      const updatedinfo = await UserForm.findByIdAndUpdate(req.params.id, { $set: updateduser })
+      const updatedinfo = await UserForm.findByIdAndUpdate(req.params.id, { $set: updateduser },
+        { new: true })
       if (updatedinfo.status === "Accept") {
         const timestampnow = new Date
         const installmentdate = formatDate(timestampnow)

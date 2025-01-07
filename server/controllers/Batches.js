@@ -3,7 +3,8 @@ const Batches = require("../models/Batch");
 const SpecificBatch = require("../models/SpecificBatch");
 const BatchAssign = require("../models/BatchAssign")
 const Form = require("../models/Form")
-
+const UserForm = require("../models/UserForm")
+const BatchDetail = require("../models/BatchN")
 
 // Function to calculate time difference
 function calculateTimeDifference(startTime, endTime) {
@@ -478,7 +479,7 @@ const getbatchdetails = async (req, res) => {
 
     try {
         const { studentid, academyname } = req.body
-        const assignbatch = await BatchAssign.findOne({ studentid: studentid, academyname: academyname })
+        const assignbatch = await UserForm.findOne({ _id: studentid, academy_name: academyname })
         if (!assignbatch) {
             return res.status(404).json({ msg: "No Batch is assign for this student" })
         }
@@ -486,7 +487,7 @@ const getbatchdetails = async (req, res) => {
 
         if (batchid) {
 
-            const batchdetail = await SpecificBatch.findOne({ _id: batchid })
+            const batchdetail = await BatchDetail.findOne({ _id: batchid })
 
             if (batchdetail) {
                 return res.status(200).json(batchdetail)

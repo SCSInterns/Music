@@ -147,7 +147,7 @@ function ProfilePreview({
                       style={{ width: "100%", borderCollapse: "collapse" }}
                     >
                       <tbody>
-                        {Object.entries(data.additionalFields.formdata).map(
+                        {Object.entries(data.additionalFields).map(
                           ([label, value], index) => (
                             <tr key={index}>
                               <td
@@ -184,7 +184,7 @@ function ProfilePreview({
                               borderBottom: "1px solid #ddd",
                             }}
                           >
-                            {data.installementDate}
+                            {data.installmentDate}
                           </td>
                         </tr>
                       </tbody>

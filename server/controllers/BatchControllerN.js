@@ -87,11 +87,11 @@ const BatchAssignment = async (req, res) => {
         }
 
 
-        if (user.batchid && user.batchid !== '') {
+        if (user.batchid && user.batchid !== 'None') {
             return res.status(403).json({ message: 'Batch already assigned' });
         }
 
-        if (appliedintrument !== instrumentName) {
+        if (appliedintrument !== instrumentName && instrumentName !== "None") {
             return res.status(403).json({
                 message: "User applied for diff instrument"
             })
@@ -104,7 +104,7 @@ const BatchAssignment = async (req, res) => {
             return res.status(404).json({ message: 'Batch not found' });
         }
 
-        if (!batch.specificDetails.instruments.includes(instrumentName)) {
+        if (!batch.specificDetails.instruments.includes(instrumentName) && instrumentName !== "None") {
             return res
                 .status(400)
                 .json({ message: `The instrument "${instrumentName}" is not available in this batch.` });
@@ -120,6 +120,7 @@ const BatchAssignment = async (req, res) => {
 
 
         user.batchid = batch._id;
+        user.batchname = batch.batchname
         await user.save();
 
 
@@ -160,6 +161,32 @@ const getallbatches = async (req, res) => {
     }
 }
 
+// get students list for batch showing  
 
+const getbatchstudents = async (req, res) => {
 
-module.exports = { BatchAddition, BatchAssignment, getallbatches }
+    try {
+
+        const { role, academyname } = req.body
+
+        if (role === "Admin") {
+            const students = await Form.find({ academy_name: academyname })
+
+            if (students.length > 0) {
+
+                return res.status(200).json(students)
+
+            } else {
+                return res.status(404).json({ message: "No Students Found" })
+            }
+        } else {
+            return res.status(401).json({ message: "Unauthorized Access" })
+        }
+
+    } catch (error) {
+        return res.status(500).json({ message: "Server error", error: error.message });
+    }
+
+}
+
+module.exports = { BatchAddition, BatchAssignment, getallbatches, getbatchstudents }

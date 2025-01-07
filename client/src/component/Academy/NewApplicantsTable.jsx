@@ -15,6 +15,7 @@ import ProfilePreview from "./ProfilePreview";
 import StatusFormModal from "./StatusForm";
 import AccountBoxRoundedIcon from "@mui/icons-material/AccountBoxRounded";
 import PreviewIcon from "@mui/icons-material/Preview";
+import { Edit } from "@mui/icons-material";
 
 function ApplicantsTable({ users, handleapplicantslist }) {
   const [studentid, setstudentid] = useState("");
@@ -199,7 +200,7 @@ function ApplicantsTable({ users, handleapplicantslist }) {
     "Mobile No": user.additionalFields?.MobileNo || "N/A",
     "Starting Date": user.installmentDate || "N/A",
     Course: user.additionalFields?.Courses || "N/A",
-    Batch: user.additionalFields?.Courses || "N/A",
+    Batch: user.batchname || "N/A",
     "More Info": `${user.role}, ${user.status}`,
     id: user._id || "N/A",
     Status: user.status,
@@ -242,15 +243,24 @@ function ApplicantsTable({ users, handleapplicantslist }) {
       accessorKey: "Batch",
       header: "Batch",
       size: 100,
-      Cell: ({ row }) => (
-        <Button
-          sx={{ color: "#0d1b2a" }}
-          disabled={row.original?.Status !== "Accept"}
-          onClick={() => handlebatchadd(row.original.id)}
-        >
-          <AddCircleOutlineIcon />
-        </Button>
-      ),
+      Cell: ({ row }) =>
+        row.original?.Batch === "N/A" ? (
+          <Button
+            sx={{ color: "#0d1b2a" }}
+            disabled={row.original?.Status !== "Accept"}
+            onClick={() => handlebatchadd(row.original.id)}
+          >
+            <AddCircleOutlineIcon />
+          </Button>
+        ) : (
+          <Button
+            sx={{ color: "#0d1b2a" }}
+            disabled={row.original?.Status !== "Accept"}
+            onClick={() => handlebatchadd(row.original.id)}
+          >
+            <Edit />
+          </Button>
+        ),
     },
     {
       accessorKey: "More Info",

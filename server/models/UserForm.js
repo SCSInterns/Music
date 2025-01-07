@@ -4,7 +4,8 @@ const { Schema } = mongoose;
 const UserFormSchema = new Schema({
     academy_name: { type: String, required: true },
     role: { type: String, required: true },
-    batchid: { type: String, required: true, default: '' },
+    batchid: { type: String, default: '' },
+    batchname: { type: String, default: '' },
     form_name: {
         type: String, required: true,
 

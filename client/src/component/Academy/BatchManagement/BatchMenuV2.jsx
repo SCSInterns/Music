@@ -1,9 +1,13 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import CreateBatch from "./CreateBatch";
 import ViewBatches from "./ViewBatches";
+import Token from "../../Token/Token";
+import { toast } from "react-toastify";
+import TimeTablev2 from "./TimeTablev2";
 
 const TopNavbar = () => {
   const [activeContent, setActiveContent] = useState("Create Batch");
+  const [list, setlist] = useState([]);
 
   const menuItems = [
     {
@@ -12,11 +16,49 @@ const TopNavbar = () => {
       component: <CreateBatch />,
     },
     {
-      name: "View Batches",
+      name: "View Batch List",
       key: "View Batches",
-      component: <ViewBatches />,
+      component: <ViewBatches records={list} />,
+    },
+    {
+      name: "Time Table",
+      key: "Time Table",
+      component: <TimeTablev2 />,
     },
   ];
+
+  const token = Token();
+  const academyname = sessionStorage.getItem("academyname");
+  const role = sessionStorage.getItem("role");
+
+  const handlebatchlist = async () => {
+    const url = "http://localhost:5000/api/auth/getbatchstudents";
+
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        Authorization: `${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        academyname: academyname,
+        role: role,
+      }),
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      const filterdata = data.filter((item) => item.batchname !== "");
+      const finalfilter = filterdata.filter((item) => item.status !== "Reject");
+      setlist(finalfilter);
+    } else {
+      toast.error("Error fetching batch list");
+    }
+  };
+
+  useEffect(() => {
+    handlebatchlist();
+  }, []);
 
   return (
     <>
