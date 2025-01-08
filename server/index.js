@@ -93,6 +93,9 @@ app.use('/api/auth', batches)
 const qrcode = require('./routes/Qrcoderoute')
 app.use('/api/auth', qrcode)
 
+const account = require("./routes/Accountroute.js")
+app.use('/api/auth', account)
+
 app.get('/', (req, res) => {
     res.send("Hello World");
 });

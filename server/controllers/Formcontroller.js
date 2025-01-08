@@ -7,7 +7,7 @@ const Logo = require('../models/Logo')
 const Qrcode = require("../models/AcademyQr")
 const AcademyQr = require('../models/AcademyQr');
 const { socketIOSingleton } = require("../socket-factory")
-
+const Account = require("./AccountsC")
 
 function formatDate(timestamp) {
   const date = new Date(timestamp);
@@ -157,6 +157,10 @@ const handlestatus = async (req, res) => {
         const installmentdate = formatDate(timestampnow)
         updatedinfo.installmentDate = installmentdate
         await updatedinfo.save()
+
+        // add account 
+        const accountentry = Account.accountmng(updatedinfo._id, updatedinfo.academy_name, "Admin")
+
       }
       res.status(200).json({ msg: "Status updated successfully ", updatedinfo })
     }

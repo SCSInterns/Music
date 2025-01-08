@@ -39,6 +39,8 @@ import Billing from "./BillingMenu";
 import { useLocation } from "react-router-dom";
 import DynamicFormMenu from "./DynamicForm/DynmaicFormMenu";
 import BatchMenuV2 from "./BatchManagement/BatchMenuV2";
+import { AddBusiness } from "@mui/icons-material";
+import AccountMenu from "./AccountMng/AccountMenu";
 
 const Sidebar = () => {
   const academyname = sessionStorage.getItem("academyname");
@@ -218,12 +220,12 @@ const Sidebar = () => {
       component: <QrScan />,
       disabled: status === "Accept" ? false : true,
     },
-    {
-      text: "Pending Fees",
-      icon: <PendingActionsIcon />,
-      component: <PendingFeesTable data={passpaymentdetails} />,
-      disabled: status === "Accept" ? false : true,
-    },
+    // {
+    //   text: "Pending Fees",
+    //   icon: <PendingActionsIcon />,
+    //   component: <PendingFeesTable data={passpaymentdetails} />,
+    //   disabled: status === "Accept" ? false : true,
+    // },
     // {
     //   text: "Form Management",
     //   icon: <InsertDriveFileIcon />,
@@ -264,6 +266,12 @@ const Sidebar = () => {
       text: "Batch Management 🆕",
       icon: <AddchartIcon />,
       component: <BatchMenuV2 />,
+      disabled: status === "Accept" ? false : false,
+    },
+    {
+      text: "Account Management 🆕",
+      icon: <AddBusiness />,
+      component: <AccountMenu />,
       disabled: status === "Accept" ? false : false,
     },
   ];
