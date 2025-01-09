@@ -1,9 +1,22 @@
-import React from "react";
+import React, { useState } from "react";
 import { MaterialReactTable } from "material-react-table";
+import PaymentIcon from "@mui/icons-material/Payment";
+import { Button, Dialog, DialogContent, DialogTitle } from "@mui/material";
+import AccountPaymentBox from "./AccountPaymentBox";
 
-function AttendanceTable({ records }) {
-  // Log the records data to ensure it's received correctly
-  console.log("Records passed to AttendanceTable:", records);
+function AttendanceTable({ records, fetchList }) {
+  const [open, setOpen] = useState(false);
+  const [selectedRecord, setSelectedRecord] = useState(null);
+
+  const handleChange = async () => {
+    setOpen(false);
+    fetchList(); // Refresh the data after changes
+  };
+
+  const handleAddPayment = (record) => {
+    setSelectedRecord(record); // Set the specific record
+    setOpen(true); // Open the dialog
+  };
 
   const columns = [
     {
@@ -40,32 +53,20 @@ function AttendanceTable({ records }) {
       accessorKey: "status",
       header: "Status",
       size: 100,
-      cell: ({ row }) => {
-        // Log the row data to ensure the outstanding amount is correctly parsed
-        const outstanding = parseFloat(row.original?.outstandingamount) || 0;
-        console.log("Row data:", row.original); // Debugging row data
-
-        return (
-          <div>
-            {outstanding > 0 ? (
-              <button
-                onClick={() => handleAddPayment(row.original)}
-                style={{
-                  backgroundColor: "#4CAF50",
-                  color: "white",
-                  border: "none",
-                  padding: "5px 10px",
-                  cursor: "pointer",
-                }}
-              >
-                Add Payment
-              </button>
-            ) : (
-              <span>Paid</span>
-            )}
-          </div>
-        );
-      },
+    },
+    {
+      accessorKey: "Add Payment",
+      header: "Add Payment",
+      size: 100,
+      Cell: ({ row }) => (
+        <Button
+          disabled={row.original.outstandingamount === 0}
+          sx={{ color: "#0d1b2a" }}
+          onClick={() => handleAddPayment(row.original)} // Pass the specific record
+        >
+          <PaymentIcon />
+        </Button>
+      ),
     },
     {
       accessorKey: "batchname",
@@ -74,17 +75,29 @@ function AttendanceTable({ records }) {
     },
   ];
 
-  // Function to handle Add Payment click
-  const handleAddPayment = (record) => {
-    console.log("Add payment for:", record);
-    alert(`Add payment for ${record.studentname}`);
-    // Implement your payment logic here
-  };
-
   return (
-    <div style={{ marginTop: "20px" }}>
-      <MaterialReactTable columns={columns} data={records} />
-    </div>
+    <>
+      {/* Material-UI Dialog */}
+      <Dialog
+        open={open}
+        onClose={() => setOpen(false)}
+        maxWidth="sm"
+        fullWidth
+      >
+        <DialogContent>
+          <AccountPaymentBox
+            close={() => setOpen(false)}
+            onChange={handleChange}
+            record={selectedRecord}
+          />
+        </DialogContent>
+      </Dialog>
+
+      {/* The table */}
+      <div style={{ marginTop: "20px" }}>
+        <MaterialReactTable columns={columns} data={records} />
+      </div>
+    </>
   );
 }
 

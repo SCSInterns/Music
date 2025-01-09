@@ -9,6 +9,7 @@ import {
   ListItemIcon,
   ListItemText,
   Divider,
+  Tooltip,
 } from "@mui/material";
 import { toast } from "react-toastify";
 import AddchartIcon from "@mui/icons-material/Addchart";
@@ -41,6 +42,8 @@ import DynamicFormMenu from "./DynamicForm/DynmaicFormMenu";
 import BatchMenuV2 from "./BatchManagement/BatchMenuV2";
 import { AddBusiness } from "@mui/icons-material";
 import AccountMenu from "./AccountMng/AccountMenu";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 
 const Sidebar = () => {
   const academyname = sessionStorage.getItem("academyname");
@@ -48,12 +51,20 @@ const Sidebar = () => {
   const socket = React.useRef(null);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [loading, setloading] = useState(false);
-  const handleDrawerToggle = () => {
-    setMobileOpen(!mobileOpen);
-  };
   const [appdata, setappdata] = useState([]);
   const [toggleapplicants, settoggleapplicants] = useState(false);
   const [passpaymentdetails, setpasspaymentdetails] = useState([]);
+  const [collapsed, setCollapsed] = useState(false);
+
+  const handleDrawerToggle = () => {
+    setMobileOpen(!mobileOpen);
+  };
+
+  const toggleCollapse = () => {
+    setCollapsed(!collapsed);
+  };
+
+  const drawerWidth = collapsed ? 80 : 300;
 
   const token = Token();
 
@@ -279,36 +290,62 @@ const Sidebar = () => {
   const drawerContent = (
     <Box
       sx={{
-        width: { xs: 250, sm: 300 },
+        width: drawerWidth,
         backgroundColor: "#0d1b2a",
         color: "#fff",
         height: "100vh",
         display: "flex",
         flexDirection: "column",
-        overflow: "hidden",
+        overflowX: "hidden",
       }}
     >
-      <Box sx={{ padding: 2 }}>
-        <Typography variant="h6" sx={{ fontWeight: "bold", color: "#fff" }}>
-          {academyname} Admin Dashboard
-        </Typography>
+      <Box
+        sx={{
+          padding: 2,
+          display: "flex",
+          justifyContent: "space-between",
+          ml: collapsed ? 0 : 2,
+        }}
+      >
+        {!collapsed && (
+          <Typography variant="h6" sx={{ fontWeight: "bold", color: "#fff" }}>
+            Admin Dashboard
+          </Typography>
+        )}
+        <IconButton
+          onClick={toggleCollapse}
+          sx={{ color: "#fff", border: "1px white solid", borderRadius: "40%" }}
+        >
+          {collapsed ? (
+            <ChevronRightIcon fontSize="small" />
+          ) : (
+            <ChevronLeftIcon fontSize="small" />
+          )}
+        </IconButton>
       </Box>
       <Divider sx={{ backgroundColor: "#2e3b4e" }} />
       <List>
         {menuItems.map((item, index) => (
-          <ListItem
-            button
+          <Tooltip
+            title={collapsed ? item.text : ""}
+            placement="right"
             key={index}
-            onClick={() => setActiveComponent(item.text)}
-            disabled={item.disabled}
-            sx={{
-              backgroundColor:
-                activeComponent === item.text ? "#2e3b4e" : "transparent",
-            }}
           >
-            <ListItemIcon sx={{ color: "#fff" }}>{item.icon}</ListItemIcon>
-            <ListItemText primary={item.text} />
-          </ListItem>
+            <ListItem
+              button
+              key={index}
+              onClick={() => setActiveComponent(item.text)}
+              disabled={item.disabled}
+              sx={{
+                backgroundColor:
+                  activeComponent === item.text ? "#2e3b4e" : "transparent",
+                paddingY: "10px",
+              }}
+            >
+              <ListItemIcon sx={{ color: "#fff" }}>{item.icon}</ListItemIcon>
+              {!collapsed && <ListItemText primary={item.text} />}
+            </ListItem>
+          </Tooltip>
         ))}
       </List>
     </Box>
@@ -381,7 +418,7 @@ const Sidebar = () => {
             display: { xs: "none", sm: "block" },
             "& .MuiDrawer-paper": {
               boxSizing: "border-box",
-              width: 300,
+              width: drawerWidth,
               overflowX: "hidden",
             },
           }}
@@ -394,11 +431,11 @@ const Sidebar = () => {
         <Box
           sx={{
             flex: 1,
-            padding: 2,
             overflowX: "hidden",
-            paddingLeft: { sm: 40 },
+            paddingLeft: `${drawerWidth}px`,
             backgroundColor: "#f1f5f9",
             height: "100vh",
+            transition: "padding-left 0.3s ease",
           }}
         >
           {menuItems.map(

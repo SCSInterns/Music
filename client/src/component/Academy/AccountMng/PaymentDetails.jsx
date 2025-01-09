@@ -15,9 +15,11 @@ import {
   Popover,
 } from "@mui/material";
 import FilterAltIcon from "@mui/icons-material/FilterAlt";
+import CloseIcon from "@mui/icons-material/Close";
 import PaymentInfoTable from "./PaymentInfoTable";
 import Token from "../../Token/Token";
 import { toast } from "react-toastify";
+import AccountPaymentBox from "./AccountPaymentBox";
 
 const months = [
   "January",
@@ -103,6 +105,19 @@ export default function FilterMenu() {
   return (
     <Box sx={{ width: "100%" }}>
       <Box display="flex" justifyContent="flex-end" alignItems="center" mb={2}>
+        <div>
+          <Typography
+            sx={{
+              color: "#0d1b2a",
+              zIndex: 3,
+              mr: 1,
+              fontWeight: "bold",
+              fontSize: "15px",
+            }}
+          >
+            Filter :
+          </Typography>
+        </div>
         <IconButton
           onClick={handleOpen}
           sx={{
@@ -124,6 +139,20 @@ export default function FilterMenu() {
           horizontal: "left",
         }}
       >
+        <IconButton
+          onClick={handleClose}
+          sx={{
+            border: "1px solid #0d1b2a",
+            borderRadius: "40%",
+            color: "#0d1b2a",
+            float: "right",
+            marginTop: "5px",
+            marginRight: "2px",
+          }}
+        >
+          <CloseIcon sx={{ fontSize: "15px", color: "red" }} />
+        </IconButton>
+
         <Box className="space-y-6 p-6" sx={{ width: "250px", maxWidth: "90%" }}>
           <Typography align="center" gutterBottom>
             Select Month and Year
@@ -211,9 +240,13 @@ export default function FilterMenu() {
           </Box>
         </Box>
       </Popover>
-
       <Box mt={3}>
-        <PaymentInfoTable records={data} />
+        <PaymentInfoTable
+          records={data}
+          fetchList={() => {
+            fetchList();
+          }}
+        />
       </Box>
     </Box>
   );

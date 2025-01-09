@@ -28,7 +28,7 @@ const newdueschema = new mongoose.Schema({
         required: true
     },
     fees: {
-        type: String,
+        type: Number,
         required: true
     },
     studentid: {
