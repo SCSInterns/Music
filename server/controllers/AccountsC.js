@@ -107,6 +107,24 @@ const fetchaccountlist = async (req, res) => {
     }
 }
 
+// fetch particular account data  
+const fetchparticularaccount = async (req, res) => {
+    try {
+
+        const { studentid } = req.body
+        const list = await Account.find({ studentid: studentid })
+
+        if (list) {
+            return res.status(200).json(list);
+        } else {
+            return res.status(404).json({ message: "No Account Found" });
+        }
+
+    } catch (error) {
+        return res.status(500).json({ message: "Internak Server Error", error });
+    }
+}
+
 // add payment 
 const addpayment = async (req, res) => {
     const { studentid, role, paymentmode, paymentdate } = req.body
@@ -196,8 +214,9 @@ const paymentstatsupdation = async (studentid) => {
         return
     } else {
 
+        const netoutstandingamount = Math.abs(student.outstandingamount)
         // case fees paid already - one month
-        if (Math.abs(student.outstandingamount) = student.fees) {
+        if (netoutstandingamount === student.fees) {
             student.previousdue = 0
             student.currentdue = 0
             student.outstandingamount = 0
@@ -207,7 +226,7 @@ const paymentstatsupdation = async (studentid) => {
         }
 
         // case fees paid already - more than one month 
-        const newoutstandingamount = Math.abs(student.outstandingamount) - student.fees
+        const newoutstandingamount = netoutstandingamount - student.fees
 
         student.previousdue = 0
         student.currentdue = 0
@@ -294,4 +313,27 @@ const advanceamount = async (req, res) => {
 
 }
 
-module.exports = { accountmng, fetchaccountlist, addpayment, advanceamount }
+// fetch transaction data acc to student 
+
+const fetchtransactiondata = async (req, res) => {
+    try {
+        const { role, studentname, batchname, academyname } = req.body
+        if (role === "Admin") {
+            const student = await Transaction.find({ studentname: studentname, batchname: batchname, academyname: academyname })
+
+            if (student) {
+                return res.status(200).json(student);
+            } else {
+                return res.status(404).json({ message: "No Transaction Found" });
+            }
+        } else {
+            return res.status(401).json({ message: "Unauthorized Access" });
+        }
+
+    } catch (error) {
+        return res.status(500).json({ message: "Internak Server Error", error });
+    }
+
+}
+
+module.exports = { accountmng, fetchaccountlist, addpayment, advanceamount, fetchparticularaccount, fetchtransactiondata }

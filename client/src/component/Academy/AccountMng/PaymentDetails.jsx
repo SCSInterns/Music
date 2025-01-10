@@ -2,8 +2,6 @@ import React, { useEffect, useState } from "react";
 import {
   Select,
   MenuItem,
-  FormControl,
-  InputLabel,
   Typography,
   TextField,
   RadioGroup,
@@ -19,33 +17,15 @@ import CloseIcon from "@mui/icons-material/Close";
 import PaymentInfoTable from "./PaymentInfoTable";
 import Token from "../../Token/Token";
 import { toast } from "react-toastify";
-import AccountPaymentBox from "./AccountPaymentBox";
-
-const months = [
-  "January",
-  "February",
-  "March",
-  "April",
-  "May",
-  "June",
-  "July",
-  "August",
-  "September",
-  "October",
-  "November",
-  "December",
-];
-
-const currentYear = new Date().getFullYear();
-const years = Array.from({ length: 11 }, (_, i) => currentYear - 5 + i);
 
 export default function FilterMenu() {
-  const [selectedMonth, setSelectedMonth] = useState("");
-  const [selectedYear, setSelectedYear] = useState("");
+  const [paymentdate, setpaymentdate] = useState("");
   const [selectedBatch, setSelectedBatch] = useState("");
+  const [batchname, setbatchname] = useState([]);
   const [status, setStatus] = useState("");
   const [anchorEl, setAnchorEl] = useState(null);
   const [data, setData] = useState([]);
+  const [filteredData, setFilteredData] = useState([]);
   const token = Token();
   const academyname = sessionStorage.getItem("academyname");
   const role = sessionStorage.getItem("role");
@@ -54,22 +34,39 @@ export default function FilterMenu() {
   const handleClose = () => setAnchorEl(null);
 
   const handleSelectChange = (event) => setSelectedBatch(event.target.value);
+  const applyFilters = () => {
+    let filtered = [...data];
+
+    if (paymentdate) {
+      const filterMonthYear = paymentdate.split("-").reverse().join("-");
+      filtered = filtered.filter(
+        (item) =>
+          item.installmentdate &&
+          item.installmentdate.slice(3, 10) === filterMonthYear
+      );
+    }
+
+    if (selectedBatch) {
+      filtered = filtered.filter((item) => item.batchname === selectedBatch);
+    }
+
+    if (status) {
+      filtered = filtered.filter((item) => item.status === status);
+    }
+
+    setFilteredData(filtered);
+  };
 
   const handleSubmit = () => {
-    console.log("Filters Applied:", {
-      month: selectedMonth,
-      year: selectedYear,
-      batch: selectedBatch,
-      status,
-    });
+    applyFilters();
     handleClose();
   };
 
   const handleReset = () => {
-    setSelectedMonth("");
-    setSelectedYear("");
+    setpaymentdate("");
     setSelectedBatch("");
     setStatus("");
+    setFilteredData(data);
     handleClose();
   };
 
@@ -91,6 +88,7 @@ export default function FilterMenu() {
 
     if (response.ok) {
       setData(data);
+      setFilteredData(data);
     } else {
       toast.error("Error fetching account list");
     }
@@ -100,24 +98,53 @@ export default function FilterMenu() {
     fetchList();
   }, []);
 
+  const handlebatchlist = async () => {
+    const url = "http://localhost:5000/api/auth/ngetbatchesdetails";
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          Authorization: `${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          academyname,
+          role,
+        }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        const dataname = data.map((item) => item.batchname);
+        setbatchname(dataname);
+      } else {
+        toast.error("Error Fetching Batch Names");
+      }
+    } catch (error) {
+      toast.error("Error Fetching Batch Names");
+    }
+  };
+
+  useEffect(() => {
+    handlebatchlist();
+  }, []);
+
   const isOpen = Boolean(anchorEl);
 
   return (
     <Box sx={{ width: "100%" }}>
       <Box display="flex" justifyContent="flex-end" alignItems="center" mb={2}>
-        <div>
-          <Typography
-            sx={{
-              color: "#0d1b2a",
-              zIndex: 3,
-              mr: 1,
-              fontWeight: "bold",
-              fontSize: "15px",
-            }}
-          >
-            Filter :
-          </Typography>
-        </div>
+        <Typography
+          sx={{
+            color: "#0d1b2a",
+            zIndex: 3,
+            mr: 1,
+            fontWeight: "bold",
+            fontSize: "15px",
+          }}
+        >
+          Filter:
+        </Typography>
         <IconButton
           onClick={handleOpen}
           sx={{
@@ -159,42 +186,25 @@ export default function FilterMenu() {
           </Typography>
 
           <Box className="flex gap-2 w-full">
-            <FormControl fullWidth>
-              <InputLabel id="month-select-label">Month</InputLabel>
-              <Select
-                labelId="month-select-label"
-                value={selectedMonth}
-                onChange={(e) => setSelectedMonth(e.target.value)}
-                label="Month"
-                fullWidth
-              >
-                {months.map((month, index) => (
-                  <MenuItem
-                    key={month}
-                    value={(index + 1).toString().padStart(2, "0")}
-                  >
-                    {month}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-
-            <FormControl fullWidth>
-              <InputLabel id="year-select-label">Year</InputLabel>
-              <Select
-                labelId="year-select-label"
-                value={selectedYear}
-                onChange={(e) => setSelectedYear(e.target.value)}
-                label="Year"
-                fullWidth
-              >
-                {years.map((year) => (
-                  <MenuItem key={year} value={year.toString()}>
-                    {year}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
+            <input
+              type="month"
+              id="datePicker"
+              name="datePicker"
+              value={paymentdate}
+              onChange={(e) => {
+                setpaymentdate(e.target.value);
+              }}
+              style={{
+                padding: "10px",
+                borderRadius: "8px",
+                width: "100%",
+                height: "50px",
+                border: "1px solid #ddd",
+                boxShadow: "0 2px 5px rgba(0,0,0,0.1)",
+                fontSize: "14px",
+                backgroundColor: "#f9f9f9",
+              }}
+            />
           </Box>
 
           <Typography align="center" gutterBottom>
@@ -209,7 +219,7 @@ export default function FilterMenu() {
             sx={{ flex: 1, mt: 1 }}
           >
             <MenuItem value="">All Batches</MenuItem>
-            {["Batch A", "Batch B", "Batch C"].map((batch, index) => (
+            {batchname.map((batch, index) => (
               <MenuItem key={index} value={batch}>
                 {batch}
               </MenuItem>
@@ -226,8 +236,8 @@ export default function FilterMenu() {
             value={status}
             onChange={(e) => setStatus(e.target.value)}
           >
-            <FormControlLabel value="paid" control={<Radio />} label="Paid" />
-            <FormControlLabel value="due" control={<Radio />} label="Due" />
+            <FormControlLabel value="Paid" control={<Radio />} label="Paid" />
+            <FormControlLabel value="Pending" control={<Radio />} label="Due" />
           </RadioGroup>
 
           <Box display="flex" justifyContent="space-between" mt={2}>
@@ -240,9 +250,10 @@ export default function FilterMenu() {
           </Box>
         </Box>
       </Popover>
+
       <Box mt={3}>
         <PaymentInfoTable
-          records={data}
+          records={filteredData}
           fetchList={() => {
             fetchList();
           }}

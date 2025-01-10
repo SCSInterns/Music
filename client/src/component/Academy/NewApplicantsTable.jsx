@@ -85,7 +85,7 @@ function ApplicantsTable({ users, handleapplicantslist }) {
   console.log(paymentstatsdetails);
 
   const paymentstats = async (studentid) => {
-    const url = "http://localhost:5000/api/auth/getpaymentstats";
+    const url = "http://localhost:5000/api/auth/fetchparticularaccount";
 
     const token = Token();
     const response = await fetch(url, {
@@ -102,7 +102,7 @@ function ApplicantsTable({ users, handleapplicantslist }) {
     });
     if (response.ok) {
       const data = await response.json();
-      setpaymentstatsdetails(data);
+      setpaymentstatsdetails(data[0]);
     }
   };
 

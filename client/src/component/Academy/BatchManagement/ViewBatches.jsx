@@ -159,7 +159,7 @@ function BatchTable({ records }) {
           onChange={handleSelectChange}
           sx={{ flex: 1 }}
         >
-          <MenuItem value="">All Batches</MenuItem>
+          <MenuItem value="All Batches">All Batches</MenuItem>
           {batchname.map((batch, index) => (
             <MenuItem key={index} value={batch}>
               {batch}

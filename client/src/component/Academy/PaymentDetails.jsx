@@ -63,9 +63,6 @@ function PaymentDetails({ data }) {
             <TableCell align="left" sx={{ fontWeight: "bold" }}>
               PaymentMode
             </TableCell>
-            <TableCell align="left" sx={{ fontWeight: "bold" }}>
-              NextPaymentDate
-            </TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -74,11 +71,10 @@ function PaymentDetails({ data }) {
               key={row.name}
               sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
             >
-              <TableCell align="left">{row.paymentDate}</TableCell>
-              <TableCell align="left">{row.amount}</TableCell>
+              <TableCell align="left">{row.paymentdate}</TableCell>
+              <TableCell align="left">{row.transactionamount}</TableCell>
               <TableCell align="left">{row.course}</TableCell>
               <TableCell align="left">{row.paymentmode}</TableCell>
-              <TableCell align="left">{row.nextPaymentDate}</TableCell>
             </TableRow>
           ))}
         </TableBody>

@@ -27,7 +27,7 @@ function ProfilePreview({
   recordsheet,
   updatepaymentstats,
 }) {
-  const [activeTab, setActiveTab] = useState("Add Payment");
+  const [activeTab, setActiveTab] = useState("Payment History");
 
   console.log(updatepaymentstats);
 
@@ -36,18 +36,18 @@ function ProfilePreview({
   };
 
   const menuItems = [
-    {
-      name: "Add Payment",
-      key: "Add Payment",
-      component: (
-        <PaymentBox
-          data={data}
-          paymentstatsdetails={paymentstats}
-          updatepaymentstats={updatepaymentstats}
-          switchToPaymentHistory={switchToPaymentHistory}
-        />
-      ),
-    },
+    // {
+    //   name: "Add Payment",
+    //   key: "Add Payment",
+    //   component: (
+    //     <PaymentBox
+    //       data={data}
+    //       paymentstatsdetails={paymentstats}
+    //       updatepaymentstats={updatepaymentstats}
+    //       switchToPaymentHistory={switchToPaymentHistory}
+    //     />
+    //   ),
+    // },
     {
       name: "Payment History",
       key: "Payment History",
@@ -73,6 +73,8 @@ function ProfilePreview({
   const handleClose = () => {
     onClose();
   };
+
+  console.log(paymentstats.previousdue);
 
   return (
     <Dialog
@@ -199,7 +201,7 @@ function ProfilePreview({
                         marginBottom: "10px",
                       }}
                     >
-                      Payment Stats:
+                      Payment Stats (₹) :
                     </Typography>
                     <table
                       style={{ width: "100%", borderCollapse: "collapse" }}
@@ -207,18 +209,22 @@ function ProfilePreview({
                       <tbody>
                         {[
                           {
-                            label: "Advance Amount",
-                            value: paymentstats.advanceamount,
+                            label: "Previous Due",
+                            value: paymentstats.previousdue,
                           },
                           {
-                            label: "Due Amount",
-                            value: paymentstats.dueamount,
+                            label: "Current Due",
+                            value: paymentstats.currentdue,
                           },
                           {
-                            label: "Next Installment",
-                            value: paymentstats.nextpaymentdate,
+                            label: "Outstanding Amount",
+                            value: paymentstats.outstandingamount,
                           },
-                          { label: "Fees", value: data.additionalFields.fees },
+                          { label: "Fees", value: paymentstats.fees },
+                          {
+                            label: "Total Amount Collected",
+                            value: data.additionalFields.fees,
+                          },
                         ].map(({ label, value }) => (
                           <tr key={label}>
                             <td
@@ -235,7 +241,7 @@ function ProfilePreview({
                                 borderBottom: "1px solid #ddd",
                               }}
                             >
-                              {value || "N/A"}
+                              {value}
                             </td>
                           </tr>
                         ))}

@@ -23,7 +23,7 @@ const TopNavbar = () => {
     {
       name: "Payment History",
       key: "Payment History",
-      component: <PaymentHistory />,
+      component: <PaymentHistory list={list} />,
     },
   ];
 

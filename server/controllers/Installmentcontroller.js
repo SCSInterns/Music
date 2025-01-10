@@ -4,6 +4,7 @@ const Form = require("../models/Form")
 const Token = require('../models/Token');
 const Due = require("../models/PaymentDues");
 const Handlepaymentstats = require('./Handlepaymentstats')
+const Transaction = require("../models/Transcation")
 
 const addMonths = (date, months) => {
     const d = new Date(date);
@@ -119,7 +120,7 @@ const getinfoofinstallment = async (req, res) => {
     try {
         const { academyname, role, username, studentid } = req.body
 
-        const response = await Installement.find({ studentId: studentid, studentname: username, academyname: academyname })
+        const response = await Transaction.find({ studentid: studentid, academyname: academyname })
 
         if (response) {
             if (role === "Admin") {

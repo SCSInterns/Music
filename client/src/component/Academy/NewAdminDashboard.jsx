@@ -218,12 +218,12 @@ const Sidebar = () => {
       ),
       disabled: status === "Accept" ? false : true,
     },
-    {
-      text: "Batch Management",
-      icon: <ReportIcon />,
-      component: <Batchmenu />,
-      disabled: status === "Accept" ? false : true,
-    },
+    // {
+    //   text: "Batch Management",
+    //   icon: <ReportIcon />,
+    //   component: <Batchmenu />,
+    //   disabled: status === "Accept" ? false : true,
+    // },
 
     {
       text: "Attendance",
@@ -339,7 +339,7 @@ const Sidebar = () => {
               sx={{
                 backgroundColor:
                   activeComponent === item.text ? "#2e3b4e" : "transparent",
-                paddingY: "10px",
+                paddingY: "15px",
               }}
             >
               <ListItemIcon sx={{ color: "#fff" }}>{item.icon}</ListItemIcon>

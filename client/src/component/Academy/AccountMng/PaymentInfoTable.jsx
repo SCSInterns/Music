@@ -3,19 +3,32 @@ import { MaterialReactTable } from "material-react-table";
 import PaymentIcon from "@mui/icons-material/Payment";
 import { Button, Dialog, DialogContent, DialogTitle } from "@mui/material";
 import AccountPaymentBox from "./AccountPaymentBox";
+import AddCardIcon from "@mui/icons-material/AddCard";
+import AdvancePaymentBox from "./AdvancePaymentBox";
 
 function AttendanceTable({ records, fetchList }) {
   const [open, setOpen] = useState(false);
+  const [openAdvancePayment, setOpenAdvancePayment] = useState(false);
   const [selectedRecord, setSelectedRecord] = useState(null);
 
   const handleChange = async () => {
     setOpen(false);
-    fetchList(); // Refresh the data after changes
+    fetchList();
+  };
+
+  const handleAdvChange = async () => {
+    setOpenAdvancePayment(false);
+    fetchList();
   };
 
   const handleAddPayment = (record) => {
-    setSelectedRecord(record); // Set the specific record
-    setOpen(true); // Open the dialog
+    setSelectedRecord(record);
+    setOpen(true);
+  };
+
+  const handleAdvPayment = (record) => {
+    setSelectedRecord(record);
+    setOpenAdvancePayment(true);
   };
 
   const columns = [
@@ -60,9 +73,9 @@ function AttendanceTable({ records, fetchList }) {
       size: 100,
       Cell: ({ row }) => (
         <Button
-          disabled={row.original.outstandingamount === 0}
+          disabled={row.original.outstandingamount <= 0}
           sx={{ color: "#0d1b2a" }}
-          onClick={() => handleAddPayment(row.original)} // Pass the specific record
+          onClick={() => handleAddPayment(row.original)}
         >
           <PaymentIcon />
         </Button>
@@ -73,11 +86,30 @@ function AttendanceTable({ records, fetchList }) {
       header: "Batch Name",
       size: 200,
     },
+    {
+      accessorKey: "mobileno",
+      header: "Mobile No",
+      size: 200,
+    },
+    {
+      accessorKey: "advance amount",
+      header: "Add Advance Payment",
+      size: 100,
+      Cell: ({ row }) => (
+        <Button
+          disabled={row.original.outstandingamount > 0}
+          sx={{ color: "#0d1b2a" }}
+          onClick={() => handleAdvPayment(row.original)}
+        >
+          <AddCardIcon />
+        </Button>
+      ),
+    },
   ];
 
   return (
     <>
-      {/* Material-UI Dialog */}
+      {/* Payment Dialog */}
       <Dialog
         open={open}
         onClose={() => setOpen(false)}
@@ -88,6 +120,22 @@ function AttendanceTable({ records, fetchList }) {
           <AccountPaymentBox
             close={() => setOpen(false)}
             onChange={handleChange}
+            record={selectedRecord}
+          />
+        </DialogContent>
+      </Dialog>
+
+      {/* Advance Payment Dialog */}
+      <Dialog
+        open={openAdvancePayment}
+        onClose={() => setOpenAdvancePayment(false)}
+        maxWidth="sm"
+        fullWidth
+      >
+        <DialogContent>
+          <AdvancePaymentBox
+            close={() => setOpenAdvancePayment(false)}
+            onChange={handleAdvChange}
             record={selectedRecord}
           />
         </DialogContent>
