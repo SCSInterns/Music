@@ -225,12 +225,12 @@ const Sidebar = () => {
     //   disabled: status === "Accept" ? false : true,
     // },
 
-    {
-      text: "Attendance",
-      icon: <GroupsIcon />,
-      component: <QrScan />,
-      disabled: status === "Accept" ? false : true,
-    },
+    // {
+    //   text: "Attendance",
+    //   icon: <GroupsIcon />,
+    //   component: <QrScan />,
+    //   disabled: status === "Accept" ? false : true,
+    // },
     // {
     //   text: "Pending Fees",
     //   icon: <PendingActionsIcon />,
@@ -249,18 +249,18 @@ const Sidebar = () => {
       component: <PaymentMenu />,
       disabled: status === "Accept" ? false : true,
     },
-    {
-      text: "Form Builder 🆕",
-      icon: <InsertDriveFileIcon />,
-      component: <DynamicFormMenu />,
-      disabled: status === "Accept" ? false : true,
-    },
-    {
-      text: "Payment Requests",
-      icon: <AccountBalanceIcon />,
-      component: <PaymentRequest />,
-      disabled: status === "Accept" ? false : true,
-    },
+    // {
+    //   text: "Form Builder 🆕",
+    //   icon: <InsertDriveFileIcon />,
+    //   component: <DynamicFormMenu />,
+    //   disabled: status === "Accept" ? false : true,
+    // },
+    // {
+    //   text: "Payment Requests",
+    //   icon: <AccountBalanceIcon />,
+    //   component: <PaymentRequest />,
+    //   disabled: status === "Accept" ? false : true,
+    // },
     {
       text: "Website Content",
       icon: <DashboardIcon />,
@@ -339,7 +339,7 @@ const Sidebar = () => {
               sx={{
                 backgroundColor:
                   activeComponent === item.text ? "#2e3b4e" : "transparent",
-                paddingY: "15px",
+                paddingY: "12px !important",
               }}
             >
               <ListItemIcon sx={{ color: "#fff" }}>{item.icon}</ListItemIcon>

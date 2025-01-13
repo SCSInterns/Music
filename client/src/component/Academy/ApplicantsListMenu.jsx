@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import ApplicantsTable from "./AppliacantsTable";
 import NewAppliantsTable from "./NewApplicantsTable";
+import DynamicFormBuilder from "./DynamicForm/DynamicFormBuilder";
+import DynamicFormViewer from "./DynamicForm/DynamicFormViewer";
 
 const TopNavbar = ({ users, handleapplicantslist }) => {
   const newRequests = users.filter((item) => item.status === "To be updated");
@@ -43,6 +45,16 @@ const TopNavbar = ({ users, handleapplicantslist }) => {
           handleapplicantslist={handleapplicantslist}
         />
       ),
+    },
+    {
+      name: "Create Form",
+      key: "Create Form",
+      component: <DynamicFormBuilder />,
+    },
+    {
+      name: "View Academy Form",
+      key: "View Academy Form",
+      component: <DynamicFormViewer />,
     },
   ];
 

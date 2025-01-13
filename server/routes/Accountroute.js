@@ -8,5 +8,8 @@ router.post('/fetchparticularaccount', authenticate.authenticatetoken, Account.f
 router.post('/addpaymentinaccount', authenticate.authenticatetoken, Account.addpayment)
 router.post('/addadvanceamount', authenticate.authenticatetoken, Account.advanceamount)
 router.post('/transactiondata', authenticate.authenticatetoken, Account.fetchtransactiondata)
+router.post('/fetchacademyaccount', authenticate.authenticatetoken, Account.fetchstats)
+router.post('/fetchcustomstats', authenticate.authenticatetoken, Account.customstats)
+
 
 module.exports = router;    

@@ -672,5 +672,6 @@ module.exports = {
     getinstallmentlist,
     freetrialrequest,
     fetchfreelist,
-    handlesubmitfreetrial
+    handlesubmitfreetrial,
+    getTodayDate
 }; 

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Typography,
@@ -14,7 +14,14 @@ import CloseIcon from "@mui/icons-material/Close";
 import { toast } from "react-toastify";
 import Token from "../../Token/Token";
 
+// start from here to submit advance payment date
+
 function AccountPaymentBox({ record, onChange, close }) {
+  const [installmentDate, setInstallmentDate] = useState(
+    record.installmentdate
+  );
+  console.log(installmentDate);
+  const [dateOptions, setDateOptions] = useState([]);
   const [paymentMode, setPaymentMode] = useState("");
   const [paymentamount, setpaymentamount] = useState(0);
   const [paymentdate, setpaymentdate] = useState("");
@@ -28,6 +35,34 @@ function AccountPaymentBox({ record, onChange, close }) {
   const handlePaymentAmountChange = (event) => {
     setpaymentamount(event.target.value);
   };
+
+  // Function to calculate future dates up to 6 months later
+  const generateDateOptions = (installmentDate) => {
+    const options = [];
+    const currentDate = new Date();
+
+    // Get the day from the installment date
+    const day = new Date(installmentDate).getDate();
+
+    // Generate dates for the next 6 months
+    for (let i = 0; i <= 6; i++) {
+      const newDate = new Date(currentDate);
+      newDate.setMonth(newDate.getMonth() + i); // Increment month by i
+      newDate.setDate(day); // Set the day to match the installment date
+
+      // Format the date as DD-MM-YYYY
+      const formattedDate = newDate.toLocaleDateString("en-GB");
+      options.push(formattedDate);
+    }
+
+    setDateOptions(options);
+  };
+
+  console.log(dateOptions);
+
+  useEffect(() => {
+    generateDateOptions(installmentDate);
+  }, [installmentDate]);
 
   const formatToDDMMYYYY = (date) => {
     if (!date) return "";
@@ -115,10 +150,11 @@ function AccountPaymentBox({ record, onChange, close }) {
             Amount (₹)
           </Typography>
           <TextField
-            value={paymentamount}
+            value={record.fees}
             onChange={handlePaymentAmountChange}
             variant="outlined"
             fullWidth
+            inputProps={{ readOnly: true }}
           />
         </Grid>
 
@@ -144,7 +180,7 @@ function AccountPaymentBox({ record, onChange, close }) {
           <Typography variant="subtitle1" fontWeight="bold">
             Payment Date
           </Typography>
-          <input
+          {/* <input
             type="date"
             id="datePicker"
             name="datePicker"
@@ -160,7 +196,28 @@ function AccountPaymentBox({ record, onChange, close }) {
               fontSize: "14px",
               backgroundColor: "#f9f9f9",
             }}
-          />
+          /> */}
+          <select
+            id="installmentDate"
+            name="installmentDate"
+            onChange={(e) => setpaymentdate(e.target.value)}
+            style={{
+              padding: "10px",
+              borderRadius: "8px",
+              width: "100%",
+              height: "50px",
+              border: "1px solid #ddd",
+              boxShadow: "0 2px 5px rgba(0,0,0,0.1)",
+              fontSize: "14px",
+              backgroundColor: "#f9f9f9",
+            }}
+          >
+            {dateOptions.map((date, index) => (
+              <option key={index} value={date}>
+                {date}
+              </option>
+            ))}
+          </select>
         </Grid>
       </Grid>
 

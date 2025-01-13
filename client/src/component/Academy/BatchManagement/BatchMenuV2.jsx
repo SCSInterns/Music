@@ -4,6 +4,7 @@ import ViewBatches from "./ViewBatches";
 import Token from "../../Token/Token";
 import { toast } from "react-toastify";
 import TimeTablev2 from "./TimeTablev2";
+import QrScan from "../QrScan";
 
 const TopNavbar = () => {
   const [activeContent, setActiveContent] = useState("Create Batch");
@@ -24,6 +25,11 @@ const TopNavbar = () => {
       name: "Time Table",
       key: "Time Table",
       component: <TimeTablev2 />,
+    },
+    {
+      name: "Attendance",
+      key: "Attendance",
+      component: <QrScan />,
     },
   ];
 

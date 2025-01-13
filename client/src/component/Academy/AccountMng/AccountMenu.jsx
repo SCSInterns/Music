@@ -4,6 +4,7 @@ import { toast } from "react-toastify";
 import PaymentDetails from "./PaymentDetails";
 import MonthlyPay from "./MonthlyPay";
 import PaymentHistory from "./PaymentHistory";
+import PaymentRequest from "../PaymentRequest";
 
 const TopNavbar = () => {
   const [activeContent, setActiveContent] = useState("Payment Details");
@@ -24,6 +25,11 @@ const TopNavbar = () => {
       name: "Payment History",
       key: "Payment History",
       component: <PaymentHistory list={list} />,
+    },
+    {
+      name: "Payment Review (Qr)",
+      key: "Payment Review(Qr)",
+      component: <PaymentRequest />,
     },
   ];
 

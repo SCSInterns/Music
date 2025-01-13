@@ -1,95 +1,132 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Card,
   CardContent,
   CardHeader,
   Typography,
-  MenuItem,
-  Select,
-  FormControl,
-  InputLabel,
+  Button,
+  Box,
 } from "@mui/material";
-import { DollarSign, CreditCard, AlertCircle } from "lucide-react";
-
-const getAnalyticsData = (year, month) => {
-  return {
-    totalPaid: Math.floor(Math.random() * 10000),
-    totalDue: Math.floor(Math.random() * 5000),
-    totalOutstanding: Math.floor(Math.random() * 3000),
-  };
-};
+import { CreditCard, AlertCircle, IndianRupee } from "lucide-react";
+import Token from "../../Token/Token";
+import { toast } from "react-toastify";
 
 export default function AnalyticsPage() {
-  const [year, setYear] = useState("2023");
-  const [month, setMonth] = useState("1");
-  const [analytics, setAnalytics] = useState(getAnalyticsData(year, month));
+  const [paymentdate, setPaymentDate] = useState("");
+  const [analytics, setAnalytics] = useState({});
+  const [defstats, setDefstats] = useState({});
 
-  const updateAnalytics = () => {
-    setAnalytics(getAnalyticsData(year, month));
+  const token = Token();
+  const role = sessionStorage.getItem("role");
+  const academyname = sessionStorage.getItem("academyname");
+
+  const fetchDefaultIncome = async () => {
+    const url = "http://localhost:5000/api/auth/fetchacademyaccount";
+
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        Authorization: `${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        role: role,
+        academyname: academyname,
+      }),
+    });
+
+    const data = await response.json();
+    if (response.ok) {
+      setDefstats(data);
+    } else {
+      const msg = data.message;
+      toast.error(msg);
+    }
   };
 
-  const years = ["2023", "2024", "2025"];
-  const months = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
-  ];
+  useEffect(() => {
+    fetchDefaultIncome();
+  }, []);
+
+  const handleSubmit = async () => {
+    const [year, month, day] = paymentdate.split("-");
+    console.log(month);
+    console.log(year);
+
+    const url = "http://localhost:5000/api/auth/fetchcustomstats";
+
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        Authorization: `${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        month: month,
+        year: year,
+        role: role,
+        academyname: academyname,
+      }),
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      setAnalytics(data);
+    } else {
+      const message = data.message;
+      toast.error(message);
+    }
+  };
+
+  const handleReset = () => {
+    setPaymentDate("");
+    setAnalytics({});
+  };
+
+  console.log(analytics);
 
   return (
     <div className="container mx-auto p-6">
-      <h1 className="text-3xl font-bold mb-12">
-        Monthly Academy Payment Analytics
-      </h1>
+      <h1 className="text-3xl font-bold mb-6">Academy Payment Analytics</h1>
 
-      {/* Dropdowns */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-20">
-        <FormControl fullWidth>
-          <InputLabel id="year-select-label">Select Year</InputLabel>
-          <Select
-            labelId="year-select-label"
-            value={year}
-            onChange={(e) => {
-              setYear(e.target.value);
-              updateAnalytics();
+      <div className="flex space-x-10 items-center">
+        {/* Date Picker */}
+        <Box className="mb-8">
+          <Typography variant="subtitle1" fontWeight="bold" className="!mb-2">
+            Select Month & Year :
+          </Typography>
+          <input
+            type="month"
+            id="datePicker"
+            name="datePicker"
+            value={paymentdate}
+            onChange={(e) => setPaymentDate(e.target.value)}
+            style={{
+              padding: "10px",
+              borderRadius: "8px",
+              width: "200px",
+              height: "50px",
+              border: "1px solid #ddd",
+              boxShadow: "0 2px 5px rgba(0,0,0,0.1)",
+              fontSize: "14px",
+              backgroundColor: "#f9f9f9",
             }}
-          >
-            {years.map((y) => (
-              <MenuItem key={y} value={y}>
-                {y}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-        <FormControl fullWidth>
-          <InputLabel id="month-select-label">Select Month</InputLabel>
-          <Select
-            labelId="month-select-label"
-            value={month}
-            onChange={(e) => {
-              setMonth((parseInt(e.target.value) + 1).toString());
-              updateAnalytics();
-            }}
-          >
-            {months.map((m, index) => (
-              <MenuItem key={index} value={index}>
-                {m}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+          />
+        </Box>
+
+        <Box display="flex" gap={4} mb={6} mt={6}>
+          <Button variant="contained" color="primary" onClick={handleSubmit}>
+            Submit
+          </Button>
+          <Button variant="outlined" color="secondary" onClick={handleReset}>
+            Reset
+          </Button>
+        </Box>
       </div>
 
       {/* Analytics Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-10">
         <Card className="shadow-lg !rounded-xl !bg-[#0d1b2a] !text-white h-auto">
           <CardHeader
             className="flex flex-row items-center justify-between"
@@ -98,14 +135,22 @@ export default function AnalyticsPage() {
                 Total Paid
               </Typography>
             }
-            avatar={<DollarSign className="h-5 w-5 text-white" />}
+            avatar={<IndianRupee className="h-5 w-5 text-white" />}
           />
           <CardContent>
             <Typography variant="h5" className="font-bold">
-              ${analytics.totalPaid.toLocaleString()}
+              {/* Check if analytics has data, else use defstats */}
+              <span>
+                {" "}
+                ₹{" "}
+                {analytics?.totalpaid != null
+                  ? analytics.totalpaid
+                  : defstats.totalpaid ?? 0}{" "}
+              </span>
             </Typography>
           </CardContent>
         </Card>
+
         <Card className="shadow-lg !rounded-xl !bg-[#0d1b2a] !text-white h-auto">
           <CardHeader
             className="flex flex-row items-center justify-between"
@@ -114,27 +159,42 @@ export default function AnalyticsPage() {
                 Total Due
               </Typography>
             }
-            avatar={<CreditCard className="h-5 w-5 text-white" />}
-          />
-          <CardContent>
-            <Typography variant="h5" className="font-bold">
-              ${analytics.totalDue.toLocaleString()}
-            </Typography>
-          </CardContent>
-        </Card>
-        <Card className="shadow-lg  !rounded-xl !bg-[#0d1b2a] !text-white h-auto">
-          <CardHeader
-            className="flex flex-row items-center justify-between"
-            title={
-              <Typography variant="subtitle1" className="font-medium">
-                Total Outstanding
-              </Typography>
-            }
             avatar={<AlertCircle className="h-5 w-5 text-white" />}
           />
           <CardContent>
             <Typography variant="h5" className="font-bold">
-              ${analytics.totalOutstanding.toLocaleString()}
+              {/* Check if analytics has data, else use defstats */}
+              <span>
+                {" "}
+                ₹{" "}
+                {analytics?.totaldue != null
+                  ? analytics.totaldue
+                  : defstats.totaldue ?? 0}{" "}
+              </span>
+            </Typography>
+          </CardContent>
+        </Card>
+
+        <Card className="shadow-lg !rounded-xl !bg-[#0d1b2a] !text-white h-auto">
+          <CardHeader
+            className="flex flex-row items-center justify-between"
+            title={
+              <Typography variant="subtitle1" className="font-medium">
+                Total Income
+              </Typography>
+            }
+            avatar={<CreditCard className="h-5 w-5 text-white" />}
+          />
+          <CardContent>
+            <Typography variant="h5" className="font-bold">
+              {/* Check if analytics has data, else use defstats */}
+              <span>
+                {" "}
+                ₹{" "}
+                {analytics?.totalincome != null
+                  ? analytics.totalincome
+                  : defstats.totalincome ?? 0}{" "}
+              </span>
             </Typography>
           </CardContent>
         </Card>

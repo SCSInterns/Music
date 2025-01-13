@@ -143,7 +143,7 @@ function PaymentRequest() {
       <div>
         <p style={{ fontSize: "20px", fontWeight: "bold" }}>
           {" "}
-          Payment Review List{" "}
+          Payment Review List Paid via QR code{" "}
         </p>
       </div>
 
