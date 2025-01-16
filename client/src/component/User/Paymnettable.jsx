@@ -49,26 +49,30 @@ function Paymnettable({ info }) {
               <TableCell align="left" sx={{ fontWeight: "bold" }}>
                 PaymentMode
               </TableCell>
-              <TableCell align="left" sx={{ fontWeight: "bold" }}>
-                NextPaymentDate
-              </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {info.map((row) => (
-              <TableRow
-                key={row.name}
-                sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-              >
-                <TableCell align="left">
-                  {row.paymentDate ? row.paymentDate : "N/A"}
+            {info.length === 0 ? (
+              <TableRow>
+                <TableCell align="center" colSpan={4}>
+                  No Payment Info Found
                 </TableCell>
-                <TableCell align="left">{row.amount}</TableCell>
-                <TableCell align="left">{row.course}</TableCell>
-                <TableCell align="left">{row.paymentmode}</TableCell>
-                <TableCell align="left">{row.nextPaymentDate}</TableCell>
               </TableRow>
-            ))}
+            ) : (
+              info.map((row) => (
+                <TableRow
+                  key={row.name}
+                  sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                >
+                  <TableCell align="left">
+                    {row.paymentdate ? row.paymentdate : "N/A"}
+                  </TableCell>
+                  <TableCell align="left">{row.transactionamount}</TableCell>
+                  <TableCell align="left">{row.course}</TableCell>
+                  <TableCell align="left">{row.paymentmode}</TableCell>
+                </TableRow>
+              ))
+            )}
           </TableBody>
         </Table>
       </div>

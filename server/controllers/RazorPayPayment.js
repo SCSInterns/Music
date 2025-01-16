@@ -7,6 +7,8 @@ const Handlepaymentstats = require("./Handlepaymentstats")
 const Email = require("./emailc")
 const PaymentRequestC = require("./PaymentRequestC")
 const Razorpayintial = require("../razorpay-initial")
+const Account = require("../models/Account")
+const Transaction = require("../models/Transcation")
 
 // create the order 
 const createOrder = async (req, res) => {
@@ -70,26 +72,42 @@ const verifypayment = async (req, res) => {
 
                 if (update.status === "Completed") {
 
-                    // installment entry  
+                    // // installment entry  
 
-                    const nextpaymentday = InstallmentController.extractDay(verificationData.enrollmentDate)
-                    const monthandyear = InstallmentController.extractMonthAndYear(verificationData.paymentDate)
-                    const newdate = `${nextpaymentday}-${monthandyear}`
-                    const dateStr = newdate;
-                    const monthsToAdd = 1;
-                    const nextPaymentDate = InstallmentController.convertAndAddMonths(dateStr, monthsToAdd);
+                    // const nextpaymentday = InstallmentController.extractDay(verificationData.enrollmentDate)
+                    // const monthandyear = InstallmentController.extractMonthAndYear(verificationData.paymentDate)
+                    // const newdate = `${nextpaymentday}-${monthandyear}`
+                    // const dateStr = newdate;
+                    // const monthsToAdd = 1;
+                    // const nextPaymentDate = InstallmentController.convertAndAddMonths(dateStr, monthsToAdd);
 
-                    const newinstallmententry = await new Installement({
-                        studentId: verificationData.studentId,
+                    // const newinstallmententry = await new Installement({
+                    //     studentId: verificationData.studentId,
+                    //     academyname: verificationData.academyName,
+                    //     studentname: verificationData.studentName,
+                    //     course: verificationData.course,
+                    //     amount: verificationData.amount,
+                    //     enrollmentDate: verificationData.enrollmentDate,
+                    //     nextPaymentDate: nextPaymentDate,
+                    //     paymentDate: verificationData.paymentDate,
+                    //     paymentmode: "RazorPay",
+                    //     studentemail: verificationData.email
+                    // }) 
+
+                    // transaction entry 
+
+                    const newinstallmententry = new Transaction({
                         academyname: verificationData.academyName,
                         studentname: verificationData.studentName,
+                        batchname: verificationData.batchname,
+                        studentemail: verificationData.email,
                         course: verificationData.course,
-                        amount: verificationData.amount,
-                        enrollmentDate: verificationData.enrollmentDate,
-                        nextPaymentDate: nextPaymentDate,
-                        paymentDate: verificationData.paymentDate,
+                        fees: verificationData.fees,
                         paymentmode: "RazorPay",
-                        studentemail: verificationData.email
+                        paymentdate: verificationData.paymentDate,
+                        studentid: verificationData.studentId,
+                        transactionamount: verificationData.amount,
+                        installmentdate: verificationData.enrollmentDate
                     })
 
                     const savedInfo = await newinstallmententry.save()
@@ -98,22 +116,28 @@ const verifypayment = async (req, res) => {
                         const updateduser = {
                             academyname: savedInfo.academyname,
                             studentname: savedInfo.studentname,
+                            batchname: savedInfo.batchname,
                             studentemail: savedInfo.studentemail,
+                            mobileno: verificationData.mobileno,
                             course: savedInfo.course,
-                            amount: savedInfo.amount,
+                            amount: savedInfo.transactionamount,
+                            studentid: savedInfo.studentid,
+                            fees: savedInfo.fees,
                             paymentmode: savedInfo.paymentmode,
-                            paymentdate: savedInfo.paymentDate,
-                            nextpaymentdate: nextPaymentDate,
-                            studentid: savedInfo.studentId,
-                            installmentdate: savedInfo.enrollmentDate
+                            paymentdate: savedInfo.paymentdate,
+                            studentid: savedInfo.studentid,
+                            installmentdate: savedInfo.installmentdate,
+                            status: "Paid",
+                            previousdue: 0,
+                            currentdue: 0,
+                            outstandingamount: 0
                         };
 
                         // updating stats 
 
                         const updatedPaymentDue = await
-                            Due.findOneAndUpdate({ studentid: savedInfo.studentId }, { $set: updateduser }, { new: true })
+                            Account.findOneAndUpdate({ studentid: savedInfo.studentid }, { $set: updateduser }, { new: true })
 
-                        Handlepaymentstats.totalduemanual(updatedPaymentDue)
                         if (updatedPaymentDue) {
 
                             // send the mail of invoice  
@@ -125,19 +149,19 @@ const verifypayment = async (req, res) => {
                                 email: updatedPaymentDue.studentemail || "N/A",
                                 course: updatedPaymentDue.course || "N/A",
                                 receiptNumber: recieptno || "N/A",
-                                dateOfPayment: updatedPaymentDue.paymentdate || "N/A",
-                                amount: savedInfo.amount || 0,
+                                dateOfPayment: verificationData.paymentDate || "N/A",
+                                amount: savedInfo.transactionamount || 0,
                                 academyName: updatedPaymentDue.academyname || "N/A",
                                 enrollmentDate: updatedPaymentDue.installmentdate || "N/A",
-                                paymentMethod: "Online (Manual)",
+                                paymentMethod: "Online (RazorPay)",
                                 paymentTableData: {
-                                    headers: ["Date", "Particulars", "Amount Paid", "NextPaymentDate"],
+                                    headers: ["Date", "Particulars", "Amount Paid", "Batch Name"],
                                     rows: [
                                         [
-                                            savedInfo.paymentDate || "N/A",
+                                            savedInfo.paymentdate || "N/A",
                                             "Monthly Fees",
-                                            `Rs. ${savedInfo.amount || 0}`,
-                                            savedInfo.nextPaymentDate || "N/A",
+                                            `Rs. ${savedInfo.transactionamount || 0}`,
+                                            savedInfo.batchname
                                         ],
                                     ],
                                 },

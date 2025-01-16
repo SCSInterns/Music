@@ -1,6 +1,7 @@
 const Installement = require("../models/Installment")
 const Paymnetdue = require("../models/PaymentDues")
 const Handlepaymentstats = require('./Handlepaymentstats')
+const Account = require("../models/Account")
 
 
 // fetch the details of payment stats for user 
@@ -11,7 +12,7 @@ const fetchpaymentsats = async (req, res) => {
 
         const { academyname, studentid } = req.body
 
-        const stats = await Paymnetdue.findOne({ academyname: academyname, studentid: studentid })
+        const stats = await Account.findOne({ academyname: academyname, studentid: studentid })
 
         if (stats) {
 

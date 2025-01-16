@@ -236,7 +236,8 @@ const DynamicForm = ({ formData }) => {
 export default function App() {
   const [formFields, setFormFields] = useState([]);
   const [regname, setregname] = useState("");
-  const academyname = sessionStorage.getItem("academyname");
+  const academyname =
+    sessionStorage.getItem("academyname") || sessionStorage.getItem("Academy");
 
   useEffect(() => {
     const fetchForm = async () => {

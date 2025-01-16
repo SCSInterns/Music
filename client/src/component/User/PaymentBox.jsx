@@ -59,7 +59,7 @@ export default function PaymentForm({ data }) {
       body: JSON.stringify({
         studentid: data.studentid,
         academyname: data.academyname,
-        amount: data.dueamount,
+        amount: data.outstandingamount,
       }),
     });
 
@@ -97,10 +97,13 @@ export default function PaymentForm({ data }) {
           signature: response.razorpay_signature,
           studentId: data.studentid,
           academyName: data.academyname,
+          mobileno: data.mobileno,
           studentName: data.studentname,
           course: data.course,
-          amount: data.amount,
+          amount: data.outstandingamount,
           enrollmentDate: data.installmentdate,
+          batchname: data.batchname,
+          fees: data.fees,
           email: data.studentemail,
           paymentDate: formatDate(new Date()),
           role: "Admin",
@@ -268,7 +271,7 @@ export default function PaymentForm({ data }) {
                     You've to pay.
                   </Typography>
                   <Typography variant="h3" fontWeight="bold" mt={1}>
-                    ₹ {data.dueamount}
+                    ₹ {data.outstandingamount}
                   </Typography>
                 </Box>
 

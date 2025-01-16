@@ -12,6 +12,7 @@ const Razorpay = () => {
   const [otpVerified, setOtpVerified] = useState(false);
   const token = Token();
   const role = sessionStorage.getItem("role");
+  const academyname = sessionStorage.getItem("academyname");
 
   const sendOtp = async () => {
     const url = "http://localhost:5000/api/auth/send-otp";
@@ -60,7 +61,7 @@ const Razorpay = () => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        academyname: email,
+        academyname: academyname,
         role: role,
         id: id,
         key: key,

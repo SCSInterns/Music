@@ -53,6 +53,12 @@ const newdueschema = new mongoose.Schema({
         required: true,
         default: 0
     },
+    totalamountcollected:
+    {
+        type: Number,
+        default: 0,
+        required: true
+    },
     installmentdate:
     {
         type: String,

@@ -1,5 +1,6 @@
 const Form = require("../models/Form")
 const User = require("../models/User")
+const UserForm = require("../models/UserForm")
 
 
 // basic info 
@@ -17,8 +18,9 @@ const profilecontroller = async (req, res) => {
             if (!email) {
                 return res.status(404).json({ msg: "Email not found " })
             }
-            const details = await Form.findOne({ academy_name: academyname, "additionalFields.formdata.Email": email })
+            const details = await UserForm.findOne({ academy_name: academyname, "additionalFields.Email": email })
             if (details) {
+                console.log(details)
                 return res.status(200).json(details)
             }
             else {

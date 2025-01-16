@@ -55,7 +55,7 @@ function Profile() {
   const [profilename, setprofilename] = useState("");
 
   function extractFirstLetter(fullName) {
-    const firstName = fullName.split(" ")[0];
+    const firstName = fullName.split(" ")[0] || "";
     return firstName.charAt(0).toUpperCase();
   }
 
@@ -80,7 +80,7 @@ function Profile() {
       const profileData = await response.json();
 
       const avatarimage = await extractFirstLetter(
-        profileData.additionalFields.formdata?.Name
+        profileData.additionalFields?.Name
       );
       setprofilename(avatarimage);
       setData(profileData);
@@ -166,7 +166,7 @@ function Profile() {
     if (data && data._id) {
       paymentinfo(
         data._id,
-        data.additionalFields?.formdata?.Name || "Unknown",
+        data.additionalFields?.Name || "Unknown",
         "Admin",
         academyname
       );
@@ -222,7 +222,7 @@ function Profile() {
               className="font-bold mb-2"
               sx={{ fontFamily: "ubuntu" }}
             >
-              {data.additionalFields.formdata?.Name || "N/A"}
+              {data.additionalFields?.Name || "N/A"}
             </Typography>
             <Typography
               variant="h6"

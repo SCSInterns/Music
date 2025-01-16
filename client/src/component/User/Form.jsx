@@ -1,12 +1,13 @@
 import React from "react";
 import Navbar from "./Navbar";
 import Avtar from "../../static/Images/Avtar.jpeg";
-import AcademyRegistration from "../Academy/AcademyRegistration";
+import AcademyRegistration from "../Academy/DynamicForm/DynamicFormViewer";
 import ScrollAnimation from "react-animate-on-scroll";
 import { motion } from "framer-motion";
 import Footer from "./Footer";
 import { Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import Modal from "../../../src/static/Images/Registrationmodal.svg";
 
 function Form() {
   const academyname = sessionStorage.getItem("Academy");
@@ -39,9 +40,14 @@ function Form() {
               initial={{ x: -100, y: 100, opacity: 0 }}
               animate={{ x: 0, y: 0, opacity: 1 }}
               transition={{ duration: 1, ease: "easeIn", staggerChildren: 0.1 }}
-              src={Avtar}
+              src={Modal}
               alt="Avatar"
-              style={{ width: "100%", maxWidth: "400px", borderRadius: "10px" }}
+              style={{
+                width: "100%",
+                maxWidth: "400px",
+                height: "100%",
+                borderRadius: "10px",
+              }}
             />
           </div>
 

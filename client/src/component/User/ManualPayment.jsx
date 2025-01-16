@@ -174,7 +174,7 @@ export default function QRPaymentPage({ data }) {
                     You have to pay:
                   </Typography>
                   <Typography variant="h4" fontWeight="bold" mt={1}>
-                    ₹ {data?.dueamount || "0.00"}
+                    ₹ {data?.outstandingamount || "0.00"}
                   </Typography>
                 </Box>
               </Paper>

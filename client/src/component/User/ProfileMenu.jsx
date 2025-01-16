@@ -6,12 +6,12 @@ import BatchProfile from "./BatchProfile";
 import QRCodeComponent from "./Qrcode";
 
 const TopNavbar = ({ data, info, details, qrcode }) => {
-  const [activeContent, setActiveContent] = useState("Account Info");
+  const [activeContent, setActiveContent] = useState("Profile Info");
 
   const menuItems = [
     {
-      name: "Account Info",
-      key: "Account Info",
+      name: "Profile Info",
+      key: "Profile Info",
       component: <ProfileAbout data={data} />,
     },
     {

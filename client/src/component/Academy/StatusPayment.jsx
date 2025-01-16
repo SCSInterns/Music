@@ -15,6 +15,7 @@ import Token from "../Token/Token";
 import { toast } from "react-toastify";
 
 const StatusFormModal = ({ open, onClose, studentData, onstatusChange }) => {
+  console.log(studentData);
   const [selectedStatus, setSelectedStatus] = useState("");
   const academyname = sessionStorage.getItem("academyname");
   const role = sessionStorage.getItem("role");

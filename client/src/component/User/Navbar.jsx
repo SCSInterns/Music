@@ -237,7 +237,7 @@ const Example = () => {
                         <>
                           <a
                             // onClick={handleSignOut}
-                            href={`${academyname}/login`}
+                            href={`/${academyname}/login`}
                             className={classNames(
                               focus ? "bg-gray-100" : "",
                               "block px-4 py-2 text-sm text-gray-700"
@@ -247,7 +247,7 @@ const Example = () => {
                           </a>
                           {!username && (
                             <a
-                              href={`${academyname}/registrationform`}
+                              href={`/${academyname}/registrationform`}
                               className={classNames(
                                 focus ? "bg-gray-100" : "",
                                 "block px-4 py-2 text-sm text-gray-700"

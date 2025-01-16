@@ -54,12 +54,12 @@ function adjustDate(inputDate) {
     return `${String(adjustedDay).padStart(2, '0')}-${String(month).padStart(2, '0')}-${year}`;
 }
 
-// const addaccountdetails = async () => {
-//     const accounts = await Student.find({})
-//     for (const account of accounts) {
-//         accountmng(account._id, account.academy_name, "Admin")
-//     }
-// }
+const addaccountdetails = async () => {
+    const accounts = await Student.find({})
+    for (const account of accounts) {
+        accountmng(account._id, account.academy_name, "Admin")
+    }
+}
 
 // create account 
 const accountmng = async (studentid, academyname, role) => {
@@ -89,6 +89,7 @@ const accountmng = async (studentid, academyname, role) => {
             currentdue: user.additionalFields?.get("Fees"),
             outstandingamount: user.additionalFields?.get("Fees"),
             installmentdate: installmentDate,
+            totalamountcollected: 0,
             status: "Pending"
         })
 
@@ -154,6 +155,7 @@ const addpayment = async (req, res) => {
             account.currentdue = 0
             account.outstandingamount = 0
             account.status = "Paid"
+            account.totalamountcollected = account.totalamountcollected + amount
 
             await account.save()
 
@@ -267,6 +269,7 @@ const advanceamount = async (req, res) => {
                 account.status = "Paid"
                 account.currentdue = 0
                 account.previousdue = 0
+                account.totalamountcollected = account.totalamountcollected + amount
                 await account.save()
 
 
@@ -455,7 +458,7 @@ const fetchstats = async (req, res) => {
             const account = await Account.find({ academyname: academyname })
             const transaction = await Transaction.find({ academyname: academyname })
 
-            if (transaction.length > 0 && account.length > 0) {
+            if (account.length > 0) {
                 let totalincome = 0
                 let totalpaid = 0
 

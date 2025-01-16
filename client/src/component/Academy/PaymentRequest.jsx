@@ -25,10 +25,11 @@ function PaymentRequest() {
   const [loading, setloading] = useState(false);
 
   const handlestatus = (row) => {
+    console.log(row);
     settogglestatusmodal(true);
     setstatusdetails({
       name: row.original?.studentname,
-      course: row.original?.Course,
+      course: row.original?.course,
       id: row.original?.studentId,
       paymentdate: row.original?.paymentDate,
     });

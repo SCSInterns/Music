@@ -86,6 +86,8 @@ export default function AnalyticsPage() {
 
   console.log(analytics);
 
+  const currentMonth = new Date().toISOString().slice(0, 7);
+
   return (
     <div className="container mx-auto p-6">
       <h1 className="text-3xl font-bold mb-6">Academy Payment Analytics</h1>
@@ -101,6 +103,7 @@ export default function AnalyticsPage() {
             id="datePicker"
             name="datePicker"
             value={paymentdate}
+            max={currentMonth}
             onChange={(e) => setPaymentDate(e.target.value)}
             style={{
               padding: "10px",

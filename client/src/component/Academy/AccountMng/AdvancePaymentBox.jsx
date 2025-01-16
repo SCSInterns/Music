@@ -14,16 +14,13 @@ import CloseIcon from "@mui/icons-material/Close";
 import { toast } from "react-toastify";
 import Token from "../../Token/Token";
 
-// start from here to submit advance payment date
-
 function AccountPaymentBox({ record, onChange, close }) {
   const [installmentDate, setInstallmentDate] = useState(
     record.installmentdate
   );
-  console.log(installmentDate);
   const [dateOptions, setDateOptions] = useState([]);
   const [paymentMode, setPaymentMode] = useState("");
-  const [paymentamount, setpaymentamount] = useState(0);
+  const [paymentamount, setpaymentamount] = useState(record.fees);
   const [paymentdate, setpaymentdate] = useState("");
   const token = Token();
   const role = sessionStorage.getItem("role");
@@ -36,32 +33,51 @@ function AccountPaymentBox({ record, onChange, close }) {
     setpaymentamount(event.target.value);
   };
 
-  // Function to calculate future dates up to 6 months later
-  const generateDateOptions = (installmentDate) => {
+  const generateDateOptions = (installmentDate, totalAmountPaid, fees) => {
     const options = [];
-    const currentDate = new Date();
 
-    // Get the day from the installment date
-    const day = new Date(installmentDate).getDate();
+    const [day, month, year] = installmentDate.split("-").map(Number);
+    const initialDate = new Date(year, month - 1, day);
 
-    // Generate dates for the next 6 months
-    for (let i = 0; i <= 6; i++) {
-      const newDate = new Date(currentDate);
-      newDate.setMonth(newDate.getMonth() + i); // Increment month by i
-      newDate.setDate(day); // Set the day to match the installment date
+    if (isNaN(initialDate.getTime())) {
+      console.error("Invalid installment date format. Use DD-MM-YYYY.");
+      return options;
+    }
 
-      // Format the date as DD-MM-YYYY
-      const formattedDate = newDate.toLocaleDateString("en-GB");
+    const noOfMonthsToBeSkipped = Math.floor(totalAmountPaid / fees);
+
+    const lastPayDate = new Date(initialDate);
+    lastPayDate.setMonth(initialDate.getMonth() + noOfMonthsToBeSkipped - 1);
+
+    for (let i = 1; i <= 6; i++) {
+      const futureDate = new Date(lastPayDate);
+      futureDate.setMonth(lastPayDate.getMonth() + i);
+
+      if (futureDate.getDate() !== day) {
+        futureDate.setDate(0);
+      }
+
+      const formattedDate = futureDate
+        .toLocaleDateString("en-GB", {
+          day: "2-digit",
+          month: "2-digit",
+          year: "numeric",
+        })
+        .replace(/\//g, "-");
+
       options.push(formattedDate);
     }
 
-    setDateOptions(options);
+    return options;
   };
 
-  console.log(dateOptions);
-
   useEffect(() => {
-    generateDateOptions(installmentDate);
+    const dateOptions1 = generateDateOptions(
+      installmentDate,
+      record.totalamountcollected,
+      record.fees
+    );
+    setDateOptions(dateOptions1);
   }, [installmentDate]);
 
   const formatToDDMMYYYY = (date) => {
@@ -71,6 +87,9 @@ function AccountPaymentBox({ record, onChange, close }) {
   };
 
   const handleSubmit = async () => {
+    if (paymentdate === "") {
+      setpaymentdate(dateOptions[0]);
+    }
     const url = "http://localhost:5000/api/auth/addadvanceamount";
     const response = await fetch(url, {
       method: "POST",
@@ -82,7 +101,7 @@ function AccountPaymentBox({ record, onChange, close }) {
         role: role,
         studentid: record?.studentid,
         paymentmode: paymentMode,
-        paymentdate: formatToDDMMYYYY(paymentdate),
+        paymentdate: paymentdate,
         amount: paymentamount,
       }),
     });
@@ -200,7 +219,10 @@ function AccountPaymentBox({ record, onChange, close }) {
           <select
             id="installmentDate"
             name="installmentDate"
-            onChange={(e) => setpaymentdate(e.target.value)}
+            onChange={(e) => {
+              setpaymentdate(e.target.value);
+              console.log(e.target.value);
+            }}
             style={{
               padding: "10px",
               borderRadius: "8px",

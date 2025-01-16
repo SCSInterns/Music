@@ -4,6 +4,7 @@ import { Typography, Button, Box } from "@mui/material";
 import PaymentOptions from "./PaymentOptions";
 
 function Payment({ data }) {
+  console.log(data);
   const [paymentstatsdetails, setpaymentstatsdetails] = useState({});
   const academyname = sessionStorage.getItem("Academy");
   const [togglepaymentbox, settogglepaymentbox] = useState(false);
@@ -72,18 +73,25 @@ function Payment({ data }) {
               <tbody>
                 {[
                   {
-                    label: "Advance Amount",
-                    value: paymentstatsdetails.advanceamount,
+                    label: "Previous Due",
+                    value: paymentstatsdetails.previousdue,
                   },
                   {
-                    label: "Due Amount",
-                    value: paymentstatsdetails.dueamount,
+                    label: "Current Due",
+                    value: paymentstatsdetails.currentdue,
                   },
                   {
-                    label: "Next Installment",
-                    value: paymentstatsdetails.nextpaymentdate,
+                    label: "Outstanding Amount",
+                    value: paymentstatsdetails.outstandingamount,
                   },
-                  { label: "Fees", value: paymentstatsdetails.amount },
+                  {
+                    label: "Joining Date",
+                    value: paymentstatsdetails.installmentdate,
+                  },
+                  {
+                    label: "Fees",
+                    value: paymentstatsdetails.fees,
+                  },
                 ].map(({ label, value }) => (
                   <tr key={label}>
                     <td
@@ -98,9 +106,25 @@ function Payment({ data }) {
                       style={{
                         padding: "8px",
                         borderBottom: "1px solid #ddd",
+                        color:
+                          label === "Outstanding Amount" && value < 0
+                            ? "green"
+                            : label === "Outstanding Amount" && value > 0
+                            ? "red"
+                            : label === "Outstanding Amount" && value === 0
+                            ? "gray"
+                            : "inherit",
+                        fontWeight:
+                          label === "Outstanding Amount" ? "bold" : "normal",
                       }}
                     >
-                      {value || "N/A"}
+                      {label === "Outstanding Amount"
+                        ? value < 0
+                          ? `${Math.abs(value)} (ADV.)`
+                          : value > 0
+                          ? `${value} (DUE)`
+                          : `${value} (CLEAR)`
+                        : value}
                     </td>
                   </tr>
                 ))}
@@ -124,7 +148,7 @@ function Payment({ data }) {
         </Box>
       ) : (
         <>
-          {paymentstatsdetails.dueamount > 0 ? (
+          {paymentstatsdetails.outstandingamount > 0 ? (
             <Button
               size="large"
               variant="contained"
