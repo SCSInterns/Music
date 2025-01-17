@@ -44,6 +44,8 @@ import { AddBusiness } from "@mui/icons-material";
 import AccountMenu from "./AccountMng/AccountMenu";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
+import { Megaphone, Volume2 } from "lucide-react";
+import AdvretisingMenu from "./Advertising/AdvretisingMenu";
 
 const Sidebar = () => {
   const academyname = sessionStorage.getItem("academyname");
@@ -274,16 +276,22 @@ const Sidebar = () => {
       disabled: status === "Accept" ? false : false,
     },
     {
-      text: "Batch Management 🆕",
+      text: "Batch Management",
       icon: <AddchartIcon />,
       component: <BatchMenuV2 />,
-      disabled: status === "Accept" ? false : false,
+      disabled: status === "Accept" ? false : true,
     },
     {
-      text: "Account Management 🆕",
+      text: "Account Management",
       icon: <AddBusiness />,
       component: <AccountMenu />,
-      disabled: status === "Accept" ? false : false,
+      disabled: status === "Accept" ? false : true,
+    },
+    {
+      text: "Advertising",
+      icon: <Volume2 />,
+      component: <AdvretisingMenu />,
+      disabled: status === "Accept" ? false : true,
     },
   ];
 

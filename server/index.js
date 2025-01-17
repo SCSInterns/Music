@@ -96,6 +96,9 @@ app.use('/api/auth', qrcode)
 const account = require("./routes/Accountroute.js")
 app.use('/api/auth', account)
 
+const advertise = require('./routes/Advertiser')
+app.use('/api/auth', advertise)
+
 app.get('/', (req, res) => {
     res.send("Hello World");
 });

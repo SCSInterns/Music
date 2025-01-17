@@ -27,6 +27,8 @@ import { io } from "socket.io-client";
 import DemoInquiry from "./DemoInquiry";
 import DemoMenu from "./DemoMenu";
 import Freetrail from "./FreetrailMenu";
+import { BriefcaseBusiness } from "lucide-react";
+import AdevrtiseMenu from "./Advertise/AdevrtiseMenu";
 
 const Sidebar = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -52,6 +54,11 @@ const Sidebar = () => {
       text: "Free Trial List",
       icon: <ThreePIcon />,
       component: <Freetrail />,
+    },
+    {
+      text: "Advertisement Mng",
+      icon: <BriefcaseBusiness />,
+      component: <AdevrtiseMenu />,
     },
   ];
 
