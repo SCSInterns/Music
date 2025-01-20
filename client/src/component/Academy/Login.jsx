@@ -101,6 +101,9 @@ function Signup() {
       sessionStorage.setItem("accesstoken", `${data.accesstoken}`);
       sessionStorage.setItem("refreshtoken", `${data.refreshtoken}`);
       sessionStorage.setItem("academyname", `${data.academyname}`);
+      sessionStorage.setItem("academyid", `${data.academyid}`);
+      sessionStorage.setItem("city", `${data.city}`);
+
       const academyname = await sessionStorage.getItem("academyname");
       sessionStorage.setItem("role", "Admin");
 

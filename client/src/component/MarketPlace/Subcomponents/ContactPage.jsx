@@ -14,7 +14,7 @@ export default function ContactPage() {
             </h2>
             <p className="text-muted-foreground">
               We&apos;d love to hear from you! Whether you have questions about{" "}
-              <span className="text-red-500 font-medium">CinemaPro</span>, need
+              <span className="text-red-500 font-medium">MusicVista</span>, need
               support, or want to learn more about our services, our team is
               here to help.
             </p>

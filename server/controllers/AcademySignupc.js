@@ -137,7 +137,12 @@ const academy_login = async (req, res) => {
             const refreshtoken = jwt.sign(user.toJSON(), process.env.REFRESH_KEY);
             const newToken = new Token({ token: refreshtoken });
             await newToken.save();
-            return res.status(200).json({ accesstoken, academyname: user.academy_name, refreshtoken, status: user.academy_access, academyid: user.academy_id });
+
+            const acdemydetails = await MusicAcademy.findOne({ _id: user.academy_id });
+            const academycity = acdemydetails.academy_city;
+            const academyid = user.academy_id;
+
+            return res.status(200).json({ accesstoken, academyname: user.academy_name, refreshtoken, status: user.academy_access, academyid: user.academy_id, city: academycity, academyid: academyid });
         } else {
             res.status(404).json({ message: "Invalid Credentials" });
         }

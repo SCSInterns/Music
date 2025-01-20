@@ -8,6 +8,35 @@ const TopNavbar = () => {
   const [activeContent, setActiveContent] = useState("Pricing");
   const [list, setlist] = useState([]);
 
+  const token = Token();
+  const role = sessionStorage.getItem("role");
+  const academyid = sessionStorage.getItem("academyid");
+
+  const fetchdata = async () => {
+    try {
+      const url = "http://localhost:5000/api/auth/getacademyadvplans";
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `${token}`,
+        },
+        body: JSON.stringify({
+          academyid: academyid,
+          role: role,
+        }),
+      });
+      const data = await response.json();
+      setlist(data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchdata();
+  }, []);
+
   const menuItems = [
     {
       name: "Pricing",
@@ -17,42 +46,9 @@ const TopNavbar = () => {
     {
       name: "Active Plans",
       key: "Active Plans",
-      component: <ActivePlans />,
+      component: <ActivePlans records={list} />,
     },
   ];
-
-  const token = Token();
-  const academyname = sessionStorage.getItem("academyname");
-  const role = sessionStorage.getItem("role");
-
-  const handlebatchlist = async () => {
-    const url = "http://localhost:5000/api/auth/getbatchstudents";
-
-    const response = await fetch(url, {
-      method: "POST",
-      headers: {
-        Authorization: `${token}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        academyname: academyname,
-        role: role,
-      }),
-    });
-
-    if (response.ok) {
-      const data = await response.json();
-      const filterdata = data.filter((item) => item.batchname !== "");
-      const finalfilter = filterdata.filter((item) => item.status !== "Reject");
-      setlist(finalfilter);
-    } else {
-      toast.error("Error fetching batch list");
-    }
-  };
-
-  useEffect(() => {
-    handlebatchlist();
-  }, []);
 
   return (
     <>

@@ -34,6 +34,23 @@ function Pricing() {
 
   console.log(advertiseList);
 
+  const city = sessionStorage.getItem("city"); // Get the city name from session storage
+
+  // Filter the advertisements to include only those where the city count exists
+  const filteredData = advertiseList.map((advertise) => {
+    // Find the specific city's count
+    const cityData = advertise.cityCounts.find((count) => count.city === city);
+
+    // Add the city's count to the advertisement object, defaulting to 0 if not found
+    return {
+      ...advertise,
+      currentcityCount: cityData ? cityData.count : 0,
+    };
+  });
+
+  // Log or process the data
+  console.log(filteredData);
+
   return (
     <>
       <div className=" text-black py-2 rounded-lg shadow-lg">
@@ -77,7 +94,7 @@ function Pricing() {
           </p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-8">
-          {advertiseList.map((item) => (
+          {filteredData.map((item) => (
             <AdvertisingCard key={item._id} data={item} />
           ))}
         </div>

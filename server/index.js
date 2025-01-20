@@ -1,5 +1,6 @@
 const express = require("express");
 const mongoose = require("mongoose");
+const rateLimit = require("express-rate-limit")
 const cors = require("cors");
 const dotenv = require("dotenv");
 const http = require('http');
@@ -49,6 +50,20 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use(cors());
+
+
+// For limiting the too many request 
+
+// const limiter = rateLimit({
+//     windowMs: 15 * 60 * 1000, // 15 minutes
+//     limit: 2, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
+//     standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+//     legacyHeaders: false, // Disable the `X-RateLimit-*` headers 
+//     message: "Too many requests from this IP, please try again after 15 minutes"
+// })
+
+// app.use('/api', limiter)
+
 
 mongoose.connect(path)
     .then(() => {

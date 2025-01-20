@@ -11,6 +11,38 @@ const TopNavbar = () => {
   const [activeContent, setActiveContent] = useState("Set Pricing");
   const [list, setlist] = useState([]);
 
+  const token = Token();
+  const role = sessionStorage.getItem("role");
+
+  const fetchdata = async () => {
+    try {
+      const url = "http://localhost:5000/api/auth/getalladvertise";
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `${token}`,
+        },
+        body: JSON.stringify({
+          role: role,
+        }),
+      });
+      const data = await response.json();
+      setlist(data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchdata();
+  }, []);
+
+  console.log(list);
+  const newrequest = list.filter((item) => item.paymentstatus === "Pending");
+  console.log(newrequest);
+  const activerequest = list.filter((item) => item.paymentstatus === "Paid");
+
   const menuItems = [
     {
       name: "Set Pricing",
@@ -25,12 +57,12 @@ const TopNavbar = () => {
     {
       name: "New Request",
       key: "New Request",
-      component: <NewRequest />,
+      component: <NewRequest records={newrequest} onChange={fetchdata()} />,
     },
     {
       name: "Active Advertisements",
       key: "Active Advertisements",
-      component: <ActiveRequest />,
+      component: <ActiveRequest records={activerequest} />,
     },
     {
       name: "Completed Advertisements",
@@ -38,10 +70,6 @@ const TopNavbar = () => {
       component: <CompletedRequest />,
     },
   ];
-
-  const token = Token();
-  const academyname = sessionStorage.getItem("academyname");
-  const role = sessionStorage.getItem("role");
 
   return (
     <>

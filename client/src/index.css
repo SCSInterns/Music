@@ -30,7 +30,7 @@ code {
 
 ::-webkit-scrollbar-thumb {
   border-radius: 10px;
-  background-color: #0d1b2a;
+  background-color: #ffffff;
   transition: height 0.5s ease-in;
 }
 html {
