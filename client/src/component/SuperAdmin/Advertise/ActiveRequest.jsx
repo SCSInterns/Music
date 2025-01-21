@@ -89,7 +89,7 @@ function PlansTable({ records }) {
         fullWidth
       >
         <DialogTitle>
-          Details
+          Preview Details
           {/* Close Icon */}
           <CloseIcon
             onClick={handleCloseDialog}

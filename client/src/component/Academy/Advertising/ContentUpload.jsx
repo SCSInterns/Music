@@ -1,0 +1,174 @@
+import React, { useState } from "react";
+import Header from "../../MarketPlace/Subcomponents/Header";
+import { Music, Menu } from "lucide-react";
+import Laptop from "../../../static/Images/LaptopFrame.png";
+import Mobile from "../../../static/Images/MobileFrame.png";
+import { Button } from "@mui/material";
+import Token from "../../Token/Token";
+import { toast } from "react-toastify";
+
+function BannerPreviewUploader({ record, onClose }) {
+  const [image, setImage] = useState(null);
+  const token = Token();
+  console.log(record);
+
+  const handleImageUpload = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      setImage(file);
+    }
+  };
+
+  const handleSubmit = async () => {
+    const url = "http://localhost:5000/api/auth/uploadadvbanner";
+
+    const data = new FormData();
+    data.append("picture", image);
+    data.append("id", record.id);
+
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        Authorization: `${token}`,
+      },
+      body: data,
+    });
+    const result = await response.json();
+    const message = result.message;
+    if (response.ok) {
+      toast.success(message);
+      setImage(null);
+      onClose();
+    } else {
+      toast.error(message);
+    }
+  };
+
+  return (
+    <div className="flex flex-col items-center space-y-8 p-6">
+      {/* File Upload Input */}
+      {!image && (
+        <>
+          <label
+            htmlFor="bannerUpload"
+            className="cursor-pointer bg-blue-600 text-white px-6 py-2 rounded-lg shadow-md hover:bg-blue-700 transition"
+          >
+            Upload Banner
+          </label>
+          <input
+            type="file"
+            id="bannerUpload"
+            accept="image/*"
+            onChange={handleImageUpload}
+            className="hidden"
+          />
+        </>
+      )}
+
+      {image && (
+        <div className="w-full flex flex-col items-center space-y-6">
+          {/* Desktop Preview */}
+          <div
+            className="relative bg-cover bg-center w-full h-96 flex justify-center items-start"
+            style={{
+              backgroundImage: `url(${Laptop})`,
+              backgroundSize: "contain",
+              backgroundRepeat: "no-repeat",
+              backgroundPosition: "center",
+              zIndex: 20,
+            }}
+          >
+            <div className="absolute w-[80%] h-[50%] bg-transparent shadow-lg overflow-hidden flex flex-col items-center justify-between z-10 mt-6 px-2 ">
+              <div className="w-full flex items-center justify-between px-4 py-2 bg-white">
+                <div className="flex items-center space-x-2">
+                  <Music className="h-3 w-3 text-primary" />
+                  <span className="text-xs font-bold text-gray-800">
+                    MusicVista
+                  </span>
+
+                  <div className="flex items-center space-x-1 !justify-end w-full !ml-12">
+                    <p className="text-[7px] font-semibold">Find Academy</p>
+                    <p className="text-[7px] font-semibold">Academy</p>
+                    <p className="text-[7px] font-semibold">About us</p>
+                    <p className="text-[7px] font-semibold">Features</p>
+                    <p className="text-[7px] font-semibold">
+                      Register Your Academy
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Banner Image */}
+              <div className="flex-grow flex items-center justify-center w-full">
+                <img
+                  src={URL.createObjectURL(image)}
+                  alt="Desktop Banner Preview"
+                  className="w-full h-full object-fill"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Mobile Preview */}
+          <div
+            className="relative bg-cover bg-center w-full h-96 flex justify-center items-start"
+            style={{
+              backgroundImage: `url(${Mobile})`,
+              backgroundSize: "contain",
+              backgroundRepeat: "no-repeat",
+              backgroundPosition: "center",
+              zIndex: 20,
+            }}
+          >
+            <div className="w-36 h-auto mt-14 bg-transparent rounded-lg shadow-lg overflow-hidden flex flex-col px-2">
+              <div className="relative bg-white flex items-center justify-between py-2">
+                <div className="flex items-center space-x-1">
+                  <Music className="h-3 w-3 text-primary" />
+                  <span className="text-xs font-bold ">MusicVista</span>
+                </div>
+                <Menu className="h-3 w-3 text-primary" />
+              </div>
+              <img
+                src={URL.createObjectURL(image)}
+                alt="Mobile Banner Preview"
+                className="w-full h-1/2 object-fill"
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {!image && (
+        <p className="text-gray-500">
+          No banner uploaded. Please upload a banner to preview.
+        </p>
+      )}
+
+      {image && (
+        <div
+          className="absolute bottom-4 right-4 flex space-x-4"
+          style={{ zIndex: 50 }}
+        >
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => {
+              handleSubmit();
+            }}
+          >
+            Publish
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => setImage(null)}
+          >
+            Cancel
+          </Button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+export default BannerPreviewUploader;

@@ -11,5 +11,6 @@ router.post('/paylateradvertise', authenticate.authenticatetoken, AdvertiseC.han
 router.post('/getacademyadvplans', authenticate.authenticatetoken, AdvertiseC.getadvertiseplans)
 router.post('/getalladvertise', authenticate.authenticatetoken, AdvertiseC.getalladvertiseapplications)
 router.post('/addadvrpayment', authenticate.authenticatetoken, AdvertiseC.addadvrpayment)
+router.post('/getadvaccbycity', AdvertiseC.getadvaccbycity)
 
 module.exports = router;

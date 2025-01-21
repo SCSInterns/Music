@@ -324,4 +324,22 @@ const addadvrpayment = async (req, res) => {
 
 }
 
-module.exports = { newEntry, updateEntry, deleteEntry, allentries, allocateadvertise, handleadvertisepayment, getadvertiseplans, getalladvertiseapplications, addadvrpayment }
+// get adv acc to city 
+
+const getadvaccbycity = async (req, res) => {
+    try {
+        const { city } = req.body
+        const advertiseapplications = await RegisterAdvertise.find({ academycity: city, paymentstatus: "Paid" });
+
+        if (advertiseapplications) {
+            return res.status(200).json(advertiseapplications)
+        } else {
+            return res.status(404).json({ message: "Not Found" })
+        }
+    } catch (error) {
+        return res.status(500).json({ message: "Internal Server Error", error })
+    }
+
+}
+
+module.exports = { newEntry, updateEntry, deleteEntry, allentries, allocateadvertise, handleadvertisepayment, getadvertiseplans, getalladvertiseapplications, addadvrpayment, getadvaccbycity }

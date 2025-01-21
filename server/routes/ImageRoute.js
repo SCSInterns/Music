@@ -1,10 +1,11 @@
 const express = require('express');
 const multer = require('multer');
 const authenicate = require('../controllers/Authenticate')
-const { storage, Gallerystorage, EventStorage, AboutStorage, InstrumentStorage, MentorsStorage, BannersStorage, QrStorage } = require('../controllers/ImageController');
+const { storage, Gallerystorage, EventStorage, AboutStorage, InstrumentStorage, MentorsStorage, BannersStorage, QrStorage, AdvertiseStorage } = require('../controllers/ImageController');
 const gallery = require('../controllers/GalleryController')
 const instrument = require('../controllers/Instrumentc')
 const router = express.Router();
+const AdvertiseApplication = require('../models/AdvertiseApplication');
 
 // Multer middleware to handle file upload
 const upload = multer({ storage });
@@ -22,6 +23,8 @@ const profileUpload = multer({ storage: MentorsStorage })
 const bannerUpload = multer({ storage: BannersStorage })
 
 const qrUpload = multer({ storage: QrStorage })
+
+const advertiseUpload = multer({ storage: AdvertiseStorage })
 
 // API route to upload an image
 router.post('/uploadlogo', upload.fields([{ name: 'logo', maxCount: 1 }]), async (req, res) => {
@@ -98,6 +101,31 @@ router.post('/uploadmentorimage', profileUpload.single('picture'), (req, res) =>
         res.status(500).json({ error: "Upload failed" });
     }
 });
+
+router.post('/uploadadvbanner', authenicate.authenticatetoken, advertiseUpload.single('picture'), async (req, res) => {
+    try {
+        const uploadedFile = req.file;
+        const imageurl = uploadedFile.path;
+        const { id } = req.body;
+
+        const advertise = await AdvertiseApplication.findOne({ _id: id })
+
+        if (advertise) {
+            advertise.bannerlink = imageurl;
+            await advertise.save();
+
+            return res.json({ message: "Banner link updated successfully" });
+        } else {
+            return res.status(404).json({ message: "Advertise not found" });
+        }
+
+    } catch (error) {
+        console.error("Error uploading to Cloudinary", error);
+        res.status(500).json({ error: "Upload failed" });
+    }
+});
+
+
 
 
 router.put('/uploadgallerytodb', authenicate.authenticatetoken, gallery.saveImageUrls)

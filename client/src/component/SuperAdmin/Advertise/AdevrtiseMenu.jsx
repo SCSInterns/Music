@@ -45,7 +45,7 @@ const TopNavbar = () => {
 
   const menuItems = [
     {
-      name: "Set Pricing",
+      name: "Create Advertisement",
       key: "Set Pricing",
       component: <Pricing />,
     },
@@ -55,7 +55,7 @@ const TopNavbar = () => {
       component: <ViewAdvertiseList />,
     },
     {
-      name: "New Request",
+      name: "Pending Request",
       key: "New Request",
       component: <NewRequest records={newrequest} onChange={fetchdata()} />,
     },

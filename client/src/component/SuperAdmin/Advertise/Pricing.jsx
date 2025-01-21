@@ -195,8 +195,15 @@ const AdvertiseForm = () => {
             variant="contained"
             color="primary"
             sx={{ float: "right" }}
+            disabled={
+              formData.limit === "" ||
+              formData.features.length === 0 ||
+              formData.name === "" ||
+              formData.price === "" ||
+              formData.section === ""
+            }
           >
-            Submit
+            Create Advertisement
           </Button>
         </Box>
       </Box>
