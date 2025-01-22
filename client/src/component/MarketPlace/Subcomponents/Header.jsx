@@ -12,6 +12,7 @@ import {
   DialogContent,
   DialogTitle,
   CircularProgress,
+  Divider,
 } from "@mui/material";
 import { LocateFixedIcon, MapPin, Menu as MenuIcon, Music } from "lucide-react";
 import * as CityIcons from "../UiElements/CityIcons";
@@ -90,12 +91,24 @@ export default function Header({ onChange }) {
     }
   }, [location]);
 
-  var defaultlocation;
   useEffect(() => {
-    if (location !== "") {
-      defaultlocation = location;
+    if (location === "") {
+      const setttedlocation = localStorage.getItem("location");
+      setLocation(setttedlocation);
     }
-  }, [location]);
+  }, []);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (!location) {
+        handleDialogOpen();
+      } else {
+        clearInterval(interval);
+      }
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, [location, handleDialogOpen]);
 
   const drawer = (
     <List>
@@ -126,7 +139,7 @@ export default function Header({ onChange }) {
 
       {/* Search Bar */}
       <div className=" lg:flex items-center md:hidden">
-        <div className="w-20 sm:w-36 md:w-48 lg:w-72">
+        <div className="hidden sm:w-36 sm:flex md:w-48 lg:w-72">
           <TextField
             variant="outlined"
             size="small"
@@ -142,7 +155,7 @@ export default function Header({ onChange }) {
       </div>
 
       {/* Desktop Navigation */}
-      <nav className="hidden md:flex items-center space-x-6">
+      <nav className="hidden lg:flex items-center space-x-6">
         <a
           href="#findacademy"
           className="text-sm font-medium hover:text-primary transition-colors"
@@ -176,7 +189,7 @@ export default function Header({ onChange }) {
       </nav>
 
       {/* Hamburger Menu */}
-      <div className="md:hidden">
+      <div className="lg:hidden">
         <IconButton onClick={handleDrawerToggle} aria-label="menu">
           <MenuIcon />
         </IconButton>
@@ -190,6 +203,19 @@ export default function Header({ onChange }) {
             },
           }}
         >
+          <TextField
+            variant="outlined"
+            size="small"
+            placeholder="Search location"
+            onClick={handleDialogOpen}
+            InputProps={{
+              startAdornment: <MapPin className="mr-2 text-gray-500" />,
+              readOnly: true,
+            }}
+            value={location}
+            className="!py-3 !px-2"
+          />
+          <Divider className="py-1" />
           {drawer}
         </Drawer>
       </div>
@@ -207,7 +233,7 @@ export default function Header({ onChange }) {
             variant="outlined"
             color="primary"
             onClick={fetchCurrentLocation}
-            className="mt-4 float-right "
+            className="md:mt-4 md:float-right !mt-5  "
             disabled={loading}
           >
             <LocateFixedIcon className="mr-2 w-5 h-5 text-blue" />
@@ -219,7 +245,10 @@ export default function Header({ onChange }) {
           </Button>
         </DialogTitle>
         <DialogContent>
-          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-4 gap-4 mt-10 max-h-[400px] overflow-y-auto p-2 w-full justify-center">
+          <div
+            className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-4 gap-4 md:mt-10 mt-4 lg:max-h-[400px] 
+           !overflow-y-hidden p-2 w-full justify-center"
+          >
             {cities.map((city) => (
               <button
                 key={city.name}
@@ -228,7 +257,7 @@ export default function Header({ onChange }) {
                   onChange();
                   setDialogOpen(false);
                 }}
-                className="flex flex-col items-center p-4 border rounded hover:bg-primary/5 hover:shadow-lg hover:scale-105 transition-all duration-300 ease-in-out"
+                className="flex flex-col items-center md:p-4 p-2 border rounded hover:bg-primary/5 hover:shadow-lg hover:scale-105 transition-all duration-300 ease-in-out"
               >
                 {city.icon}
                 <span className="text-sm font-medium mt-3">{city.name}</span>

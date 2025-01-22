@@ -143,7 +143,7 @@ export default function CitySelector() {
 
         {/* City Grid */}
         {value === 0 && (
-          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-4 mt-10 max-h-[400px] overflow-y-auto p-2 w-full justify-center">
+          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-4 mt-10 lg:max-h-[400px] overflow-y-auto p-2 w-full justify-center">
             {cities.map((city) => (
               <button
                 key={city.name}
@@ -168,7 +168,7 @@ export default function CitySelector() {
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Enter 6-digit Pincode"
               inputProps={{ maxLength: 6 }}
-              className="w-96 border p-2 rounded-md"
+              className="md:w-96 w-52 border p-2 rounded-md"
             />
             <Button
               variant="contained"

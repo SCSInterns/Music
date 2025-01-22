@@ -10,7 +10,6 @@ import { toast } from "react-toastify";
 function BannerPreviewUploader({ record, onClose }) {
   const [image, setImage] = useState(null);
   const token = Token();
-  console.log(record);
 
   const handleImageUpload = (event) => {
     const file = event.target.files[0];
@@ -19,28 +18,68 @@ function BannerPreviewUploader({ record, onClose }) {
     }
   };
 
+  const validateImageDimensions = async (image) => {
+    return new Promise((resolve) => {
+      const img = new Image();
+      const objectUrl = URL.createObjectURL(image);
+
+      img.onload = () => {
+        if (img.width !== 1024 || img.height !== 576) {
+          toast.error(
+            "Please upload the banner with the required resolution (1024x576)"
+          );
+          URL.revokeObjectURL(objectUrl);
+          resolve(false);
+        } else {
+          URL.revokeObjectURL(objectUrl);
+          resolve(true);
+        }
+      };
+
+      img.onerror = () => {
+        toast.error("Error loading the image. Please try again.");
+        URL.revokeObjectURL(objectUrl);
+        resolve(false);
+      };
+
+      img.src = objectUrl;
+    });
+  };
+
   const handleSubmit = async () => {
+    const isValid = await validateImageDimensions(image);
+    if (!isValid) {
+      setImage(null);
+      return;
+    }
+
     const url = "http://localhost:5000/api/auth/uploadadvbanner";
 
     const data = new FormData();
     data.append("picture", image);
     data.append("id", record.id);
 
-    const response = await fetch(url, {
-      method: "POST",
-      headers: {
-        Authorization: `${token}`,
-      },
-      body: data,
-    });
-    const result = await response.json();
-    const message = result.message;
-    if (response.ok) {
-      toast.success(message);
-      setImage(null);
-      onClose();
-    } else {
-      toast.error(message);
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          Authorization: `${token}`,
+        },
+        body: data,
+      });
+
+      const result = await response.json();
+      const message = result.message;
+
+      if (response.ok) {
+        toast.success(message);
+        setImage(null);
+        onClose();
+      } else {
+        toast.error(message);
+      }
+    } catch (error) {
+      toast.error("An unexpected error occurred while uploading the image.");
     }
   };
 
@@ -139,9 +178,29 @@ function BannerPreviewUploader({ record, onClose }) {
       )}
 
       {!image && (
-        <p className="text-gray-500">
-          No banner uploaded. Please upload a banner to preview.
-        </p>
+        <>
+          <p className="text-gray-500">
+            No banner uploaded. Please upload a banner to preview.
+          </p>
+
+          <p className="text-blue-900 font-bold mt-5">
+            Note: Banner resolution should be
+            <span className="text-red-500"> 1024</span> *
+            <span className="text-red-500"> 576 </span>
+            pixels.
+          </p>
+
+          <p className="text-blue-900 font-bold mt-5">
+            Reference Link: &nbsp;
+            <a
+              href="https://www.iloveimg.com/resize-image"
+              className="text-red-500"
+              target="_blank"
+            >
+              https://www.iloveimg.com/resize-image
+            </a>
+          </p>
+        </>
       )}
 
       {image && (

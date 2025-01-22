@@ -2,8 +2,15 @@ const Advertise = require("../models/AdvertisePricing")
 const RegisterAdvertise = require("../models/AdvertiseApplication")
 const Academy = require("../models/MusicAcademy")
 const Academysignup = require("./AcademySignupc")
-const Admin = require("../models/Admin")
 const CityAdvertise = require("../models/AdvertiseCityCount")
+const Emailc = require("./emailc")
+const MusicAcademy = require("../models/MusicAcademy")
+const Admin = require("../models/Admin")
+const { generateReceiptNumber } = require("./PaymentRequestC")
+const RazorPayCred = require("../models/RazorPayCred")
+const { superadminrazorpaycred } = require("../razorpay-initial")
+const RazorPayOrder = require("../models/Supbscription")
+
 
 const newEntry = async (req, res) => {
 
@@ -212,13 +219,13 @@ const handleadvertisepayment = async (req, res) => {
 
     try {
 
-        const { role, academyid, advertiseid, academycity, amount, advertisename } = req.body
+        const { role, academyid, advertiseid, academycity, amount, advertisename, section } = req.body
 
         if (role !== "Admin") {
             return res.status(401).json({ message: "Unauthorized Access" })
         }
 
-        await allocateadvertise(role, academyid, amount, advertiseid, advertisename, "pending", "pending")
+        await allocateadvertise(role, academyid, amount, advertiseid, advertisename, "pending", section)
 
         return res.status(200).json({ message: "Allocation Successfull" })
 
@@ -313,6 +320,24 @@ const addadvrpayment = async (req, res) => {
             advertiseapplication.paymentstatus = "Paid"
             await advertiseapplication.save();
 
+            const Address = await MusicAcademy.findOne({ _id: advertiseapplication.academyid })
+
+            const formatAddress = await Academysignup.formatAddress(Address)
+
+            const admin = await Admin.findOne({ academy_id: advertiseapplication.academyid })
+
+            const recieptno = generateReceiptNumber()
+
+            // send email invoice    
+            const amount = Math.floor(advertiseapplication.amount * (1 - 0.18));
+            const gst = Math.floor(advertiseapplication.amount * 0.18);
+            const totalamount = advertiseapplication.amount;
+
+
+            const mail = await Emailc.sendsubscriptioninvoice(admin.academy_email, admin.academy_name, formatAddress, recieptno, paymentdate, expirydate, "Advertise", amount, gst, totalamount)
+
+
+
             return res.status(200).json({ message: "Payment Added Successfully" })
         } else {
             return res.status(404).json({ message: "Not Found" })
@@ -324,15 +349,44 @@ const addadvrpayment = async (req, res) => {
 
 }
 
+// compare dates for expiry 
+const compareDates = (date1, date2) => {
+    const [day1, month1, year1] = date1.split("-").map(Number);
+    const [day2, month2, year2] = date2.split("-").map(Number);
+
+    // Create Date objects
+    const d1 = new Date(year1, month1 - 1, day1);
+    const d2 = new Date(year2, month2 - 1, day2);
+
+    // Compare the dates
+    if (d2 >= d1) {
+        return true;
+    }
+    else {
+        return false;
+    }
+};
+
 // get adv acc to city 
 
 const getadvaccbycity = async (req, res) => {
     try {
         const { city } = req.body
+        const currentdate = Academysignup.getTodayDate();
         const advertiseapplications = await RegisterAdvertise.find({ academycity: city, paymentstatus: "Paid" });
 
+        const filteredadv = []
+        for (adv of advertiseapplications) {
+            const result = compareDates(currentdate, adv.expirydate)
+            if (result === true) {
+                if (adv.bannerlink !== "pending") {
+                    filteredadv.push(adv)
+                }
+            }
+        }
         if (advertiseapplications) {
-            return res.status(200).json(advertiseapplications)
+
+            return res.status(200).json(filteredadv)
         } else {
             return res.status(404).json({ message: "Not Found" })
         }
@@ -341,5 +395,41 @@ const getadvaccbycity = async (req, res) => {
     }
 
 }
+
+// create razorpay order for advertise 
+
+
+const createrazorpayorderadvertise = async () => {
+    try {
+
+        const { paymentoption, amount, advertiseid } = req.body
+
+        if (!amount || !advertiseid) {
+            return res.status(400).json({
+                success: false,
+                error: 'Amount and advertise ID are required'
+            });
+        }
+
+        const razorpayInstance = await superadminrazorpaycred();
+
+
+        const options = {
+            amount: amount * 100,
+            currency: 'INR',
+            receipt: `receipt_${Date.now()}`,
+        };
+
+
+
+
+    } catch (error) {
+        return res.status(500).json({ message: "Internal Server Error", error })
+    }
+}
+
+
+// verify razorpay order for advertise 
+
 
 module.exports = { newEntry, updateEntry, deleteEntry, allentries, allocateadvertise, handleadvertisepayment, getadvertiseplans, getalladvertiseapplications, addadvrpayment, getadvaccbycity }

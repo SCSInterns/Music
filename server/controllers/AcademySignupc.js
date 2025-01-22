@@ -678,5 +678,6 @@ module.exports = {
     freetrialrequest,
     fetchfreelist,
     handlesubmitfreetrial,
-    getTodayDate
+    getTodayDate,
+    formatAddress
 }; 

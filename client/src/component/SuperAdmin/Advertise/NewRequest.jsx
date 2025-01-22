@@ -17,7 +17,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import Token from "../../Token/Token";
 import { toast } from "react-toastify";
 
-function PlansTable({ records, onChange }) {
+function PlansTable({ records, onUpdate }) {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
   const [paymentdate, setpaymentdate] = useState("");
@@ -50,7 +50,7 @@ function PlansTable({ records, onChange }) {
     if (response.ok) {
       toast.success(msg);
       setDialogOpen(false);
-      onChange();
+      onUpdate();
     } else {
       toast.error(msg);
     }

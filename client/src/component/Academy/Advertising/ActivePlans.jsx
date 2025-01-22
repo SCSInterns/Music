@@ -51,39 +51,32 @@ function PlansTable({ records }) {
           <Tooltip
             title={isPaymentPending ? "Please Pay First" : "Add Content"}
             placement="bottom"
-            disableInteractive={isPaymentPending}
+            disableInteractive={false}
           >
             {row.original.bannerLink === "pending" ? (
-              <>
-                {" "}
-                <span>
-                  {" "}
-                  <Button
-                    variant="outlined"
-                    color="primary"
-                    style={{ border: "none" }}
-                    disabled={isPaymentPending}
-                    onClick={() => handleOpenDialog(row.original)}
-                  >
-                    <AddBoxIcon />
-                  </Button>
-                </span>{" "}
-              </>
+              <span>
+                <Button
+                  variant="outlined"
+                  color="primary"
+                  style={{ border: "none" }}
+                  disabled={isPaymentPending}
+                  onClick={() => handleOpenDialog(row.original)}
+                >
+                  <AddBoxIcon />
+                </Button>
+              </span>
             ) : (
-              <>
-                <span>
-                  {" "}
-                  <Button
-                    variant="outlined"
-                    color="primary"
-                    style={{ border: "none" }}
-                    disabled={isPaymentPending}
-                    onClick={() => handleOpenDialog(row.original)}
-                  >
-                    <EditIcon />
-                  </Button>
-                </span>
-              </>
+              <span>
+                <Button
+                  variant="outlined"
+                  color="primary"
+                  style={{ border: "none" }}
+                  disabled={isPaymentPending}
+                  onClick={() => handleOpenDialog(row.original)}
+                >
+                  <EditIcon />
+                </Button>
+              </span>
             )}
           </Tooltip>
         );

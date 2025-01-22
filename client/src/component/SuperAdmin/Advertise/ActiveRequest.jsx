@@ -108,7 +108,7 @@ function PlansTable({ records }) {
 
         <DialogContent>
           {selectedRow ? (
-            <Box sx={{ my: 2 }}>
+            <Box sx={{ my: 2, overflowX: "hidden" }}>
               <table style={{ width: "100%", borderCollapse: "collapse" }}>
                 <thead>
                   <tr>

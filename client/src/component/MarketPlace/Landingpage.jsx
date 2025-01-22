@@ -10,7 +10,6 @@ import BannerSlideshow from "./Subcomponents/BannerSlideShow";
 
 function Home() {
   const location = localStorage.getItem("location");
-  console.log(location);
   const [data, setdata] = useState([]);
 
   const fetchbanners = async (cityname) => {
@@ -47,7 +46,7 @@ function Home() {
     setTimeout(() => {
       const city = localStorage.getItem("location");
       fetchbanners(city);
-    }, 2000);
+    }, 1000);
   };
 
   return (

@@ -57,7 +57,7 @@ const TopNavbar = () => {
     {
       name: "Pending Request",
       key: "New Request",
-      component: <NewRequest records={newrequest} onChange={fetchdata()} />,
+      component: <NewRequest records={newrequest} onUpdate={fetchdata} />,
     },
     {
       name: "Active Advertisements",
