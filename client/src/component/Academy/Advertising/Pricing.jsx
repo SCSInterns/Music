@@ -3,13 +3,14 @@ import Model from "../../../static/Images/Advertise.svg";
 import Token from "../../Token/Token";
 import { Button } from "@mui/material";
 import AdvertisingCard from "./AdvertiseCard";
+import { io } from "socket.io-client";
 
 function Pricing() {
   const [advertiseList, setAdvertiseList] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const token = Token();
   const role = sessionStorage.getItem("role");
-
+  const socket = React.useRef(null);
   const fetchdata = async () => {
     try {
       const url = "http://localhost:5000/api/auth/allentries";
@@ -27,6 +28,21 @@ function Pricing() {
       console.error("Error fetching data:", error);
     }
   };
+
+  const startSocket = () => {
+    socket.current.on("NewAdvertisePlan", (newEntry) => {
+      fetchdata();
+    });
+  };
+
+  useEffect(() => {
+    socket.current = io("http://localhost:5000");
+    startSocket();
+    return () => {
+      socket.current.off("NewAdvertisePlan");
+      socket.current.disconnect();
+    };
+  }, []);
 
   useEffect(() => {
     fetchdata();

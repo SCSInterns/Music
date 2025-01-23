@@ -638,7 +638,7 @@ const sendsubscriptioninvoice = async (
       totalAmount: toatalamount,
       paymentMethod: "Online (Razorpay)",
       plans: {
-        headers: ['Payment Date', 'Plan', 'Renewal Date', 'Amount', 'GST (INR)', 'SubTotal'],
+        headers: ['Payment Date', 'Plan', 'Renewal Date', 'SubTotal', 'GST (INR)', 'Total'],
         rows: [
           [issuedate, planname, renewaldate, amount, gst, toatalamount]
         ]

@@ -10,6 +10,39 @@ const { generateReceiptNumber } = require("./PaymentRequestC")
 const RazorPayCred = require("../models/RazorPayCred")
 const { superadminrazorpaycred } = require("../razorpay-initial")
 const RazorPayOrder = require("../models/Supbscription")
+const cron = require('node-cron');
+const { socketIOSingleton } = require("../socket-factory")
+
+cron.schedule("0 0 * * *", () => {
+    try {
+        resetlmit()
+    } catch (error) {
+        console.log("Error connceting to cron", error)
+    }
+}
+)
+
+const resetlmit = async () => {
+
+    const Advertise = await RegisterAdvertise.find({})
+    const todayDate = Academysignup.getTodayDate()
+
+    for (const adv of Advertise) {
+        if (adv.expirydate === todayDate) {
+            const city = adv.academycity
+            const id = adv.advertiseid
+
+            console.log(adv)
+            const count = await CityAdvertise.findOne({ advertiseId: id, city: city })
+            count.count = count.count - 1
+            await count.save()
+            console.log(count)
+            return
+        }
+    }
+
+
+}
 
 
 const newEntry = async (req, res) => {
@@ -29,7 +62,7 @@ const newEntry = async (req, res) => {
             })
 
             const response = await newEntry.save()
-
+            socketIOSingleton.emit('NewAdvertisePlan', response);
             if (response) {
                 return res.status(201).json({ message: "Advertise Pricing Created Successfully" })
             } else {
@@ -66,6 +99,7 @@ const updateEntry = async (req, res) => {
                 const response = await existing.save()
 
                 if (response) {
+                    socketIOSingleton.emit('NewAdvertisePlan', response);
                     return res.status(200).json({ message: "Advertise Pricing Updated Successfully" })
                 } else {
                     return res.status(500).json({ message: "Internal Server Error " })
@@ -99,6 +133,7 @@ const deleteEntry = async (req, res) => {
                 const response = await Advertise.deleteOne({ _id: id })
 
                 if (response) {
+                    socketIOSingleton.emit('NewAdvertisePlan', response);
                     return res.status(200).json({ message: "Advertise Pricing Deleted Successfully" })
                 } else {
                     return res.status(500).json({ message: "Internal Server Error" })
@@ -397,12 +432,10 @@ const getadvaccbycity = async (req, res) => {
 }
 
 // create razorpay order for advertise 
-
-
 const createrazorpayorderadvertise = async () => {
     try {
 
-        const { paymentoption, amount, advertiseid } = req.body
+        const { amount, advertiseid } = req.body
 
         if (!amount || !advertiseid) {
             return res.status(400).json({
@@ -420,16 +453,81 @@ const createrazorpayorderadvertise = async () => {
             receipt: `receipt_${Date.now()}`,
         };
 
+        const order = await razorpayInstance.orders.create(options);
 
+        // saving order details in db 
+        const newOrder = new RazorPayOrder({
+            academyname: response.academy_name,
+            razorpayOrderId: order.id,
+            adminId: advertiseid,
+            amount: order.amount,
+            status: 'created',
+        });
 
+        const data = await newOrder.save();
+
+        res.status(201).json(data);
 
     } catch (error) {
         return res.status(500).json({ message: "Internal Server Error", error })
     }
 }
 
-
 // verify razorpay order for advertise 
+const verifyrazorpayorderadvertise = async (req, res) => {
+    try {
+
+        const { verificationData } = req.body
 
 
-module.exports = { newEntry, updateEntry, deleteEntry, allentries, allocateadvertise, handleadvertisepayment, getadvertiseplans, getalladvertiseapplications, addadvrpayment, getadvaccbycity }
+        const order = await RazorPayOrder.findOne({
+            adminId: verificationData.advertiseid,
+            razorpayOrderId: verificationData.orderId
+        })
+
+        if (order) {
+            order.status = "Completed"
+            const update = await order.save()
+
+            const defaultadv = await allocateadvertise("Admin", verificationData.academyid, verificationData.amount, verificationData.advertiseid, verificationData.advertisename, "pending", section)
+
+            defaultadv.paymentstatus = "Paid"
+            defaultadv.paymentmode = "Razorpay"
+
+            const paymentdate = Academysignup.getTodayDate()
+            const expirydate = calculateDateAfter30Days(paymentdate)
+
+            defaultadv.paymentdate = paymentdate
+            defaultadv.expirydate = expirydate
+            await defaultadv.save()
+
+            const Address = await MusicAcademy.findOne({ _id: defaultadv.academyid })
+
+            const formatAddress = await Academysignup.formatAddress(Address)
+
+            const admin = await Admin.findOne({ academy_id: defaultadv.academyid })
+            const recieptno = generateReceiptNumber()
+
+            // send email invoice    
+            const amount = Math.floor(defaultadv.amount * (1 - 0.18));
+            const gst = Math.floor(defaultadv.amount * 0.18);
+            const totalamount = defaultadv.amount;
+
+
+            const mail = await Emailc.sendsubscriptioninvoice(admin.academy_email, admin.academy_name, formatAddress, recieptno, paymentdate, expirydate, "Advertise", amount, gst, totalamount)
+
+            return res.status(200).json({ message: "Payment Added Successfully" })
+        } else {
+            return res.status(404).json({ message: "Not Found" })
+        }
+
+
+
+    } catch (error) {
+        return res.status(500).json({ message: "Internal Server Error", error })
+    }
+
+}
+
+
+module.exports = { newEntry, updateEntry, deleteEntry, allentries, allocateadvertise, handleadvertisepayment, getadvertiseplans, getalladvertiseapplications, addadvrpayment, getadvaccbycity, createrazorpayorderadvertise, verifyrazorpayorderadvertise }

@@ -44,11 +44,13 @@ const PaymentDialog = ({ open, onClose, data }) => {
 
       if (createbooking.ok) {
         toast.success(msg);
-        onClose(); // Close the dialog
+        onClose();
       } else {
         toast.error(msg);
       }
     }
+
+    // start from here for razorpay payment
 
     // if (option === "payNow") {
     //   // razorpaypayment

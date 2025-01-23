@@ -3,11 +3,13 @@ import Token from "../../Token/Token";
 import { toast } from "react-toastify";
 import Pricing from "./Pricing";
 import ActivePlans from "./ActivePlans";
+import CompletedPlan from "./CompletedPlan";
 
 const TopNavbar = () => {
   const [activeContent, setActiveContent] = useState("Pricing");
   const [list, setlist] = useState([]);
-
+  const [activeplans, setactiveplans] = useState([]);
+  const [completedplans, setcompletedplans] = useState([]);
   const token = Token();
   const role = sessionStorage.getItem("role");
   const academyid = sessionStorage.getItem("academyid");
@@ -37,6 +39,51 @@ const TopNavbar = () => {
     fetchdata();
   }, []);
 
+  const compareDates = (date1, date2) => {
+    if (!date1 && !date2) return false;
+    const [day1, month1, year1] = date1.split("-").map(Number);
+    const [day2, month2, year2] = date2.split("-").map(Number);
+
+    const d1 = new Date(year1, month1 - 1, day1);
+    const d2 = new Date(year2, month2 - 1, day2);
+
+    if (d2 > d1) {
+      return true;
+    } else {
+      return false;
+    }
+  };
+
+  function getCurrentDate() {
+    const today = new Date();
+    const day = String(today.getDate()).padStart(2, "0");
+    const month = String(today.getMonth() + 1).padStart(2, "0");
+    const year = today.getFullYear();
+
+    return `${day}-${month}-${year}`;
+  }
+
+  const todaydate = getCurrentDate();
+
+  useEffect(() => {
+    const active = [];
+    const completed = [];
+    list.forEach((item) => {
+      if (item.expirydate !== "Pending") {
+        if (compareDates(todaydate, item.expirydate)) {
+          active.push(item);
+        } else {
+          completed.push(item);
+        }
+      } else {
+        active.push(item);
+      }
+    });
+
+    setactiveplans(active);
+    setcompletedplans(completed);
+  }, [list]);
+
   const menuItems = [
     {
       name: "Pricing",
@@ -46,7 +93,12 @@ const TopNavbar = () => {
     {
       name: "Active Plans",
       key: "Active Plans",
-      component: <ActivePlans records={list} />,
+      component: <ActivePlans records={activeplans} />,
+    },
+    {
+      name: "Completed Plans",
+      key: "Completed Plans",
+      component: <CompletedPlan records={completedplans} />,
     },
   ];
 

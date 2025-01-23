@@ -37,3 +37,8 @@ code {
 html {
   scroll-behavior: smooth;
 }
+
+.no-scrollbar {
+  overflow-x: auto;
+  scrollbar-width: none;
+}

@@ -1,11 +1,12 @@
 const express = require('express');
 const multer = require('multer');
 const authenicate = require('../controllers/Authenticate')
-const { storage, Gallerystorage, EventStorage, AboutStorage, InstrumentStorage, MentorsStorage, BannersStorage, QrStorage, AdvertiseStorage } = require('../controllers/ImageController');
+const { storage, Gallerystorage, EventStorage, AboutStorage, InstrumentStorage, MentorsStorage, BannersStorage, QrStorage, AdvertiseStorage, MarketingBannerStorage } = require('../controllers/ImageController');
 const gallery = require('../controllers/GalleryController')
 const instrument = require('../controllers/Instrumentc')
 const router = express.Router();
 const AdvertiseApplication = require('../models/AdvertiseApplication');
+const MarketingBanners = require('../models/MarketingBanners');
 
 // Multer middleware to handle file upload
 const upload = multer({ storage });
@@ -25,6 +26,8 @@ const bannerUpload = multer({ storage: BannersStorage })
 const qrUpload = multer({ storage: QrStorage })
 
 const advertiseUpload = multer({ storage: AdvertiseStorage })
+
+const marketingbannersupload = multer({ storage: MarketingBannerStorage })
 
 // API route to upload an image
 router.post('/uploadlogo', upload.fields([{ name: 'logo', maxCount: 1 }]), async (req, res) => {
@@ -125,8 +128,38 @@ router.post('/uploadadvbanner', authenicate.authenticatetoken, advertiseUpload.s
     }
 });
 
+router.post('/uploadmarketingbanner', authenicate.authenticatetoken, marketingbannersupload.single("image"), async (req, res) => {
+    try {
+        const uploadedFile = req.file;
 
+        const { slot } = req.body;
 
+        const marketingbanner = await MarketingBanners.findOne({ slotNumber: slot })
+
+        if (marketingbanner) {
+
+            marketingbanner.imageUrl = uploadedFile.path;
+            await marketingbanner.save();
+
+            return res.json({ message: "Banner link updated successfully" });
+        } else {
+            return res.status(404).json({ message: "Banner not found" });
+        }
+
+    } catch (error) {
+        console.error("Error uploading to Cloudinary", error);
+        res.status(500).json({ error: "Upload failed" });
+    }
+});
+
+router.get("/getmarketingbanners", async (req, res) => {
+    try {
+        return res.json(await MarketingBanners.find({}))
+    } catch (error) {
+        return res.status(500).json({ error: "Internal Server Error", error });
+    }
+
+})
 
 router.put('/uploadgallerytodb', authenicate.authenticatetoken, gallery.saveImageUrls)
 router.post('/uploadevents', authenicate.authenticatetoken, gallery.handleevents)

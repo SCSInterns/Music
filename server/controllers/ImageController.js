@@ -110,4 +110,15 @@ const AdvertiseStorage = new CloudinaryStorage({
   },
 });
 
-module.exports = { cloudinary, storage, Gallerystorage, EventStorage, AboutStorage, InstrumentStorage, MentorsStorage, BannersStorage, QrStorage, AdvertiseStorage };
+const MarketingBannerStorage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: async (req, file) => {
+    return {
+      folder: 'Advertise',
+      public_id: file.originalname.split('.')[0] || Date.now(),
+      allowed_formats: ['jpg', 'png', 'jpeg'],
+    };
+  },
+});
+
+module.exports = { cloudinary, storage, Gallerystorage, EventStorage, AboutStorage, InstrumentStorage, MentorsStorage, BannersStorage, QrStorage, AdvertiseStorage, MarketingBannerStorage };
