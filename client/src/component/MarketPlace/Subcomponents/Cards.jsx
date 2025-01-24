@@ -1,45 +1,89 @@
+import { useEffect, useState } from "react";
 import { FocusCards } from "../UiElements/FocusCards";
 
 export function FocusCardsDemo() {
+  const [filteracademy, setfilteracademy] = useState([]);
+  const [result, setResult] = useState([]);
+  const city = localStorage.getItem("location");
+
   const cards = [
     {
-      title: "String Music Academy",
-      location: "Ahmedabad",
-      src: "https://i.pinimg.com/736x/cd/fc/dc/cdfcdc3d6a81567e19a1d12369a746a5.jpg",
+      academyname: "String Music Academy",
+      academycity: city,
+      bannerlink:
+        "https://i.pinimg.com/736x/c5/0b/ca/c50bcad94b0cc6b48f3e781d31dfa215.jpg",
     },
     {
-      title: "Aom Music Academu",
-      location: "Rajkot",
-      src: "https://i.pinimg.com/736x/37/24/c1/3724c16a6c530ca787fe83357c4cc90e.jpg",
+      academyname: "Aom Music Academu",
+      academycity: city,
+      bannerlink:
+        "https://i.pinimg.com/736x/df/79/8d/df798d557854f0701d314421573a70ea.jpg",
     },
     {
-      title: "Vibration Music Academy",
-      location: "Mumbai",
-      src: "https://i.pinimg.com/736x/19/d9/97/19d99751fad923492b810be799706c49.jpg",
+      academyname: "Vibration Music Academy",
+      academycity: city,
+      bannerlink:
+        "https://i.pinimg.com/736x/19/d9/97/19d99751fad923492b810be799706c49.jpg",
     },
     {
-      title: "House Of Rock Music Institute",
-      location: "Bangalore",
-      src: "https://i.pinimg.com/736x/52/43/b2/5243b20d5fa0fc0c53470f7061c94459.jpg",
+      academyname: "House Of Rock Music Institute",
+      academycity: city,
+      bannerlink:
+        "https://i.pinimg.com/736x/52/43/b2/5243b20d5fa0fc0c53470f7061c94459.jpg",
     },
     {
-      title: "Fonseca Music Academy",
-      location: "Delhi",
-      src: "https://i.pinimg.com/736x/0f/d0/76/0fd076f960c94f5151a6a50d5d68f89c.jpg",
+      academyname: "Fonseca Music Academy",
+      academycity: city,
+      bannerlink:
+        "https://i.pinimg.com/736x/0f/d0/76/0fd076f960c94f5151a6a50d5d68f89c.jpg",
     },
     {
-      title: "Art Enclave Studio & Music Academy",
-      location: "Pune",
-      src: "https://i.pinimg.com/736x/a7/77/11/a777113773b372ff4e3d8b71576540b6.jpg",
+      academyname: "Art Enclave Studio & Music Academy",
+      academycity: city,
+      bannerlink:
+        "https://i.pinimg.com/736x/a7/77/11/a777113773b372ff4e3d8b71576540b6.jpg",
     },
   ];
+
+  const fetchFeaturedAcademy = async () => {
+    const url = "http://localhost:5000/api/auth/featuredAcademies";
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        city: city,
+      }),
+    });
+    if (response.ok) {
+      let data = await response.json();
+      data = data.filter((item) => item !== null);
+      setfilteracademy(data);
+    }
+  };
+
+  useEffect(() => {
+    fetchFeaturedAcademy();
+  }, []);
+
+  useEffect(() => {
+    const combinedResult = [...filteracademy];
+    if (filteracademy.length < 6) {
+      const required = 6 - filteracademy.length;
+      for (let i = 0; i < required; i++) {
+        combinedResult.push(cards[i]);
+      }
+    }
+    setResult(combinedResult);
+  }, [filteracademy]);
 
   return (
     <div className="py-20">
       <h2 className="text-3xl font-bold mb-12 text-center text-gray-800">
-        Leap Into Excellence with Top Academies !
+        Leap Into Excellence with Top Academies!
       </h2>
-      <FocusCards cards={cards} />
+      <FocusCards cards={result} />
     </div>
   );
 }

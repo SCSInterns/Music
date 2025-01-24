@@ -260,7 +260,10 @@ const handleadvertisepayment = async (req, res) => {
             return res.status(401).json({ message: "Unauthorized Access" })
         }
 
-        await allocateadvertise(role, academyid, amount, advertiseid, advertisename, "pending", section)
+        const response = await allocateadvertise(role, academyid, amount, advertiseid, advertisename, "pending", section)
+
+        // instant update to superadmin 
+        socketIOSingleton.emit('NewApplicationAdv', response);
 
         return res.status(200).json({ message: "Allocation Successfull" })
 
@@ -370,9 +373,6 @@ const addadvrpayment = async (req, res) => {
 
 
             const mail = await Emailc.sendsubscriptioninvoice(admin.academy_email, admin.academy_name, formatAddress, recieptno, paymentdate, expirydate, "Advertise", amount, gst, totalamount)
-
-
-
             return res.status(200).json({ message: "Payment Added Successfully" })
         } else {
             return res.status(404).json({ message: "Not Found" })
@@ -408,7 +408,7 @@ const getadvaccbycity = async (req, res) => {
     try {
         const { city } = req.body
         const currentdate = Academysignup.getTodayDate();
-        const advertiseapplications = await RegisterAdvertise.find({ academycity: city, paymentstatus: "Paid" });
+        const advertiseapplications = await RegisterAdvertise.find({ academycity: city, paymentstatus: "Paid", section: "Banner" });
 
         const filteredadv = []
         for (adv of advertiseapplications) {
@@ -432,10 +432,10 @@ const getadvaccbycity = async (req, res) => {
 }
 
 // create razorpay order for advertise 
-const createrazorpayorderadvertise = async () => {
+const createrazorpayorderadvertise = async (req, res) => {
     try {
 
-        const { amount, advertiseid } = req.body
+        const { amount, advertiseid, academyname } = req.body
 
         if (!amount || !advertiseid) {
             return res.status(400).json({
@@ -445,8 +445,6 @@ const createrazorpayorderadvertise = async () => {
         }
 
         const razorpayInstance = await superadminrazorpaycred();
-
-
         const options = {
             amount: amount * 100,
             currency: 'INR',
@@ -457,7 +455,7 @@ const createrazorpayorderadvertise = async () => {
 
         // saving order details in db 
         const newOrder = new RazorPayOrder({
-            academyname: response.academy_name,
+            academyname: academyname,
             razorpayOrderId: order.id,
             adminId: advertiseid,
             amount: order.amount,
@@ -489,7 +487,9 @@ const verifyrazorpayorderadvertise = async (req, res) => {
             order.status = "Completed"
             const update = await order.save()
 
-            const defaultadv = await allocateadvertise("Admin", verificationData.academyid, verificationData.amount, verificationData.advertiseid, verificationData.advertisename, "pending", section)
+            var amount = Math.floor(order.amount / 100)
+
+            const defaultadv = await allocateadvertise("Admin", verificationData.academyid, amount, verificationData.advertiseid, verificationData.advertisename, "pending", verificationData.section)
 
             defaultadv.paymentstatus = "Paid"
             defaultadv.paymentmode = "Razorpay"
@@ -509,12 +509,18 @@ const verifyrazorpayorderadvertise = async (req, res) => {
             const recieptno = generateReceiptNumber()
 
             // send email invoice    
-            const amount = Math.floor(defaultadv.amount * (1 - 0.18));
+            amount = Math.floor(defaultadv.amount * (1 - 0.18));
             const gst = Math.floor(defaultadv.amount * 0.18);
             const totalamount = defaultadv.amount;
 
 
             const mail = await Emailc.sendsubscriptioninvoice(admin.academy_email, admin.academy_name, formatAddress, recieptno, paymentdate, expirydate, "Advertise", amount, gst, totalamount)
+
+            await RazorPayOrder.findOneAndDelete({ adminId: order.adminId, razorpayOrderId: order.razorpayOrderId })
+
+            // instant update to superadmin 
+
+            socketIOSingleton.emit('NewApplicationAdv', defaultadv);
 
             return res.status(200).json({ message: "Payment Added Successfully" })
         } else {
@@ -530,4 +536,39 @@ const verifyrazorpayorderadvertise = async (req, res) => {
 }
 
 
-module.exports = { newEntry, updateEntry, deleteEntry, allentries, allocateadvertise, handleadvertisepayment, getadvertiseplans, getalladvertiseapplications, addadvrpayment, getadvaccbycity, createrazorpayorderadvertise, verifyrazorpayorderadvertise }
+// failed razorpay payment 
+const failedrazorpaypayment = async (req, res) => {
+    try {
+        const { orderId, adminid, academyname } = req.body
+
+        const Order = await RazorPayOrder.findOne({
+            academyname: academyname,
+            adminId: adminid,
+            razorpayOrderId: orderId
+        })
+
+        const advertise = await RegisterAdvertise.findOne({ _id: adminid })
+
+        const acdemydetails = await Admin.findOne({ academy_id: advertise.academyid })
+
+        const paymentdate = Academysignup.getTodayDate()
+
+        if (Order) {
+            // payment fail msg 
+            await Emailc.paymentfailed(academyname, acdemydetails.academy_email, paymentdate, Order.amount)
+
+            await Order.deleteOne()
+
+            return res.status(200).json({ msg: "Mail Send and Order Deleted " })
+
+        } else {
+            return res.status(404).json({ msg: "Order Not Found" })
+        }
+
+    } catch (error) {
+        console.error("Error verifying Razorpay order:", error);
+        res.status(500).json({ success: false, error: 'Failed to veify Razorpay order', error });
+    }
+}
+
+module.exports = { newEntry, updateEntry, deleteEntry, allentries, allocateadvertise, handleadvertisepayment, getadvertiseplans, getalladvertiseapplications, addadvrpayment, getadvaccbycity, createrazorpayorderadvertise, verifyrazorpayorderadvertise, failedrazorpaypayment }

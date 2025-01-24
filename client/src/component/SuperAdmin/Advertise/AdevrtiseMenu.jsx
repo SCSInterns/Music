@@ -7,15 +7,31 @@ import ActiveRequest from "./ActiveRequest";
 import CompletedRequest from "./CompletedRequest";
 import ViewAdvertiseList from "./ViewAdvertiseList";
 import DefaultBanners from "./DefaultBanners";
+import { io } from "socket.io-client";
 
 const TopNavbar = () => {
   const [activeContent, setActiveContent] = useState("Set Pricing");
   const [list, setlist] = useState([]);
   const [activeplans, setactiveplans] = useState([]);
   const [completedplans, setcompletedplans] = useState([]);
-
+  const socket = React.useRef(null);
   const token = Token();
   const role = sessionStorage.getItem("role");
+
+  const startSocket = () => {
+    socket.current.on("NewApplicationAdv", (newEntry) => {
+      fetchdata();
+    });
+  };
+
+  useEffect(() => {
+    socket.current = io("http://localhost:5000");
+    startSocket();
+    return () => {
+      socket.current.off("NewApplicationAdv");
+      socket.current.disconnect();
+    };
+  }, []);
 
   const fetchdata = async () => {
     try {

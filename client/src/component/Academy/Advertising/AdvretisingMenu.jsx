@@ -65,6 +65,10 @@ const TopNavbar = () => {
 
   const todaydate = getCurrentDate();
 
+  const onUpdate = () => {
+    fetchdata();
+  };
+
   useEffect(() => {
     const active = [];
     const completed = [];
@@ -88,12 +92,25 @@ const TopNavbar = () => {
     {
       name: "Pricing",
       key: "Pricing",
-      component: <Pricing />,
+      component: (
+        <Pricing
+          onUpdate={() => {
+            onUpdate();
+          }}
+        />
+      ),
     },
     {
       name: "Active Plans",
       key: "Active Plans",
-      component: <ActivePlans records={activeplans} />,
+      component: (
+        <ActivePlans
+          records={activeplans}
+          onUpdate={() => {
+            onUpdate();
+          }}
+        />
+      ),
     },
     {
       name: "Completed Plans",

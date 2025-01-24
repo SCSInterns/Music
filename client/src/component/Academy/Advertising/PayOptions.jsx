@@ -10,9 +10,11 @@ import {
 import Token from "../../Token/Token";
 import { toast } from "react-toastify";
 
-const PaymentDialog = ({ open, onClose, data }) => {
+const PaymentDialog = ({ open, onClose, data, onUpdate }) => {
   const token = Token();
   const academyname = sessionStorage.getItem("academyname");
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
+
   const academyid = sessionStorage.getItem("academyid");
   const role = sessionStorage.getItem("role");
   const city = sessionStorage.getItem("city");
@@ -50,144 +52,146 @@ const PaymentDialog = ({ open, onClose, data }) => {
       }
     }
 
-    // start from here for razorpay payment
+    if (option === "payNow") {
+      // razorpaypayment
+      const generateorder = async () => {
+        const url = "http://localhost:5000/api/auth/createrazorpayorderadv";
+        setloading(true);
+        const response = await fetch(url, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            authorization: `${token}`,
+          },
+          body: JSON.stringify({
+            amount: data.price,
+            advertiseid: data._id,
+            academyname: academyname,
+          }),
+        });
 
-    // if (option === "payNow") {
-    //   // razorpaypayment
+        if (response.ok) {
+          const data = await response.json();
 
-    //   const generateorder = async () => {
-    //     // const url = "http://localhost:5000/api/auth/handlesubscriptionpayment";
-    //     setloading(true);
-    //     const response = await fetch(url, {
-    //       method: "POST",
-    //       headers: {
-    //         "Content-Type": "application/json",
-    //       },
-    //       body: JSON.stringify({
-    //         paymentoption: "Pay Now",
-    //         amount: data.price,
-    //         advertiseid: academyid,
-    //       }),
-    //     });
+          setTimeout(() => {
+            setloading(false);
+            handlePayment(data);
+            onUpdate();
+          }, 2000);
+          toast.success("Order Created Succes");
+        }
+      };
 
-    //     if (response.ok) {
-    //       const data = await response.json();
+      await generateorder();
+      setIsPopupOpen(true);
 
-    //       setTimeout(() => {
-    //         setloading(false);
-    //         handlePayment(data);
-    //       }, 2000);
+      const rkey = "rzp_test_ABJbNmzawvCqjV";
 
-    //       toast.success("Order Created Succes");
-    //     }
-    //   };
+      const handlePayment = async (orderdata) => {
+        const options = {
+          key: rkey,
+          amount: orderdata.amount,
+          currency: "INR",
+          name: `SoftCoding Solutions`,
+          description: "Advertise Payment",
+          image:
+            "https://i.pinimg.com/736x/f2/b9/87/f2b9874c4adae66d0dc58743d33c1130.jpg",
+          order_id: orderdata.razorpayOrderId,
+          handler: async function (response) {
+            const verificationData = {
+              paymentId: response.razorpay_payment_id,
+              orderId: response.razorpay_order_id,
+              advertiseid: orderdata.adminId,
+              academyid: academyid,
+              amount: orderdata.amount,
+              advertisename: data.name,
+              section: data.section,
+            };
 
-    //   const rkey = "rzp_test_ABJbNmzawvCqjV";
+            const url = "http://localhost:5000/api/auth/verifyrazorpayorderadv";
+            setloading(true);
+            const responsepayment = await fetch(url, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                authorization: `${token}`,
+              },
+              body: JSON.stringify({
+                verificationData: verificationData,
+              }),
+            });
 
-    //   const handlePayment = async (orderdata) => {
-    //     const options = {
-    //       key: rkey,
-    //       amount: orderdata.amount,
-    //       currency: "INR",
-    //       name: `SoftCoding Solutions`,
-    //       description: "Subscription Payment",
-    //       image:
-    //         "https://i.pinimg.com/736x/f2/b9/87/f2b9874c4adae66d0dc58743d33c1130.jpg",
-    //       order_id: orderdata.razorpayOrderId,
-    //       handler: async function (response) {
-    //         const verificationData = {
-    //           paymentId: response.razorpay_payment_id,
-    //           orderId: response.razorpay_order_id,
-    //           adminId: orderdata.adminId,
-    //         };
+            if (responsepayment.ok) {
+              setIsPopupOpen(false);
+              setloading(false);
+              toast.success(" Payment Success . Access from Active Plans 🎉.");
+            } else {
+              setIsPopupOpen(false);
+              setloading(false);
+              toast.error("Error Saving Payment Details ");
+            }
+          },
+          prefill: {
+            name: orderdata.academyname,
+          },
+          notes: {
+            adminid: orderdata.adminId,
+            academyName: orderdata.academyname,
+            amount: orderdata.amount,
+          },
+          theme: {
+            color: "#020617",
+          },
+        };
 
-    //         const url =
-    //           "http://localhost:5000/api/auth/verifysubscriptionpayment";
-    //         setloading(true);
-    //         const responsepayment = await fetch(url, {
-    //           method: "POST",
-    //           headers: {
-    //             "Content-Type": "application/json",
-    //           },
-    //           body: JSON.stringify({
-    //             verificationData: verificationData,
-    //           }),
-    //         });
+        const rzp = new window.Razorpay(options);
 
-    //         if (responsepayment.ok) {
-    //           setIsPopupOpen(false);
-    //           setloading(false);
-    //           toast.success(
-    //             " Payment Success . Pls submit your application 🎉."
-    //           );
-    //         } else {
-    //           setIsPopupOpen(false);
-    //           setloading(false);
-    //           toast.error("Error Saving Payment Details ");
-    //         }
-    //       },
-    //       prefill: {
-    //         name: orderdata.academyname,
-    //       },
-    //       notes: {
-    //         adminid: orderdata.adminId,
-    //         academyName: orderdata.academyname,
-    //         amount: orderdata.amount,
-    //       },
-    //       theme: {
-    //         color: "#020617",
-    //       },
-    //     };
+        rzp.on("payment.failed", async function (response) {
+          rzp.close();
 
-    //     const rzp = new window.Razorpay(options);
+          setTimeout(() => {
+            const razorpayIframe = document.querySelector("iframe");
+            const razorpayOverlay = document.querySelector(
+              ".razorpay-container"
+            );
 
-    //     rzp.on("payment.failed", async function (response) {
-    //       rzp.close();
+            if (razorpayIframe) razorpayIframe.remove();
+            if (razorpayOverlay) razorpayOverlay.remove();
 
-    //       setTimeout(() => {
-    //         const razorpayIframe = document.querySelector("iframe");
-    //         const razorpayOverlay = document.querySelector(
-    //           ".razorpay-container"
-    //         );
+            document.body.style.overflow = "auto";
+            document.body.style.pointerEvents = "auto";
+          }, 500);
 
-    //         if (razorpayIframe) razorpayIframe.remove();
-    //         if (razorpayOverlay) razorpayOverlay.remove();
+          if (!response.razorpay_payment_id || !response.razorpay_signature) {
+            const url = "http://localhost:5000/api/auth/failedadvpayment";
+            const response = await fetch(url, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                authorization: `${token}`,
+              },
+              body: JSON.stringify({
+                adminid: orderdata.adminId,
+                orderId: orderdata.razorpayOrderId,
+                academyname: orderdata.academyname,
+              }),
+            });
 
-    //         document.body.style.overflow = "auto";
-    //         document.body.style.pointerEvents = "auto";
-    //       }, 500);
+            if (response.ok) {
+              toast.error("Payment failed. Please try again.");
+            } else {
+              toast.error(" Payment Submission Failed ");
+            }
+            setIsPopupOpen(false);
+            setloading(false);
+            return;
+          }
+        });
 
-    //       if (!response.razorpay_payment_id || !response.razorpay_signature) {
-    //         const url =
-    //           "http://localhost:5000/api/auth/failedsubscriptionpayment";
-    //         const response = await fetch(url, {
-    //           method: "POST",
-    //           headers: {
-    //             "Content-Type": "application/json",
-    //           },
-    //           body: JSON.stringify({
-    //             adminid: orderdata.adminId,
-    //             orderId: orderdata.razorpayOrderId,
-    //             academyname: orderdata.academyname,
-    //           }),
-    //         });
-
-    //         if (response.ok) {
-    //           toast.error("Payment failed. Please try again.");
-    //         } else {
-    //           toast.error(" Payment Submission Failed ");
-    //         }
-    //         setIsPopupOpen(false);
-    //         setloading(false);
-    //         return;
-    //       }
-    //     });
-
-    //     rzp.open();
-    //   };
-    // }
-
-    onClose(); // Close the dialog
+        rzp.open();
+      };
+    }
+    onClose();
   };
 
   return (

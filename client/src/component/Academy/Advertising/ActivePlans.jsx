@@ -14,7 +14,7 @@ import ContentUpload from "./ContentUpload";
 import CloseIcon from "@mui/icons-material/Close";
 import EditIcon from "@mui/icons-material/Edit";
 
-function PlansTable({ records }) {
+function PlansTable({ records, onUpdate }) {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
   console.log(records);
@@ -153,6 +153,9 @@ function PlansTable({ records }) {
               record={selectedRow}
               onClose={() => {
                 handleCloseDialog();
+              }}
+              onUpdate={() => {
+                onUpdate();
               }}
             />
           ) : (

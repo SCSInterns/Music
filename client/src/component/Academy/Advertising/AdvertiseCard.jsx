@@ -2,7 +2,7 @@ import { Check } from "lucide-react";
 import React, { useState } from "react";
 import PayOptions from "./PayOptions";
 
-function AdvertisingCard({ data }) {
+function AdvertisingCard({ data, onUpdate }) {
   const { name, price, limit, section, features, currentcityCount } = data;
   const [open, setOpen] = useState(false);
 
@@ -77,7 +77,12 @@ function AdvertisingCard({ data }) {
 
       {/* Payment Options Dialog */}
       {open && (
-        <PayOptions open={open} onClose={() => setOpen(false)} data={data} />
+        <PayOptions
+          open={open}
+          onClose={() => setOpen(false)}
+          data={data}
+          onUpdate={onUpdate}
+        />
       )}
     </>
   );

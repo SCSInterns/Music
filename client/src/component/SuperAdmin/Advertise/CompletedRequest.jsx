@@ -153,6 +153,12 @@ function PlansTable({ records }) {
                     </td>
                   </tr>
                   <tr>
+                    <td style={tableCellStyle}>Amount</td>
+                    <td style={tableCellStyle}>
+                      {selectedRow.amount || "N/A"}
+                    </td>
+                  </tr>
+                  <tr>
                     <td style={tableCellStyle}>Mode of Payment</td>
                     <td style={tableCellStyle}>
                       {selectedRow.paymentmode || "N/A"}

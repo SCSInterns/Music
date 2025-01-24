@@ -5,7 +5,7 @@ import { Button } from "@mui/material";
 import AdvertisingCard from "./AdvertiseCard";
 import { io } from "socket.io-client";
 
-function Pricing() {
+function Pricing({ onUpdate }) {
   const [advertiseList, setAdvertiseList] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const token = Token();
@@ -111,7 +111,7 @@ function Pricing() {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-8">
           {filteredData.map((item) => (
-            <AdvertisingCard key={item._id} data={item} />
+            <AdvertisingCard key={item._id} data={item} onUpdate={onUpdate} />
           ))}
         </div>
       </div>

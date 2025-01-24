@@ -114,6 +114,10 @@ app.use('/api/auth', account)
 const advertise = require('./routes/Advertiser')
 app.use('/api/auth', advertise)
 
+const featuredAcademies = require('./routes/FeaturedAcademyr.js')
+app.use('/api/auth', featuredAcademies)
+
+
 app.get('/', (req, res) => {
     res.send("Hello World");
 });

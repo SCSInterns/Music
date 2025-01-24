@@ -12,7 +12,8 @@ router.post('/getacademyadvplans', authenticate.authenticatetoken, AdvertiseC.ge
 router.post('/getalladvertise', authenticate.authenticatetoken, AdvertiseC.getalladvertiseapplications)
 router.post('/addadvrpayment', authenticate.authenticatetoken, AdvertiseC.addadvrpayment)
 router.post('/getadvaccbycity', AdvertiseC.getadvaccbycity)
-router.post('createrazorpayorderadv', authenticate.authenticatetoken, AdvertiseC.createrazorpayorderadvertise)
+router.post('/createrazorpayorderadv', authenticate.authenticatetoken, AdvertiseC.createrazorpayorderadvertise)
 router.post('/verifyrazorpayorderadv', authenticate.authenticatetoken, AdvertiseC.verifyrazorpayorderadvertise)
+router.post("/failedadvpayment", authenticate.authenticatetoken, AdvertiseC.failedrazorpaypayment)
 
 module.exports = router;

@@ -7,7 +7,8 @@ import { Button } from "@mui/material";
 import Token from "../../Token/Token";
 import { toast } from "react-toastify";
 
-function BannerPreviewUploader({ record, onClose }) {
+function BannerPreviewUploader({ record, onClose , onUpdate }) {
+  console.log(record.section);
   const [image, setImage] = useState(null);
   const token = Token();
 
@@ -19,31 +20,61 @@ function BannerPreviewUploader({ record, onClose }) {
   };
 
   const validateImageDimensions = async (image) => {
-    return new Promise((resolve) => {
-      const img = new Image();
-      const objectUrl = URL.createObjectURL(image);
+    const section = record.section;
+    if (section === "Banner") {
+      return new Promise((resolve) => {
+        const img = new Image();
+        const objectUrl = URL.createObjectURL(image);
 
-      img.onload = () => {
-        if (img.width !== 1024 || img.height !== 576) {
-          toast.error(
-            "Please upload the banner with the required resolution (1024x576)"
-          );
+        img.onload = () => {
+          if (img.width !== 1024 || img.height !== 576) {
+            toast.error(
+              "Please upload the banner with the required resolution (1024x576)"
+            );
+            URL.revokeObjectURL(objectUrl);
+            resolve(false);
+          } else {
+            URL.revokeObjectURL(objectUrl);
+            resolve(true);
+          }
+        };
+
+        img.onerror = () => {
+          toast.error("Error loading the image. Please try again.");
           URL.revokeObjectURL(objectUrl);
           resolve(false);
-        } else {
+        };
+
+        img.src = objectUrl;
+      });
+    }
+    if (section === "Featured") {
+      return new Promise((resolve) => {
+        const img = new Image();
+        const objectUrl = URL.createObjectURL(image);
+
+        img.onload = () => {
+          if (img.width !== 750 || img.height !== 750) {
+            toast.error(
+              "Please upload the banner with the required resolution (750x750)"
+            );
+            URL.revokeObjectURL(objectUrl);
+            resolve(false);
+          } else {
+            URL.revokeObjectURL(objectUrl);
+            resolve(true);
+          }
+        };
+
+        img.onerror = () => {
+          toast.error("Error loading the image. Please try again.");
           URL.revokeObjectURL(objectUrl);
-          resolve(true);
-        }
-      };
+          resolve(false);
+        };
 
-      img.onerror = () => {
-        toast.error("Error loading the image. Please try again.");
-        URL.revokeObjectURL(objectUrl);
-        resolve(false);
-      };
-
-      img.src = objectUrl;
-    });
+        img.src = objectUrl;
+      });
+    }
   };
 
   const handleSubmit = async () => {
@@ -73,7 +104,8 @@ function BannerPreviewUploader({ record, onClose }) {
 
       if (response.ok) {
         toast.success(message);
-        setImage(null);
+        setImage(null); 
+        onUpdate() ;
         onClose();
       } else {
         toast.error(message);
@@ -82,6 +114,15 @@ function BannerPreviewUploader({ record, onClose }) {
       toast.error("An unexpected error occurred while uploading the image.");
     }
   };
+
+  const cards = [];
+  if (image !== null && record.section === "Featured") {
+    cards.push({
+      title: sessionStorage.getItem("academyname"),
+      location: sessionStorage.getItem("city"),
+      src: URL.createObjectURL(image),
+    });
+  }
 
   return (
     <div className="flex flex-col items-center space-y-8 p-6">
@@ -137,14 +178,32 @@ function BannerPreviewUploader({ record, onClose }) {
                 </div>
               </div>
 
-              {/* Banner Image */}
-              <div className="flex-grow flex items-center justify-center w-full">
-                <img
-                  src={URL.createObjectURL(image)}
-                  alt="Desktop Banner Preview"
-                  className="w-full h-full object-fill"
-                />
-              </div>
+              {record.section === "Banner" && (
+                <div className="flex-grow flex items-center justify-center w-full">
+                  {/* Banner Image */}
+                  <img
+                    src={URL.createObjectURL(image)}
+                    alt="Desktop Banner Preview"
+                    className="w-full h-full object-fill"
+                  />
+                </div>
+              )}
+              {record.section === "Featured" && (
+                <div className="flex-grow flex items-start absolute  mt-10 justify-center w-full !h-80 z-30">
+                  <div>
+                    <div className="relative top-8 -left-1 px-4 bg-red-500 text-white text-[8px] w-fit -rotate-45 z-20">
+                      Featured
+                    </div>
+
+                    <img
+                      src={URL.createObjectURL(image)}
+                      alt=""
+                      height={"150px"}
+                      width={"150px"}
+                    />
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
@@ -167,11 +226,29 @@ function BannerPreviewUploader({ record, onClose }) {
                 </div>
                 <Menu className="h-3 w-3 text-primary" />
               </div>
-              <img
-                src={URL.createObjectURL(image)}
-                alt="Mobile Banner Preview"
-                className="w-full h-1/2 object-fill"
-              />
+
+              {record.section === "Banner" && (
+                <img
+                  src={URL.createObjectURL(image)}
+                  alt="Mobile Banner Preview"
+                  className="w-full h-1/2 object-fill"
+                />
+              )}
+              {record.section === "Featured" && (
+                <div className="flex-grow flex items-start relative justify-center w-full !h-80 z-30">
+                  <div>
+                    <div className="absolute top-3.5 -left-0.5 px-2.5 bg-red-500 text-white text-[5px] w-fit -rotate-45 z-20">
+                      Featured
+                    </div>
+                    <img
+                      src={URL.createObjectURL(image)}
+                      alt=""
+                      height={"250px"}
+                      width={"250px"}
+                    />
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -183,12 +260,23 @@ function BannerPreviewUploader({ record, onClose }) {
             No banner uploaded. Please upload a banner to preview.
           </p>
 
-          <p className="text-blue-900 font-bold mt-5">
-            Note: Banner resolution should be
-            <span className="text-red-500"> 1024</span> *
-            <span className="text-red-500"> 576 </span>
-            pixels.
-          </p>
+          {record.section === "Banner" && (
+            <p className="text-blue-900 font-bold mt-5">
+              Note: Banner resolution should be
+              <span className="text-red-500"> 1024</span> *
+              <span className="text-red-500"> 576 </span>
+              pixels.
+            </p>
+          )}
+
+          {record.section === "Featured" && (
+            <p className="text-blue-900 font-bold mt-5">
+              Note: Banner resolution should be
+              <span className="text-red-500"> 750</span> *
+              <span className="text-red-500"> 750 </span>
+              pixels.
+            </p>
+          )}
 
           <p className="text-blue-900 font-bold mt-5">
             Reference Link: &nbsp;
