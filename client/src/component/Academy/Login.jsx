@@ -32,7 +32,8 @@ function Signup() {
       return;
     }
 
-    const url = "http://localhost:5000/api/auth/send-otp";
+    const url =
+      "https://e673-2401-4900-1c80-453-9857-51b6-65f9-1434.ngrok-free.app/api/auth/send-otp";
     const response = await fetch(url, {
       method: "POST",
       headers: {
@@ -56,7 +57,8 @@ function Signup() {
 
   const handleVerifyOtp = async (e) => {
     e.preventDefault();
-    const url = "http://localhost:5000/api/auth/verify-otp";
+    const url =
+      "https://e673-2401-4900-1c80-453-9857-51b6-65f9-1434.ngrok-free.app/api/auth/verify-otp";
     const response = await fetch(url, {
       method: "POST",
       headers: {
@@ -80,7 +82,8 @@ function Signup() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    const url = "http://localhost:5000/api/auth/academylogin";
+    const url =
+      "https://e673-2401-4900-1c80-453-9857-51b6-65f9-1434.ngrok-free.app/api/auth/academylogin";
     const response = await fetch(url, {
       method: "POST",
       headers: {

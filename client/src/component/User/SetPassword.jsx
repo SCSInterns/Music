@@ -32,7 +32,8 @@ function ForgotPassword() {
 
     setLoading(true);
 
-    const url = "http://localhost:5000/api/auth/send-customotp";
+    const url =
+      "https://e673-2401-4900-1c80-453-9857-51b6-65f9-1434.ngrok-free.app/api/auth/send-customotp";
     try {
       const response = await fetch(url, {
         method: "POST",
@@ -72,7 +73,8 @@ function ForgotPassword() {
 
     setLoading(true);
 
-    const url = "http://localhost:5000/api/auth/verify-otp";
+    const url =
+      "https://e673-2401-4900-1c80-453-9857-51b6-65f9-1434.ngrok-free.app/api/auth/verify-otp";
     try {
       const response = await fetch(url, {
         method: "POST",
@@ -107,7 +109,8 @@ function ForgotPassword() {
 
     if (pwdregex.test(newPassword)) {
       if (newPassword === confirmPassword) {
-        const url = "http://localhost:5000/api/auth/resetcred";
+        const url =
+          "https://e673-2401-4900-1c80-453-9857-51b6-65f9-1434.ngrok-free.app/api/auth/resetcred";
 
         const response = await fetch(url, {
           method: "POST",

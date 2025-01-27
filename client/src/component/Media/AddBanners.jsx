@@ -42,7 +42,8 @@ const Banners = () => {
     });
 
     try {
-      const url = "http://localhost:5000/api/auth/uploadbannerphotos";
+      const url =
+        "https://e673-2401-4900-1c80-453-9857-51b6-65f9-1434.ngrok-free.app/api/auth/uploadbannerphotos";
       const response = await fetch(url, {
         method: "POST",
         body: formData,
@@ -65,7 +66,8 @@ const Banners = () => {
   };
 
   const handleadditiontodb = async (imageurl) => {
-    const url = "http://localhost:5000/api/auth/addbanner";
+    const url =
+      "https://e673-2401-4900-1c80-453-9857-51b6-65f9-1434.ngrok-free.app/api/auth/addbanner";
     const token = Token();
     const response = await fetch(url, {
       method: "PUT",

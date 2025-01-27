@@ -55,7 +55,8 @@ function Events() {
     const formData = new FormData();
     formData.append("picture", selectedImage);
 
-    const url = "http://localhost:5000/api/auth/uploadeventimage";
+    const url =
+      "https://e673-2401-4900-1c80-453-9857-51b6-65f9-1434.ngrok-free.app/api/auth/uploadeventimage";
 
     try {
       const response = await fetch(url, {
@@ -79,7 +80,8 @@ function Events() {
   };
 
   const handlefinalsubmit = async () => {
-    const url = "http://localhost:5000/api/auth/uploadevents";
+    const url =
+      "https://e673-2401-4900-1c80-453-9857-51b6-65f9-1434.ngrok-free.app/api/auth/uploadevents";
 
     const token = Token();
 

@@ -42,7 +42,8 @@ const QRCodeUploadForm = () => {
     const formData = new FormData();
     formData.append("picture", selectedImage);
 
-    const url = "http://localhost:5000/api/auth/uploadqr";
+    const url =
+      "https://e673-2401-4900-1c80-453-9857-51b6-65f9-1434.ngrok-free.app/api/auth/uploadqr";
     try {
       setLoading(true);
       const response = await fetch(url, {
@@ -72,7 +73,8 @@ const QRCodeUploadForm = () => {
       return;
     }
 
-    const url = "http://localhost:5000/api/auth/uploadqrdata";
+    const url =
+      "https://e673-2401-4900-1c80-453-9857-51b6-65f9-1434.ngrok-free.app/api/auth/uploadqrdata";
     try {
       setLoading(true);
       const response = await fetch(url, {

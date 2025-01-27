@@ -22,7 +22,8 @@ export default function PaymentForm({ data }) {
   const rkey = razorid;
 
   const getrazorpayid = async (academyname) => {
-    const url = "http://localhost:5000/api/auth/getrazorpayid";
+    const url =
+      "https://e673-2401-4900-1c80-453-9857-51b6-65f9-1434.ngrok-free.app/api/auth/getrazorpayid";
     const response = await fetch(url, {
       method: "POST",
       headers: {
@@ -47,7 +48,8 @@ export default function PaymentForm({ data }) {
   }, [academyname]);
 
   const generateorder = async () => {
-    const url = "http://localhost:5000/api/auth/createrazorpayorder";
+    const url =
+      "https://e673-2401-4900-1c80-453-9857-51b6-65f9-1434.ngrok-free.app/api/auth/createrazorpayorder";
     setloading(true);
     const token = Token();
     const response = await fetch(url, {
@@ -109,7 +111,8 @@ export default function PaymentForm({ data }) {
           role: "Admin",
         };
 
-        const url = "http://localhost:5000/api/auth/verifyrazorpayorder";
+        const url =
+          "https://e673-2401-4900-1c80-453-9857-51b6-65f9-1434.ngrok-free.app/api/auth/verifyrazorpayorder";
         setloading(true);
         const token = Token();
         const responsepayment = await fetch(url, {
@@ -166,7 +169,8 @@ export default function PaymentForm({ data }) {
       }, 500);
 
       if (!response.razorpay_payment_id || !response.razorpay_signature) {
-        const url = "http://localhost:5000/api/auth/failedpayment";
+        const url =
+          "https://e673-2401-4900-1c80-453-9857-51b6-65f9-1434.ngrok-free.app/api/auth/failedpayment";
         const token = Token();
         const response = await fetch(url, {
           method: "POST",

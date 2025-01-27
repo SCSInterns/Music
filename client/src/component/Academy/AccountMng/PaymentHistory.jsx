@@ -45,7 +45,8 @@ function PaymentDetails({ list }) {
   ];
 
   const handleBatchList = async () => {
-    const url = "http://localhost:5000/api/auth/ngetbatchesdetails";
+    const url =
+      "https://e673-2401-4900-1c80-453-9857-51b6-65f9-1434.ngrok-free.app/api/auth/ngetbatchesdetails";
     try {
       const response = await fetch(url, {
         method: "POST",
@@ -87,7 +88,8 @@ function PaymentDetails({ list }) {
   }, [selectedBatch, list]);
 
   const handleSubmit = async () => {
-    const url = "http://localhost:5000/api/auth/transactiondata";
+    const url =
+      "https://e673-2401-4900-1c80-453-9857-51b6-65f9-1434.ngrok-free.app/api/auth/transactiondata";
 
     const response = await fetch(url, {
       method: "POST",

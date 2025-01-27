@@ -12,6 +12,7 @@ const { superadminrazorpaycred } = require("../razorpay-initial")
 const RazorPayOrder = require("../models/Supbscription")
 const cron = require('node-cron');
 const { socketIOSingleton } = require("../socket-factory")
+const logger = require("../Winston")
 
 cron.schedule("0 0 * * *", () => {
     try {
@@ -420,8 +421,9 @@ const getadvaccbycity = async (req, res) => {
             }
         }
         if (advertiseapplications) {
-
+            logger.info(`Advertise by city fetched success for city: ${city}`, { function: "getadvaccbycity", status: "success" })
             return res.status(200).json(filteredadv)
+
         } else {
             return res.status(404).json({ message: "Not Found" })
         }

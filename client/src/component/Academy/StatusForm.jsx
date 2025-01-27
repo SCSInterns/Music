@@ -37,7 +37,8 @@ const StatusFormModal = ({ open, onClose, studentData, onstatusChange }) => {
     role,
     studentname
   ) => {
-    const url = "http://localhost:5000/api/auth/setcredentials";
+    const url =
+      "https://e673-2401-4900-1c80-453-9857-51b6-65f9-1434.ngrok-free.app/api/auth/setcredentials";
     const response = await fetch(url, {
       method: "POST",
       headers: {
@@ -58,7 +59,7 @@ const StatusFormModal = ({ open, onClose, studentData, onstatusChange }) => {
   };
 
   const handleSubmit = async (status, id) => {
-    const url = `http://localhost:5000/api/auth/updatestatus/${id}`;
+    const url = `https://e673-2401-4900-1c80-453-9857-51b6-65f9-1434.ngrok-free.app/api/auth/updatestatus/${id}`;
     const token = Token();
     const response = await fetch(url, {
       method: "PUT",

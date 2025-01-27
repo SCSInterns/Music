@@ -25,7 +25,8 @@ const BatchSelectionModal = ({ open, onClose, data }) => {
   useEffect(() => {
     const fetchBatches = async () => {
       try {
-        const url = "http://localhost:5000/api/auth/ngetbatchesdetails";
+        const url =
+          "https://e673-2401-4900-1c80-453-9857-51b6-65f9-1434.ngrok-free.app/api/auth/ngetbatchesdetails";
         const token = Token();
         const response = await fetch(url, {
           method: "POST",
@@ -80,7 +81,8 @@ const BatchSelectionModal = ({ open, onClose, data }) => {
     console.log("Selected Batch ID:", selectedBatch);
     console.log("Selected Instrument ID:", selectedInstrument);
 
-    const url = "http://localhost:5000/api/auth/addusertobatch";
+    const url =
+      "https://e673-2401-4900-1c80-453-9857-51b6-65f9-1434.ngrok-free.app/api/auth/addusertobatch";
     const token = Token();
 
     const response = await fetch(url, {

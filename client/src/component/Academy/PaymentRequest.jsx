@@ -37,7 +37,8 @@ function PaymentRequest() {
 
   const handleList = async () => {
     setloading(true);
-    let url = "http://localhost:5000/api/auth/getnewpaymentrequest";
+    let url =
+      "https://e673-2401-4900-1c80-453-9857-51b6-65f9-1434.ngrok-free.app/api/auth/getnewpaymentrequest";
     const response = await fetch(url, {
       method: "POST",
       headers: {

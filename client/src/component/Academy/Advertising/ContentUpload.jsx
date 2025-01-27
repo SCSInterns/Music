@@ -7,7 +7,7 @@ import { Button } from "@mui/material";
 import Token from "../../Token/Token";
 import { toast } from "react-toastify";
 
-function BannerPreviewUploader({ record, onClose , onUpdate }) {
+function BannerPreviewUploader({ record, onClose, onUpdate }) {
   console.log(record.section);
   const [image, setImage] = useState(null);
   const token = Token();
@@ -84,7 +84,8 @@ function BannerPreviewUploader({ record, onClose , onUpdate }) {
       return;
     }
 
-    const url = "http://localhost:5000/api/auth/uploadadvbanner";
+    const url =
+      "https://e673-2401-4900-1c80-453-9857-51b6-65f9-1434.ngrok-free.app/api/auth/uploadadvbanner";
 
     const data = new FormData();
     data.append("picture", image);
@@ -104,8 +105,8 @@ function BannerPreviewUploader({ record, onClose , onUpdate }) {
 
       if (response.ok) {
         toast.success(message);
-        setImage(null); 
-        onUpdate() ;
+        setImage(null);
+        onUpdate();
         onClose();
       } else {
         toast.error(message);

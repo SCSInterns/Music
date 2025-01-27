@@ -16,7 +16,8 @@ function PaymentDetails({ data }) {
   const [installmentdata, setInstallmentData] = useState([]);
 
   const getdata = async (studentid, username) => {
-    const url = "http://localhost:5000/api/auth/getinfoinstallment";
+    const url =
+      "https://e673-2401-4900-1c80-453-9857-51b6-65f9-1434.ngrok-free.app/api/auth/getinfoinstallment";
     const token = Token();
     const response = await fetch(url, {
       method: "POST",

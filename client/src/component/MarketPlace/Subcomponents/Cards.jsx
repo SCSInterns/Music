@@ -4,7 +4,7 @@ import { FocusCards } from "../UiElements/FocusCards";
 export function FocusCardsDemo() {
   const [filteracademy, setfilteracademy] = useState([]);
   const [result, setResult] = useState([]);
-  const city = localStorage.getItem("location");
+  const [city, setCity] = useState(localStorage.getItem("location"));
 
   const cards = [
     {
@@ -14,7 +14,7 @@ export function FocusCardsDemo() {
         "https://i.pinimg.com/736x/c5/0b/ca/c50bcad94b0cc6b48f3e781d31dfa215.jpg",
     },
     {
-      academyname: "Aom Music Academu",
+      academyname: "Aom Music Academy",
       academycity: city,
       bannerlink:
         "https://i.pinimg.com/736x/df/79/8d/df798d557854f0701d314421573a70ea.jpg",
@@ -46,7 +46,8 @@ export function FocusCardsDemo() {
   ];
 
   const fetchFeaturedAcademy = async () => {
-    const url = "http://localhost:5000/api/auth/featuredAcademies";
+    const url =
+      "https://e673-2401-4900-1c80-453-9857-51b6-65f9-1434.ngrok-free.app/api/auth/featuredAcademies";
     const response = await fetch(url, {
       method: "POST",
       headers: {
@@ -65,7 +66,7 @@ export function FocusCardsDemo() {
 
   useEffect(() => {
     fetchFeaturedAcademy();
-  }, []);
+  }, [city]);
 
   useEffect(() => {
     const combinedResult = [...filteracademy];
@@ -77,6 +78,17 @@ export function FocusCardsDemo() {
     }
     setResult(combinedResult);
   }, [filteracademy]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const newCity = localStorage.getItem("location");
+      if (newCity !== city) {
+        setCity(newCity);
+      }
+    }, 500);
+
+    return () => clearInterval(interval);
+  }, [city]);
 
   return (
     <div className="py-20">

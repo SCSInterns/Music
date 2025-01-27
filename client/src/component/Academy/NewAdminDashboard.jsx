@@ -46,6 +46,7 @@ import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import { Megaphone, Volume2 } from "lucide-react";
 import AdvretisingMenu from "./Advertising/AdvretisingMenu";
+import EventMenu from "./EventMng/EventMenu";
 
 const Sidebar = () => {
   const academyname = sessionStorage.getItem("academyname");
@@ -72,7 +73,8 @@ const Sidebar = () => {
 
   const handleApplicants = async () => {
     settoggleapplicants(true);
-    let url = "http://localhost:5000/api/auth/getdata";
+    let url =
+      "https://e673-2401-4900-1c80-453-9857-51b6-65f9-1434.ngrok-free.app/api/auth/getdata";
     const response = await fetch(url, {
       method: "POST",
       headers: {
@@ -109,7 +111,8 @@ const Sidebar = () => {
 
   const handleFees = async () => {
     const todaydate = getCurrentDate();
-    const url = "http://localhost:5000/api/auth/getpaymnetdue";
+    const url =
+      "https://e673-2401-4900-1c80-453-9857-51b6-65f9-1434.ngrok-free.app/api/auth/getpaymnetdue";
     const token = Token();
     const response = await fetch(url, {
       method: "POST",
@@ -168,7 +171,7 @@ const Sidebar = () => {
   const [info, setinfo] = useState([]);
 
   const fetchlist = async (academyname, adminid) => {
-    const url = `http://localhost:5000/api/auth/getsubspaymentlist`;
+    const url = `https://e673-2401-4900-1c80-453-9857-51b6-65f9-1434.ngrok-free.app/api/auth/getsubspaymentlist`;
 
     let token = Token();
     try {
@@ -291,6 +294,12 @@ const Sidebar = () => {
       text: "Advertising",
       icon: <Volume2 />,
       component: <AdvretisingMenu />,
+      disabled: status === "Accept" ? false : true,
+    },
+    {
+      text: "Event Management",
+      icon: <GroupsIcon />,
+      component: <EventMenu />,
       disabled: status === "Accept" ? false : true,
     },
   ];

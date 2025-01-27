@@ -24,7 +24,8 @@ function Video() {
   }, [data]);
 
   const getvideolink = async () => {
-    const url = "http://localhost:5000/api/auth/getvideos";
+    const url =
+      "https://e673-2401-4900-1c80-453-9857-51b6-65f9-1434.ngrok-free.app/api/auth/getvideos";
 
     try {
       const response = await fetch(url, {

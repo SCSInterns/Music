@@ -10,7 +10,8 @@ const BannerSlideshow = ({ data }) => {
   const [Banners, setBanners] = useState([]);
 
   const getBanners = async () => {
-    const url = "http://localhost:5000/api/auth/getmarketingbanners";
+    const url =
+      "https://e673-2401-4900-1c80-453-9857-51b6-65f9-1434.ngrok-free.app/api/auth/getmarketingbanners";
 
     const response = await fetch(url, {
       method: "GET",

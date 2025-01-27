@@ -56,7 +56,7 @@ function DetailedInfo({
   const [info, setinfo] = useState([]);
 
   const fetchlist = async (academyname, academyid) => {
-    const url = `http://localhost:5000/api/auth/getsubspaymentlist`;
+    const url = `https://e673-2401-4900-1c80-453-9857-51b6-65f9-1434.ngrok-free.app/api/auth/getsubspaymentlist`;
 
     let token = Token();
     try {

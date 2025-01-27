@@ -59,7 +59,7 @@ const DynamicForm = ({ formData }) => {
 
     console.log(formValues);
 
-    let url = `http://localhost:5000/api/auth/savedata`;
+    let url = `https://e673-2401-4900-1c80-453-9857-51b6-65f9-1434.ngrok-free.app/api/auth/savedata`;
     const response = await fetch(url, {
       method: "POST",
       headers: {
@@ -242,13 +242,16 @@ export default function App() {
   useEffect(() => {
     const fetchForm = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/auth/getform", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ academyname }),
-        });
+        const response = await fetch(
+          "https://e673-2401-4900-1c80-453-9857-51b6-65f9-1434.ngrok-free.app/api/auth/getform",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ academyname }),
+          }
+        );
 
         if (response.ok) {
           const data = await response.json();

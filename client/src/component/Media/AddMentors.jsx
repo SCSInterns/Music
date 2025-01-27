@@ -60,7 +60,8 @@ function MentorForm() {
     const formData = new FormData();
     formData.append("picture", profileImage);
 
-    const url = "http://localhost:5000/api/auth/uploadmentorimage";
+    const url =
+      "https://e673-2401-4900-1c80-453-9857-51b6-65f9-1434.ngrok-free.app/api/auth/uploadmentorimage";
 
     try {
       const response = await fetch(url, {
@@ -102,7 +103,7 @@ function MentorForm() {
 
     try {
       const response = await fetch(
-        "http://localhost:5000/api/auth/addmentors",
+        "https://e673-2401-4900-1c80-453-9857-51b6-65f9-1434.ngrok-free.app/api/auth/addmentors",
         {
           method: "POST",
           headers: {

@@ -99,7 +99,8 @@ function AcademyRegistration({ academyName, Role }) {
     if (academy) {
       academyname = academy;
     }
-    let url = "http://localhost:5000/api/auth/getform";
+    let url =
+      "https://e673-2401-4900-1c80-453-9857-51b6-65f9-1434.ngrok-free.app/api/auth/getform";
 
     try {
       const response = await fetch(url, {
@@ -179,7 +180,7 @@ function AcademyRegistration({ academyName, Role }) {
       return;
     }
 
-    let url = `http://localhost:5000/api/auth/savedata`;
+    let url = `https://e673-2401-4900-1c80-453-9857-51b6-65f9-1434.ngrok-free.app/api/auth/savedata`;
 
     console.log(academyname, role);
     const response = await fetch(url, {

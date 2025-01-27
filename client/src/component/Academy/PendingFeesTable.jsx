@@ -36,7 +36,8 @@ function PendingFeesTable({ data }) {
   const role = sessionStorage.getItem("role");
 
   const handlecustomisedate = async (date, academyname, role) => {
-    const url = "http://localhost:5000/api/auth/getpaymnetdue";
+    const url =
+      "https://e673-2401-4900-1c80-453-9857-51b6-65f9-1434.ngrok-free.app/api/auth/getpaymnetdue";
     const token = Token();
     const response = await fetch(url, {
       method: "POST",
@@ -66,7 +67,8 @@ function PendingFeesTable({ data }) {
   };
 
   const handlereminder = async (email, amount, name) => {
-    const url = "http://localhost:5000/api/auth/sendpaymentreminder";
+    const url =
+      "https://e673-2401-4900-1c80-453-9857-51b6-65f9-1434.ngrok-free.app/api/auth/sendpaymentreminder";
     const token = Token();
 
     let response = await fetch(url, {

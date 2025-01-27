@@ -6,12 +6,16 @@ import reportWebVitals from './reportWebVitals';
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css';
 import './component/Business Website/globals.css'
+import { Provider } from 'react-redux'
+import { store } from './component/Redux/Store'
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
     <>
-        <App />
-        <ToastContainer position='bottom-right' />
+        <Provider store={store}>
+            <App />
+            <ToastContainer position='bottom-right' />
+        </Provider>
     </>
 
 );

@@ -11,7 +11,8 @@ function Payment({ data }) {
   const [defaulttoggle, setdefaulttoggle] = useState(true);
 
   const paymentinfo = async (studentid) => {
-    const url = "http://localhost:5000/api/auth/getpaymentstatsforusers";
+    const url =
+      "https://e673-2401-4900-1c80-453-9857-51b6-65f9-1434.ngrok-free.app/api/auth/getpaymentstatsforusers";
 
     const token = Token();
     const response = await fetch(url, {

@@ -13,7 +13,8 @@ function Home() {
   const [data, setdata] = useState([]);
 
   const fetchbanners = async (cityname) => {
-    const url = "http://localhost:5000/api/auth/getadvaccbycity";
+    const url =
+      "https://e673-2401-4900-1c80-453-9857-51b6-65f9-1434.ngrok-free.app/api/auth/getadvaccbycity";
 
     const response = await fetch(url, {
       method: "POST",

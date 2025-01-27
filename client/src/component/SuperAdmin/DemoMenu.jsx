@@ -15,7 +15,8 @@ const TopNavbar = () => {
 
   const getData = async () => {
     try {
-      const url = "http://localhost:5000/api/superadmin/getdemodata";
+      const url =
+        "https://e673-2401-4900-1c80-453-9857-51b6-65f9-1434.ngrok-free.app/api/superadmin/getdemodata";
       const response = await fetch(url, {
         method: "POST",
         headers: {

@@ -214,7 +214,8 @@ const BatchDetailsForm = () => {
       return toast.error("Please fill all required fields.");
     }
 
-    const url = "http://localhost:5000/api/auth/addbatchesnew";
+    const url =
+      "https://e673-2401-4900-1c80-453-9857-51b6-65f9-1434.ngrok-free.app/api/auth/addbatchesnew";
 
     try {
       const response = await fetch(url, {

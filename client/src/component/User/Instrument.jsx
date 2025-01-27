@@ -15,7 +15,8 @@ function Instrument() {
   useEffect(() => {
     const fetchInstruments = async () => {
       try {
-        const url = "http://localhost:5000/api/auth/getinstrument";
+        const url =
+          "https://e673-2401-4900-1c80-453-9857-51b6-65f9-1434.ngrok-free.app/api/auth/getinstrument";
 
         const response = await fetch(url, {
           method: "POST",
