@@ -1,5 +1,6 @@
 const dotenv = require("dotenv");
 dotenv.config();
+const Location = require("../models/EventLocations")
 
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 
@@ -47,4 +48,50 @@ const generateAIDescription = async (req, res) => {
     }
 };
 
-module.exports = { generateAIDescription };
+// set venue details  
+const createVenueDetails = async (req, res) => {
+    try {
+
+        const { venuename, city, state, pincode, maplink, role } = req.body
+
+        if (role !== "Admin") {
+            return res.status(401).json({ error: "Unauthorized access" });
+        }
+
+        const newvenue = new Location({
+            venuename: venuename,
+            city: city,
+            state: state,
+            pincode: pincode,
+            maplink: maplink,
+        })
+
+        const response = await newvenue.save();
+
+        return res.status(201).json(response);
+
+    } catch (error) {
+        return res.status(500).json({ error: error.message });
+    }
+}
+
+// get venue details  
+
+const getVenueDetails = async (req, res) => {
+    try {
+
+        const { role } = req.body
+
+        if (role !== "Admin") {
+            return res.status(401).json({ error: "Unauthorized access" });
+        }
+
+        const venues = await Location.find();
+        return res.status(200).json(venues);
+
+    } catch (error) {
+        return res.status(500).json({ error: error.message });
+    }
+}
+
+module.exports = { generateAIDescription, createVenueDetails, getVenueDetails };

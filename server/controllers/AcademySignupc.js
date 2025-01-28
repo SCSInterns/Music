@@ -305,7 +305,7 @@ const handlemanualsubscriptionpayment = async (req, res) => {
                 existingInfo.academy_password = hashedpwd
 
 
-                existingInfo.academy_url = `https://e673-2401-4900-1c80-453-9857-51b6-65f9-1434.ngrok-free.app/${existingInfo.academy_name}`
+                existingInfo.academy_url = `https://a461-2401-4900-1c80-453-1151-62e6-c991-25b3.ngrok-free.app/${existingInfo.academy_name}`
 
                 await existingInfo.save()
 
@@ -416,7 +416,7 @@ const verifysubscriptionpayment = async (req, res) => {
             adminprofile.academy_password = hashedpwd
 
 
-            adminprofile.academy_url = `https://e673-2401-4900-1c80-453-9857-51b6-65f9-1434.ngrok-free.app/${adminprofile.academy_name}`
+            adminprofile.academy_url = `https://a461-2401-4900-1c80-453-1151-62e6-c991-25b3.ngrok-free.app/${adminprofile.academy_name}`
 
             if (adminprofile.renewaldate === "N/A") {
                 const currentDate = getTodayDate()
@@ -635,7 +635,7 @@ const handlesubmitfreetrial = async (req, res) => {
 
                 existing.renewaldate = sevenDaysLater
 
-                existing.academy_url = `https://e673-2401-4900-1c80-453-9857-51b6-65f9-1434.ngrok-free.app/${existing.academy_name}`
+                existing.academy_url = `https://a461-2401-4900-1c80-453-1151-62e6-c991-25b3.ngrok-free.app/${existing.academy_name}`
 
                 await existing.save()
 

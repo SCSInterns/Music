@@ -47,7 +47,7 @@ export default function PricingDetails({ id, admin }) {
 
   const generateOrder = async () => {
     const url =
-      "https://e673-2401-4900-1c80-453-9857-51b6-65f9-1434.ngrok-free.app/api/auth/handlesubscriptionpayment";
+      "https://a461-2401-4900-1c80-453-1151-62e6-c991-25b3.ngrok-free.app/api/auth/handlesubscriptionpayment";
     setLoading(true);
 
     const response = await fetch(url, {
@@ -93,7 +93,7 @@ export default function PricingDetails({ id, admin }) {
         };
 
         const url =
-          "https://e673-2401-4900-1c80-453-9857-51b6-65f9-1434.ngrok-free.app/api/auth/verifysubscriptionpayment";
+          "https://a461-2401-4900-1c80-453-1151-62e6-c991-25b3.ngrok-free.app/api/auth/verifysubscriptionpayment";
         setLoading(true);
         const responsepayment = await fetch(url, {
           method: "POST",
@@ -145,7 +145,7 @@ export default function PricingDetails({ id, admin }) {
 
       if (!response.razorpay_payment_id || !response.razorpay_signature) {
         const url =
-          "https://e673-2401-4900-1c80-453-9857-51b6-65f9-1434.ngrok-free.app/api/auth/failedsubscriptionpayment";
+          "https://a461-2401-4900-1c80-453-1151-62e6-c991-25b3.ngrok-free.app/api/auth/failedsubscriptionpayment";
         const response = await fetch(url, {
           method: "POST",
           headers: {

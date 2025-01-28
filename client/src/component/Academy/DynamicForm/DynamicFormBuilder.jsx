@@ -71,7 +71,7 @@ export default function FormBuilder() {
     }
 
     const url =
-      "https://e673-2401-4900-1c80-453-9857-51b6-65f9-1434.ngrok-free.app/api/auth/academyregform";
+      "https://a461-2401-4900-1c80-453-1151-62e6-c991-25b3.ngrok-free.app/api/auth/academyregform";
 
     const response = await fetch(url, {
       method: "POST",

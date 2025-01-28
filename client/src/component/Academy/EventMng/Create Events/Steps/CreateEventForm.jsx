@@ -1,6 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { setVenues } from "../../../../Features/VenuesSlice";
 import { updateFormData } from "../../../../Features/EventsSlice";
+import { LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import {
   TextField,
   RadioGroup,
@@ -13,14 +16,25 @@ import {
   Grid,
   InputAdornment,
   Tooltip,
+  Chip,
+  Box,
+  Select,
+  MenuItem,
+  InputLabel,
 } from "@mui/material";
 import AutoFixHighIcon from "@mui/icons-material/AutoFixHigh";
+import { TimePicker } from "@mui/x-date-pickers";
 import Token from "../../../../Token/Token";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import dayjs from "dayjs";
 
 function EventForm() {
   const dispatch = useDispatch();
   const formData = useSelector((state) => state.event);
+  const [selectedDate, setSelectedDate] = useState(null);
+  const currentVenues = useSelector((state) => state.venues.venues);
   const token = Token();
+  const eventDates = useSelector((state) => state.event.eventDates);
 
   const handleInputChange = (e) => {
     const { name, value, checked, type } = e.target;
@@ -31,18 +45,55 @@ function EventForm() {
     }
   };
 
-  const handleDateChange = (e) => {
+  console.log(currentVenues);
+
+  const categories = [
+    "WorkShops",
+    "Music Shows",
+    "Meetups",
+    "Kids",
+    "Performances",
+    "Exhibitions",
+    "Others",
+  ];
+
+  const handleCategoryChange = (e) => {
     const { value } = e.target;
-    dispatch(
-      updateFormData({
-        eventDates: value.split(",").map((date) => date.trim()),
-      })
-    );
+    dispatch(updateFormData({ eventCategory: value }));
+  };
+  const handleDateSelect = (date) => {
+    if (date && dayjs(date).isValid()) {
+      const formattedDate = dayjs(date).format("DD-MM-YYYY");
+      if (!eventDates.includes(formattedDate)) {
+        dispatch(
+          updateFormData({ eventDates: [...eventDates, formattedDate] })
+        );
+      }
+    } else {
+      console.error("Invalid Date:", date);
+    }
+    setSelectedDate(null);
+  };
+
+  const handleRemoveDate = (date) => {
+    const updatedDates = eventDates.filter((d) => d !== date);
+    dispatch(updateFormData({ eventDates: updatedDates }));
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Form Data Submitted:", formData);
+    const formattedData = {
+      ...formData,
+      times: formData.timeSameAllDays
+        ? {
+            allDays: {
+              startTime: formData.startTime,
+              endTime: formData.endTime,
+            },
+          }
+        : formData.times,
+    };
+    console.log("Submitted Data:", formattedData);
   };
 
   const handleaigeneration = async () => {
@@ -63,6 +114,22 @@ function EventForm() {
     }
   };
 
+  const handleTimeChange = (time, name, date = null) => {
+    if (
+      formData.occurrence === "Recurring" &&
+      !formData.timeSameAllDays &&
+      date
+    ) {
+      const updatedTimes = {
+        ...formData.times,
+        [date]: { ...formData.times[date], [name]: time },
+      };
+      dispatch(updateFormData({ times: updatedTimes }));
+    } else {
+      dispatch(updateFormData({ [name]: time }));
+    }
+  };
+
   return (
     <div className="form-container">
       <form onSubmit={handleSubmit} className="space-y-4">
@@ -77,12 +144,31 @@ function EventForm() {
               value={formData.eventName}
               onChange={handleInputChange}
             />
+            <Grid container spacing={2}>
+              {/* Event Category Dropdown */}
+              <Grid item xs={12} my={2}>
+                <FormControl fullWidth>
+                  <InputLabel id="category-label">Event Category</InputLabel>
+                  <Select
+                    labelId="category-label"
+                    value={formData.eventCategory}
+                    onChange={handleCategoryChange}
+                  >
+                    {categories.map((category) => (
+                      <MenuItem key={category} value={category}>
+                        {category}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Grid>
+            </Grid>
           </Grid>
 
           {/* Occurrence */}
-          <Grid item xs={12}>
-            <FormControl component="fieldset">
-              <FormLabel component="legend">Occurrence</FormLabel>
+          <Grid container xs={12} my={2}>
+            <FormControl component="fieldset" className="flex items-center">
+              <label component="legend">Occurrence</label>
               <RadioGroup
                 name="occurrence"
                 value={formData.occurrence}
@@ -105,50 +191,134 @@ function EventForm() {
 
           {/* Multiple Dates if Recurring */}
           {formData.occurrence === "Recurring" && (
-            <Grid item xs={12}>
-              <TextField
-                label="Multiple Dates (comma-separated)"
-                variant="outlined"
-                fullWidth
-                name="eventDates"
-                value={formData.eventDates.join(", ")}
-                onChange={handleDateChange}
-                helperText="Enter dates separated by commas (e.g., 2025-01-01, 2025-01-02)"
-              />
-            </Grid>
-          )}
-
-          {/* Time Same for All Days */}
-          {formData.occurrence === "Recurring" && (
-            <Grid item xs={12}>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={formData.timeSameAllDays}
-                    onChange={handleInputChange}
-                    name="timeSameAllDays"
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <Grid item xs={12}>
+                <Grid item xs={12}>
+                  <DatePicker
+                    label="Select Date"
+                    value={selectedDate}
+                    onChange={handleDateSelect}
+                    renderInput={(params) => (
+                      <TextField {...params} fullWidth />
+                    )}
                   />
-                }
-                label="Time same for all days?"
-              />
+                </Grid>
+                <Grid item xs={12}>
+                  <Box display="flex" flexWrap="wrap" gap={1} mt={2}>
+                    <label htmlFor="eventDates" className="my-1">
+                      Selected Dates :
+                    </label>
+                    {eventDates.map((date, index) => (
+                      <Chip
+                        key={index}
+                        label={date}
+                        onDelete={() => handleRemoveDate(date)}
+                        color="primary"
+                      />
+                    ))}
+                  </Box>
+                </Grid>
+              </Grid>
+            </LocalizationProvider>
+          )}
+
+          <div className="flex space-x-3 items-center">
+            {formData.occurrence === "Single" && (
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <Grid container spacing={3} alignItems="center" wrap="nowrap">
+                  <Grid item xs={3}>
+                    <DatePicker
+                      label="Select Date"
+                      value={
+                        formData.eventDates[0] &&
+                        dayjs(
+                          formData.eventDates[0],
+                          "DD-MM-YYYY",
+                          true
+                        ).isValid()
+                          ? dayjs(formData.eventDates[0], "DD-MM-YYYY")
+                          : null
+                      }
+                      onChange={(date) => {
+                        const formattedDate = date
+                          ? dayjs(date).format("DD-MM-YYYY")
+                          : null;
+                        if (
+                          formattedDate &&
+                          dayjs(formattedDate, "DD-MM-YYYY", true).isValid()
+                        ) {
+                          handleDateSelect(formattedDate);
+                        } else {
+                          console.error(
+                            "Invalid date selected:",
+                            formattedDate
+                          ); // Log invalid date for debugging
+                        }
+                      }}
+                      renderInput={(params) => (
+                        <TextField {...params} fullWidth />
+                      )}
+                    />
+                  </Grid>
+                  <Grid item xs={3}>
+                    <TimePicker
+                      label="Start Time"
+                      value={formData.startTime}
+                      onChange={(time) => handleTimeChange(time, "startTime")}
+                      renderInput={(params) => (
+                        <TextField {...params} fullWidth />
+                      )}
+                    />
+                  </Grid>
+                  <Grid item xs={3}>
+                    <TimePicker
+                      label="End Time"
+                      value={formData.endTime}
+                      onChange={(time) => handleTimeChange(time, "endTime")}
+                      renderInput={(params) => (
+                        <TextField {...params} fullWidth />
+                      )}
+                    />
+                  </Grid>
+                </Grid>
+              </LocalizationProvider>
+            )}
+          </div>
+
+          {formData.occurrence === "Single" && (
+            <Grid item xs={12} my={2}>
+              <FormControl fullWidth>
+                <InputLabel id="venue-label">Select Venue</InputLabel>
+                <Select labelId="venue-label">
+                  {currentVenues.map((venue) => (
+                    <MenuItem key={venue.id} value={venue.id}>
+                      {venue.venuename}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
             </Grid>
           )}
 
-          {/* Venue Same for All Locations */}
-          <Grid item xs={12}>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={formData.venueSameForAll}
-                  onChange={handleInputChange}
-                  name="venueSameForAll"
+          <div className="flex my-5">
+            {/* Time Same for All Days */}
+            {formData.occurrence === "Recurring" && (
+              <Grid item xs={12}>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={formData.timeSameAllDays}
+                      onChange={handleInputChange}
+                      name="timeSameAllDays"
+                    />
+                  }
+                  label="Time same for all days?"
                 />
-              }
-              label="Venue same for all locations?"
-            />
-          </Grid>
+              </Grid>
+            )}
+          </div>
 
-          {/* Description */}
+          {/* Description
           <Grid item xs={12}>
             <TextField
               label="Description"
@@ -186,11 +356,73 @@ function EventForm() {
                 ),
               }}
             />
-          </Grid>
+          </Grid> */}
+
+          {formData.occurrence === "Recurring" && (
+            <>
+              {formData.timeSameAllDays ? (
+                <Grid item xs={12}>
+                  <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <TimePicker
+                      label="Start Time (All Days)"
+                      value={formData.startTime}
+                      onChange={(time) => handleTimeChange(time, "startTime")}
+                      renderInput={(params) => (
+                        <TextField {...params} fullWidth />
+                      )}
+                    />
+                    <TimePicker
+                      label="End Time (All Days)"
+                      value={formData.endTime}
+                      onChange={(time) => handleTimeChange(time, "endTime")}
+                      sx={{ ml: 3 }}
+                      renderInput={(params) => (
+                        <TextField {...params} fullWidth />
+                      )}
+                    />
+                  </LocalizationProvider>
+                </Grid>
+              ) : (
+                eventDates.map((date, index) => (
+                  <Grid item xs={12} key={index}>
+                    <label className="mr-4"> Date : {date}</label>
+                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                      <TimePicker
+                        label="Start Time"
+                        value={formData.times?.[date]?.startTime || null}
+                        onChange={(time) =>
+                          handleTimeChange(time, "startTime", date)
+                        }
+                        renderInput={(params) => (
+                          <TextField {...params} fullWidth />
+                        )}
+                      />
+                      <TimePicker
+                        label="End Time"
+                        value={formData.times?.[date]?.endTime || null}
+                        onChange={(time) =>
+                          handleTimeChange(time, "endTime", date)
+                        }
+                        sx={{ ml: 3 }}
+                        renderInput={(params) => (
+                          <TextField {...params} fullWidth />
+                        )}
+                      />
+                    </LocalizationProvider>
+                  </Grid>
+                ))
+              )}
+            </>
+          )}
 
           {/* Submit Button */}
           <Grid item xs={12}>
-            <Button type="submit" variant="contained" color="primary">
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              sx={{ float: "right" }}
+            >
               Submit
             </Button>
           </Grid>

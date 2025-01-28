@@ -5,9 +5,18 @@ const initialState = {
   occurrence: "Single",
   multipleDates: false,
   timeSameAllDays: false,
+  times: {},
   venueSameForAll: false,
   description: "",
+  eventCategory: "",
   eventDates: [],
+  venue: {
+    venueName: "",
+    venueCity: "",
+    venueState: "",
+    pincode: "",
+    mapLink: "",
+  },
 };
 
 const eventSlice = createSlice({

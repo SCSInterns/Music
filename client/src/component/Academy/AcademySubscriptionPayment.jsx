@@ -52,7 +52,7 @@ function AcademySubscriptionPayment() {
 
   const submitfreetrial = async (academyname) => {
     const url =
-      "https://e673-2401-4900-1c80-453-9857-51b6-65f9-1434.ngrok-free.app/api/auth/freetrialrequest";
+      "https://a461-2401-4900-1c80-453-1151-62e6-c991-25b3.ngrok-free.app/api/auth/freetrialrequest";
     setloading(true);
 
     const response = await fetch(url, {
@@ -87,7 +87,7 @@ function AcademySubscriptionPayment() {
   };
   const generateorder = async () => {
     const url =
-      "https://e673-2401-4900-1c80-453-9857-51b6-65f9-1434.ngrok-free.app/api/auth/handlesubscriptionpayment";
+      "https://a461-2401-4900-1c80-453-1151-62e6-c991-25b3.ngrok-free.app/api/auth/handlesubscriptionpayment";
     setloading(true);
     const response = await fetch(url, {
       method: "POST",
@@ -133,7 +133,7 @@ function AcademySubscriptionPayment() {
         };
 
         const url =
-          "https://e673-2401-4900-1c80-453-9857-51b6-65f9-1434.ngrok-free.app/api/auth/verifysubscriptionpayment";
+          "https://a461-2401-4900-1c80-453-1151-62e6-c991-25b3.ngrok-free.app/api/auth/verifysubscriptionpayment";
         setloading(true);
         const responsepayment = await fetch(url, {
           method: "POST",
@@ -186,7 +186,7 @@ function AcademySubscriptionPayment() {
 
       if (!response.razorpay_payment_id || !response.razorpay_signature) {
         const url =
-          "https://e673-2401-4900-1c80-453-9857-51b6-65f9-1434.ngrok-free.app/api/auth/failedsubscriptionpayment";
+          "https://a461-2401-4900-1c80-453-1151-62e6-c991-25b3.ngrok-free.app/api/auth/failedsubscriptionpayment";
         const response = await fetch(url, {
           method: "POST",
           headers: {

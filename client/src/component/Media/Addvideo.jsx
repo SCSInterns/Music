@@ -36,7 +36,7 @@ export default function Addvideo() {
     setloading(true);
     // https://youtu.be/khUaF36F_SY
     const url =
-      "https://e673-2401-4900-1c80-453-9857-51b6-65f9-1434.ngrok-free.app/api/auth/uploadvideo";
+      "https://a461-2401-4900-1c80-453-1151-62e6-c991-25b3.ngrok-free.app/api/auth/uploadvideo";
     const token = Token();
     const response = await fetch(url, {
       method: "POST",

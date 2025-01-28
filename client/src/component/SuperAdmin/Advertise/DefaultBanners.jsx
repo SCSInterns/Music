@@ -79,7 +79,7 @@ const BannerUploader = () => {
     formData.append("slot", index + 1);
 
     const url =
-      "https://e673-2401-4900-1c80-453-9857-51b6-65f9-1434.ngrok-free.app/api/auth/uploadmarketingbanner";
+      "https://a461-2401-4900-1c80-453-1151-62e6-c991-25b3.ngrok-free.app/api/auth/uploadmarketingbanner";
     try {
       const response = await fetch(url, {
         method: "POST",
@@ -115,7 +115,7 @@ const BannerUploader = () => {
 
   const getBanners = async () => {
     const url =
-      "https://e673-2401-4900-1c80-453-9857-51b6-65f9-1434.ngrok-free.app/api/auth/getmarketingbanners";
+      "https://a461-2401-4900-1c80-453-1151-62e6-c991-25b3.ngrok-free.app/api/auth/getmarketingbanners";
 
     const response = await fetch(url, {
       method: "GET",

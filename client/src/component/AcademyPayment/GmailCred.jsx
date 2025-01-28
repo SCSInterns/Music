@@ -15,7 +15,7 @@ const GmailCred = () => {
 
   const sendOtp = async () => {
     const url =
-      "https://e673-2401-4900-1c80-453-9857-51b6-65f9-1434.ngrok-free.app/api/auth/send-otp";
+      "https://a461-2401-4900-1c80-453-1151-62e6-c991-25b3.ngrok-free.app/api/auth/send-otp";
     const response = await fetch(url, {
       method: "POST",
       headers: {
@@ -35,7 +35,7 @@ const GmailCred = () => {
 
   const verifyOtp = async () => {
     const url =
-      "https://e673-2401-4900-1c80-453-9857-51b6-65f9-1434.ngrok-free.app/api/auth/verify-otp";
+      "https://a461-2401-4900-1c80-453-1151-62e6-c991-25b3.ngrok-free.app/api/auth/verify-otp";
     const response = await fetch(url, {
       method: "POST",
       headers: {
@@ -55,7 +55,7 @@ const GmailCred = () => {
 
   const handleSubmit = async () => {
     const url =
-      "https://e673-2401-4900-1c80-453-9857-51b6-65f9-1434.ngrok-free.app/api/auth/addgooglecreds";
+      "https://a461-2401-4900-1c80-453-1151-62e6-c991-25b3.ngrok-free.app/api/auth/addgooglecreds";
     const response = await fetch(url, {
       method: "POST",
       headers: {

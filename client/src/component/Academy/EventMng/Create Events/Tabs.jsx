@@ -1,13 +1,45 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import NavigateBeforeIcon from "@mui/icons-material/NavigateBefore";
 import { useSelector, useDispatch } from "react-redux";
 import { nextStep, prevStep } from "../../../Features/StepperSlice";
+import { setVenues } from "../../../Features/VenuesSlice";
 import CreateEventForm from "../Create Events/Steps/CreateEventForm";
+import CreateLocation from "./Steps/CreateLocation";
+import Token from "../../../Token/Token";
+import { toast } from "react-toastify";
 
 function Stepper() {
   const dispatch = useDispatch();
   const currentStep = useSelector((state) => state.stepper.currentStep);
+  const currentVenues = useSelector((state) => state.venues.venues);
+  const token = Token();
+  useEffect(() => {
+    const fetchVenues = async () => {
+      const response = await fetch(
+        "http://localhost:5000/api/auth/getvenuedetails",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `${token}`,
+          },
+          body: JSON.stringify({
+            role: sessionStorage.getItem("role"),
+          }),
+        }
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        dispatch(setVenues(data));
+      } else {
+        toast.error("Error fetching venues");
+      }
+    };
+
+    fetchVenues();
+  }, []);
 
   const steps = [
     "Event Data",
@@ -106,6 +138,11 @@ function Stepper() {
         {steps[currentStep] === "Event Data" && (
           <div>
             <CreateEventForm />
+          </div>
+        )}
+        {steps[currentStep] === "Location" && (
+          <div>
+            <CreateLocation />
           </div>
         )}
       </div>

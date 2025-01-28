@@ -110,7 +110,7 @@ function Dashboard() {
   };
 
   const setcredentials = async (id) => {
-    const url = `https://e673-2401-4900-1c80-453-9857-51b6-65f9-1434.ngrok-free.app/api/superadmin/academycredentials/${id}`;
+    const url = `https://a461-2401-4900-1c80-453-1151-62e6-c991-25b3.ngrok-free.app/api/superadmin/academycredentials/${id}`;
     const academyurl = `http://localhost:3000/${admin[0].academy_name}`;
     const token = Token();
     const response = await fetch(url, {
@@ -135,7 +135,7 @@ function Dashboard() {
   };
 
   const handlesharecred = async (email, id) => {
-    const url = `https://e673-2401-4900-1c80-453-9857-51b6-65f9-1434.ngrok-free.app/api/auth/sendcred`;
+    const url = `https://a461-2401-4900-1c80-453-1151-62e6-c991-25b3.ngrok-free.app/api/auth/sendcred`;
     const token = Token();
     const response = await fetch(url, {
       method: "POST",
@@ -161,7 +161,7 @@ function Dashboard() {
 
   const handlestatus = async (id, status) => {
     try {
-      const url = `https://e673-2401-4900-1c80-453-9857-51b6-65f9-1434.ngrok-free.app/api/superadmin/academyacess/${id}`;
+      const url = `https://a461-2401-4900-1c80-453-1151-62e6-c991-25b3.ngrok-free.app/api/superadmin/academyacess/${id}`;
       const token = Token();
       const response = await fetch(url, {
         method: "PUT",
@@ -190,7 +190,7 @@ function Dashboard() {
 
   const fetchadmindetailsbyid = async (id) => {
     try {
-      const url = `https://e673-2401-4900-1c80-453-9857-51b6-65f9-1434.ngrok-free.app/api/superadmin/detailsofadminbyid/${id}`;
+      const url = `https://a461-2401-4900-1c80-453-1151-62e6-c991-25b3.ngrok-free.app/api/superadmin/detailsofadminbyid/${id}`;
       const token = Token();
       const response = await fetch(url, {
         method: "GET",
@@ -217,7 +217,7 @@ function Dashboard() {
     const fetchData = async () => {
       try {
         const token = Token();
-        const url = `https://e673-2401-4900-1c80-453-9857-51b6-65f9-1434.ngrok-free.app/api/superadmin/academydetails`;
+        const url = `https://a461-2401-4900-1c80-453-1151-62e6-c991-25b3.ngrok-free.app/api/superadmin/academydetails`;
         const response = await fetch(url, {
           method: "POST",
           headers: {
@@ -246,7 +246,7 @@ function Dashboard() {
       const token = Token();
 
       // Fetch preview details
-      let url = `https://e673-2401-4900-1c80-453-9857-51b6-65f9-1434.ngrok-free.app/api/auth/preview/${id}`;
+      let url = `https://a461-2401-4900-1c80-453-1151-62e6-c991-25b3.ngrok-free.app/api/auth/preview/${id}`;
       let response = await fetch(url, {
         method: "GET",
         headers: {
@@ -263,7 +263,7 @@ function Dashboard() {
       setDetails(previewData); // Update details
 
       // Fetch academy details by name
-      url = `https://e673-2401-4900-1c80-453-9857-51b6-65f9-1434.ngrok-free.app/api/auth/academybyname`;
+      url = `https://a461-2401-4900-1c80-453-1151-62e6-c991-25b3.ngrok-free.app/api/auth/academybyname`;
       response = await fetch(url, {
         method: "POST",
         headers: {

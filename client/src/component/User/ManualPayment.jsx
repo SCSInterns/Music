@@ -68,7 +68,7 @@ export default function QRPaymentPage({ data }) {
     }
 
     const url =
-      "https://e673-2401-4900-1c80-453-9857-51b6-65f9-1434.ngrok-free.app/api/auth/submitmanualpayment";
+      "https://a461-2401-4900-1c80-453-1151-62e6-c991-25b3.ngrok-free.app/api/auth/submitmanualpayment";
     const token = Token();
     const response = await fetch(url, {
       method: "POST",
@@ -92,7 +92,7 @@ export default function QRPaymentPage({ data }) {
 
   const fetchQR = async () => {
     const url =
-      "https://e673-2401-4900-1c80-453-9857-51b6-65f9-1434.ngrok-free.app/api/auth/getqr";
+      "https://a461-2401-4900-1c80-453-1151-62e6-c991-25b3.ngrok-free.app/api/auth/getqr";
 
     try {
       const token = Token();

@@ -47,7 +47,7 @@ const MultipleImageUpload = () => {
 
     try {
       const url =
-        "https://e673-2401-4900-1c80-453-9857-51b6-65f9-1434.ngrok-free.app/api/auth/uploadgalleryphotos";
+        "https://a461-2401-4900-1c80-453-1151-62e6-c991-25b3.ngrok-free.app/api/auth/uploadgalleryphotos";
       const response = await fetch(url, {
         method: "POST",
         body: formData,
@@ -80,7 +80,7 @@ const MultipleImageUpload = () => {
 
   const handleadditiontodb = async (imageurl) => {
     const url =
-      "https://e673-2401-4900-1c80-453-9857-51b6-65f9-1434.ngrok-free.app/api/auth/uploadgallerytodb";
+      "https://a461-2401-4900-1c80-453-1151-62e6-c991-25b3.ngrok-free.app/api/auth/uploadgallerytodb";
     const token = Token();
     const response = await fetch(url, {
       method: "PUT",

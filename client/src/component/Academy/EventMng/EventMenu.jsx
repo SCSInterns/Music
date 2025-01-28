@@ -3,6 +3,7 @@ import CreateEvent from "../EventMng/Create Events/MainPage";
 import EventList from "../EventMng/Event List/MainPage";
 import ParticipantsList from "../EventMng/Event Participants/MainPage";
 import ViewersList from "../EventMng/Event Viewers/MainPage";
+import Locations from "./Create Events/Locations";
 
 const TopNavbar = () => {
   const [activeContent, setActiveContent] = useState("Create Event");
@@ -27,6 +28,11 @@ const TopNavbar = () => {
       name: "Event Viewers",
       key: "Event Viewers",
       component: <ViewersList />,
+    },
+    {
+      name: "Add Event Venue",
+      key: "Add Event Venue",
+      component: <Locations />,
     },
   ];
 

@@ -6,6 +6,16 @@ const EventSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    eventcategory:
+    {
+        type: String,
+        required: true
+    },
+    description:
+    {
+        type: String,
+        required: true
+    },
     occurancetype:
     {
         type: String,
@@ -15,7 +25,14 @@ const EventSchema = new mongoose.Schema({
     {
         type: [String],
         required: true
-    }
+    },
+    time:
+    {
+        type: [String],
+        required: true
+    },
+
+
 })
 
 module.exports = mongoose.model('Event Management', EventSchema);
