@@ -43,7 +43,7 @@ const Banners = () => {
 
     try {
       const url =
-        "https://a461-2401-4900-1c80-453-1151-62e6-c991-25b3.ngrok-free.app/api/auth/uploadbannerphotos";
+        "https://33c6-2401-4900-1c80-453-a119-e83b-914e-fd0b.ngrok-free.app/api/auth/uploadbannerphotos";
       const response = await fetch(url, {
         method: "POST",
         body: formData,
@@ -67,7 +67,7 @@ const Banners = () => {
 
   const handleadditiontodb = async (imageurl) => {
     const url =
-      "https://a461-2401-4900-1c80-453-1151-62e6-c991-25b3.ngrok-free.app/api/auth/addbanner";
+      "https://33c6-2401-4900-1c80-453-a119-e83b-914e-fd0b.ngrok-free.app/api/auth/addbanner";
     const token = Token();
     const response = await fetch(url, {
       method: "PUT",

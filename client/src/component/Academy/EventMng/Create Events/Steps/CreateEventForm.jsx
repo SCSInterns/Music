@@ -292,7 +292,8 @@ function EventForm() {
                 <Select labelId="venue-label">
                   {currentVenues.map((venue) => (
                     <MenuItem key={venue.id} value={venue.id}>
-                      {venue.venuename}
+                      {venue.venuename}, {venue.city} , {venue.state} -{" "}
+                      {venue.pincode}
                     </MenuItem>
                   ))}
                 </Select>

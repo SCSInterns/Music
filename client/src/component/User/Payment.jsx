@@ -12,7 +12,7 @@ function Payment({ data }) {
 
   const paymentinfo = async (studentid) => {
     const url =
-      "https://a461-2401-4900-1c80-453-1151-62e6-c991-25b3.ngrok-free.app/api/auth/getpaymentstatsforusers";
+      "https://33c6-2401-4900-1c80-453-a119-e83b-914e-fd0b.ngrok-free.app/api/auth/getpaymentstatsforusers";
 
     const token = Token();
     const response = await fetch(url, {

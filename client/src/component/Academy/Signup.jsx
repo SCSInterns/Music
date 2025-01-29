@@ -27,7 +27,7 @@ function Signup() {
   };
 
   const setacademyname = async () => {
-    const url = `https://a461-2401-4900-1c80-453-1151-62e6-c991-25b3.ngrok-free.app/api/auth/preview/${id}`;
+    const url = `https://33c6-2401-4900-1c80-453-a119-e83b-914e-fd0b.ngrok-free.app/api/auth/preview/${id}`;
 
     const response = await fetch(url, {
       method: "GET",
@@ -58,7 +58,7 @@ function Signup() {
       if (!otpSent) {
         // Send OTP to the provided email
         const response = await fetch(
-          "https://a461-2401-4900-1c80-453-1151-62e6-c991-25b3.ngrok-free.app/api/auth/send-otp",
+          "https://33c6-2401-4900-1c80-453-a119-e83b-914e-fd0b.ngrok-free.app/api/auth/send-otp",
           {
             method: "POST",
             headers: {
@@ -81,7 +81,7 @@ function Signup() {
       } else if (!otpVerified) {
         // Verify OTP
         const response = await fetch(
-          "https://a461-2401-4900-1c80-453-1151-62e6-c991-25b3.ngrok-free.app/api/auth/verify-otp",
+          "https://33c6-2401-4900-1c80-453-a119-e83b-914e-fd0b.ngrok-free.app/api/auth/verify-otp",
           {
             method: "POST",
             headers: {
@@ -101,7 +101,7 @@ function Signup() {
 
           // Complete signup
           const signupResponse = await fetch(
-            "https://a461-2401-4900-1c80-453-1151-62e6-c991-25b3.ngrok-free.app/api/auth/academysignup",
+            "https://33c6-2401-4900-1c80-453-a119-e83b-914e-fd0b.ngrok-free.app/api/auth/academysignup",
             {
               method: "POST",
               headers: {

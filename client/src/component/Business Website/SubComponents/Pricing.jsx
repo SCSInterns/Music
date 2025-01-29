@@ -36,7 +36,7 @@ export default function PricingDetails() {
             {plans[0].description}
           </p>
           <button className="px-6 py-2 rounded-full bg-black text-white hover:bg-black/90 transition-colors shadow-lg transform hover:scale-105">
-            <a href="https://a461-2401-4900-1c80-453-1151-62e6-c991-25b3.ngrok-free.app/academyregform">
+            <a href="https://33c6-2401-4900-1c80-453-a119-e83b-914e-fd0b.ngrok-free.app/academyregform">
               Sign up
             </a>
           </button>

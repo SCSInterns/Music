@@ -28,7 +28,7 @@ function Signup() {
     }
 
     const url =
-      "https://a461-2401-4900-1c80-453-1151-62e6-c991-25b3.ngrok-free.app/api/auth/send-otp";
+      "https://33c6-2401-4900-1c80-453-a119-e83b-914e-fd0b.ngrok-free.app/api/auth/send-otp";
     const response = await fetch(url, {
       method: "POST",
       headers: {
@@ -53,7 +53,7 @@ function Signup() {
   const handleVerifyOtp = async (e) => {
     e.preventDefault();
     const url =
-      "https://a461-2401-4900-1c80-453-1151-62e6-c991-25b3.ngrok-free.app/api/auth/verify-otp";
+      "https://33c6-2401-4900-1c80-453-a119-e83b-914e-fd0b.ngrok-free.app/api/auth/verify-otp";
     const response = await fetch(url, {
       method: "POST",
       headers: {
@@ -78,7 +78,7 @@ function Signup() {
   const handleLogin = async (e) => {
     e.preventDefault();
     const url =
-      "https://a461-2401-4900-1c80-453-1151-62e6-c991-25b3.ngrok-free.app/api/superadmin/superadminlogin";
+      "https://33c6-2401-4900-1c80-453-a119-e83b-914e-fd0b.ngrok-free.app/api/superadmin/superadminlogin";
     const response = await fetch(url, {
       method: "POST",
       headers: {

@@ -32,7 +32,7 @@ function AccountPaymentBox({ record, onChange, close }) {
 
   const handleSubmit = async () => {
     const url =
-      "https://a461-2401-4900-1c80-453-1151-62e6-c991-25b3.ngrok-free.app/api/auth/addpaymentinaccount";
+      "https://33c6-2401-4900-1c80-453-a119-e83b-914e-fd0b.ngrok-free.app/api/auth/addpaymentinaccount";
     const response = await fetch(url, {
       method: "POST",
       headers: {

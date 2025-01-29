@@ -26,7 +26,7 @@ const BatchSelectionModal = ({ open, onClose, data }) => {
     const fetchBatches = async () => {
       try {
         const url =
-          "https://a461-2401-4900-1c80-453-1151-62e6-c991-25b3.ngrok-free.app/api/auth/ngetbatchesdetails";
+          "https://33c6-2401-4900-1c80-453-a119-e83b-914e-fd0b.ngrok-free.app/api/auth/ngetbatchesdetails";
         const token = Token();
         const response = await fetch(url, {
           method: "POST",
@@ -82,7 +82,7 @@ const BatchSelectionModal = ({ open, onClose, data }) => {
     console.log("Selected Instrument ID:", selectedInstrument);
 
     const url =
-      "https://a461-2401-4900-1c80-453-1151-62e6-c991-25b3.ngrok-free.app/api/auth/addusertobatch";
+      "https://33c6-2401-4900-1c80-453-a119-e83b-914e-fd0b.ngrok-free.app/api/auth/addusertobatch";
     const token = Token();
 
     const response = await fetch(url, {

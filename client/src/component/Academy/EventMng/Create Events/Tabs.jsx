@@ -43,8 +43,8 @@ function Stepper() {
 
   const steps = [
     "Event Data",
-    "Location",
     "Form",
+    "Seat Layout",
     "Ticketing",
     "Payment",
     "Extra Details",

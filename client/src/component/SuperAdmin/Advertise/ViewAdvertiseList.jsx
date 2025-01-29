@@ -37,7 +37,7 @@ const ViewAdvertiseList = () => {
   const fetchData = async () => {
     try {
       const url =
-        "https://a461-2401-4900-1c80-453-1151-62e6-c991-25b3.ngrok-free.app/api/auth/allentries";
+        "https://33c6-2401-4900-1c80-453-a119-e83b-914e-fd0b.ngrok-free.app/api/auth/allentries";
       const response = await fetch(url, {
         method: "POST",
         headers: {
@@ -70,7 +70,7 @@ const ViewAdvertiseList = () => {
   const confirmDelete = async () => {
     try {
       const url =
-        "https://a461-2401-4900-1c80-453-1151-62e6-c991-25b3.ngrok-free.app/api/auth/deleteentry";
+        "https://33c6-2401-4900-1c80-453-a119-e83b-914e-fd0b.ngrok-free.app/api/auth/deleteentry";
       const response = await fetch(url, {
         method: "POST",
         headers: {
