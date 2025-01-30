@@ -166,9 +166,9 @@ function EventForm() {
           </Grid>
 
           {/* Occurrence */}
-          <Grid container xs={12} my={2}>
+          <Grid container xs={12} my={2} ml={2}>
             <FormControl component="fieldset" className="flex items-center">
-              <label component="legend">Occurrence</label>
+              <label>Occurrence :</label>
               <RadioGroup
                 name="occurrence"
                 value={formData.occurrence}
@@ -193,14 +193,40 @@ function EventForm() {
           {formData.occurrence === "Recurring" && (
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <Grid item xs={12}>
-                <Grid item xs={12}>
+                <Grid
+                  item
+                  xs={12}
+                  sx={{ display: "flex", justifyContent: "flex-start" }}
+                >
                   <DatePicker
                     label="Select Date"
                     value={selectedDate}
                     onChange={handleDateSelect}
                     renderInput={(params) => (
-                      <TextField {...params} fullWidth />
+                      <TextField
+                        {...params}
+                        fullWidth
+                        size="small"
+                        sx={{ maxWidth: 200 }}
+                      />
                     )}
+                    disablePast
+                    PopperProps={{
+                      modifiers: [
+                        {
+                          name: "preventOverflow",
+                          options: {
+                            boundary: "window",
+                          },
+                        },
+                        {
+                          name: "flip",
+                          options: {
+                            fallbackPlacements: ["top"],
+                          },
+                        },
+                      ],
+                    }}
                   />
                 </Grid>
                 <Grid item xs={12}>
@@ -222,7 +248,7 @@ function EventForm() {
             </LocalizationProvider>
           )}
 
-          <div className="flex space-x-3 items-center">
+          <div className="flex space-x-3 items-center ml-4">
             {formData.occurrence === "Single" && (
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <Grid container spacing={3} alignItems="center" wrap="nowrap">
@@ -315,6 +341,16 @@ function EventForm() {
                   }
                   label="Time same for all days?"
                 />
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={formData.venueSameForAll}
+                      onChange={handleInputChange}
+                      name="venueSameForAll"
+                    />
+                  }
+                  label="Venue same for all days?"
+                />
               </Grid>
             )}
           </div>
@@ -358,6 +394,45 @@ function EventForm() {
               }}
             />
           </Grid> */}
+
+          {formData.occurrence === "Recurring" &&
+            formData.venueSameForAll === true && (
+              <Grid item xs={12}>
+                <FormControl fullWidth>
+                  <InputLabel id="venue-label">Select Venue</InputLabel>
+                  <Select labelId="venue-label">
+                    {currentVenues.map((venue) => (
+                      <MenuItem key={venue.id} value={venue.id}>
+                        {venue.venuename}, {venue.city} , {venue.state} -{" "}
+                        {venue.pincode}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Grid>
+            )}
+
+          {formData.occurrence === "Recurring" &&
+            formData.venueSameForAll === false && (
+              <Grid item xs={12} my={2}>
+                {eventDates.map((date, index) => (
+                  <Grid item xs={12} key={index} my={2}>
+                    <label className="mr-4"> Date : {date}</label>
+                    <FormControl fullWidth>
+                      <InputLabel id="venue-label">Select Venue</InputLabel>
+                      <Select labelId="venue-label">
+                        {currentVenues.map((venue) => (
+                          <MenuItem key={venue.id} value={venue.id}>
+                            {venue.venuename}, {venue.city} , {venue.state} -{" "}
+                            {venue.pincode}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                  </Grid>
+                ))}
+              </Grid>
+            )}
 
           {formData.occurrence === "Recurring" && (
             <>

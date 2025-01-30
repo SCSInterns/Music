@@ -3,9 +3,12 @@ const router = express.Router();
 const event = require('../controllers/EventCreation');
 const authenticate = require("../controllers/Authenticate")
 const Eventlocationc = require("../controllers/EventCreation")
+const SeatC = require("../controllers/SeatLayoutC")
 
 router.post('/generateeventdescwithai', authenticate.authenticatetoken, event.generateAIDescription)
 router.post('/createvenuedetails', authenticate.authenticatetoken, Eventlocationc.createVenueDetails)
 router.post('/getvenuedetails', authenticate.authenticatetoken, Eventlocationc.getVenueDetails)
+router.post('/createseatlayout', authenticate.authenticatetoken, SeatC.validateCreateLayout, SeatC.createlayout)
+router.post('getseatlayout', authenticate.authenticatetoken, SeatC.getseatlayout)
 
 module.exports = router;

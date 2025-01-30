@@ -1,38 +1,37 @@
 const mongoose = require('mongoose');
 
-const EventSchema = new mongoose.Schema({
-    eventname:
+const EventFormSchema = new mongoose.Schema({
+    eventid:
     {
         type: String,
         required: true
     },
-    eventcategory:
+    name:
     {
         type: String,
         required: true
     },
-    description:
+    email:
     {
         type: String,
         required: true
     },
-    occurancetype:
+    mobile:
     {
         type: String,
         required: true
     },
-    date:
+    gender:
     {
-        type: [String],
+        type: String,
         required: true
     },
-    time:
+    age:
     {
-        type: [String],
+        type: Number,
         required: true
-    },
-
-
+    }
 })
 
-module.exports = mongoose.model('Event Management', EventSchema);
+
+module.exports = mongoose.model('EventForm', EventFormSchema);

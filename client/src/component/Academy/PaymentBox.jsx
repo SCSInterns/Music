@@ -67,7 +67,7 @@ const PaymentBox = ({
     course
   ) => {
     const url =
-      "https://33c6-2401-4900-1c80-453-a119-e83b-914e-fd0b.ngrok-free.app/api/auth/addlatestdue";
+      "https://ac26-2401-4900-1c80-453-791e-b7de-8205-4ba4.ngrok-free.app/api/auth/addlatestdue";
     const token = Token();
     const response = await fetch(url, {
       method: "PUT",
@@ -112,7 +112,7 @@ const PaymentBox = ({
       return;
     }
 
-    const url = `https://33c6-2401-4900-1c80-453-a119-e83b-914e-fd0b.ngrok-free.app/api/auth/addpaymentdetails/${id}`;
+    const url = `https://ac26-2401-4900-1c80-453-791e-b7de-8205-4ba4.ngrok-free.app/api/auth/addpaymentdetails/${id}`;
 
     let token = Token();
     try {

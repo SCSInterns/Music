@@ -59,7 +59,7 @@ const DynamicForm = ({ formData }) => {
 
     console.log(formValues);
 
-    let url = `https://33c6-2401-4900-1c80-453-a119-e83b-914e-fd0b.ngrok-free.app/api/auth/savedata`;
+    let url = `https://ac26-2401-4900-1c80-453-791e-b7de-8205-4ba4.ngrok-free.app/api/auth/savedata`;
     const response = await fetch(url, {
       method: "POST",
       headers: {
@@ -243,7 +243,7 @@ export default function App() {
     const fetchForm = async () => {
       try {
         const response = await fetch(
-          "https://33c6-2401-4900-1c80-453-a119-e83b-914e-fd0b.ngrok-free.app/api/auth/getform",
+          "https://ac26-2401-4900-1c80-453-791e-b7de-8205-4ba4.ngrok-free.app/api/auth/getform",
           {
             method: "POST",
             headers: {

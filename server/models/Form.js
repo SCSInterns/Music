@@ -28,6 +28,8 @@ const formSchema = new Schema({
     installmentDate: { type: String, required: true, default: "Yet to set" },
 });
 
+formSchema.index({ academy_name: 1 })
+
 const Academy = mongoose.model('Registration Form', formSchema);
 
 module.exports = Academy;

@@ -56,7 +56,7 @@ function ParticularBatches() {
   const handlebatches = async () => {
     const token = Token();
     const url =
-      "https://33c6-2401-4900-1c80-453-a119-e83b-914e-fd0b.ngrok-free.app/api/auth/getbatchesdetails";
+      "https://ac26-2401-4900-1c80-453-791e-b7de-8205-4ba4.ngrok-free.app/api/auth/getbatchesdetails";
 
     const response = await fetch(url, {
       method: "POST",
@@ -97,7 +97,7 @@ function ParticularBatches() {
     handleSubmitDays();
 
     const url =
-      "https://33c6-2401-4900-1c80-453-a119-e83b-914e-fd0b.ngrok-free.app/api/auth/updatebatchdetails";
+      "https://ac26-2401-4900-1c80-453-791e-b7de-8205-4ba4.ngrok-free.app/api/auth/updatebatchdetails";
     const token = Token();
     const response = await fetch(url, {
       method: "PUT",

@@ -99,7 +99,7 @@ const ApplicantsTable = ({ users }) => {
 
   const handleattendancerecord = async () => {
     const url =
-      "https://33c6-2401-4900-1c80-453-a119-e83b-914e-fd0b.ngrok-free.app/api/auth/getrecords";
+      "https://ac26-2401-4900-1c80-453-791e-b7de-8205-4ba4.ngrok-free.app/api/auth/getrecords";
     const token = Token();
     const response = await fetch(url, {
       method: "POST",
@@ -146,7 +146,7 @@ const ApplicantsTable = ({ users }) => {
   const batchdetails = async (id) => {
     console.log("Student Id :", id);
     const url =
-      "https://33c6-2401-4900-1c80-453-a119-e83b-914e-fd0b.ngrok-free.app/api/auth/getbatchdetail";
+      "https://ac26-2401-4900-1c80-453-791e-b7de-8205-4ba4.ngrok-free.app/api/auth/getbatchdetail";
     const token = Token();
     const response = await fetch(url, {
       method: "POST",
@@ -167,7 +167,7 @@ const ApplicantsTable = ({ users }) => {
 
   const paymentstats = async (studentid) => {
     const url =
-      "https://33c6-2401-4900-1c80-453-a119-e83b-914e-fd0b.ngrok-free.app/api/auth/getpaymentstats";
+      "https://ac26-2401-4900-1c80-453-791e-b7de-8205-4ba4.ngrok-free.app/api/auth/getpaymentstats";
 
     const token = Token();
     const response = await fetch(url, {
@@ -230,7 +230,7 @@ const ApplicantsTable = ({ users }) => {
     course
   ) => {
     const url =
-      "https://33c6-2401-4900-1c80-453-a119-e83b-914e-fd0b.ngrok-free.app/api/auth/addlatestdue";
+      "https://ac26-2401-4900-1c80-453-791e-b7de-8205-4ba4.ngrok-free.app/api/auth/addlatestdue";
     const token = Token();
     const response = await fetch(url, {
       method: "PUT",
@@ -271,7 +271,7 @@ const ApplicantsTable = ({ users }) => {
       return;
     }
 
-    const url = `https://33c6-2401-4900-1c80-453-a119-e83b-914e-fd0b.ngrok-free.app/api/auth/addpaymentdetails/${id}`;
+    const url = `https://ac26-2401-4900-1c80-453-791e-b7de-8205-4ba4.ngrok-free.app/api/auth/addpaymentdetails/${id}`;
 
     let token = Token();
     try {
@@ -328,7 +328,7 @@ const ApplicantsTable = ({ users }) => {
 
   const getsubscriptiondays = async (id) => {
     const url =
-      "https://33c6-2401-4900-1c80-453-a119-e83b-914e-fd0b.ngrok-free.app/api/auth/getsubscriptiondetails";
+      "https://ac26-2401-4900-1c80-453-791e-b7de-8205-4ba4.ngrok-free.app/api/auth/getsubscriptiondetails";
     let token = Token();
 
     try {
@@ -381,7 +381,7 @@ const ApplicantsTable = ({ users }) => {
   ) => {
     console.log(academyname, email, role, studentname);
     const url =
-      "https://33c6-2401-4900-1c80-453-a119-e83b-914e-fd0b.ngrok-free.app/api/auth/setcredentials";
+      "https://ac26-2401-4900-1c80-453-791e-b7de-8205-4ba4.ngrok-free.app/api/auth/setcredentials";
     const token = Token();
     const response = await fetch(url, {
       method: "POST",
@@ -404,7 +404,7 @@ const ApplicantsTable = ({ users }) => {
   };
 
   const handlePreview = async (id) => {
-    const url = `https://33c6-2401-4900-1c80-453-a119-e83b-914e-fd0b.ngrok-free.app/api/auth/getdatabyid/${id}`;
+    const url = `https://ac26-2401-4900-1c80-453-791e-b7de-8205-4ba4.ngrok-free.app/api/auth/getdatabyid/${id}`;
     let token = Token();
     let role = sessionStorage.getItem("role");
 
@@ -456,7 +456,7 @@ const ApplicantsTable = ({ users }) => {
   };
 
   const handleinstallment = async (id) => {
-    const url = `https://33c6-2401-4900-1c80-453-a119-e83b-914e-fd0b.ngrok-free.app/api/auth/updateinstallment/${id}`;
+    const url = `https://ac26-2401-4900-1c80-453-791e-b7de-8205-4ba4.ngrok-free.app/api/auth/updateinstallment/${id}`;
     const token = Token();
     const currentDate = new Date();
     const formattedDate = `${String(currentDate.getDate()).padStart(
@@ -484,7 +484,7 @@ const ApplicantsTable = ({ users }) => {
   };
 
   const handleclick = async (status, id) => {
-    const url = `https://33c6-2401-4900-1c80-453-a119-e83b-914e-fd0b.ngrok-free.app/api/auth/updatestatus/${id}`;
+    const url = `https://ac26-2401-4900-1c80-453-791e-b7de-8205-4ba4.ngrok-free.app/api/auth/updatestatus/${id}`;
     const token = Token();
     const response = await fetch(url, {
       method: "PUT",

@@ -8,6 +8,8 @@ import CreateEventForm from "../Create Events/Steps/CreateEventForm";
 import CreateLocation from "./Steps/CreateLocation";
 import Token from "../../../Token/Token";
 import { toast } from "react-toastify";
+import CreateSeatLayout from "./Steps/CreateSeatLayout";
+import CreateTickets from "./Steps/CreateTickets";
 
 function Stepper() {
   const dispatch = useDispatch();
@@ -43,7 +45,6 @@ function Stepper() {
 
   const steps = [
     "Event Data",
-    "Form",
     "Seat Layout",
     "Ticketing",
     "Payment",
@@ -143,6 +144,16 @@ function Stepper() {
         {steps[currentStep] === "Location" && (
           <div>
             <CreateLocation />
+          </div>
+        )}
+        {steps[currentStep] === "Seat Layout" && (
+          <div>
+            <CreateSeatLayout />
+          </div>
+        )}
+        {steps[currentStep] === "Ticketing" && (
+          <div>
+            <CreateTickets />
           </div>
         )}
       </div>

@@ -23,7 +23,7 @@ function Profile() {
 
   const getsociallinks = async () => {
     const url =
-      "https://33c6-2401-4900-1c80-453-a119-e83b-914e-fd0b.ngrok-free.app/api/auth/getsociallinks";
+      "https://ac26-2401-4900-1c80-453-791e-b7de-8205-4ba4.ngrok-free.app/api/auth/getsociallinks";
 
     const response = await fetch(url, {
       method: "POST",
@@ -64,7 +64,7 @@ function Profile() {
 
   const fetchProfile = async () => {
     const url =
-      "https://33c6-2401-4900-1c80-453-a119-e83b-914e-fd0b.ngrok-free.app/api/auth/fetchprofile";
+      "https://ac26-2401-4900-1c80-453-791e-b7de-8205-4ba4.ngrok-free.app/api/auth/fetchprofile";
 
     const response = await fetch(url, {
       method: "POST",
@@ -92,7 +92,7 @@ function Profile() {
 
   const paymentinfo = async (id, name, role, academyname) => {
     const url =
-      "https://33c6-2401-4900-1c80-453-a119-e83b-914e-fd0b.ngrok-free.app/api/auth/getinfoinstallment";
+      "https://ac26-2401-4900-1c80-453-791e-b7de-8205-4ba4.ngrok-free.app/api/auth/getinfoinstallment";
 
     const response = await fetch(url, {
       method: "POST",
@@ -117,7 +117,7 @@ function Profile() {
   const batchdetails = async (id) => {
     console.log("Student Id :", id);
     const url =
-      "https://33c6-2401-4900-1c80-453-a119-e83b-914e-fd0b.ngrok-free.app/api/auth/getbatchdetail";
+      "https://ac26-2401-4900-1c80-453-791e-b7de-8205-4ba4.ngrok-free.app/api/auth/getbatchdetail";
 
     const response = await fetch(url, {
       method: "POST",
@@ -140,7 +140,7 @@ function Profile() {
   const fetchqr = async (studentId) => {
     try {
       const url =
-        "https://33c6-2401-4900-1c80-453-a119-e83b-914e-fd0b.ngrok-free.app/api/auth/fetchqr";
+        "https://ac26-2401-4900-1c80-453-791e-b7de-8205-4ba4.ngrok-free.app/api/auth/fetchqr";
 
       const response = await fetch(url, {
         method: "POST",

@@ -1,33 +1,50 @@
 const mongoose = require('mongoose');
 
 const EventMngSchema = new mongoose.Schema({
-    eventname:
-    {
+    eventname: {
         type: String,
         required: true
     },
-    eventcategory:
-    {
+    eventcategory: {
         type: String,
         required: true
     },
-    occurancetype:
-    {
+    occurancetype: {
         type: String,
         required: true
     },
-    venueid:
-    {
+    eventdescription: {
         type: String,
+        required: true
     },
-    seatlayoutid:
-    {
-        type: String,
+    seatlayoutid: {
+        type: [String],
     },
-    ticketid:
-    {
+    ticketid: {
         type: String
-    }
-})
+    },
+    eventSchedule: [
+        {
+            date: {
+                type: String,
+                required: true
+            },
+            startTime: {
+                type: String,
+                required: true
+            },
+            endTime: {
+                type: String,
+                required: true
+            },
+            venueid: {
+                type: String,
+                required: true
+            }
+        }
+    ]
+});
 
 const EventMng = mongoose.model('EventMng', EventMngSchema);
+
+module.exports = EventMng;

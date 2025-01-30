@@ -12,7 +12,7 @@ function Detailview() {
 
   const knowmoredetails = async (eventId) => {
     const url =
-      "https://33c6-2401-4900-1c80-453-a119-e83b-914e-fd0b.ngrok-free.app/api/auth/knowmoredetails";
+      "https://ac26-2401-4900-1c80-453-791e-b7de-8205-4ba4.ngrok-free.app/api/auth/knowmoredetails";
     const response = await fetch(url, {
       method: "POST",
       headers: {

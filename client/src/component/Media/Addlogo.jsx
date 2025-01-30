@@ -53,7 +53,7 @@ const Addlogo = () => {
     console.log("Form Data:", Array.from(formData.entries())); // Log entries
 
     const url =
-      "https://33c6-2401-4900-1c80-453-a119-e83b-914e-fd0b.ngrok-free.app/api/auth/uploadlogo";
+      "https://ac26-2401-4900-1c80-453-791e-b7de-8205-4ba4.ngrok-free.app/api/auth/uploadlogo";
 
     try {
       const response = await fetch(url, {
@@ -78,7 +78,7 @@ const Addlogo = () => {
   const handlelogostoring = async () => {
     try {
       const url =
-        "https://33c6-2401-4900-1c80-453-a119-e83b-914e-fd0b.ngrok-free.app/api/auth/uploadlogodata";
+        "https://ac26-2401-4900-1c80-453-791e-b7de-8205-4ba4.ngrok-free.app/api/auth/uploadlogodata";
       const token = Token();
       const response = await fetch(url, {
         method: "POST",

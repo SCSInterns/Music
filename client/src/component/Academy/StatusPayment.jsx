@@ -34,7 +34,7 @@ const StatusFormModal = ({ open, onClose, studentData, onstatusChange }) => {
 
   const handleSubmit = async (id, status, date) => {
     const url =
-      "https://33c6-2401-4900-1c80-453-a119-e83b-914e-fd0b.ngrok-free.app/api/auth/verifymanualpayment";
+      "https://ac26-2401-4900-1c80-453-791e-b7de-8205-4ba4.ngrok-free.app/api/auth/verifymanualpayment";
     const response = await fetch(url, {
       method: "POST",
       headers: {

@@ -51,7 +51,7 @@ export default function CancelSubscriptionForm({ open, handleClose }) {
     }
 
     const url =
-      "https://33c6-2401-4900-1c80-453-a119-e83b-914e-fd0b.ngrok-free.app/api/auth/send-otp";
+      "https://ac26-2401-4900-1c80-453-791e-b7de-8205-4ba4.ngrok-free.app/api/auth/send-otp";
     const response = await fetch(url, {
       method: "POST",
       headers: {
@@ -73,7 +73,7 @@ export default function CancelSubscriptionForm({ open, handleClose }) {
 
   const handleVerifyOtp = async () => {
     const url =
-      "https://33c6-2401-4900-1c80-453-a119-e83b-914e-fd0b.ngrok-free.app/api/auth/verify-otp";
+      "https://ac26-2401-4900-1c80-453-791e-b7de-8205-4ba4.ngrok-free.app/api/auth/verify-otp";
     const response = await fetch(url, {
       method: "POST",
       headers: {
@@ -112,7 +112,7 @@ export default function CancelSubscriptionForm({ open, handleClose }) {
       return;
     }
 
-    const url = `https://33c6-2401-4900-1c80-453-a119-e83b-914e-fd0b.ngrok-free.app/api/auth/cancelsubscription`;
+    const url = `https://ac26-2401-4900-1c80-453-791e-b7de-8205-4ba4.ngrok-free.app/api/auth/cancelsubscription`;
 
     const response = await fetch(url, {
       method: "POST",

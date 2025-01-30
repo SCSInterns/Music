@@ -10,6 +10,11 @@ const SeatSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    priceperseat:
+    {
+        type: Number,
+        required: true
+    },
     eventid:
     {
         type: String,
@@ -20,7 +25,7 @@ const SeatSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
-    noofcol:
+    noofseatsperrow:
     {
         type: Number,
         required: true
@@ -36,4 +41,6 @@ const SeatSchema = new mongoose.Schema({
     }
 })
 
-module.exports = { SeatSchema }
+const SeatLayout = mongoose.model('Seat Layout', SeatSchema);
+
+module.exports = { SeatLayout }

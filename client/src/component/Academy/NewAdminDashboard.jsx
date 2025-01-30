@@ -74,7 +74,7 @@ const Sidebar = () => {
   const handleApplicants = async () => {
     settoggleapplicants(true);
     let url =
-      "https://33c6-2401-4900-1c80-453-a119-e83b-914e-fd0b.ngrok-free.app/api/auth/getdata";
+      "https://ac26-2401-4900-1c80-453-791e-b7de-8205-4ba4.ngrok-free.app/api/auth/getdata";
     const response = await fetch(url, {
       method: "POST",
       headers: {
@@ -112,7 +112,7 @@ const Sidebar = () => {
   const handleFees = async () => {
     const todaydate = getCurrentDate();
     const url =
-      "https://33c6-2401-4900-1c80-453-a119-e83b-914e-fd0b.ngrok-free.app/api/auth/getpaymnetdue";
+      "https://ac26-2401-4900-1c80-453-791e-b7de-8205-4ba4.ngrok-free.app/api/auth/getpaymnetdue";
     const token = Token();
     const response = await fetch(url, {
       method: "POST",
@@ -171,7 +171,7 @@ const Sidebar = () => {
   const [info, setinfo] = useState([]);
 
   const fetchlist = async (academyname, adminid) => {
-    const url = `https://33c6-2401-4900-1c80-453-a119-e83b-914e-fd0b.ngrok-free.app/api/auth/getsubspaymentlist`;
+    const url = `https://ac26-2401-4900-1c80-453-791e-b7de-8205-4ba4.ngrok-free.app/api/auth/getsubspaymentlist`;
 
     let token = Token();
     try {
