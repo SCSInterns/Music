@@ -40,7 +40,7 @@ function Timetable() {
 
   const getLogo = async () => {
     const url =
-      "https://ac26-2401-4900-1c80-453-791e-b7de-8205-4ba4.ngrok-free.app/api/auth/getlogo";
+      "https://5817-2401-4900-1c80-3ab2-dca7-daa1-96ff-e659.ngrok-free.app/api/auth/getlogo";
 
     const response = await fetch(url, {
       method: "POST",
@@ -67,7 +67,7 @@ function Timetable() {
   const handleapplicants = async (id) => {
     const token = Token();
     const url =
-      "https://ac26-2401-4900-1c80-453-791e-b7de-8205-4ba4.ngrok-free.app/api/auth/getapplicantslist";
+      "https://5817-2401-4900-1c80-3ab2-dca7-daa1-96ff-e659.ngrok-free.app/api/auth/getapplicantslist";
 
     const response = await fetch(url, {
       method: "POST",
@@ -97,7 +97,7 @@ function Timetable() {
   const handlebatches = async () => {
     const token = Token();
     const url =
-      "https://ac26-2401-4900-1c80-453-791e-b7de-8205-4ba4.ngrok-free.app/api/auth/getbatchesdetails";
+      "https://5817-2401-4900-1c80-3ab2-dca7-daa1-96ff-e659.ngrok-free.app/api/auth/getbatchesdetails";
 
     const response = await fetch(url, {
       method: "POST",

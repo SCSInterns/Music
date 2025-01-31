@@ -20,12 +20,27 @@ const SeatSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    seatsorientation:
+    {
+        type: String,
+        required: true
+    },
     noofrows:
     {
         type: Number,
         required: true
     },
-    noofseatsperrow:
+    noofpartition:
+    {
+        type: Number,
+        required: true
+    },
+    seatsPerPartition:
+    {
+        type: Number,
+        required: true
+    },
+    maxSeatsPerPartition:
     {
         type: Number,
         required: true

@@ -42,6 +42,7 @@ function EventForm() {
       dispatch(updateFormData({ [name]: checked }));
     } else if (type === "radio" || type === "text" || type === "textarea") {
       dispatch(updateFormData({ [name]: value }));
+    } else if ((name = "form-venue")) {
     }
   };
 
@@ -315,7 +316,7 @@ function EventForm() {
             <Grid item xs={12} my={2}>
               <FormControl fullWidth>
                 <InputLabel id="venue-label">Select Venue</InputLabel>
-                <Select labelId="venue-label">
+                <Select labelId="venue-label" name="form-venue">
                   {currentVenues.map((venue) => (
                     <MenuItem key={venue.id} value={venue.id}>
                       {venue.venuename}, {venue.city} , {venue.state} -{" "}
@@ -400,7 +401,7 @@ function EventForm() {
               <Grid item xs={12}>
                 <FormControl fullWidth>
                   <InputLabel id="venue-label">Select Venue</InputLabel>
-                  <Select labelId="venue-label">
+                  <Select labelId="venue-label" name="form-venue">
                     {currentVenues.map((venue) => (
                       <MenuItem key={venue.id} value={venue.id}>
                         {venue.venuename}, {venue.city} , {venue.state} -{" "}
@@ -420,7 +421,7 @@ function EventForm() {
                     <label className="mr-4"> Date : {date}</label>
                     <FormControl fullWidth>
                       <InputLabel id="venue-label">Select Venue</InputLabel>
-                      <Select labelId="venue-label">
+                      <Select labelId="venue-label" name="form-venue">
                         {currentVenues.map((venue) => (
                           <MenuItem key={venue.id} value={venue.id}>
                             {venue.venuename}, {venue.city} , {venue.state} -{" "}

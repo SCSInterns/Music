@@ -100,7 +100,7 @@ function AcademyRegistration({ academyName, Role }) {
       academyname = academy;
     }
     let url =
-      "https://ac26-2401-4900-1c80-453-791e-b7de-8205-4ba4.ngrok-free.app/api/auth/getform";
+      "https://5817-2401-4900-1c80-3ab2-dca7-daa1-96ff-e659.ngrok-free.app/api/auth/getform";
 
     try {
       const response = await fetch(url, {
@@ -180,7 +180,7 @@ function AcademyRegistration({ academyName, Role }) {
       return;
     }
 
-    let url = `https://ac26-2401-4900-1c80-453-791e-b7de-8205-4ba4.ngrok-free.app/api/auth/savedata`;
+    let url = `https://5817-2401-4900-1c80-3ab2-dca7-daa1-96ff-e659.ngrok-free.app/api/auth/savedata`;
 
     console.log(academyname, role);
     const response = await fetch(url, {

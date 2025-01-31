@@ -25,7 +25,7 @@ const StatusFormModal = ({ open, onClose, studentData, onstatusChange }) => {
     onClose();
   };
   const handleSubmit = async (status, id) => {
-    const url = `https://ac26-2401-4900-1c80-453-791e-b7de-8205-4ba4.ngrok-free.app/api/superadmin/handledemostatus`;
+    const url = `https://5817-2401-4900-1c80-3ab2-dca7-daa1-96ff-e659.ngrok-free.app/api/superadmin/handledemostatus`;
     const token = Token();
     const response = await fetch(url, {
       method: "POST",
