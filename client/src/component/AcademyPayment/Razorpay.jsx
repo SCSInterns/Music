@@ -15,8 +15,7 @@ const Razorpay = () => {
   const academyname = sessionStorage.getItem("academyname");
 
   const sendOtp = async () => {
-    const url =
-      "https://5817-2401-4900-1c80-3ab2-dca7-daa1-96ff-e659.ngrok-free.app/api/auth/send-otp";
+    const url = "http://localhost:5000/api/auth/send-otp";
     const response = await fetch(url, {
       method: "POST",
       headers: {
@@ -35,8 +34,7 @@ const Razorpay = () => {
   };
 
   const verifyOtp = async () => {
-    const url =
-      "https://5817-2401-4900-1c80-3ab2-dca7-daa1-96ff-e659.ngrok-free.app/api/auth/verify-otp";
+    const url = "http://localhost:5000/api/auth/verify-otp";
     const response = await fetch(url, {
       method: "POST",
       headers: {
@@ -55,8 +53,7 @@ const Razorpay = () => {
   };
 
   const handleSubmit = async () => {
-    const url =
-      "https://5817-2401-4900-1c80-3ab2-dca7-daa1-96ff-e659.ngrok-free.app/api/auth/addrazorpaycreds";
+    const url = "http://localhost:5000/api/auth/addrazorpaycreds";
     const response = await fetch(url, {
       method: "POST",
       headers: {

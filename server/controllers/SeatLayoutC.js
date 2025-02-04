@@ -13,9 +13,9 @@ const validateCreateLayout = [
     check("noofrows")
         .isInt({ min: 1 })
         .withMessage("Number of rows must be a positive integer"),
-    check("noofseatsperrows")
+    check("noofpartition")
         .isInt({ min: 1 })
-        .withMessage("Number of seats per row must be a positive integer"),
+        .withMessage("Number of partition must be a positive integer"),
     check("planname").notEmpty().withMessage("Plan name is required"),
     check("priceperseat").notEmpty().withMessage("Price per seat is required"),
 ];
@@ -26,27 +26,43 @@ const createlayout = async (req, res) => {
     if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
     }
-    const { academyid, eventid, noofrows, noofseatsperrows, planname, priceperseat } = req.body
+    const { academyid, eventid, noofrows, planname, priceperseat, seatsPerPartition, maxSeatsPerPartition, noofpartition, seatingorientation, venueid } = req.body
 
     try {
 
-        const total = noofrows * noofseatsperrows
+        var count = 0
+
+        for (const i in seatsPerPartition) {
+            for (const j in seatsPerPartition[i]) {
+                count = count + Math.floor(seatsPerPartition[i][j])
+            }
+        }
+
         const seatbooked = 0
 
         const newSeat = new SeatLayout({
             academyid: academyid,
-            planname: planname,
-            eventid: eventid,
             noofrows: noofrows,
-            noofseatsperrow: noofseatsperrows,
-            totalnoofseats: total,
+            noofpartition: noofpartition,
+            seatsPerPartition: seatsPerPartition,
+            maxSeatsPerPartition: maxSeatsPerPartition,
+            seatingorientation: seatingorientation,
+            eventid: eventid,
+            planname: planname,
+            priceperseat: priceperseat,
+            totalnoofseats: count,
             seatbooked: seatbooked,
-            priceperseat: priceperseat
+            venueid: venueid,
         })
-        await newSeat.save()
+        const confirmed = await newSeat.save()
 
-
-        return res.status(201).json({ message: "Seat layout created successfully" })
+        if (confirmed) {
+            return res.status(201).json({ message: "Seat layout created successfully" })
+        } else {
+            return res.status(404).json({
+                message: "Seat layout creation failed"
+            })
+        }
 
 
     } catch (error) {

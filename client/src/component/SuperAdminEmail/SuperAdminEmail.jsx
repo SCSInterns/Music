@@ -10,7 +10,7 @@ function NewRequest() {
       try {
         const token = Token();
         console.log("Fetching superadmin details with token:", token);
-        const url = `https://5817-2401-4900-1c80-3ab2-dca7-daa1-96ff-e659.ngrok-free.app/api/superadmin/superadmindetails`;
+        const url = `http://localhost:5000/api/superadmin/superadmindetails`;
         const response = await fetch(url, {
           method: "POST",
           headers: {

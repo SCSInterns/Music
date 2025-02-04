@@ -23,8 +23,7 @@ export default function CitySelector() {
   const [value, setValue] = useState(0);
 
   const handleserchbycity = async (city) => {
-    const url =
-      "https://5817-2401-4900-1c80-3ab2-dca7-daa1-96ff-e659.ngrok-free.app/api/auth/getacademybycity";
+    const url = "http://localhost:5000/api/auth/getacademybycity";
     const response = await fetch(url, {
       method: "POST",
       headers: {
@@ -59,8 +58,7 @@ export default function CitySelector() {
   const handleSearchByPincode = async () => {
     console.log(`Searching for pincode: ${searchQuery}`);
 
-    const url =
-      "https://5817-2401-4900-1c80-3ab2-dca7-daa1-96ff-e659.ngrok-free.app/api/auth/getnearacademy";
+    const url = "http://localhost:5000/api/auth/getnearacademy";
 
     const response = await fetch(url, {
       method: "POST",

@@ -38,8 +38,7 @@ function About() {
     const formData = new FormData();
     formData.append("picture", selectedImage);
 
-    const url =
-      "https://5817-2401-4900-1c80-3ab2-dca7-daa1-96ff-e659.ngrok-free.app/api/auth/uploadaboutimage";
+    const url = "http://localhost:5000/api/auth/uploadaboutimage";
 
     try {
       const response = await fetch(url, {
@@ -63,8 +62,7 @@ function About() {
   };
 
   const handlefinalsubmit = async () => {
-    const url =
-      "https://5817-2401-4900-1c80-3ab2-dca7-daa1-96ff-e659.ngrok-free.app/api/auth/uploadabout";
+    const url = "http://localhost:5000/api/auth/uploadabout";
 
     const token = Token();
 

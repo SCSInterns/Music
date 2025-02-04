@@ -38,8 +38,7 @@ const TopNavbar = () => {
   const role = sessionStorage.getItem("role");
 
   const handlebatchlist = async () => {
-    const url =
-      "https://5817-2401-4900-1c80-3ab2-dca7-daa1-96ff-e659.ngrok-free.app/api/auth/getbatchstudents";
+    const url = "http://localhost:5000/api/auth/getbatchstudents";
 
     const response = await fetch(url, {
       method: "POST",

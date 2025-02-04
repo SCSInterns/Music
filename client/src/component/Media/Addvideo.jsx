@@ -35,8 +35,7 @@ export default function Addvideo() {
   const handlesubmit = async () => {
     setloading(true);
     // https://youtu.be/khUaF36F_SY
-    const url =
-      "https://5817-2401-4900-1c80-3ab2-dca7-daa1-96ff-e659.ngrok-free.app/api/auth/uploadvideo";
+    const url = "http://localhost:5000/api/auth/uploadvideo";
     const token = Token();
     const response = await fetch(url, {
       method: "POST",

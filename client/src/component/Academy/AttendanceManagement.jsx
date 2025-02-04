@@ -14,8 +14,7 @@ function AttendanceManagement({ data }) {
 
   const fetchBatchDetails = async (studentId) => {
     try {
-      const url =
-        "https://5817-2401-4900-1c80-3ab2-dca7-daa1-96ff-e659.ngrok-free.app/api/auth/getbatchdetail";
+      const url = "http://localhost:5000/api/auth/getbatchdetail";
       const response = await fetch(url, {
         method: "POST",
         headers: {
@@ -45,8 +44,7 @@ function AttendanceManagement({ data }) {
 
   const generateQR = async (studentId, batchId) => {
     try {
-      const url =
-        "https://5817-2401-4900-1c80-3ab2-dca7-daa1-96ff-e659.ngrok-free.app/api/auth/generateqr";
+      const url = "http://localhost:5000/api/auth/generateqr";
       const response = await fetch(url, {
         method: "POST",
         headers: {
@@ -78,8 +76,7 @@ function AttendanceManagement({ data }) {
   const fetchOrGenerateQR = async (studentId) => {
     setIsLoading(true);
     try {
-      const url =
-        "https://5817-2401-4900-1c80-3ab2-dca7-daa1-96ff-e659.ngrok-free.app/api/auth/fetchqr";
+      const url = "http://localhost:5000/api/auth/fetchqr";
       const response = await fetch(url, {
         method: "POST",
         headers: {

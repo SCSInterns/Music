@@ -71,8 +71,7 @@ export default function FilterMenu() {
   };
 
   const fetchList = async () => {
-    const url =
-      "https://5817-2401-4900-1c80-3ab2-dca7-daa1-96ff-e659.ngrok-free.app/api/auth/fetchaccountlist";
+    const url = "http://localhost:5000/api/auth/fetchaccountlist";
     const response = await fetch(url, {
       method: "POST",
       headers: {
@@ -100,8 +99,7 @@ export default function FilterMenu() {
   }, []);
 
   const handlebatchlist = async () => {
-    const url =
-      "https://5817-2401-4900-1c80-3ab2-dca7-daa1-96ff-e659.ngrok-free.app/api/auth/ngetbatchesdetails";
+    const url = "http://localhost:5000/api/auth/ngetbatchesdetails";
     try {
       const response = await fetch(url, {
         method: "POST",

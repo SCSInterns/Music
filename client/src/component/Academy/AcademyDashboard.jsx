@@ -98,7 +98,7 @@ function AcademyDashboard() {
   }, []);
 
   const verifyurl = async () => {
-    const url = `https://5817-2401-4900-1c80-3ab2-dca7-daa1-96ff-e659.ngrok-free.app/api/auth/verifyurl`;
+    const url = `http://localhost:5000/api/auth/verifyurl`;
     const token = Token();
     const response = await fetch(url, {
       method: "POST",
@@ -319,8 +319,7 @@ function AcademyDashboard() {
     setwebcontentmenu(false);
     setattendance(false);
     setattendancestyle(false);
-    let url =
-      "https://5817-2401-4900-1c80-3ab2-dca7-daa1-96ff-e659.ngrok-free.app/api/auth/getdata";
+    let url = "http://localhost:5000/api/auth/getdata";
     const token = Token();
     const response = await fetch(url, {
       method: "POST",
@@ -354,8 +353,7 @@ function AcademyDashboard() {
   console.log(appdata);
 
   const handlePastApplication = async () => {
-    let url =
-      "https://5817-2401-4900-1c80-3ab2-dca7-daa1-96ff-e659.ngrok-free.app/api/auth/getrejectedapplicant";
+    let url = "http://localhost:5000/api/auth/getrejectedapplicant";
     const token = Token();
     const response = await fetch(url, {
       method: "POST",
@@ -412,8 +410,7 @@ function AcademyDashboard() {
     setattendancestyle(false);
     setbatchmenu(false);
     const todaydate = getCurrentDate();
-    const url =
-      "https://5817-2401-4900-1c80-3ab2-dca7-daa1-96ff-e659.ngrok-free.app/api/auth/getpaymnetdue";
+    const url = "http://localhost:5000/api/auth/getpaymnetdue";
     const token = Token();
     const response = await fetch(url, {
       method: "POST",
@@ -450,7 +447,7 @@ function AcademyDashboard() {
       return acc;
     }, {});
 
-    let url = `https://5817-2401-4900-1c80-3ab2-dca7-daa1-96ff-e659.ngrok-free.app/api/auth/academyregform`;
+    let url = `http://localhost:5000/api/auth/academyregform`;
     const token = Token();
     const response = await fetch(url, {
       method: "POST",

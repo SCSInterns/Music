@@ -58,8 +58,7 @@ const AdvertiseForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const url =
-      "https://5817-2401-4900-1c80-3ab2-dca7-daa1-96ff-e659.ngrok-free.app/api/auth/newentry";
+    const url = "http://localhost:5000/api/auth/newentry";
 
     try {
       const response = await fetch(url, {

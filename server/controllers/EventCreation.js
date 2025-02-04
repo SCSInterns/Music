@@ -94,4 +94,21 @@ const getVenueDetails = async (req, res) => {
     }
 }
 
+// create event details   
+
+const createEventDetails = async (req, res) => {
+
+    try {
+
+        const { eventName, venue, eventDates, time, occurrence, highlights, audience, registration, attendance, role } = req.body
+
+
+
+
+    } catch (error) {
+        return res.status(500).json({ error: error.message });
+    }
+
+}
+
 module.exports = { generateAIDescription, createVenueDetails, getVenueDetails };

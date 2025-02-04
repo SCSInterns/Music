@@ -21,8 +21,7 @@ export default function AnalyticsPage() {
   const academyname = sessionStorage.getItem("academyname");
 
   const fetchDefaultIncome = async () => {
-    const url =
-      "https://5817-2401-4900-1c80-3ab2-dca7-daa1-96ff-e659.ngrok-free.app/api/auth/fetchacademyaccount";
+    const url = "http://localhost:5000/api/auth/fetchacademyaccount";
 
     const response = await fetch(url, {
       method: "POST",
@@ -54,8 +53,7 @@ export default function AnalyticsPage() {
     console.log(month);
     console.log(year);
 
-    const url =
-      "https://5817-2401-4900-1c80-3ab2-dca7-daa1-96ff-e659.ngrok-free.app/api/auth/fetchcustomstats";
+    const url = "http://localhost:5000/api/auth/fetchcustomstats";
 
     const response = await fetch(url, {
       method: "POST",

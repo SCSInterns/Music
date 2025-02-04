@@ -27,7 +27,7 @@ function Signup() {
   };
 
   const setacademyname = async () => {
-    const url = `https://5817-2401-4900-1c80-3ab2-dca7-daa1-96ff-e659.ngrok-free.app/api/auth/preview/${id}`;
+    const url = `http://localhost:5000/api/auth/preview/${id}`;
 
     const response = await fetch(url, {
       method: "GET",
@@ -58,7 +58,7 @@ function Signup() {
       if (!otpSent) {
         // Send OTP to the provided email
         const response = await fetch(
-          "https://5817-2401-4900-1c80-3ab2-dca7-daa1-96ff-e659.ngrok-free.app/api/auth/send-otp",
+          "http://localhost:5000/api/auth/send-otp",
           {
             method: "POST",
             headers: {
@@ -81,7 +81,7 @@ function Signup() {
       } else if (!otpVerified) {
         // Verify OTP
         const response = await fetch(
-          "https://5817-2401-4900-1c80-3ab2-dca7-daa1-96ff-e659.ngrok-free.app/api/auth/verify-otp",
+          "http://localhost:5000/api/auth/verify-otp",
           {
             method: "POST",
             headers: {
@@ -101,7 +101,7 @@ function Signup() {
 
           // Complete signup
           const signupResponse = await fetch(
-            "https://5817-2401-4900-1c80-3ab2-dca7-daa1-96ff-e659.ngrok-free.app/api/auth/academysignup",
+            "http://localhost:5000/api/auth/academysignup",
             {
               method: "POST",
               headers: {

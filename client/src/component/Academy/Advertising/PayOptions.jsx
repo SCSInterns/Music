@@ -23,8 +23,7 @@ const PaymentDialog = ({ open, onClose, data, onUpdate }) => {
   const handleOptionClick = async (option) => {
     console.log(option);
     if (option === "payLater") {
-      const url =
-        "https://5817-2401-4900-1c80-3ab2-dca7-daa1-96ff-e659.ngrok-free.app/api/auth/paylateradvertise";
+      const url = "http://localhost:5000/api/auth/paylateradvertise";
 
       const createbooking = await fetch(url, {
         method: "POST",
@@ -56,8 +55,7 @@ const PaymentDialog = ({ open, onClose, data, onUpdate }) => {
     if (option === "payNow") {
       // razorpaypayment
       const generateorder = async () => {
-        const url =
-          "https://5817-2401-4900-1c80-3ab2-dca7-daa1-96ff-e659.ngrok-free.app/api/auth/createrazorpayorderadv";
+        const url = "http://localhost:5000/api/auth/createrazorpayorderadv";
         setloading(true);
         const response = await fetch(url, {
           method: "POST",
@@ -110,8 +108,7 @@ const PaymentDialog = ({ open, onClose, data, onUpdate }) => {
               section: data.section,
             };
 
-            const url =
-              "https://5817-2401-4900-1c80-3ab2-dca7-daa1-96ff-e659.ngrok-free.app/api/auth/verifyrazorpayorderadv";
+            const url = "http://localhost:5000/api/auth/verifyrazorpayorderadv";
             setloading(true);
             const responsepayment = await fetch(url, {
               method: "POST",
@@ -166,8 +163,7 @@ const PaymentDialog = ({ open, onClose, data, onUpdate }) => {
           }, 500);
 
           if (!response.razorpay_payment_id || !response.razorpay_signature) {
-            const url =
-              "https://5817-2401-4900-1c80-3ab2-dca7-daa1-96ff-e659.ngrok-free.app/api/auth/failedadvpayment";
+            const url = "http://localhost:5000/api/auth/failedadvpayment";
             const response = await fetch(url, {
               method: "POST",
               headers: {

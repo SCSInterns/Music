@@ -9,6 +9,6 @@ router.post('/generateeventdescwithai', authenticate.authenticatetoken, event.ge
 router.post('/createvenuedetails', authenticate.authenticatetoken, Eventlocationc.createVenueDetails)
 router.post('/getvenuedetails', authenticate.authenticatetoken, Eventlocationc.getVenueDetails)
 router.post('/createseatlayout', authenticate.authenticatetoken, SeatC.validateCreateLayout, SeatC.createlayout)
-router.post('getseatlayout', authenticate.authenticatetoken, SeatC.getseatlayout)
+router.post('/getseatlayout', authenticate.authenticatetoken, SeatC.getseatlayout)
 
 module.exports = router;

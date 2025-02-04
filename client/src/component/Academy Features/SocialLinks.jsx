@@ -66,8 +66,7 @@ function SocialLinks() {
       mail: links.mail,
     };
 
-    const url =
-      "https://5817-2401-4900-1c80-3ab2-dca7-daa1-96ff-e659.ngrok-free.app/api/auth/savesociallink";
+    const url = "http://localhost:5000/api/auth/savesociallink";
     const token = Token();
     try {
       const response = await fetch(url, {

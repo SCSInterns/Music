@@ -10,9 +10,11 @@ import {
   InputLabel,
   Select,
   MenuItem,
+  Button,
 } from "@mui/material";
 import { Armchair } from "lucide-react";
 import Token from "../../../../Token/Token";
+import { toast } from "react-toastify";
 
 const SeatForm = () => {
   const [formData, setFormData] = useState({
@@ -69,8 +71,9 @@ const SeatForm = () => {
         "Content-Type": "application/json",
         Authorization: `${token}`,
       },
-      body: {
+      body: JSON.stringify({
         academyid: sessionStorage.getItem("academyid"),
+        role: sessionStorage.getItem("role"),
         noofrows: formData.noofrows,
         noofpartition: formData.noofpartition,
         seatsPerPartition: seatsPerPartition,
@@ -79,9 +82,26 @@ const SeatForm = () => {
         eventid: "123",
         planname: "Default",
         priceperseat: 100,
-      },
+        venueid: "123",
+      }),
     });
+
+    const data = await response.json();
+    const message = await data.message;
+    if (response.ok) {
+      toast.success(message);
+      formData.noofrows = "";
+      formData.noofpartition = "";
+      setSeatsPerPartition([]);
+      setMaxSeatsPerPartition([]);
+      setorder("Ascending");
+    } else {
+      toast.error(message);
+    }
   };
+
+  console.log(seatsPerPartition);
+  console.log(maxSeatsPerPartition);
 
   return (
     <Container maxWidth="md" className="my-5">
@@ -217,7 +237,8 @@ const SeatForm = () => {
 
           {/* Seat Layout Preview */}
           <Grid container spacing={2} direction="column" sx={{ mt: 3, ml: 4 }}>
-            <div className="flex justify-center">
+            <div className="flex flex-col items-center justify-center">
+              <p>All eyes this way</p>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 100 50"
@@ -284,7 +305,6 @@ const SeatForm = () => {
                             style={{
                               color: "#4caf50",
                               cursor: "pointer",
-                              margin: "2px",
                               width: "18px",
                               height: "18px",
                             }}
@@ -299,6 +319,19 @@ const SeatForm = () => {
           </Grid>
         </Paper>
       )}
+
+      <Button
+        variant="contained"
+        onClick={() => {
+          handlesubmit();
+        }}
+        sx={{ float: "right", my: 2 }}
+        disabled={
+          seatsPerPartition.length === 0 && maxSeatsPerPartition.length === 0
+        }
+      >
+        Submit
+      </Button>
     </Container>
   );
 };

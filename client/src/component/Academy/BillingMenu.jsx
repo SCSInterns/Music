@@ -10,7 +10,7 @@ const TopNavbar = ({ academyid, info }) => {
 
   const fetchadmindetailsbyid = async (id) => {
     try {
-      const url = `https://5817-2401-4900-1c80-3ab2-dca7-daa1-96ff-e659.ngrok-free.app/api/superadmin/detailsofadminbyacademyid/${id}`;
+      const url = `http://localhost:5000/api/superadmin/detailsofadminbyacademyid/${id}`;
       const token = Token();
       const response = await fetch(url, {
         method: "GET",

@@ -90,8 +90,7 @@ function AccountPaymentBox({ record, onChange, close }) {
     if (paymentdate === "") {
       setpaymentdate(dateOptions[0]);
     }
-    const url =
-      "https://5817-2401-4900-1c80-3ab2-dca7-daa1-96ff-e659.ngrok-free.app/api/auth/addadvanceamount";
+    const url = "http://localhost:5000/api/auth/addadvanceamount";
     const response = await fetch(url, {
       method: "POST",
       headers: {

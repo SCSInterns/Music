@@ -20,7 +20,7 @@ const SeatSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    seatsorientation:
+    seatingorientation:
     {
         type: String,
         required: true
@@ -37,12 +37,12 @@ const SeatSchema = new mongoose.Schema({
     },
     seatsPerPartition:
     {
-        type: Number,
+        type: Array,
         required: true
     },
     maxSeatsPerPartition:
     {
-        type: Number,
+        type: Array,
         required: true
     },
     totalnoofseats:
@@ -53,6 +53,11 @@ const SeatSchema = new mongoose.Schema({
     seatbooked:
     {
         type: Number
+    },
+    venueid:
+    {
+        type: String,
+        required: true
     }
 })
 

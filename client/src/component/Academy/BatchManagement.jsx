@@ -49,8 +49,7 @@ function BatchManagement() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const url =
-      "https://5817-2401-4900-1c80-3ab2-dca7-daa1-96ff-e659.ngrok-free.app/api/auth/addbatchesinfo";
+    const url = "http://localhost:5000/api/auth/addbatchesinfo";
     const token = Token();
     const response = await fetch(url, {
       method: "POST",

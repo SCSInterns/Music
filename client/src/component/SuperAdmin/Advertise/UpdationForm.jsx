@@ -73,8 +73,7 @@ const UpdateAdvertiseDialog = ({ open, initialData, onClose, onUpdate }) => {
     e.preventDefault();
 
     try {
-      const url =
-        "https://5817-2401-4900-1c80-3ab2-dca7-daa1-96ff-e659.ngrok-free.app/api/auth/updateentry";
+      const url = "http://localhost:5000/api/auth/updateentry";
       const response = await fetch(url, {
         method: "POST",
         headers: {

@@ -44,7 +44,7 @@ const PaymentBox = ({ admin }) => {
 
     const formateddate = convertDateFormat(paymentdate);
 
-    const url = `https://5817-2401-4900-1c80-3ab2-dca7-daa1-96ff-e659.ngrok-free.app/api/auth/handlemanualsubspayment`;
+    const url = `http://localhost:5000/api/auth/handlemanualsubspayment`;
 
     let token = Token();
     try {

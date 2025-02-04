@@ -23,8 +23,7 @@ export default function Footer() {
   }
 
   const getlogo = async () => {
-    const url =
-      "https://5817-2401-4900-1c80-3ab2-dca7-daa1-96ff-e659.ngrok-free.app/api/auth/getlogo";
+    const url = "http://localhost:5000/api/auth/getlogo";
 
     const response = await fetch(url, {
       method: "POST",
@@ -43,8 +42,7 @@ export default function Footer() {
   };
 
   const getacademydetails = async () => {
-    const url =
-      "https://5817-2401-4900-1c80-3ab2-dca7-daa1-96ff-e659.ngrok-free.app/api/auth/getacademydetails";
+    const url = "http://localhost:5000/api/auth/getacademydetails";
 
     const response = await fetch(url, {
       method: "POST",
@@ -64,8 +62,7 @@ export default function Footer() {
   };
 
   const getsociallinks = async () => {
-    const url =
-      "https://5817-2401-4900-1c80-3ab2-dca7-daa1-96ff-e659.ngrok-free.app/api/auth/getsociallinks";
+    const url = "http://localhost:5000/api/auth/getsociallinks";
 
     const response = await fetch(url, {
       method: "POST",

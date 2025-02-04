@@ -85,8 +85,7 @@ function ApplicantsTable({ users, handleapplicantslist }) {
   console.log(paymentstatsdetails);
 
   const paymentstats = async (studentid) => {
-    const url =
-      "https://5817-2401-4900-1c80-3ab2-dca7-daa1-96ff-e659.ngrok-free.app/api/auth/fetchparticularaccount";
+    const url = "http://localhost:5000/api/auth/fetchparticularaccount";
 
     const token = Token();
     const response = await fetch(url, {
@@ -109,8 +108,7 @@ function ApplicantsTable({ users, handleapplicantslist }) {
 
   const batchdetails = async (id) => {
     console.log("Student Id :", id);
-    const url =
-      "https://5817-2401-4900-1c80-3ab2-dca7-daa1-96ff-e659.ngrok-free.app/api/auth/getbatchdetail";
+    const url = "http://localhost:5000/api/auth/getbatchdetail";
     const token = Token();
     const response = await fetch(url, {
       method: "POST",
@@ -130,8 +128,7 @@ function ApplicantsTable({ users, handleapplicantslist }) {
   };
 
   const handleattendancerecord = async () => {
-    const url =
-      "https://5817-2401-4900-1c80-3ab2-dca7-daa1-96ff-e659.ngrok-free.app/api/auth/getrecords";
+    const url = "http://localhost:5000/api/auth/getrecords";
     const token = Token();
     const response = await fetch(url, {
       method: "POST",
@@ -160,7 +157,7 @@ function ApplicantsTable({ users, handleapplicantslist }) {
   }, [data && batchdata]);
 
   const handlePreview = async (id) => {
-    const url = `https://5817-2401-4900-1c80-3ab2-dca7-daa1-96ff-e659.ngrok-free.app/api/auth/getdatabyid/${id}`;
+    const url = `http://localhost:5000/api/auth/getdatabyid/${id}`;
     let token = Token();
     let role = sessionStorage.getItem("role");
 

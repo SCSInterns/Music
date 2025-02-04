@@ -11,8 +11,7 @@ function Detailview() {
   const eventId = id;
 
   const knowmoredetails = async (eventId) => {
-    const url =
-      "https://5817-2401-4900-1c80-3ab2-dca7-daa1-96ff-e659.ngrok-free.app/api/auth/knowmoredetails";
+    const url = "http://localhost:5000/api/auth/knowmoredetails";
     const response = await fetch(url, {
       method: "POST",
       headers: {
