@@ -16,7 +16,9 @@ const initialState = {
     venueState: "",
     pincode: "",
     mapLink: "",
+    venueid: "",
   },
+  venueid: "",
 };
 
 const eventSlice = createSlice({

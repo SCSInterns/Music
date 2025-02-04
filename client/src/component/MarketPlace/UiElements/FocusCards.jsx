@@ -18,7 +18,11 @@ export const Card = React.memo(({ card, index, hovered, setHovered }) => (
         </div>
 
         <img
-          src={card.bannerlink}
+          src={
+            card.bannerlink
+              ? card.bannerlink
+              : "https://i.pinimg.com/736x/52/43/b2/5243b20d5fa0fc0c53470f7061c94459.jpg"
+          }
           alt={card.title}
           fill
           className="object-cover absolute inset-0"
@@ -30,12 +34,12 @@ export const Card = React.memo(({ card, index, hovered, setHovered }) => (
           )}
         >
           <div className="space-x-5">
-            <div className="text-xl md:text-2xl font-medium bg-clip-text text-transparent bg-gradient-to-b from-neutral-50 to-neutral-200">
-              {card.academyname}
+            <div className="text-xl md:text-2xl font-medium bg-clip-text text-transparent bg-gradient-to-b from-neutral-50 to-neutral-200 line-clamp-1  relative !float-right left-0 ">
+              {card.academyname ? card.academyname : card.academy_name}
             </div>
 
-            <div className="mt-2 text-l md:text-xl font-small block bg-clip-text text-transparent bg-gradient-to-b from-neutral-50 to-neutral-200 float-right right-0">
-              {card.academycity}
+            <div className="mt-2 text-l md:text-xl font-small block bg-clip-text text-transparent bg-gradient-to-b from-neutral-50 to-neutral-200 absolute !float-right right-1 bottom-1">
+              {card.academycity ? card.academycity : card.academy_city}
             </div>
           </div>
         </div>
@@ -48,12 +52,13 @@ Card.displayName = "Card";
 
 export function FocusCards({ cards }) {
   const [hovered, setHovered] = useState(null);
+  console.log(cards);
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-10 max-w-5xl mx-auto md:px-8 w-full">
       {cards.map((card, index) => (
         <Card
-          key={card.academyname}
+          key={card.academyname ? card.academyname : card.academy_name}
           card={card}
           index={index}
           hovered={hovered}

@@ -1,8 +1,9 @@
 const dotenv = require("dotenv");
 dotenv.config();
 const Location = require("../models/EventLocations")
-
+const PaymentCreds = require("./RazorPayAcademyCred")
 const { GoogleGenerativeAI } = require("@google/generative-ai");
+const EventPaymentCreds = require("../models/EventPaymentCreds");
 
 const token = process.env.googleapi;
 
@@ -94,8 +95,7 @@ const getVenueDetails = async (req, res) => {
     }
 }
 
-// create event details   
-
+// create event details -- to do 
 const createEventDetails = async (req, res) => {
 
     try {
@@ -111,4 +111,47 @@ const createEventDetails = async (req, res) => {
 
 }
 
-module.exports = { generateAIDescription, createVenueDetails, getVenueDetails };
+const eventcreds = async (razorpaykey, razorpayid, qrcodeurl, academyid, eventid, type) => {
+    if (type === "both" || type === "razorpay") {
+        const ekey = PaymentCreds.encrypt(razorpaykey)
+
+        const eid = PaymentCreds.encrypt(razorpayid)
+
+        if (type === "razorpay") {
+            const newcreds = new EventPaymentCreds({
+                eventId: eventid,
+                razorpayId: eid,
+                razorpayKey: ekey,
+                qrcode: "none",
+                type: "razorpay",
+                academyId: academyid,
+            })
+            await newcreds.save()
+            return newcreds
+        } else {
+            const newcreds = new EventPaymentCreds({
+                eventId: eventid,
+                razorpayId: eid,
+                razorpayKey: ekey,
+                qrcode: qrcodeurl,
+                type: "both",
+                academyId: academyid,
+            })
+            await newcreds.save()
+            return newcreds
+        }
+    } else {
+        const newcreds = new EventPaymentCreds({
+            eventId: eventid,
+            razorpayId: "none",
+            razorpayKey: "none",
+            qrcode: qrcodeurl,
+            type: "manual",
+            academyId: academyid,
+        })
+        await newcreds.save()
+        return newcreds
+    }
+}
+
+module.exports = { generateAIDescription, createVenueDetails, getVenueDetails, eventcreds };

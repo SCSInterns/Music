@@ -162,6 +162,30 @@ const retriveid = async (req, res) => {
     }
 }
 
+const retriveacademycred = async (req, res) => {
+    try {
+
+        const { academyname } = req.body
+        const creds = await Cred.findOne({ academyname: academyname })
+
+        if (creds) {
+            const id = decrypt(creds.razorpay_id)
+            const key = decrypt(creds.razorpay_key)
+            const arr = {
+                key: key,
+                id: id
+            }
+            return res.status(200).json(arr)
+        } else {
+            return res.status(404).json({ msg: "Credentials Not Found " })
+        }
+
+    } catch (error) {
+        return res.status(500).json({ msg: "Internal Server Error" })
+    }
+}
+
+
 const retrivemail = async (req, res) => {
     try {
         const { academyname } = req.body
@@ -204,4 +228,4 @@ function decrypt(text) {
 }
 
 
-module.exports = { storecred, retrivecred, retriveid, storemailcred, retrivemailcred, retrivemail }
+module.exports = { storecred, retrivecred, retriveid, storemailcred, retrivemailcred, retrivemail, retriveacademycred, encrypt, decrypt }

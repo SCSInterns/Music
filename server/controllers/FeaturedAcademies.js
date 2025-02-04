@@ -18,8 +18,18 @@ const featuredAcademies = async (req, res) => {
         if (advertise.length === 0) {
 
             if (musicacademiesdefault.length > 6) {
-                musicacademiesdefault.splice(0, 6)
-                return res.status(200).json(musicacademiesdefault)
+                const uniqueAcademies = [];
+                const academyNames = new Set();
+
+                for (const academy of musicacademiesdefault) {
+                    if (!academyNames.has(academy.academy_name)) {
+                        academyNames.add(academy.academy_name);
+                        uniqueAcademies.push(academy);
+                    }
+                    if (uniqueAcademies.length === 6) break;
+                }
+
+                return res.status(200).json(uniqueAcademies);
             }
         }
 

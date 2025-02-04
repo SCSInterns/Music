@@ -23,5 +23,6 @@ router.post('/createrazorpayorder', authenticate.authenticatetoken, RazorPayOrde
 router.post('/verifyrazorpayorder', authenticate.authenticatetoken, RazorPayOrder.verifypayment)
 router.post('/failedpayment', authenticate.authenticatetoken, RazorPayOrder.rejectpayment)
 router.post('/getrazorpayid', authenticate.authenticatetoken, RazorPayCred.retriveid)
+router.post('/getacademyrazorpaycreds', authenticate.authenticatetoken, RazorPayCred.retriveacademycred)
 
 module.exports = router

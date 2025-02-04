@@ -59,6 +59,9 @@ export function FocusCardsDemo() {
     if (response.ok) {
       let data = await response.json();
       data = data.filter((item) => item !== null);
+      if (data.length > 6) {
+        data = data.slice(0, 5);
+      }
       setfilteracademy(data);
     }
   };

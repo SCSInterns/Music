@@ -184,7 +184,7 @@ function CreateTickets() {
                 }}
               >
                 <Typography
-                  className="text-sm my-4"
+                  className="text-sm !my-6"
                   align="center"
                   gutterBottom
                 >
@@ -256,7 +256,7 @@ function CreateTickets() {
                                   ] || ""
                                 }
                                 inputProps={{ min: 0, readOnly: true }}
-                                sx={{ width: "100%" }}
+                                sx={{ width: "30%" }}
                               />
                             </Grid>
                           ))}

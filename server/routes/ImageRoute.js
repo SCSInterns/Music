@@ -1,12 +1,13 @@
 const express = require('express');
 const multer = require('multer');
 const authenicate = require('../controllers/Authenticate')
-const { storage, Gallerystorage, EventStorage, AboutStorage, InstrumentStorage, MentorsStorage, BannersStorage, QrStorage, AdvertiseStorage, MarketingBannerStorage } = require('../controllers/ImageController');
+const { storage, Gallerystorage, EventStorage, AboutStorage, InstrumentStorage, MentorsStorage, BannersStorage, QrStorage, AdvertiseStorage, MarketingBannerStorage, EventQrStorage } = require('../controllers/ImageController');
 const gallery = require('../controllers/GalleryController')
 const instrument = require('../controllers/Instrumentc')
 const router = express.Router();
 const AdvertiseApplication = require('../models/AdvertiseApplication');
 const MarketingBanners = require('../models/MarketingBanners');
+const { eventcreds } = require('../controllers/EventCreation');
 
 // Multer middleware to handle file upload
 const upload = multer({ storage });
@@ -28,6 +29,8 @@ const qrUpload = multer({ storage: QrStorage })
 const advertiseUpload = multer({ storage: AdvertiseStorage })
 
 const marketingbannersupload = multer({ storage: MarketingBannerStorage })
+
+const eventQrUpload = multer({ storage: EventQrStorage })
 
 // API route to upload an image
 router.post('/uploadlogo', upload.fields([{ name: 'logo', maxCount: 1 }]), async (req, res) => {
@@ -158,8 +161,64 @@ router.get("/getmarketingbanners", async (req, res) => {
     } catch (error) {
         return res.status(500).json({ error: "Internal Server Error", error });
     }
-
 })
+router.post(
+    "/uploadeventcreds",
+    authenicate.authenticatetoken,
+    async (req, res) => {
+        try {
+            if (req.body.type === "Both" || req.body.type === "Manual") {
+                eventQrUpload.single("picture")(req, res, async (err) => {
+                    if (err) {
+                        return res
+                            .status(400)
+                            .json({ error: "Image upload failed", details: err });
+                    }
+
+                    if (!req.file) {
+                        return res.status(400).json({ error: "QR Code image is required" });
+                    }
+
+                    // Insertion of creds
+                    try {
+                        await eventcreds(
+                            req.body.type === "Both" ? req.body.razorpaykey : "N/A",
+                            req.body.type === "Both" ? req.body.razorpayid : "N/A",
+                            req.file.path,
+                            req.body.academyId,
+                            req.body.eventId,
+                            req.body.type
+                        );
+
+                        return res.json({ message: "Creds Saved successfully" });
+                    } catch (dbError) {
+                        return res
+                            .status(500)
+                            .json({ error: "Database Error", details: dbError });
+                    }
+                });
+            } else {
+                // Insertion of creds (without image upload)
+                await eventcreds(
+                    req.body.razorpaykey,
+                    req.body.razorpayid,
+                    "N/A",
+                    req.body.academyId,
+                    req.body.eventId,
+                    req.body.type
+                );
+
+                return res.json({ message: "Creds Saved successfully" });
+            }
+        } catch (error) {
+            return res
+                .status(500)
+                .json({ error: "Internal Server Error", details: error });
+        }
+    }
+);
+
+
 
 router.put('/uploadgallerytodb', authenicate.authenticatetoken, gallery.saveImageUrls)
 router.post('/uploadevents', authenicate.authenticatetoken, gallery.handleevents)
