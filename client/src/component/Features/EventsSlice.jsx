@@ -19,6 +19,7 @@ const initialState = {
     venueid: "",
   },
   venueid: "",
+  venuetype: "",
 };
 
 const eventSlice = createSlice({

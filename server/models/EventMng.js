@@ -23,6 +23,10 @@ const EventMngSchema = new mongoose.Schema({
     ticketid: {
         type: String
     },
+    venuetype:
+    {
+        type: String,
+    },
     eventSchedule: [
         {
             date: {

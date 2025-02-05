@@ -10,5 +10,6 @@ router.post('/createvenuedetails', authenticate.authenticatetoken, Eventlocation
 router.post('/getvenuedetails', authenticate.authenticatetoken, Eventlocationc.getVenueDetails)
 router.post('/createseatlayout', authenticate.authenticatetoken, SeatC.validateCreateLayout, SeatC.createlayout)
 router.post('/getseatlayout', authenticate.authenticatetoken, SeatC.getseatlayout)
+router.post("/createeventdetails", authenticate.authenticatetoken, event.createEventDetails)
 
 module.exports = router;

@@ -14,16 +14,31 @@ import {
   MenuItem,
   Tooltip,
   Divider,
+  Table,
+  TableHead,
+  TableBody,
+  TableRow,
+  TableCell,
+  TableContainer,
+  FormLabel,
+  RadioGroup,
+  Radio,
+  FormControlLabel,
 } from "@mui/material";
 import { Armchair } from "lucide-react";
 import { toast } from "react-toastify";
 import { Delete } from "@mui/icons-material";
 import { Plus } from "lucide-react";
+import { nextStep } from "../../../../Features/StepperSlice";
+import { useDispatch } from "react-redux";
 
 function CreateTickets() {
   const [formdata, setformdata] = useState([]);
   const [open, setopen] = useState(false);
   const [plans, setPlans] = useState([{ planName: "", pricePerSeat: "" }]);
+  const dispatch = useDispatch();
+  const [seatLayout, setSeatLayout] = useState("no");
+  const [seatlayoutpopup, setseatlayoutpopup] = useState(false);
 
   const getlayout = async () => {
     const url = "http://localhost:5000/api/auth/getseatlayout";
@@ -105,7 +120,14 @@ function CreateTickets() {
     toast.success("Plans submitted successfully!");
   };
 
-  console.log(plans);
+  const handleSeatLayoutChange = (event) => {
+    setSeatLayout(event.target.value);
+    if (event.target.value === "yes") {
+      setseatlayoutpopup(true);
+    } else {
+      setseatlayoutpopup(false);
+    }
+  };
 
   return (
     <div className="space-y-4">
@@ -170,6 +192,40 @@ function CreateTickets() {
       </Button>
 
       {open && (
+        <div>
+          <Grid container spacing={3} alignItems="center">
+            <Grid item xs={12}>
+              <FormControl component="fieldset">
+                <div className="flex space-x-5 flex-row items-center  my-3">
+                  <FormLabel component="legend">
+                    Pricig according to seat layout ? :
+                  </FormLabel>
+                  <RadioGroup
+                    aria-label="seat-layout"
+                    name="seatLayout"
+                    value={seatLayout}
+                    onChange={handleSeatLayoutChange}
+                    sx={{ display: "flex", gap: 3, flexDirection: "row" }}
+                  >
+                    <FormControlLabel
+                      value="yes"
+                      control={<Radio />}
+                      label="Yes"
+                    />
+                    <FormControlLabel
+                      value="no"
+                      control={<Radio />}
+                      label="No"
+                    />
+                  </RadioGroup>
+                </div>
+              </FormControl>
+            </Grid>
+          </Grid>
+        </div>
+      )}
+
+      {seatlayoutpopup && (
         <>
           <div className="my-10">
             {formdata.noofrows && formdata.noofpartition && (
@@ -195,109 +251,95 @@ function CreateTickets() {
                   style={{ overflowX: "auto", paddingBottom: "10px" }}
                   className="no-scrollbar"
                 >
-                  <Grid container spacing={1} ml={2}>
-                    <Grid container item spacing={2} alignItems="center">
-                      <Grid item sx={{ width: "80px" }}>
-                        <p>Row</p>
-                      </Grid>
-                      {Array.from({
-                        length: Number(formdata.noofpartition),
-                      }).map((_, partition) => (
-                        <Grid
-                          item
-                          key={partition}
-                          sx={{ textAlign: "center", flex: "1 1 0" }}
-                        >
-                          <Typography className="font-bold">
-                            Partition {partition + 1}
-                          </Typography>
-                        </Grid>
-                      ))}
-
-                      <Grid item sx={{ textAlign: "center", width: "120px" }}>
-                        <Typography className="font-bold">Plan</Typography>
-                      </Grid>
-                    </Grid>
-
-                    {Array.from({ length: Number(formdata.noofrows) }).map(
-                      (_, row) => (
-                        <Grid
-                          container
-                          item
-                          spacing={2}
-                          alignItems="center"
-                          key={row}
-                        >
-                          <Grid
-                            item
-                            sx={{ width: "80px", textAlign: "center" }}
-                          >
-                            <Typography>{row + 1}</Typography>
-                          </Grid>
-
+                  <TableContainer sx={{ mt: 2 }}>
+                    <Table>
+                      {/* Table Head */}
+                      <TableHead>
+                        <TableRow>
+                          <TableCell align="center">
+                            <Typography variant="subtitle1" fontWeight="bold">
+                              Row
+                            </Typography>
+                          </TableCell>
                           {Array.from({
                             length: Number(formdata.noofpartition),
                           }).map((_, partition) => (
-                            <Grid
-                              item
-                              key={partition}
-                              sx={{
-                                textAlign: "center",
-                                flex: "1 1 0",
-                                marginY: 2,
-                              }}
-                            >
-                              <TextField
-                                type="number"
-                                size="small"
-                                value={
-                                  formdata.seatsPerPartition[row]?.[
-                                    partition
-                                  ] || ""
-                                }
-                                inputProps={{ min: 0, readOnly: true }}
-                                sx={{ width: "30%" }}
-                              />
-                            </Grid>
+                            <TableCell key={partition} align="center">
+                              <Typography variant="subtitle1" fontWeight="bold">
+                                Partition {partition + 1}
+                              </Typography>
+                            </TableCell>
                           ))}
+                          <TableCell align="center">
+                            <Typography variant="subtitle1" fontWeight="bold">
+                              Plan
+                            </Typography>
+                          </TableCell>
+                        </TableRow>
+                      </TableHead>
 
-                          <Grid
-                            item
-                            sx={{
-                              textAlign: "center",
-                              width: "120px",
-                            }}
-                          >
-                            <FormControl fullWidth>
-                              <InputLabel id="venue-label">
-                                Select Plan
-                              </InputLabel>
-                              <Select
-                                value={
-                                  formdata.plansPerRow[row]?.planName || ""
-                                }
-                                onChange={(e) => {
-                                  const selectedPlan = plans.find(
-                                    (plan) => plan.planName === e.target.value
-                                  );
-                                  handlePlanChange(row, selectedPlan);
-                                }}
-                              >
-                                {plans.map((plan) => (
-                                  <MenuItem
-                                    key={plan.pricePerSeat}
-                                    value={plan.planName}
+                      {/* Table Body */}
+                      <TableBody>
+                        {Array.from({ length: Number(formdata.noofrows) }).map(
+                          (_, row) => (
+                            <TableRow key={row}>
+                              {/* Row Number */}
+                              <TableCell align="center">
+                                <Typography>{row + 1}</Typography>
+                              </TableCell>
+
+                              {/* Partitions */}
+                              {Array.from({
+                                length: Number(formdata.noofpartition),
+                              }).map((_, partition) => (
+                                <TableCell key={partition} align="center">
+                                  <TextField
+                                    type="number"
+                                    size="small"
+                                    value={
+                                      formdata.seatsPerPartition[row]?.[
+                                        partition
+                                      ] || ""
+                                    }
+                                    inputProps={{ min: 0, readOnly: true }}
+                                    sx={{ width: "60px" }}
+                                  />
+                                </TableCell>
+                              ))}
+
+                              {/* Plan Selection */}
+                              <TableCell align="center" width={"50% "}>
+                                <FormControl fullWidth>
+                                  <InputLabel>Select Plan</InputLabel>
+                                  <Select
+                                    value={
+                                      formdata.plansPerRow[row]?.planName || ""
+                                    }
+                                    onChange={(e) => {
+                                      const selectedPlan = plans.find(
+                                        (plan) =>
+                                          plan.planName === e.target.value
+                                      );
+                                      handlePlanChange(row, selectedPlan);
+                                    }}
                                   >
-                                    {plan.planName} (₹{plan.pricePerSeat})
-                                  </MenuItem>
-                                ))}
-                              </Select>
-                            </FormControl>
-                          </Grid>
-                        </Grid>
-                      )
-                    )}
-                  </Grid>
+                                    {plans.map((plan) => (
+                                      <MenuItem
+                                        key={plan.pricePerSeat}
+                                        value={plan.planName}
+                                      >
+                                        {plan.planName} (₹{plan.pricePerSeat})
+                                      </MenuItem>
+                                    ))}
+                                  </Select>
+                                </FormControl>
+                              </TableCell>
+                            </TableRow>
+                          )
+                        )}
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
                 </div>
               </Paper>
             )}

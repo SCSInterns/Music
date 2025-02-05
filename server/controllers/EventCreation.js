@@ -4,6 +4,7 @@ const Location = require("../models/EventLocations")
 const PaymentCreds = require("./RazorPayAcademyCred")
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 const EventPaymentCreds = require("../models/EventPaymentCreds");
+const Event = require("../models/EventMng");
 
 const token = process.env.googleapi;
 
@@ -95,15 +96,45 @@ const getVenueDetails = async (req, res) => {
     }
 }
 
+
+// time conversion 
+function convertToIST(utcDateString) {
+    const date = new Date(utcDateString);
+    const options = { timeZone: "Asia/Kolkata", hour12: false, hour: "2-digit", minute: "2-digit" };
+    return date.toLocaleTimeString("en-IN", options);
+}
+
 // create event details -- to do 
 const createEventDetails = async (req, res) => {
-
     try {
+        const { eventName, venueid, eventDates, startTime, endTime, occurrence, eventCategory, role, venuetype } = req.body
 
-        const { eventName, venue, eventDates, time, occurrence, highlights, audience, registration, attendance, role } = req.body
+        if (role !== "Admin") {
+            return res.status(401).json({ error: "Unauthorized access" });
+        }
 
+        const formatteddate = eventDates[0].split("-").reverse().join("-")
+        const formattedstarttime = convertToIST(startTime)
+        const formattedendtime = convertToIST(endTime)
 
+        const newapplication = new Event({
+            eventname: eventName,
+            eventcategory: eventCategory,
+            occurancetype: occurrence,
+            eventdescription: "N/A",
+            seatlayoutid: "N/A",
+            ticketid: "N/A",
+            venuetype: venuetype,
+            eventSchedule: [{ date: formatteddate, startTime: formattedstarttime, endTime: formattedendtime, venueid: venueid }]
 
+        })
+        const response = await newapplication.save();
+        if (response) {
+            return res.status(201).json(response);
+        }
+        else {
+            return res.status(500).json({ error: "Error in creating event" });
+        }
 
     } catch (error) {
         return res.status(500).json({ error: error.message });
@@ -112,12 +143,12 @@ const createEventDetails = async (req, res) => {
 }
 
 const eventcreds = async (razorpaykey, razorpayid, qrcodeurl, academyid, eventid, type) => {
-    if (type === "both" || type === "razorpay") {
+    if (type === "Both" || type === "Razorpay") {
         const ekey = PaymentCreds.encrypt(razorpaykey)
 
         const eid = PaymentCreds.encrypt(razorpayid)
 
-        if (type === "razorpay") {
+        if (type === "Razorpay") {
             const newcreds = new EventPaymentCreds({
                 eventId: eventid,
                 razorpayId: eid,
@@ -154,4 +185,4 @@ const eventcreds = async (razorpaykey, razorpayid, qrcodeurl, academyid, eventid
     }
 }
 
-module.exports = { generateAIDescription, createVenueDetails, getVenueDetails, eventcreds };
+module.exports = { generateAIDescription, createVenueDetails, getVenueDetails, eventcreds, createEventDetails };

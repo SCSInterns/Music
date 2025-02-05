@@ -162,63 +162,17 @@ router.get("/getmarketingbanners", async (req, res) => {
         return res.status(500).json({ error: "Internal Server Error", error });
     }
 })
-router.post(
-    "/uploadeventcreds",
-    authenicate.authenticatetoken,
-    async (req, res) => {
-        try {
-            if (req.body.type === "Both" || req.body.type === "Manual") {
-                eventQrUpload.single("picture")(req, res, async (err) => {
-                    if (err) {
-                        return res
-                            .status(400)
-                            .json({ error: "Image upload failed", details: err });
-                    }
 
-                    if (!req.file) {
-                        return res.status(400).json({ error: "QR Code image is required" });
-                    }
 
-                    // Insertion of creds
-                    try {
-                        await eventcreds(
-                            req.body.type === "Both" ? req.body.razorpaykey : "N/A",
-                            req.body.type === "Both" ? req.body.razorpayid : "N/A",
-                            req.file.path,
-                            req.body.academyId,
-                            req.body.eventId,
-                            req.body.type
-                        );
-
-                        return res.json({ message: "Creds Saved successfully" });
-                    } catch (dbError) {
-                        return res
-                            .status(500)
-                            .json({ error: "Database Error", details: dbError });
-                    }
-                });
-            } else {
-                // Insertion of creds (without image upload)
-                await eventcreds(
-                    req.body.razorpaykey,
-                    req.body.razorpayid,
-                    "N/A",
-                    req.body.academyId,
-                    req.body.eventId,
-                    req.body.type
-                );
-
-                return res.json({ message: "Creds Saved successfully" });
-            }
-        } catch (error) {
-            return res
-                .status(500)
-                .json({ error: "Internal Server Error", details: error });
-        }
+router.post("/uploadeventqrcode", authenicate.authenticatetoken, eventQrUpload.single("picture"), async (req, res) => {
+    try {
+        const uploadedFile = req.file;
+        return res.json({ imageUrl: uploadedFile.path, imageId: uploadedFile.filename });
+    } catch (error) {
+        return res.status(500).json({ error: "Internal Server Error", error });
     }
-);
-
-
+}
+)
 
 router.put('/uploadgallerytodb', authenicate.authenticatetoken, gallery.saveImageUrls)
 router.post('/uploadevents', authenicate.authenticatetoken, gallery.handleevents)

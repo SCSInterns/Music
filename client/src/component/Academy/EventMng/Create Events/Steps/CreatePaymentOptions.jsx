@@ -15,6 +15,8 @@ import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import DeleteIcon from "@mui/icons-material/Delete";
 import LockIcon from "@mui/icons-material/Lock";
 import { toast } from "react-toastify";
+import { nextStep } from "../../../../Features/StepperSlice";
+import { useDispatch } from "react-redux";
 
 function CreatePaymentOptions() {
   const [credentials, setCredentials] = useState(null);
@@ -25,6 +27,8 @@ function CreatePaymentOptions() {
   const [qrPreview, setQrPreview] = useState(null);
   const [editMode, setEditMode] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [url, seturl] = useState("");
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const fetchCredentials = async () => {
@@ -65,6 +69,8 @@ function CreatePaymentOptions() {
     }
   };
 
+  // https://res.cloudinary.com/dipnrfd3h/image/upload/v1738735682/EventQrcode/download%20%282%29.png
+
   const toggleEdit = () => {
     setEditMode(!editMode);
   };
@@ -72,6 +78,7 @@ function CreatePaymentOptions() {
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
+
   const handleSubmit = async () => {
     const url = "http://localhost:5000/api/auth/uploadeventcreds";
     const token = Token();
@@ -97,8 +104,12 @@ function CreatePaymentOptions() {
     }
 
     data.append("academyId", sessionStorage.getItem("academyid"));
-    data.append("eventId", "123"); // Ensure correct event ID
+    data.append("eventId", "123");
     data.append("type", selectedTab);
+    // ✅ Log FormData properly
+    for (let pair of data.entries()) {
+      console.log(pair[0], pair[1]); // Logs key and value
+    }
 
     try {
       const response = await fetch(url, {
@@ -116,11 +127,31 @@ function CreatePaymentOptions() {
         setQrCode(null);
         setQrPreview(null);
         setSelectedTab("Manual");
+        dispatch(nextStep());
       } else {
         toast.error(final.error || "Failed to upload credentials.");
       }
     } catch (error) {
       toast.error("Network error. Please try again.");
+    }
+  };
+
+  const handleQrUpload = async () => {
+    const data = new FormData();
+    data.append("picture", qrCode);
+
+    const url = "http://localhost:5000/api/auth/uploadeventqrcode";
+
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        authorization: `${Token()}`,
+      },
+      body: data,
+    });
+    if (response.ok) {
+      const final = await response.json();
+      seturl(final.imageUrl);
     }
   };
 
@@ -275,6 +306,14 @@ function CreatePaymentOptions() {
                   alt="QR Code Preview"
                   className="mt-4 w-48 h-48 mx-auto border border-gray-300 rounded-md"
                 />
+                <Button
+                  variant="contained"
+                  sx={{ mt: 3, mb: 3 }}
+                  onClick={handleQrUpload}
+                >
+                  {" "}
+                  Uplaod{" "}
+                </Button>
               </>
             )}
           </div>

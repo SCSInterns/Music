@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setVenues } from "../../../../Features/VenuesSlice";
+import { nextStep } from "../../../../Features/StepperSlice";
 import { updateFormData } from "../../../../Features/EventsSlice";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -27,6 +28,8 @@ import { TimePicker } from "@mui/x-date-pickers";
 import Token from "../../../../Token/Token";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
+import { toast } from "react-toastify";
+import "dayjs/locale/en-in";
 
 function EventForm() {
   const dispatch = useDispatch();
@@ -42,11 +45,15 @@ function EventForm() {
       dispatch(updateFormData({ [name]: checked }));
     } else if (type === "radio" || type === "text" || type === "textarea") {
       dispatch(updateFormData({ [name]: value }));
-    } else if ((name = "form-venue")) {
+    } else if (name === "form-venue") {
+      dispatch(updateFormData({ ["venueid"]: value }));
+    } else if (name === "venuetype") {
+      dispatch(updateFormData({ [name]: value }));
     }
   };
 
   console.log(currentVenues);
+  console.log(formData);
 
   const categories = [
     "WorkShops",
@@ -57,6 +64,8 @@ function EventForm() {
     "Exhibitions",
     "Others",
   ];
+
+  const Venues = ["Ground", "Party Plot", "Stadium", "Theatre", "Auditorium"];
 
   const handleCategoryChange = (e) => {
     const { value } = e.target;
@@ -81,7 +90,7 @@ function EventForm() {
     dispatch(updateFormData({ eventDates: updatedDates }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const formattedData = {
       ...formData,
@@ -93,8 +102,26 @@ function EventForm() {
             },
           }
         : formData.times,
+      role: sessionStorage.getItem("role"),
     };
     console.log("Submitted Data:", formattedData);
+    const url = "http://localhost:5000/api/auth/createeventdetails";
+
+    const CreateEvent = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `${token}`,
+      },
+      body: JSON.stringify(formattedData),
+    });
+
+    if (CreateEvent.ok) {
+      toast.success("Application Proceeded");
+      dispatch(nextStep());
+    } else {
+      toast.error("Error saving Application");
+    }
   };
 
   const handleaigeneration = async () => {
@@ -156,6 +183,27 @@ function EventForm() {
                     onChange={handleCategoryChange}
                   >
                     {categories.map((category) => (
+                      <MenuItem key={category} value={category}>
+                        {category}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Grid>
+            </Grid>
+
+            <Grid container spacing={2}>
+              {/* Event Venue Type  Dropdown */}
+              <Grid item xs={12} my={2}>
+                <FormControl fullWidth>
+                  <InputLabel id="category-label">Event Venue Type</InputLabel>
+                  <Select
+                    labelId="category-label"
+                    value={formData.venuetype}
+                    onChange={handleInputChange}
+                    name="venuetype"
+                  >
+                    {Venues.map((category) => (
                       <MenuItem key={category} value={category}>
                         {category}
                       </MenuItem>
@@ -254,37 +302,20 @@ function EventForm() {
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <Grid container spacing={3} alignItems="center" wrap="nowrap">
                   <Grid item xs={3}>
-                    <DatePicker
+                    <TextField
                       label="Select Date"
-                      value={
-                        formData.eventDates[0] &&
-                        dayjs(
-                          formData.eventDates[0],
-                          "DD-MM-YYYY",
-                          true
-                        ).isValid()
-                          ? dayjs(formData.eventDates[0], "DD-MM-YYYY")
-                          : null
-                      }
-                      onChange={(date) => {
-                        const formattedDate = date
-                          ? dayjs(date).format("DD-MM-YYYY")
-                          : null;
-                        if (
-                          formattedDate &&
-                          dayjs(formattedDate, "DD-MM-YYYY", true).isValid()
-                        ) {
-                          handleDateSelect(formattedDate);
-                        } else {
-                          console.error(
-                            "Invalid date selected:",
-                            formattedDate
-                          ); // Log invalid date for debugging
-                        }
+                      type="date"
+                      value={formData.eventDates[0] || ""}
+                      onChange={(e) => {
+                        const formattedDate = e.target.value;
+                        dispatch(
+                          updateFormData({ eventDates: [formattedDate] })
+                        );
                       }}
-                      renderInput={(params) => (
-                        <TextField {...params} fullWidth />
-                      )}
+                      InputLabelProps={{
+                        shrink: true,
+                      }}
+                      fullWidth
                     />
                   </Grid>
                   <Grid item xs={3}>
@@ -316,9 +347,13 @@ function EventForm() {
             <Grid item xs={12} my={2}>
               <FormControl fullWidth>
                 <InputLabel id="venue-label">Select Venue</InputLabel>
-                <Select labelId="venue-label" name="form-venue">
+                <Select
+                  labelId="venue-label"
+                  name="form-venue"
+                  onChange={handleInputChange}
+                >
                   {currentVenues.map((venue) => (
-                    <MenuItem key={venue.id} value={venue.id}>
+                    <MenuItem key={venue._id} value={venue._id}>
                       {venue.venuename}, {venue.city} , {venue.state} -{" "}
                       {venue.pincode}
                     </MenuItem>
@@ -401,9 +436,13 @@ function EventForm() {
               <Grid item xs={12}>
                 <FormControl fullWidth>
                   <InputLabel id="venue-label">Select Venue</InputLabel>
-                  <Select labelId="venue-label" name="form-venue">
+                  <Select
+                    labelId="venue-label"
+                    name="form-venue"
+                    onChange={handleInputChange}
+                  >
                     {currentVenues.map((venue) => (
-                      <MenuItem key={venue.id} value={venue.id}>
+                      <MenuItem key={venue._id} value={venue._id}>
                         {venue.venuename}, {venue.city} , {venue.state} -{" "}
                         {venue.pincode}
                       </MenuItem>
@@ -421,9 +460,13 @@ function EventForm() {
                     <label className="mr-4"> Date : {date}</label>
                     <FormControl fullWidth>
                       <InputLabel id="venue-label">Select Venue</InputLabel>
-                      <Select labelId="venue-label" name="form-venue">
+                      <Select
+                        labelId="venue-label"
+                        name="form-venue"
+                        onChange={handleInputChange}
+                      >
                         {currentVenues.map((venue) => (
-                          <MenuItem key={venue.id} value={venue.id}>
+                          <MenuItem key={venue._id} value={venue._id}>
                             {venue.venuename}, {venue.city} , {venue.state} -{" "}
                             {venue.pincode}
                           </MenuItem>
@@ -500,7 +543,7 @@ function EventForm() {
               color="primary"
               sx={{ float: "right" }}
             >
-              Submit
+              Next
             </Button>
           </Grid>
         </Grid>
