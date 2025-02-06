@@ -21,6 +21,8 @@ import Token from "../../../../Token/Token";
 import { toast } from "react-toastify";
 import { nextStep } from "../../../../Features/StepperSlice";
 import { useDispatch, useSelector } from "react-redux";
+import DrawingCanvas from "../CreateLayout/DrwaingCanvas";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 const SeatForm = () => {
   const [formData, setFormData] = useState({
@@ -34,6 +36,16 @@ const SeatForm = () => {
   const [seatLayout, setSeatLayout] = useState("no");
   const token = Token();
   const dispatch = useDispatch();
+  const [layout, setlayout] = useState(null);
+  const [layoutpreview, setlayoutpreview] = useState(null);
+
+  const handleLayoutChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      setlayout(file);
+      setlayoutpreview(URL.createObjectURL(file));
+    }
+  };
 
   const handleSeatLayoutChange = (event) => {
     setSeatLayout(event.target.value);
@@ -48,6 +60,29 @@ const SeatForm = () => {
     if (!updatedSeats[rowIndex]) updatedSeats[rowIndex] = [];
     updatedSeats[rowIndex][partitionIndex] = value;
     setSeatsPerPartition(updatedSeats);
+  };
+
+  const handlelayoutsubmit = async (file) => {
+    const url = "http://localhost:5000/api/auth/uploadeventlayoutimage";
+
+    const formData = new FormData();
+    formData.append("picture", file);
+    // future to be dynamic
+    formData.append("eventid", "67a3561e4fce44a72a65bbc0");
+
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        Authorization: `${token}`,
+      },
+      body: formData,
+    });
+    if (response.ok) {
+      toast.success("Image Uploaded Successfully");
+      dispatch(nextStep());
+    } else {
+      toast.error(" Image Upload Failed");
+    }
   };
 
   useEffect(() => {
@@ -149,18 +184,6 @@ const SeatForm = () => {
           </Grid>
         </Grid>
       </div>
-
-      {seatLayout === "no" && (
-        <Button
-          variant="contained"
-          onClick={() => {
-            dispatch(nextStep());
-          }}
-          sx={{ float: "right", my: 2 }}
-        >
-          Next
-        </Button>
-      )}
 
       {seatLayout === "yes" && (
         <>
@@ -403,6 +426,12 @@ const SeatForm = () => {
           >
             Submit & Next
           </Button>
+        </>
+      )}
+
+      {seatLayout === "no" && (
+        <>
+          <DrawingCanvas onSubmit={handlelayoutsubmit} />
         </>
       )}
     </Container>

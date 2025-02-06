@@ -185,4 +185,36 @@ const eventcreds = async (razorpaykey, razorpayid, qrcodeurl, academyid, eventid
     }
 }
 
-module.exports = { generateAIDescription, createVenueDetails, getVenueDetails, eventcreds, createEventDetails };
+// insert pricing plans in case of event creation using layout 
+
+const insertPricingPlans = async (req, res) => {
+    try {
+        const { plans, eventid } = req.body
+        const event = await Event.findOne({ _id: eventid })
+
+        var totalseats = 0
+
+        plans.forEach(plan => {
+            totalseats += Number(plan.maxSeats)
+        })
+
+        if (event) {
+            event.plans = plans
+            event.totalSeats = totalseats
+            const response = await event.save()
+            if (response) {
+                return res.status(201).json(response)
+            } else {
+                return res.status(500).json({ error: "Error in inserting pricing plans" })
+            }
+        } else {
+            return res.status(404).json({ error: "Event not found" })
+        }
+    } catch (error) {
+        return res.status(500).json({ error: error.message })
+    }
+
+}
+
+
+module.exports = { generateAIDescription, createVenueDetails, getVenueDetails, eventcreds, createEventDetails, insertPricingPlans };

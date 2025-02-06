@@ -51,7 +51,7 @@ const BannerSlideshow = ({ data }) => {
         pagination={{ clickable: true }}
         autoplay={{ delay: 3000 }}
         loop
-        className="w-full md:h-[400px] h-[200px]"
+        className="w-full md:h-[450px] h-[200px]"
       >
         {links.length === 0
           ? Banners.map((banner) => (

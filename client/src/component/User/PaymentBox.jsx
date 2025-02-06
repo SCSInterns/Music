@@ -21,6 +21,34 @@ export default function PaymentForm({ data }) {
   const [razorid, setrazorid] = useState("");
   const rkey = razorid;
 
+  const ENCRYPTION_KEY = process.env.REACT_APP_AES_KEY;
+
+  async function decrypt(text, key) {
+    const textParts = text.split(":");
+    const iv = new Uint8Array(Buffer.from(textParts.shift(), "hex"));
+    const encryptedData = new Uint8Array(
+      Buffer.from(textParts.join(":"), "hex")
+    );
+
+    const keyBuffer = await crypto.subtle.importKey(
+      "raw",
+      new Uint8Array(Buffer.from(key, "hex")),
+      { name: "AES-CBC" },
+      false,
+      ["decrypt"]
+    );
+
+    const decryptedBuffer = await crypto.subtle.decrypt(
+      { name: "AES-CBC", iv },
+      keyBuffer,
+      encryptedData
+    );
+
+    const visible = await new TextDecoder().decode(decryptedBuffer);
+
+    return visible;
+  }
+
   const getrazorpayid = async (academyname) => {
     const url = "http://localhost:5000/api/auth/getrazorpayid";
     const response = await fetch(url, {
@@ -36,7 +64,8 @@ export default function PaymentForm({ data }) {
 
     if (response.ok) {
       const data = await response.json();
-      setrazorid(data);
+      const razorpayid = await decrypt(data, ENCRYPTION_KEY);
+      setrazorid(razorpayid);
     } else {
       toast.error("Error Fetching Creds ");
     }

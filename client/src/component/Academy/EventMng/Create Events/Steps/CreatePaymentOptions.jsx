@@ -17,6 +17,7 @@ import LockIcon from "@mui/icons-material/Lock";
 import { toast } from "react-toastify";
 import { nextStep } from "../../../../Features/StepperSlice";
 import { useDispatch } from "react-redux";
+import { Buffer } from "buffer";
 
 function CreatePaymentOptions() {
   const [credentials, setCredentials] = useState(null);
@@ -29,6 +30,34 @@ function CreatePaymentOptions() {
   const [showPassword, setShowPassword] = useState(false);
   const [url, seturl] = useState("");
   const dispatch = useDispatch();
+
+  const ENCRYPTION_KEY = process.env.REACT_APP_AES_KEY;
+
+  async function decrypt(text, key) {
+    const textParts = text.split(":");
+    const iv = new Uint8Array(Buffer.from(textParts.shift(), "hex"));
+    const encryptedData = new Uint8Array(
+      Buffer.from(textParts.join(":"), "hex")
+    );
+
+    const keyBuffer = await crypto.subtle.importKey(
+      "raw",
+      new Uint8Array(Buffer.from(key, "hex")),
+      { name: "AES-CBC" },
+      false,
+      ["decrypt"]
+    );
+
+    const decryptedBuffer = await crypto.subtle.decrypt(
+      { name: "AES-CBC", iv },
+      keyBuffer,
+      encryptedData
+    );
+
+    const visible = await new TextDecoder().decode(decryptedBuffer);
+
+    return visible;
+  }
 
   useEffect(() => {
     const fetchCredentials = async () => {
@@ -50,6 +79,8 @@ function CreatePaymentOptions() {
           throw new Error("Failed to fetch credentials");
         }
         const data = await response.json();
+        data.key = await decrypt(data.key, ENCRYPTION_KEY);
+        data.id = await decrypt(data.id, ENCRYPTION_KEY);
         setCredentials(data);
       } catch (err) {
         setError(err.message);

@@ -111,7 +111,7 @@ function AcademySubscriptionPayment() {
     }
   };
 
-  const rkey = "rzp_test_ABJbNmzawvCqjV";
+  const rkey = process.env.REACT_APP_RKEY;
 
   const handlePayment = async (orderdata) => {
     const options = {

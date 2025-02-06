@@ -149,7 +149,7 @@ const retriveid = async (req, res) => {
         const creds = await Cred.findOne({ academyname: academyname })
 
         if (creds) {
-            const id = decrypt(creds.razorpay_id)
+            const id = creds.razorpay_id
             return res.status(200).json(id)
         } else {
             return res.status(404).json({ msg: "Credentials Not Found " })
@@ -169,12 +169,16 @@ const retriveacademycred = async (req, res) => {
         const creds = await Cred.findOne({ academyname: academyname })
 
         if (creds) {
-            const id = decrypt(creds.razorpay_id)
-            const key = decrypt(creds.razorpay_key)
+            const id = creds.razorpay_id
+            const key = creds.razorpay_key
             const arr = {
                 key: key,
                 id: id
             }
+            console.log(
+                decrypt(id),
+                decrypt(key)
+            )
             return res.status(200).json(arr)
         } else {
             return res.status(404).json({ msg: "Credentials Not Found " })

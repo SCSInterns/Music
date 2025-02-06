@@ -40,6 +40,8 @@ function CreateTickets() {
   const [seatLayout, setSeatLayout] = useState("no");
   const [seatlayoutpopup, setseatlayoutpopup] = useState(false);
 
+  console.log(plans);
+
   const getlayout = async () => {
     const url = "http://localhost:5000/api/auth/getseatlayout";
 
@@ -126,6 +128,29 @@ function CreateTickets() {
       setseatlayoutpopup(true);
     } else {
       setseatlayoutpopup(false);
+    }
+  };
+
+  const handleplansubmit = async () => {
+    const url = "http://localhost:5000/api/auth/insertpricingplans";
+
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `${Token()}`,
+      },
+      body: JSON.stringify({
+        eventid: "67a3561e4fce44a72a65bbc0",
+        plans: plans,
+      }),
+    });
+
+    if (response.ok) {
+      toast.success("Plans added successfully!");
+      dispatch(nextStep());
+    } else {
+      toast.error("Error adding plans!");
     }
   };
 
@@ -463,6 +488,58 @@ function CreateTickets() {
                 </div>
               ))}
           </Grid>
+        </>
+      )}
+
+      {seatlayoutpopup === false && open && (
+        <>
+          <div className=" p-6 rounded-lg">
+            <h2 className="text-xl font-semibold text-gray-800 mb-4">
+              Seat Limit Set
+            </h2>
+
+            <h4 className="text-red-500">
+              Note : Pls add the same plan name that was used in canvas layout
+              creation .
+            </h4>
+
+            {plans.map((plan, index) => (
+              <div
+                key={index}
+                className="flex items-center  justify-evenly p-4 rounded-md shadow-sm mb-3"
+              >
+                <p className="text-md w-1/4 font-medium text-gray-700">
+                  {plan.planName}
+                </p>
+
+                <input
+                  type="number"
+                  placeholder="Max Seats"
+                  className="border flex justify-start border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 rounded-lg p-2 w-60 text-center"
+                  value={plan.maxSeats || ""}
+                  onChange={(e) => {
+                    const updatedPlans = [...plans];
+                    updatedPlans[index].maxSeats = e.target.value;
+                    updatedPlans[index].CurrentBookedSeats = 0;
+                    setPlans(updatedPlans);
+                  }}
+                  min={0}
+                />
+              </div>
+            ))}
+
+            <div className="my-10">
+              <Button
+                variant="contained"
+                sx={{ width: "200px", float: "right" }}
+                onClick={() => {
+                  handleplansubmit();
+                }}
+              >
+                Submit and Next
+              </Button>
+            </div>
+          </div>
         </>
       )}
     </div>

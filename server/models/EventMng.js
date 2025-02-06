@@ -1,9 +1,18 @@
 const mongoose = require('mongoose');
 
+const PlanSchema = new mongoose.Schema({
+    planName: { type: String, required: true },
+    pricePerSeat: { type: Number, required: true },
+    maxSeats: { type: Number, required: true },
+});
+
 const EventMngSchema = new mongoose.Schema({
     eventname: {
         type: String,
         required: true
+    },
+    banner: {
+        type: String,
     },
     eventcategory: {
         type: String,
@@ -20,6 +29,10 @@ const EventMngSchema = new mongoose.Schema({
     seatlayoutid: {
         type: [String],
     },
+    seatlayouturl:
+    {
+        type: String,
+    },
     ticketid: {
         type: String
     },
@@ -27,6 +40,11 @@ const EventMngSchema = new mongoose.Schema({
     {
         type: String,
     },
+    totalSeats:
+    {
+        type: Number,
+    },
+    plans: [PlanSchema],
     eventSchedule: [
         {
             date: {
