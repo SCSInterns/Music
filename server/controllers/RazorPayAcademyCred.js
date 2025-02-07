@@ -3,6 +3,7 @@ const crypto = require('crypto');
 const MCred = require("../models/GoogleAppCred")
 
 const aes_key = process.env.AES_KEY
+const hmac_key = process.env.HMAC_KEY
 
 // const ENCRYPTION_KEY1 = crypto.randomBytes(32).toString('hex');
 // console.log('Generated Key:', ENCRYPTION_KEY1);
@@ -175,10 +176,8 @@ const retriveacademycred = async (req, res) => {
                 key: key,
                 id: id
             }
-            console.log(
-                decrypt(id),
-                decrypt(key)
-            )
+            console.log(arr)
+            console.log(decrypt(key))
             return res.status(200).json(arr)
         } else {
             return res.status(404).json({ msg: "Credentials Not Found " })
@@ -212,23 +211,50 @@ const retrivemail = async (req, res) => {
 
 const ENCRYPTION_KEY = aes_key;
 const IV_LENGTH = 16;
+const HMAC_KEY = hmac_key;
+
+if (Buffer.from(ENCRYPTION_KEY, 'hex').length !== 32) {
+    throw new Error("Invalid ENCRYPTION_KEY length. Must be 32 bytes (64 hex characters).");
+}
+if (Buffer.from(HMAC_KEY, 'hex').length < 32) {
+    throw new Error("Invalid HMAC_KEY length. Must be at least 32 bytes.");
+}
+
 
 function encrypt(text) {
+    console.log("Encrypted text", text)
     const iv = crypto.randomBytes(IV_LENGTH);
-    const cipher = crypto.createCipheriv('aes-256-cbc', Buffer.from(ENCRYPTION_KEY, 'hex'), iv);
-    let encrypted = cipher.update(text);
+    const cipher = crypto.createCipheriv('aes-256-gcm', Buffer.from(ENCRYPTION_KEY, 'hex'), iv);
+    let encrypted = cipher.update(text, 'utf8');
     encrypted = Buffer.concat([encrypted, cipher.final()]);
-    return iv.toString('hex') + ':' + encrypted.toString('hex');
+    const tag = cipher.getAuthTag();
+    const hmac = crypto.createHmac('sha256', Buffer.from(HMAC_KEY, 'hex'))
+        .update(Buffer.concat([iv, encrypted, tag]))
+        .digest('hex');
+    return iv.toString('hex') + ':' + encrypted.toString('hex') + ':' + tag.toString('hex') + ':' + hmac;
 }
 
 function decrypt(text) {
-    const textParts = text.split(':');
-    const iv = Buffer.from(textParts.shift(), 'hex');
-    const encryptedText = Buffer.from(textParts.join(':'), 'hex');
-    const decipher = crypto.createDecipheriv('aes-256-cbc', Buffer.from(ENCRYPTION_KEY, 'hex'), iv);
+    const parts = text.split(':');
+    if (parts.length !== 4 || parts.some(p => p.length === 0)) {
+        throw new Error("Invalid encrypted format. Data may be corrupted.");
+    }
+    const iv = Buffer.from(parts[0], 'hex');
+    const encryptedText = Buffer.from(parts[1], 'hex');
+    const tag = Buffer.from(parts[2], 'hex');
+    const hmacReceived = parts[3];
+    const hmac = crypto.createHmac('sha256', Buffer.from(HMAC_KEY, 'hex'))
+        .update(Buffer.concat([iv, encryptedText, tag]))
+        .digest('hex');
+    if (hmac !== hmacReceived) {
+        throw new Error("HMAC verification failed! Data might be tampered.");
+    }
+    const decipher = crypto.createDecipheriv('aes-256-gcm', Buffer.from(ENCRYPTION_KEY, 'hex'), iv);
+    decipher.setAuthTag(tag);
     let decrypted = decipher.update(encryptedText);
     decrypted = Buffer.concat([decrypted, decipher.final()]);
-    return decrypted.toString();
+    console.log("Decrypted text", decrypted.toString('utf8'))
+    return decrypted.toString('utf8');
 }
 
 

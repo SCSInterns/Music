@@ -8,6 +8,10 @@ import {
   IconButton,
   TextField,
   InputAdornment,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
 } from "@mui/material";
 import CreateIcon from "@mui/icons-material/Create";
 import Visibility from "@mui/icons-material/Visibility";
@@ -33,30 +37,88 @@ function CreatePaymentOptions() {
 
   const ENCRYPTION_KEY = process.env.REACT_APP_AES_KEY;
 
+  // start from here - decryption pass but not same key is generated in frontend and backend
   async function decrypt(text, key) {
-    const textParts = text.split(":");
-    const iv = new Uint8Array(Buffer.from(textParts.shift(), "hex"));
-    const encryptedData = new Uint8Array(
-      Buffer.from(textParts.join(":"), "hex")
+    console.log("Frontend Encrypted Text:", text);
+
+    const parts = text.split(":");
+    if (parts.length !== 4) {
+      throw new Error("Invalid encrypted format");
+    }
+
+    const iv = new Uint8Array(Buffer.from(parts[0], "hex"));
+    const encryptedData = new Uint8Array(Buffer.from(parts[1], "hex"));
+    const tag = new Uint8Array(Buffer.from(parts[2], "hex"));
+    const hmacReceived = parts[3];
+
+    console.log("IV:", parts[0]);
+    console.log("Encrypted Data:", parts[1]);
+    console.log("Tag:", parts[2]);
+    console.log("HMAC Received:", hmacReceived);
+
+    const hmacKey = process.env.REACT_APP_HMAC_KEY;
+    if (!hmacKey) {
+      throw new Error("HMAC key is missing in .env.");
+    }
+
+    // 🔹 Convert HMAC key to Uint8Array
+    const hmacKeyBuffer = new Uint8Array(Buffer.from(hmacKey, "hex"));
+
+    // 🔹 Import HMAC key
+    const hmacKeyCrypto = await crypto.subtle.importKey(
+      "raw",
+      hmacKeyBuffer,
+      { name: "HMAC", hash: { name: "SHA-256" } },
+      false,
+      ["sign"]
     );
 
+    // 🔹 Compute HMAC
+    const hmacBuffer = new Uint8Array([...iv, ...encryptedData, ...tag]);
+    const hmacGeneratedBuffer = await crypto.subtle.sign(
+      "HMAC",
+      hmacKeyCrypto,
+      hmacBuffer
+    );
+
+    // Convert to Hex String
+    function arrayBufferToHex(buffer) {
+      return [...new Uint8Array(buffer)]
+        .map((b) => b.toString(16).padStart(2, "0"))
+        .join("");
+    }
+
+    const hmacGenerated = arrayBufferToHex(hmacGeneratedBuffer);
+    console.log("HMAC Generated:", hmacGenerated);
+
+    // 🔥 Compare HMACs
+    if (hmacGenerated !== hmacReceived) {
+      throw new Error("HMAC verification failed! Data might be tampered.");
+    }
+
+    // 🔹 Import AES Key
     const keyBuffer = await crypto.subtle.importKey(
       "raw",
       new Uint8Array(Buffer.from(key, "hex")),
-      { name: "AES-CBC" },
+      { name: "AES-GCM" },
       false,
       ["decrypt"]
     );
 
+    // 🔹 Decrypt Data
     const decryptedBuffer = await crypto.subtle.decrypt(
-      { name: "AES-CBC", iv },
+      { name: "AES-GCM", iv, tagLength: 128 },
       keyBuffer,
       encryptedData
     );
+    try {
+      const verifiedd = new TextDecoder().decode(decryptedBuffer);
+      console.log("Decrypted Data:", verifiedd);
+    } catch (error) {
+      console.error("Error while decoding decrypted data:", error);
+    }
 
-    const visible = await new TextDecoder().decode(decryptedBuffer);
-
-    return visible;
+    return new TextDecoder().decode(decryptedBuffer);
   }
 
   useEffect(() => {
@@ -79,6 +141,7 @@ function CreatePaymentOptions() {
           throw new Error("Failed to fetch credentials");
         }
         const data = await response.json();
+
         data.key = await decrypt(data.key, ENCRYPTION_KEY);
         data.id = await decrypt(data.id, ENCRYPTION_KEY);
         setCredentials(data);
@@ -204,16 +267,17 @@ function CreatePaymentOptions() {
 
   return (
     <div className="max-w-3xl mx-auto p-6 my-4 ">
-      <Tabs
-        value={selectedTab}
-        onChange={(e, newValue) => setSelectedTab(newValue)}
-        sx={{ padding: 2 }}
-      >
-        <Tab label="Manual Payment" value={"Manual"} />
-        <Tab label="Razorpay" value={"Razorpay"} />
-        <Tab label="Both" value={"Both"} />
-      </Tabs>
-
+      <FormControl fullWidth sx={{ padding: 2 }}>
+        <InputLabel>Select Payment Method</InputLabel>
+        <Select
+          value={selectedTab}
+          onChange={(e) => setSelectedTab(e.target.value)}
+        >
+          <MenuItem value="Manual">Manual Payment</MenuItem>
+          <MenuItem value="Razorpay">Razorpay</MenuItem>
+          <MenuItem value="Both">Both</MenuItem>
+        </Select>
+      </FormControl>
       <div className="mt-6">
         {selectedTab === 0 && (
           <div className="my-16 text-center">

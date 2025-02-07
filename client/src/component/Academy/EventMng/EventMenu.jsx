@@ -59,7 +59,7 @@ const TopNavbar = () => {
             </ul>
           </div>
         </nav>
-        <div className="p-5 my-5">
+        <div className="p-5 my-8">
           {menuItems.map(
             (item) =>
               activeContent === item.key && (

@@ -24,28 +24,36 @@ export default function PaymentForm({ data }) {
   const ENCRYPTION_KEY = process.env.REACT_APP_AES_KEY;
 
   async function decrypt(text, key) {
-    const textParts = text.split(":");
-    const iv = new Uint8Array(Buffer.from(textParts.shift(), "hex"));
-    const encryptedData = new Uint8Array(
-      Buffer.from(textParts.join(":"), "hex")
+    const parts = text.split(":");
+    if (parts.length !== 4) {
+      throw new Error("Invalid encrypted format");
+    }
+    const iv = new Uint8Array(Buffer.from(parts[0], "hex"));
+    const encryptedData = new Uint8Array(Buffer.from(parts[1], "hex"));
+    const tag = new Uint8Array(Buffer.from(parts[2], "hex"));
+    const hmacReceived = parts[3];
+    const hmacKey = new Uint8Array(
+      Buffer.from(process.env.REACT_APP_HMAC_KEY, "hex")
     );
-
+    const hmacBuffer = new Uint8Array([...iv, ...encryptedData, ...tag]);
+    const hmacGenerated = await crypto.subtle.digest("SHA-256", hmacBuffer);
+    const hmacHex = Buffer.from(hmacGenerated).toString("hex");
+    if (hmacHex !== hmacReceived) {
+      throw new Error("HMAC verification failed! Data might be tampered.");
+    }
     const keyBuffer = await crypto.subtle.importKey(
       "raw",
       new Uint8Array(Buffer.from(key, "hex")),
-      { name: "AES-CBC" },
+      { name: "AES-GCM" },
       false,
       ["decrypt"]
     );
-
     const decryptedBuffer = await crypto.subtle.decrypt(
-      { name: "AES-CBC", iv },
+      { name: "AES-GCM", iv, additionalData: tag, tagLength: 128 },
       keyBuffer,
       encryptedData
     );
-
-    const visible = await new TextDecoder().decode(decryptedBuffer);
-
+    const visible = new TextDecoder().decode(decryptedBuffer);
     return visible;
   }
 

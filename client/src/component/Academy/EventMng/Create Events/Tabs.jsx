@@ -11,6 +11,7 @@ import { toast } from "react-toastify";
 import CreateSeatLayout from "./Steps/CreateSeatLayout";
 import CreateTickets from "./Steps/CreateTickets";
 import CreatePaymentOptions from "./Steps/CreatePaymentOptions";
+import CreateExtraDetails from "./Steps/CreateExtraDetails";
 
 function Stepper() {
   const dispatch = useDispatch();
@@ -160,6 +161,11 @@ function Stepper() {
         {steps[currentStep] === "Payment" && (
           <div>
             <CreatePaymentOptions />
+          </div>
+        )}
+        {steps[currentStep] === "Extra Details" && (
+          <div>
+            <CreateExtraDetails />
           </div>
         )}
       </div>

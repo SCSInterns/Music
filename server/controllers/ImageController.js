@@ -143,17 +143,6 @@ const EventLayoutStorage = new CloudinaryStorage({
   },
 });
 
-const EventBannerStorage = new CloudinaryStorage({
-  cloudinary: cloudinary,
-  params: async (req, file) => {
-    return {
-      folder: 'EventBanner',
-      public_id: file.originalname.split('.')[0] || Date.now(),
-      allowed_formats: ['jpg', 'png', 'jpeg'],
-    };
-  },
-});
 
 
-
-module.exports = { cloudinary, storage, Gallerystorage, EventStorage, AboutStorage, InstrumentStorage, MentorsStorage, BannersStorage, QrStorage, AdvertiseStorage, MarketingBannerStorage, EventQrStorage, EventLayoutStorage, EventBannerStorage };
+module.exports = { cloudinary, storage, Gallerystorage, EventStorage, AboutStorage, InstrumentStorage, MentorsStorage, BannersStorage, QrStorage, AdvertiseStorage, MarketingBannerStorage, EventQrStorage, EventLayoutStorage };

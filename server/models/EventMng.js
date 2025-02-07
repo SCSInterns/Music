@@ -1,10 +1,31 @@
 const mongoose = require('mongoose');
 
 const PlanSchema = new mongoose.Schema({
-    planName: { type: String, required: true },
-    pricePerSeat: { type: Number, required: true },
-    maxSeats: { type: Number, required: true },
+    planName: { type: String },
+    pricePerSeat: { type: Number },
+    maxSeats: { type: Number },
 });
+
+
+const CouponSchema = new mongoose.Schema({
+    couponName: { type: String },
+    Discount: { type: Number },
+    MaximumTickets: { type: Number },
+    ExpiryDate: { type: String }
+})
+
+
+const GroupSchema = new mongoose.Schema({
+    couponName: { type: String },
+    Discount: { type: Number },
+    MinimumTickets: { type: Number },
+})
+
+
+const ExtraDetailsSChema = new mongoose.Schema({
+    termsandconditions: { type: String },
+    contatinformation: { type: String },
+})
 
 const EventMngSchema = new mongoose.Schema({
     eventname: {
@@ -44,6 +65,16 @@ const EventMngSchema = new mongoose.Schema({
     {
         type: Number,
     },
+    agefreetickets: {
+        type: Number
+    },
+    sponserstickets:
+    {
+        type: Number
+    },
+    ExtraDetailsSChema: [ExtraDetailsSChema],
+    groupdiscount: [GroupSchema],
+    coupon: [CouponSchema],
     plans: [PlanSchema],
     eventSchedule: [
         {

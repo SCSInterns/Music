@@ -1,7 +1,7 @@
 const express = require('express');
 const multer = require('multer');
 const authenicate = require('../controllers/Authenticate')
-const { storage, Gallerystorage, EventStorage, AboutStorage, InstrumentStorage, MentorsStorage, BannersStorage, QrStorage, AdvertiseStorage, MarketingBannerStorage, EventQrStorage, EventLayoutStorage, EventBannerStorage } = require('../controllers/ImageController');
+const { cloudinary, storage, Gallerystorage, EventStorage, AboutStorage, InstrumentStorage, MentorsStorage, BannersStorage, QrStorage, AdvertiseStorage, MarketingBannerStorage, EventQrStorage, EventLayoutStorage } = require('../controllers/ImageController');
 const gallery = require('../controllers/GalleryController')
 const instrument = require('../controllers/Instrumentc')
 const router = express.Router();
@@ -35,7 +35,9 @@ const eventQrUpload = multer({ storage: EventQrStorage })
 
 const eventLayoutUpload = multer({ storage: EventLayoutStorage })
 
-const eventBannerUpload = multer({ storage: EventBannerStorage })
+const storagebanner = multer.memoryStorage()
+const uploadbanner = multer({ storage: storagebanner })
+
 
 // API route to upload an image
 router.post('/uploadlogo', upload.fields([{ name: 'logo', maxCount: 1 }]), async (req, res) => {
@@ -103,23 +105,36 @@ router.post('/uploadintrumentimage', instrumentUpload.single('picture'), (req, r
     }
 });
 
-router.post('/uploadeventbannerimage', eventBannerUpload.single('picture'), async (req, res) => {
-    try {
-        const uploadedFile = req.file;
-        const { eventid } = req.body
-        const event = await EventMng.findOne({ _id: eventid })
-        if (event) {
-            event.banner = uploadedFile.path;
-            await event.save();
-            return res.json({ message: "Event banner updated successfully" });
-        } else {
-            return res.status(404).json({ message: "Event not found" });
+router.post('/uploadeventbannerimage', authenicate.authenticatetoken,
+    uploadbanner.single('picture'), async (req, res) => {
+        try {
+            const { eventid } = req.body
+
+            if (!req.file) {
+                return res.status(400).json({ message: "No file uploaded" });
+            }
+
+
+            const result = await cloudinary.uploader.upload(
+                `data:image/png;base64,${req.file.buffer.toString("base64")}`,
+                { folder: "eventbanners" }
+            );
+
+            const path = result.secure_url
+
+            const event = await EventMng.findOne({ _id: eventid })
+            if (event) {
+                event.banner = path;
+                await event.save();
+                return res.json({ message: "Event banner updated successfully" });
+            } else {
+                return res.status(404).json({ message: "Event not found" });
+            }
+        } catch (error) {
+            console.error("Error uploading to Cloudinary", error);
+            res.status(500).json({ error: "Upload failed" });
         }
-    } catch (error) {
-        console.error("Error uploading to Cloudinary", error);
-        res.status(500).json({ error: "Upload failed" });
-    }
-});
+    });
 
 router.post('/uploadeventlayoutimage', authenicate.authenticatetoken, eventLayoutUpload.single('picture'), async (req, res) => {
     try {
