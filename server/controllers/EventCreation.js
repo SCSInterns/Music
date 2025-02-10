@@ -216,5 +216,55 @@ const insertPricingPlans = async (req, res) => {
 
 }
 
+const createExtraDetails = async (req, res) => {
+    try {
+        const { role, id, Sponsers, Coupon, Group, TermsAndConditions, ContactInformation, description, agefree } = req.body;
 
-module.exports = { generateAIDescription, createVenueDetails, getVenueDetails, eventcreds, createEventDetails, insertPricingPlans };
+        if (role !== "Admin") {
+            return res.status(401).json({ error: "Unauthorized access" });
+        }
+        const event = await Event.findById(id);
+
+        if (!event) {
+            return res.status(404).json({ error: "Event not found" });
+        }
+
+        event.ExtraDetailsSChema = {
+            termsandconditions: TermsAndConditions,
+            contatinformation: ContactInformation,
+        };
+        event.coupon = Coupon;
+        event.groupdiscount = Group;
+        event.eventdescription = description;
+        event.sponserstickets = Sponsers;
+        event.agefreetickets = agefree;
+        const updatedEvent = await event.save();
+        return res.status(200).json(updatedEvent);
+
+    } catch (error) {
+        return res.status(500).json({ error: error.message });
+    }
+};
+
+const getEventDetails = async (req, res) => {
+    try {
+
+        const { id } = req.body
+
+        const event = await Event.findOne({ _id: id });
+
+        if (!event) {
+            return res.status(404).json({ error: "Event not found" });
+        }
+
+        return res.status(200).json(event)
+
+
+    } catch (error) {
+        return res.status(500).json({ error: error.message });
+    }
+
+
+}
+
+module.exports = { generateAIDescription, createVenueDetails, getVenueDetails, eventcreds, createEventDetails, insertPricingPlans, createExtraDetails, getEventDetails };

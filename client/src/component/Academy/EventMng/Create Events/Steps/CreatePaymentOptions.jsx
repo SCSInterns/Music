@@ -20,7 +20,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import LockIcon from "@mui/icons-material/Lock";
 import { toast } from "react-toastify";
 import { nextStep } from "../../../../Features/StepperSlice";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Buffer } from "buffer";
 
 function CreatePaymentOptions() {
@@ -34,37 +34,30 @@ function CreatePaymentOptions() {
   const [showPassword, setShowPassword] = useState(false);
   const [url, seturl] = useState("");
   const dispatch = useDispatch();
+  const formData = useSelector((state) => state.event);
+  const eventid = formData.eventid;
 
   const ENCRYPTION_KEY = process.env.REACT_APP_AES_KEY;
-
-  // start from here - decryption pass but not same key is generated in frontend and backend
   async function decrypt(text, key) {
-    console.log("Frontend Encrypted Text:", text);
-
     const parts = text.split(":");
     if (parts.length !== 4) {
       throw new Error("Invalid encrypted format");
     }
 
-    const iv = new Uint8Array(Buffer.from(parts[0], "hex"));
-    const encryptedData = new Uint8Array(Buffer.from(parts[1], "hex"));
-    const tag = new Uint8Array(Buffer.from(parts[2], "hex"));
+    const iv = Buffer.from(parts[0], "hex");
+    const encryptedData = Buffer.from(parts[1], "hex");
+    const tag = Buffer.from(parts[2], "hex");
     const hmacReceived = parts[3];
 
-    console.log("IV:", parts[0]);
-    console.log("Encrypted Data:", parts[1]);
-    console.log("Tag:", parts[2]);
-    console.log("HMAC Received:", hmacReceived);
-
+    // 🔹 Compute HMAC using Buffer.concat (same as server)
     const hmacKey = process.env.REACT_APP_HMAC_KEY;
     if (!hmacKey) {
       throw new Error("HMAC key is missing in .env.");
     }
 
-    // 🔹 Convert HMAC key to Uint8Array
-    const hmacKeyBuffer = new Uint8Array(Buffer.from(hmacKey, "hex"));
+    const hmacBuffer = Buffer.concat([iv, encryptedData, tag]);
 
-    // 🔹 Import HMAC key
+    const hmacKeyBuffer = Buffer.from(hmacKey, "hex");
     const hmacKeyCrypto = await crypto.subtle.importKey(
       "raw",
       hmacKeyBuffer,
@@ -73,25 +66,15 @@ function CreatePaymentOptions() {
       ["sign"]
     );
 
-    // 🔹 Compute HMAC
-    const hmacBuffer = new Uint8Array([...iv, ...encryptedData, ...tag]);
     const hmacGeneratedBuffer = await crypto.subtle.sign(
       "HMAC",
       hmacKeyCrypto,
       hmacBuffer
     );
+    const hmacGenerated = [...new Uint8Array(hmacGeneratedBuffer)]
+      .map((b) => b.toString(16).padStart(2, "0"))
+      .join("");
 
-    // Convert to Hex String
-    function arrayBufferToHex(buffer) {
-      return [...new Uint8Array(buffer)]
-        .map((b) => b.toString(16).padStart(2, "0"))
-        .join("");
-    }
-
-    const hmacGenerated = arrayBufferToHex(hmacGeneratedBuffer);
-    console.log("HMAC Generated:", hmacGenerated);
-
-    // 🔥 Compare HMACs
     if (hmacGenerated !== hmacReceived) {
       throw new Error("HMAC verification failed! Data might be tampered.");
     }
@@ -99,31 +82,45 @@ function CreatePaymentOptions() {
     // 🔹 Import AES Key
     const keyBuffer = await crypto.subtle.importKey(
       "raw",
-      new Uint8Array(Buffer.from(key, "hex")),
+      Buffer.from(key, "hex"),
       { name: "AES-GCM" },
       false,
-      ["decrypt"]
+      ["encrypt", "decrypt"]
     );
 
-    // 🔹 Decrypt Data
-    const decryptedBuffer = await crypto.subtle.decrypt(
-      { name: "AES-GCM", iv, tagLength: 128 },
-      keyBuffer,
-      encryptedData
-    );
+    const encryptedWithTag = new Uint8Array([
+      ...new Uint8Array(encryptedData),
+      ...new Uint8Array(tag),
+    ]);
+
+    var decryptedBuffer;
+
     try {
-      const verifiedd = new TextDecoder().decode(decryptedBuffer);
-      console.log("Decrypted Data:", verifiedd);
+      decryptedBuffer = await crypto.subtle.decrypt(
+        { name: "AES-GCM", iv, tagLength: 128 },
+        keyBuffer,
+        encryptedWithTag
+      );
     } catch (error) {
-      console.error("Error while decoding decrypted data:", error);
+      console.error("Decryption Failed:", error);
     }
 
-    return new TextDecoder().decode(decryptedBuffer);
+    try {
+      const decryptedText = new TextDecoder().decode(decryptedBuffer);
+      return decryptedText;
+    } catch (error) {
+      console.error("Error while decoding decrypted data:", error);
+      throw error;
+    }
   }
 
   useEffect(() => {
     const fetchCredentials = async () => {
       try {
+        if (eventid === "") {
+          toast.error("Please Complete Previous Step");
+        }
+
         const response = await fetch(
           "http://localhost:5000/api/auth/getacademyrazorpaycreds",
           {
@@ -200,11 +197,6 @@ function CreatePaymentOptions() {
     data.append("academyId", sessionStorage.getItem("academyid"));
     data.append("eventId", "123");
     data.append("type", selectedTab);
-    // ✅ Log FormData properly
-    for (let pair of data.entries()) {
-      console.log(pair[0], pair[1]); // Logs key and value
-    }
-
     try {
       const response = await fetch(url, {
         method: "POST",

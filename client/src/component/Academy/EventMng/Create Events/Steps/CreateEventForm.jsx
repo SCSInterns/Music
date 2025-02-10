@@ -24,7 +24,6 @@ import {
   MenuItem,
   InputLabel,
 } from "@mui/material";
-import AutoFixHighIcon from "@mui/icons-material/AutoFixHigh";
 import { TimePicker } from "@mui/x-date-pickers";
 import Token from "../../../../Token/Token";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
@@ -118,28 +117,12 @@ function EventForm() {
     });
 
     if (CreateEvent.ok) {
+      const data = await CreateEvent.json();
+      dispatch(updateFormData({ eventid: data._id }));
       toast.success("Application Proceeded");
       dispatch(nextStep());
     } else {
       toast.error("Error saving Application");
-    }
-  };
-
-  const handleaigeneration = async () => {
-    const url = "http://localhost:5000/api/auth/generateeventdescwithai";
-
-    const response = await fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `${token}`,
-      },
-    });
-
-    if (response.ok) {
-      const data = await response.json();
-      const content = data.description;
-      dispatch(updateFormData({ description: content }));
     }
   };
 
@@ -192,6 +175,7 @@ function EventForm() {
                 variant="outlined"
                 fullWidth
                 name="eventName"
+                required
                 value={formData.eventName}
                 onChange={handleInputChange}
               />
@@ -415,46 +399,6 @@ function EventForm() {
                 </Grid>
               )}
             </div>
-
-            {/* Description
-          <Grid item xs={12}>
-            <TextField
-              label="Description"
-              variant="outlined"
-              fullWidth
-              multiline
-              rows={12}
-              name="description"
-              value={formData.description}
-              onChange={handleInputChange}
-              InputProps={{
-                endAdornment: (
-                  <Tooltip title="Create with AI">
-                    <InputAdornment
-                      position="end"
-                      sx={{
-                        top: 15,
-                        position: "absolute",
-                        right: 0,
-                        cursor: "pointer",
-                      }}
-                    >
-                      <Button
-                        variant="outlined"
-                        size="small"
-                        sx={{ border: "none", cursor: "pointer" }}
-                        onClick={() => {
-                          handleaigeneration();
-                        }}
-                      >
-                        <AutoFixHighIcon />
-                      </Button>
-                    </InputAdornment>
-                  </Tooltip>
-                ),
-              }}
-            />
-          </Grid> */}
 
             {formData.occurrence === "Recurring" &&
               formData.venueSameForAll === true && (

@@ -12,5 +12,7 @@ router.post('/createseatlayout', authenticate.authenticatetoken, SeatC.validateC
 router.post('/getseatlayout', authenticate.authenticatetoken, SeatC.getseatlayout)
 router.post("/createeventdetails", authenticate.authenticatetoken, event.createEventDetails)
 router.post("/insertpricingplans", authenticate.authenticatetoken, event.insertPricingPlans)
+router.post("/createextradetails", authenticate.authenticatetoken, event.createExtraDetails)
+router.post("/geteventdetails", event.getEventDetails)
 
 module.exports = router;

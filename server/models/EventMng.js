@@ -8,10 +8,10 @@ const PlanSchema = new mongoose.Schema({
 
 
 const CouponSchema = new mongoose.Schema({
-    couponName: { type: String },
-    Discount: { type: Number },
-    MaximumTickets: { type: Number },
-    ExpiryDate: { type: String }
+    name: { type: String },
+    discount: { type: Number },
+    tickets: { type: Number },
+    expirydate: { type: String }
 })
 
 

@@ -12,6 +12,7 @@ import CreateSeatLayout from "./Steps/CreateSeatLayout";
 import CreateTickets from "./Steps/CreateTickets";
 import CreatePaymentOptions from "./Steps/CreatePaymentOptions";
 import CreateExtraDetails from "./Steps/CreateExtraDetails";
+import Preview from "./Steps/Preview";
 
 function Stepper() {
   const dispatch = useDispatch();
@@ -166,6 +167,11 @@ function Stepper() {
         {steps[currentStep] === "Extra Details" && (
           <div>
             <CreateExtraDetails />
+          </div>
+        )}
+        {steps[currentStep] === "Publish" && (
+          <div>
+            <Preview />
           </div>
         )}
       </div>

@@ -39,6 +39,8 @@ const SeatForm = () => {
   const [layout, setlayout] = useState(null);
   const [layoutpreview, setlayoutpreview] = useState(null);
 
+  console.log(SeatData.eventid);
+
   const handleLayoutChange = (event) => {
     const file = event.target.files[0];
     if (file) {
@@ -63,12 +65,15 @@ const SeatForm = () => {
   };
 
   const handlelayoutsubmit = async (file) => {
+    if (SeatData.eventid === "") {
+      toast.error("Please complete the previous step before proceeding");
+      return;
+    }
     const url = "http://localhost:5000/api/auth/uploadeventlayoutimage";
 
     const formData = new FormData();
     formData.append("picture", file);
-    // future to be dynamic
-    formData.append("eventid", "67a3561e4fce44a72a65bbc0");
+    formData.append("eventid", SeatData.eventid);
 
     const response = await fetch(url, {
       method: "POST",
@@ -110,6 +115,10 @@ const SeatForm = () => {
   }, [seatsPerPartition, formData.noofpartition]);
 
   const handlesubmit = async () => {
+    if (SeatData.eventid === "") {
+      toast.error("Please complete the previous step before proceeding");
+      return;
+    }
     const url = "http://localhost:5000/api/auth/createseatlayout";
 
     const response = await fetch(url, {
@@ -126,7 +135,7 @@ const SeatForm = () => {
         seatsPerPartition: seatsPerPartition,
         maxSeatsPerPartition: maxSeatsPerPartition,
         seatingorientation: order,
-        eventid: "123",
+        eventid: SeatData.eventid,
         planname: "Default",
         priceperseat: 100,
         venueid: "123",

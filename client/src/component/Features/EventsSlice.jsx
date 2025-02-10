@@ -1,6 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
+  eventid: "",
   eventName: "",
   occurrence: "Single",
   multipleDates: false,

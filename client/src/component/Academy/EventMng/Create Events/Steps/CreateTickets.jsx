@@ -30,7 +30,7 @@ import { toast } from "react-toastify";
 import { Delete } from "@mui/icons-material";
 import { Plus } from "lucide-react";
 import { nextStep } from "../../../../Features/StepperSlice";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 function CreateTickets() {
   const [formdata, setformdata] = useState([]);
@@ -39,10 +39,16 @@ function CreateTickets() {
   const dispatch = useDispatch();
   const [seatLayout, setSeatLayout] = useState("no");
   const [seatlayoutpopup, setseatlayoutpopup] = useState(false);
+  const formData = useSelector((state) => state.event);
+  const eventid = formData.eventid;
 
   console.log(plans);
 
   const getlayout = async () => {
+    if (eventid === "") {
+      toast.error("Please Complete Previous Step");
+      return;
+    }
     const url = "http://localhost:5000/api/auth/getseatlayout";
 
     const response = await fetch(url, {

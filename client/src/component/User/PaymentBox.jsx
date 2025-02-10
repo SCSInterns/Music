@@ -28,33 +28,75 @@ export default function PaymentForm({ data }) {
     if (parts.length !== 4) {
       throw new Error("Invalid encrypted format");
     }
-    const iv = new Uint8Array(Buffer.from(parts[0], "hex"));
-    const encryptedData = new Uint8Array(Buffer.from(parts[1], "hex"));
-    const tag = new Uint8Array(Buffer.from(parts[2], "hex"));
+
+    const iv = Buffer.from(parts[0], "hex");
+    const encryptedData = Buffer.from(parts[1], "hex");
+    const tag = Buffer.from(parts[2], "hex");
     const hmacReceived = parts[3];
-    const hmacKey = new Uint8Array(
-      Buffer.from(process.env.REACT_APP_HMAC_KEY, "hex")
+
+    // 🔹 Compute HMAC using Buffer.concat (same as server)
+    const hmacKey = process.env.REACT_APP_HMAC_KEY;
+    if (!hmacKey) {
+      throw new Error("HMAC key is missing in .env.");
+    }
+
+    const hmacBuffer = Buffer.concat([iv, encryptedData, tag]);
+
+    const hmacKeyBuffer = Buffer.from(hmacKey, "hex");
+    const hmacKeyCrypto = await crypto.subtle.importKey(
+      "raw",
+      hmacKeyBuffer,
+      { name: "HMAC", hash: { name: "SHA-256" } },
+      false,
+      ["sign"]
     );
-    const hmacBuffer = new Uint8Array([...iv, ...encryptedData, ...tag]);
-    const hmacGenerated = await crypto.subtle.digest("SHA-256", hmacBuffer);
-    const hmacHex = Buffer.from(hmacGenerated).toString("hex");
-    if (hmacHex !== hmacReceived) {
+
+    const hmacGeneratedBuffer = await crypto.subtle.sign(
+      "HMAC",
+      hmacKeyCrypto,
+      hmacBuffer
+    );
+    const hmacGenerated = [...new Uint8Array(hmacGeneratedBuffer)]
+      .map((b) => b.toString(16).padStart(2, "0"))
+      .join("");
+
+    if (hmacGenerated !== hmacReceived) {
       throw new Error("HMAC verification failed! Data might be tampered.");
     }
+
+    // 🔹 Import AES Key
     const keyBuffer = await crypto.subtle.importKey(
       "raw",
-      new Uint8Array(Buffer.from(key, "hex")),
+      Buffer.from(key, "hex"),
       { name: "AES-GCM" },
       false,
-      ["decrypt"]
+      ["encrypt", "decrypt"]
     );
-    const decryptedBuffer = await crypto.subtle.decrypt(
-      { name: "AES-GCM", iv, additionalData: tag, tagLength: 128 },
-      keyBuffer,
-      encryptedData
-    );
-    const visible = new TextDecoder().decode(decryptedBuffer);
-    return visible;
+
+    const encryptedWithTag = new Uint8Array([
+      ...new Uint8Array(encryptedData),
+      ...new Uint8Array(tag),
+    ]);
+
+    var decryptedBuffer;
+
+    try {
+      decryptedBuffer = await crypto.subtle.decrypt(
+        { name: "AES-GCM", iv, tagLength: 128 },
+        keyBuffer,
+        encryptedWithTag
+      );
+    } catch (error) {
+      console.error("Decryption Failed:", error);
+    }
+
+    try {
+      const decryptedText = new TextDecoder().decode(decryptedBuffer);
+      return decryptedText;
+    } catch (error) {
+      console.error("Error while decoding decrypted data:", error);
+      throw error;
+    }
   }
 
   const getrazorpayid = async (academyname) => {
