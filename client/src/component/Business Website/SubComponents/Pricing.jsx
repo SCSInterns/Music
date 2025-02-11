@@ -36,7 +36,7 @@ export default function PricingDetails() {
             {plans[0].description}
           </p>
           <button className="px-6 py-2 rounded-full bg-black text-white hover:bg-black/90 transition-colors shadow-lg transform hover:scale-105">
-            <a href="http://localhost:5000/academyregform">Sign up</a>
+            <a href="http://localhost:3000/academyregform">Sign up</a>
           </button>
         </div>
 

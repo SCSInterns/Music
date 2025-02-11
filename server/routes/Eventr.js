@@ -14,5 +14,6 @@ router.post("/createeventdetails", authenticate.authenticatetoken, event.createE
 router.post("/insertpricingplans", authenticate.authenticatetoken, event.insertPricingPlans)
 router.post("/createextradetails", authenticate.authenticatetoken, event.createExtraDetails)
 router.post("/geteventdetails", event.getEventDetails)
+router.post("/inserteventcreds", authenticate.authenticatetoken, Eventlocationc.StoreCreds)
 
 module.exports = router;

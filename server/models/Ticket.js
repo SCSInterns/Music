@@ -1,19 +1,35 @@
 const mongoose = require("mongoose")
 
 const TicketSchema = new mongoose.Schema({
-    academyname:
+    eventid:
     {
         type: String,
         required: true
     },
-    academyid:
+    Name:
     {
         type: String,
         required: true
     },
-    ticketprice:
+    Email:
+    {
+        type: String,
+        required: true
+    },
+    Age:
     {
         type: Number,
+        required: true
+    },
+    Mobile:
+    {
+        type: Number,
+        required: true
+    },
+    Amount:
+    {
+        type: Number,
+        required: true
     }
 
 })

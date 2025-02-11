@@ -6,7 +6,6 @@ const PlanSchema = new mongoose.Schema({
     maxSeats: { type: Number },
 });
 
-
 const CouponSchema = new mongoose.Schema({
     name: { type: String },
     discount: { type: Number },
@@ -20,7 +19,6 @@ const GroupSchema = new mongoose.Schema({
     Discount: { type: Number },
     MinimumTickets: { type: Number },
 })
-
 
 const ExtraDetailsSChema = new mongoose.Schema({
     termsandconditions: { type: String },
@@ -75,6 +73,12 @@ const EventMngSchema = new mongoose.Schema({
     ExtraDetailsSChema: [ExtraDetailsSChema],
     groupdiscount: [GroupSchema],
     coupon: [CouponSchema],
+    paymentcreds: {
+        razorpayId: { type: String },
+        razorpayKey: { type: String },
+        qrcode: { type: String },
+        type: { type: String },
+    },
     plans: [PlanSchema],
     eventSchedule: [
         {

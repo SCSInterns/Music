@@ -35,7 +35,7 @@ function CreatePaymentOptions() {
   const [url, seturl] = useState("");
   const dispatch = useDispatch();
   const formData = useSelector((state) => state.event);
-  const eventid = formData.eventid;
+  const eventid = formData.eventid || "67a3561e4fce44a72a65bbc0";
 
   const ENCRYPTION_KEY = process.env.REACT_APP_AES_KEY;
   async function decrypt(text, key) {
@@ -170,58 +170,6 @@ function CreatePaymentOptions() {
     setShowPassword(!showPassword);
   };
 
-  const handleSubmit = async () => {
-    const url = "http://localhost:5000/api/auth/uploadeventcreds";
-    const token = Token();
-
-    if (!token) {
-      toast.error("Authorization token is missing.");
-      return;
-    }
-
-    const data = new FormData();
-
-    if (qrCode && (selectedTab === "Manual" || selectedTab === "Both")) {
-      data.append("picture", qrCode);
-    }
-
-    if (selectedTab === "Razorpay" || selectedTab === "Both") {
-      if (!credentials.id || !credentials.key) {
-        toast.error("Razorpay credentials are required.");
-        return;
-      }
-      data.append("razorpayid", credentials.id);
-      data.append("razorpaykey", credentials.key);
-    }
-
-    data.append("academyId", sessionStorage.getItem("academyid"));
-    data.append("eventId", "123");
-    data.append("type", selectedTab);
-    try {
-      const response = await fetch(url, {
-        method: "POST",
-        headers: {
-          authorization: `${token}`,
-        },
-        body: data,
-      });
-
-      const final = await response.json();
-
-      if (response.ok) {
-        toast.success(final.message);
-        setQrCode(null);
-        setQrPreview(null);
-        setSelectedTab("Manual");
-        dispatch(nextStep());
-      } else {
-        toast.error(final.error || "Failed to upload credentials.");
-      }
-    } catch (error) {
-      toast.error("Network error. Please try again.");
-    }
-  };
-
   const handleQrUpload = async () => {
     const data = new FormData();
     data.append("picture", qrCode);
@@ -238,6 +186,103 @@ function CreatePaymentOptions() {
     if (response.ok) {
       const final = await response.json();
       seturl(final.imageUrl);
+    }
+  };
+
+  async function encrypt(text) {
+    const IV_LENGTH = 16;
+    const HMAC_KEY = process.env.REACT_APP_HMAC_KEY;
+
+    if (!HMAC_KEY || !ENCRYPTION_KEY) {
+      throw new Error("HMAC_KEY or ENCRYPTION_KEY is missing in .env.");
+    }
+
+    const iv = crypto.getRandomValues(new Uint8Array(IV_LENGTH));
+
+    const keyBuffer = Buffer.from(ENCRYPTION_KEY, "hex");
+    const aesKey = await crypto.subtle.importKey(
+      "raw",
+      keyBuffer,
+      { name: "AES-GCM" },
+      false,
+      ["encrypt"]
+    );
+
+    const encodedText = new TextEncoder().encode(text);
+    const encryptedBuffer = await crypto.subtle.encrypt(
+      { name: "AES-GCM", iv },
+      aesKey,
+      encodedText
+    );
+
+    const encrypted = Buffer.from(new Uint8Array(encryptedBuffer)).toString(
+      "hex"
+    );
+
+    const tag = iv;
+    const hmacKeyBuffer = Buffer.from(HMAC_KEY, "hex");
+    const hmacKey = await crypto.subtle.importKey(
+      "raw",
+      hmacKeyBuffer,
+      { name: "HMAC", hash: { name: "SHA-256" } },
+      false,
+      ["sign"]
+    );
+
+    const hmacBuffer = Buffer.concat([
+      Buffer.from(iv),
+      Buffer.from(encrypted, "hex"),
+      Buffer.from(tag),
+    ]);
+    const hmacGeneratedBuffer = await crypto.subtle.sign(
+      "HMAC",
+      hmacKey,
+      hmacBuffer
+    );
+    const hmacGenerated = [...new Uint8Array(hmacGeneratedBuffer)]
+      .map((b) => b.toString(16).padStart(2, "0"))
+      .join("");
+
+    return `${Buffer.from(iv).toString("hex")}:${encrypted}:${Buffer.from(
+      tag
+    ).toString("hex")}:${hmacGenerated}`;
+  }
+
+  const handleFinalSubmit = async () => {
+    if (selectedTab === "Both" || selectedTab === "Manual") {
+      if (url === "") {
+        toast.error("Please Upload Qr code first ");
+        return;
+      }
+    }
+
+    const urli = "http://localhost:5000/api/auth/inserteventcreds";
+
+    const did = await encrypt(credentials.id, ENCRYPTION_KEY);
+
+    const dkey = await encrypt(credentials.key, ENCRYPTION_KEY);
+
+    const response = await fetch(urli, {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        authorization: `${Token()}`,
+      },
+      body: JSON.stringify({
+        role: sessionStorage.getItem("role"),
+        id: eventid,
+        rid: did,
+        rkey: dkey,
+        qrurl: url,
+        type: selectedTab,
+      }),
+    });
+
+    if (response.ok) {
+      toast.success("Creds saved success");
+      dispatch(nextStep());
+    } else {
+      toast.error("Error saving details ");
     }
   };
 
@@ -412,7 +457,7 @@ function CreatePaymentOptions() {
           variant="contained"
           sx={{ my: 3, float: "right" }}
           onClick={() => {
-            handleSubmit();
+            handleFinalSubmit();
           }}
         >
           Submit

@@ -1,36 +1,41 @@
 import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { Button, Divider } from "@mui/material";
+import TicketBookingDialog from "../Tickets/TicketsDialog";
 
 function Preview() {
   const formData = useSelector((state) => state.event);
   const eventid = formData.eventid || "67a3561e4fce44a72a65bbc0";
-  const [preview, setpreview] = useState({});
+  const [preview, setPreview] = useState(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
 
   const fetchEventDetails = async () => {
     if (!eventid) {
-      toast.error("Pls Complete Previous Steps");
+      toast.error("Please complete previous steps");
       return;
     }
 
-    const url = "http://localhost:5000/api/auth/geteventdetails";
+    try {
+      const response = await fetch(
+        "http://localhost:5000/api/auth/geteventdetails",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ id: eventid }),
+        }
+      );
 
-    const response = await fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        id: eventid,
-      }),
-    });
-
-    if (response.ok) {
-      const data = await response.json();
-      setpreview(data);
-    } else {
-      toast.error("Error fetching event details");
+      if (response.ok) {
+        const data = await response.json();
+        setPreview(data);
+      } else {
+        toast.error("Error fetching event details");
+      }
+    } catch (error) {
+      toast.error("Network error while fetching event details");
     }
   };
 
@@ -38,8 +43,14 @@ function Preview() {
     fetchEventDetails();
   }, []);
 
+  if (!preview) {
+    return (
+      <p className="text-center text-gray-600">Loading event details...</p>
+    );
+  }
+
   return (
-    <div className=" min-h-screen py-8">
+    <div className="min-h-screen py-8">
       {/* Event Banner */}
       <div className="w-11/12 max-w-5xl mx-auto overflow-hidden rounded-lg shadow-lg">
         <img
@@ -52,19 +63,23 @@ function Preview() {
       {/* Event Details */}
       <div className="w-11/12 max-w-5xl mx-auto mt-6 p-6 rounded-lg">
         {/* Title */}
-
         <div className="flex justify-between">
-          <div>
-            <h1 className="text-3xl font-serif font-bold text-gray-800 text-left">
-              Annual Celebration - Spectrum Family
-            </h1>
-          </div>
-
-          <div className="float-end">
-            <Button variant="contained" size="large">
-              Book
-            </Button>
-          </div>
+          <h1 className="text-3xl font-serif font-bold text-gray-800 text-left">
+            Annual Celebration - Spectrum Family
+          </h1>
+          <Button
+            variant="contained"
+            size="large"
+            color="primary"
+            onClick={() => setDialogOpen(true)}
+          >
+            Book Now
+          </Button>
+          <TicketBookingDialog
+            open={dialogOpen}
+            onClose={() => setDialogOpen(false)}
+            plans={preview.plans}
+          />
         </div>
 
         <Divider className="!my-3" />
@@ -72,7 +87,7 @@ function Preview() {
         {/* About Event */}
         <div className="mt-6 flex flex-col md:flex-row md:space-x-10">
           <div className="md:w-1/2">
-            <h2 className="text-xl  text-left font-semibold text-gray-700">
+            <h2 className="text-xl font-semibold text-gray-700 text-left">
               About Event:
             </h2>
             <p className="mt-2 text-gray-600 leading-relaxed text-left whitespace-pre-wrap">
@@ -106,20 +121,39 @@ function Preview() {
           </div>
         </div>
 
-        {preview.seatlayouturl && (
-          <div className="my-4 float-start">
-            <p className="text-xl  text-left font-semibold text-gray-700">
-              {" "}
-              Event Layout :
-            </p>
+        <Divider className="pt-5" />
 
-            <img
-              src={preview.seatlayouturl}
-              alt="Event Layout"
-              className="my-auto !mx-auto"
-            />
-          </div>
+        {/* Event Layout */}
+        {preview?.seatlayouturl && (
+          <>
+            <p className="text-xl my-4 font-semibold text-gray-700 !text-left">
+              Event Layout:
+            </p>
+            <div className="my-4 flex flex-col items-center justify-center">
+              <img
+                src={preview.seatlayouturl}
+                alt="Event Layout"
+                className="mx-auto"
+              />
+            </div>
+          </>
         )}
+
+        <Divider className="pt-5" />
+
+        {/* Terms and Conditions */}
+        {preview?.ExtraDetailsSChema?.[0]?.termsandconditions && (
+          <>
+            <p className="text-xl my-4 font-semibold text-gray-700 !text-left">
+              Terms and Conditions:
+            </p>
+            <p className="flex py-3 whitespace-pre-wrap">
+              {preview.ExtraDetailsSChema[0].termsandconditions}
+            </p>
+          </>
+        )}
+
+        <Divider className="pt-5" />
       </div>
     </div>
   );

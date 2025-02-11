@@ -263,8 +263,37 @@ const getEventDetails = async (req, res) => {
     } catch (error) {
         return res.status(500).json({ error: error.message });
     }
+}
 
+
+const StoreCreds = async (req, res) => {
+    const { role, id, rid, rkey, qrurl, type } = req.body
+
+    if (role !== "Admin") {
+        return res.status(401).json({ error: "Unauthorized access" });
+    }
+
+    const event = await Event.findOne({ _id: id })
+
+    if (!event) {
+        return res.status(404).json({ error: "Event not found" });
+    }
+
+    event.paymentcreds = {
+        razorpayId: rid,
+        razorpayKey: rkey,
+        qrcode: qrurl,
+        type: type
+    };
+
+    const result = await event.save()
+
+    if (result) {
+        return res.status(200).json({ msg: "Payment credentials stored successfully" })
+    } else {
+        return res.status(500).json({ error: "Error in storing payment credentials" })
+    }
 
 }
 
-module.exports = { generateAIDescription, createVenueDetails, getVenueDetails, eventcreds, createEventDetails, insertPricingPlans, createExtraDetails, getEventDetails };
+module.exports = { generateAIDescription, createVenueDetails, getVenueDetails, eventcreds, createEventDetails, insertPricingPlans, createExtraDetails, getEventDetails, StoreCreds };

@@ -120,6 +120,9 @@ app.use('/api/auth', featuredAcademies)
 const eventr = require('./routes/Eventr.js')
 app.use('/api/auth', eventr)
 
+const ticketr = require('./routes/Ticketr.js')
+app.use('/api/auth', ticketr)
+
 
 app.get('/', (req, res) => {
     res.send("Hello World");
