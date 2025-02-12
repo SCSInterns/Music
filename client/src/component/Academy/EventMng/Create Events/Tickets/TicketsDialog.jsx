@@ -7,12 +7,24 @@ import {
   Typography,
   Box,
   IconButton,
+  DialogActions,
 } from "@mui/material";
 import RemoveIcon from "@mui/icons-material/Remove";
 import AddIcon from "@mui/icons-material/Add";
+import CloseIcon from "@mui/icons-material/Close";
 
 const TicketBookingDialog = ({ open, onClose, plans }) => {
   const [selectedTickets, setSelectedTickets] = useState({});
+
+  console.log(selectedTickets);
+
+  const totalAmount = Object.entries(selectedTickets).reduce(
+    (acc, [planName, count]) => {
+      const plan = plans.find((p) => p.planName === planName);
+      return acc + (plan ? plan.pricePerSeat * count : 0);
+    },
+    0
+  );
 
   const handleAddTicket = (planName) => {
     setSelectedTickets((prev) => {
@@ -35,7 +47,16 @@ const TicketBookingDialog = ({ open, onClose, plans }) => {
 
   return (
     <Dialog open={open} onClose={onClose} fullWidth>
-      <DialogTitle>Select Tickets</DialogTitle>
+      <div className="flex justify-between items-center">
+        <DialogTitle>Select Tickets</DialogTitle>
+        <DialogActions className="mr-4 !p-0 !w-fit">
+          <CloseIcon
+            onClick={onClose}
+            className="hover:text-white hover:bg-red-500 !border !size-7 p-1 rounded-lg border-red-600 text-red-600 cursor-pointer"
+            fontSize="small"
+          />
+        </DialogActions>
+      </div>
       <DialogContent>
         <Typography variant="body2" color="textSecondary">
           You can add up to 10 tickets only
@@ -89,6 +110,17 @@ const TicketBookingDialog = ({ open, onClose, plans }) => {
             </Box>
           </Box>
         ))}
+      </DialogContent>
+      <div className="flex  items-center justify-between px-4 py-2  border border-t-1 border-black">
+        <div className="flex space-x-2 items-center">
+          <p className="semibold text-xl text-blue-500">Total :</p>
+
+          <span>
+            <span>₹ </span>
+            <span className="text-xl bold">{totalAmount}</span>
+          </span>
+        </div>
+
         <Button
           variant="contained"
           color="primary"
@@ -97,7 +129,7 @@ const TicketBookingDialog = ({ open, onClose, plans }) => {
         >
           Proceed to Checkout
         </Button>
-      </DialogContent>
+      </div>
     </Dialog>
   );
 };

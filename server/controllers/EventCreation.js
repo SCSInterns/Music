@@ -5,6 +5,41 @@ const PaymentCreds = require("./RazorPayAcademyCred")
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 const EventPaymentCreds = require("../models/EventPaymentCreds");
 const Event = require("../models/EventMng");
+const { redis } = require("../RedisInitalitation")
+
+
+// call this at publish time of event 
+const addeventinredis = async (eventdetails, hashKey) => {
+    const eventid = eventdetails._id;
+    const existing = await redis.hget(hashKey, eventid)
+    if (existing) {
+        console.log("already exists")
+        const parsedEvent = JSON.parse(existing);
+        const temp = parsedEvent.eventdetails?.plans
+        for (const tem of temp) {
+            if (tem.planName === "General Access") {
+                console.log(tem.ticketbooked)
+            }
+        }
+        return
+    }
+    await redis.hset(hashKey, eventid, JSON.stringify({
+        eventdetails
+    }));
+}
+
+
+// add the event at time of publishing by admin 
+const geteventinredis = async () => {
+    const hashkey = "events"
+    const events = await Event.find()
+    for (const event of events) {
+        addeventinredis(event, hashkey)
+    }
+}
+
+geteventinredis()
+
 
 const token = process.env.googleapi;
 

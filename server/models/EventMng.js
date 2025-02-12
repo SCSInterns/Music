@@ -4,6 +4,7 @@ const PlanSchema = new mongoose.Schema({
     planName: { type: String },
     pricePerSeat: { type: Number },
     maxSeats: { type: Number },
+    ticketbooked: { type: Number, default: 0 }
 });
 
 const CouponSchema = new mongoose.Schema({
