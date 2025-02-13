@@ -62,9 +62,28 @@ async function processpayment() {
 }
 
 
+const createTopic = async (topicName) => {
+    try {
+        const admin = kafka.admin();
+        await admin.connect();
+        const topics = await admin.listTopics();
 
-availability()
-processpayment()
-init()
+        if (!topics.includes(topicName)) {
+            await admin.createTopics({
+                topics: [{ topic: topicName, numPartitions: 3, replicationFactor: 1 }],
+            });
+            console.log(`✅ Topic ${topicName} created`);
+        } else {
+            console.log(`ℹ️ Topic ${topicName} already exists`);
+        }
+        await admin.disconnect();
+    } catch (error) {
+        console.error("❌ Kafka Topic Creation Error:", error);
+    }
+};
 
+// createTopic("PaymentEntry"); 
+
+
+module.exports = { createTopic }
 

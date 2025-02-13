@@ -30,6 +30,15 @@ const TicketSchema = new mongoose.Schema({
     {
         type: Number,
         required: true
+    },
+    PlanName:
+    {
+        type: String,
+        required: true
+    },
+    NoofTicket: {
+        type: Number,
+        required: true
     }
 
 })

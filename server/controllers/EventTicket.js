@@ -1,6 +1,7 @@
 const Ticket = require("../models/Ticket")
 const Event = require("../models/EventMng")
 const { kafka } = require("../Kafka")
+const { Partitioners } = require("kafkajs")
 const { redis } = require("../RedisInitalitation")
 
 // start from here
@@ -8,10 +9,13 @@ const { redis } = require("../RedisInitalitation")
 
 const runProducer = async (topic, ticketData) => {
     try {
-        const location = ticketData.location.toLowerCase()
-        const producer = kafka.producer();
+        const location = ticketData.location.toLowerCase();
+        const producer = kafka.producer({ createPartitioner: Partitioners.LegacyPartitioner });
         await producer.connect();
-        await producer.send({
+        console.log("✅ Producer connected");
+
+        // Send message
+        const response = await producer.send({
             topic: topic,
             key: "EventBooking",
             messages: [{ value: JSON.stringify(ticketData) }],
@@ -19,73 +23,68 @@ const runProducer = async (topic, ticketData) => {
         });
         await producer.disconnect();
     } catch (error) {
-        return error
+        console.error("❌ Producer Error:", error);
     }
 };
+
 
 
 // groups of consumer 
 
 // availability 
 
-const availability = async (req, res) => {
-    const consumer = kafka.consumer({ groupId: "ticketavailabilty-group" })
-    await consumer.connect()
-    await consumer.subscribe({ topics: ["CheckAvailability"] });
+// Kafka Consumer for Availability Check
+const availabilityConsumer = async (ticketRequest) => {
+    try {
+        const details = await redis.hget("events", ticketRequest.eventId);
+        if (!details) {
+            console.log("Event not found in Redis cache.");
+            return null;
+        }
+        const formattedData = JSON.parse(details);
+        const plans = formattedData.eventdetails?.plans || [];
 
-    await consumer.run({
-        eachMessage: async ({ message }) => {
-            const ticketRequest = JSON.parse(message.value.toString());
-            const details = await redis.hget("events", ticketRequest.eventId)
-            if (!details) {
-                return console.log("Event not found in Redis cache.");
-            }
-            const formatteddata = JSON.parse(details);
-            const temp = formatteddata.eventdetails?.plans
-            for (const tem of temp) {
-                if (tem.planName === ticketRequest.planName) {
-                    if (tem.maxSeats > temp.ticketbooked) {
-                        // call another job to send payment order  
-                        await runProducer("ProcessPayment", ticketRequest)
-                    } else {
-                        console.log("No tickets available.");
-                    }
+        for (const plan of plans) {
+            if (plan.planName === ticketRequest.planName) {
+                const bookedSeats = await plan.ticketbooked;
+                if (plan.maxSeats > bookedSeats) {
+                    // Proceed with payment process
+                    await runProducer("ProcessPayment", ticketRequest);
+                    return { status: "Available", ticketRequest };
+                } else {
+                    console.log("No tickets available.");
+                    return { status: "Unavailable" };
                 }
             }
         }
-    })
+        return { status: "Plan Not Found" };
+    } catch (error) {
+        console.error("Availability Consumer Error:", error);
+        return { status: "Error", error };
+    }
+};
 
-}
-
-// ticket payment 
-const ticketPayment = async (req, res) => {
-    const consumer = kafka.consumer({
-        groupId: "ticketpayment-group"
-    })
-
-    await consumer.connect()
-    await consumer.subscribe({ topics: ["ProcessPayment"] });
-
-    await consumer.run({
-        eachMessage: async ({ message }) => {
-            const ticketRequest = JSON.parse(message.value.toString());
-            const details = await redis.hget("events", ticketRequest.eventId)
-            if (!details) {
-                return console.log("Event not found in Redis cache.");
-            }
-            const formatteddata = JSON.parse(details);
-            const temp = formatteddata.eventdetails.paymentcreds
-            if (!temp) {
-                return console.log("Creds Not found ")
-            }
-
-            res.status(200).json({ creds: temp });
-
-            console.log("Sent payment creds to Kafka response topic.");
-
+// Kafka Consumer for Payment Credentials
+const paymentConsumer = async (ticketRequest) => {
+    try {
+        const details = await redis.hget("events", ticketRequest.eventId);
+        if (!details) {
+            console.log("Event not found in Redis cache.");
+            return null;
         }
-    })
-}
+        const formattedData = JSON.parse(details);
+        const paymentCreds = formattedData.eventdetails?.paymentcreds;
+
+        if (!paymentCreds) {
+            console.log("Payment credentials not found.");
+            return null;
+        }
+        return { status: "Payment Ready", paymentCreds };
+    } catch (error) {
+        console.error("Payment Consumer Error:", error);
+        return { status: "Error", error };
+    }
+};
 
 
 // mailing  
@@ -98,38 +97,97 @@ const ticketPayment = async (req, res) => {
 
 
 // booking 
-
 const booking = async (req, res) => {
     try {
         const ticketData = req.body;
-        await runProducer("CheckAvailability", ticketData);
-
-        const consumer = kafka.consumer({ groupId: "response-group" });
-        await consumer.connect();
-        await consumer.subscribe({ topics: ["PaymentCredsResponse"] });
-
-        return new Promise((resolve, reject) => {
-            let timeout = setTimeout(() => {
-                consumer.disconnect();
-                reject(res.status(504).json({ message: "Payment credentials response timeout" }));
-            }, 10000);
-
-            consumer.run({
-                eachMessage: async ({ message }) => {
-                    if (message.key.toString() === ticketData.userId) {
-                        clearTimeout(timeout);
-                        await consumer.disconnect();
-                        resolve(res.json({ paymentCreds: JSON.parse(message.value.toString()) }));
-                    }
-                }
-            });
-        });
-
+        await runProducer("PaymentEntry", ticketData);
+        return res.status(200).json({ message: "Ticket Booked Successfully" });
     } catch (error) {
-        console.error("Error in booking:", error);
-        return res.status(500).json({ msg: "Internal Server Error" });
+        console.error("Booking Error:", error);
+        res.status(500).json({ msg: "Internal Server Error" });
     }
 };
 
 
-module.exports = { booking, runProducer }
+// step 1 -- get payment creds and availabilty thriugh redis 
+const getPaymentCreds = async (req, res) => {
+    try {
+        const ticketRequest = req.body;
+        const availabilityResponse = await availabilityConsumer(ticketRequest);
+        if (availabilityResponse.status !== "Available") {
+            return res.status(400).json({ message: "Tickets not available" });
+        }
+        const paymentResponse = await paymentConsumer(ticketRequest);
+        if (!paymentResponse || !paymentResponse.paymentCreds) {
+            return res.status(400).json({ message: "Payment credentials not found" });
+        }
+        res.json({
+            message: "Payment Credentials Retrieved",
+            paymentCreds: paymentResponse.paymentCreds,
+        });
+    } catch (error) {
+        console.error("Payment Creds API Error:", error);
+        res.status(500).json({ msg: "Internal Server Error" });
+    }
+};
+
+// setp 2 -- if payment done then run kafka services 
+const paymentSuccess = async (req, res) => {
+    try {
+        const ticketRequest = req.body;
+        const eventId = ticketRequest.eventId;
+        const planName = ticketRequest.planName;
+        const paymentStatus = ticketRequest.paymentStatus;
+        const paymentAmount = ticketRequest.paymentAmount;
+
+        // proceed events  -- start from here   
+
+
+
+
+
+    } catch (error) {
+        console.error("Error Processing Tickets:", error);
+        res.status(500).json({ msg: "Internal Server Error" });
+    }
+
+}
+
+// step 3 
+
+const paymentEntryConsumer = async () => {
+    try {
+        const consumer = kafka.consumer({ groupId: "ticket-group8" });
+        await consumer.connect();
+        console.log("✅ Consumer Connected to Kafka");
+        await consumer.subscribe({ topic: "PaymentEntry", fromBeginning: true });
+        await consumer.run({
+            eachMessage: async ({ topic, partition, message }) => {
+                const parsedMessage = JSON.parse(message.value.toString());
+                const hashkey = "payment-entry"
+                const redisKey = `payment:${parsedMessage.eventId}:${Date.now()}`;
+                await redis.hset(hashkey, redisKey, JSON.stringify(parsedMessage));
+                console.log(`💾 Stored in Redis with key: ${redisKey}`);
+            },
+        });
+    } catch (error) {
+        console.error("🚨 Consumer Error:", error);
+    }
+};
+
+const SendTicketEmail = async (req, res) => {
+    try {
+
+    } catch (error) {
+        console.error("🚨 Consumer Error:", error);
+    }
+}
+
+paymentEntryConsumer()
+
+
+
+
+
+
+module.exports = { booking, getPaymentCreds }
