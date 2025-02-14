@@ -11,11 +11,16 @@ dotenv.config();
 
 const retriveacademygooglecred = async (academyname) => {
 
-  const details = await Credentials.retrivemailcred(academyname)
+  console.log(academyname)
 
+  const details = await Credentials.retrivemailcred(academyname)
+  console.log(details)
   if (details) {
     const mailid = details.mail
     const pwd = details.pwd
+
+    console.log(mailid)
+    console.log(pwd)
 
     const transporter = nodemailer.createTransport({
       service: "gmail",
@@ -837,6 +842,12 @@ const renewalreminderemail = async (
 
 const sendeventpass = async (academyname, email, bgcover, qrcode, eventname, planname, attendene, eventdate, eventtime, eventvenue, amount, Ticketid) => {
   const googlecred = await retriveacademygooglecred(academyname)
+
+  // start from here 
+
+  if (!googlecred) {
+    console.error("Email credentials not found. Skipping email sending.");
+  }
 
   const frommail = googlecred.mailid
 

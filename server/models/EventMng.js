@@ -31,6 +31,10 @@ const EventMngSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    academyname: {
+        type: String,
+        required: true
+    },
     banner: {
         type: String,
     },

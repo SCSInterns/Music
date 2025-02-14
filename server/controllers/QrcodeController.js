@@ -2,7 +2,8 @@ const Qrcode = require("../models/Qrcode")
 const QR = require('qrcode');
 const Attendance = require("../models/Attendance")
 const Rollno = require("../controllers/RollnoController")
-const Form = require("../models/UserForm")
+const Form = require("../models/UserForm");
+const { redis } = require("../RedisInitalitation");
 
 function getInitials(str) {
     return str
@@ -61,6 +62,42 @@ const generateqrcode = async (req, res) => {
 
     } catch (error) {
         res.status(500).json({ message: 'Server not supported', error });
+    }
+}
+
+
+// generate booking id  
+const generateAlphanumericCode = () => {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let code = '';
+    for (let i = 0; i < 6; i++) {
+        code += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return code;
+};
+
+
+const generateqrforeventpass = async (ticketid, attendes, amount, eventid, eventname) => {
+    try {
+        const data = JSON.stringify({ ticketid, attendes, amount, eventid, eventname })
+        const qrCodeData = await QR.toDataURL(data);
+        if (qrCodeData) {
+            const bookingid = generateAlphanumericCode()
+            const redisentry = await redis.hget("payment-entry", ticketid)
+            if (redisentry) {
+                let existingEntry = JSON.parse(redisentry)
+                existingEntry.qrcode = qrCodeData
+                existingEntry.bookingid = bookingid
+                const newentry = await redis.hset("payment-entry", ticketid, JSON.stringify(existingEntry));
+                return { message: "Qr code generated successfully" }
+            } else {
+                return "Entry Not Found in redis"
+            }
+        } else {
+            return "Error generating qr code"
+        }
+    } catch (error) {
+        return error;
     }
 }
 
@@ -154,4 +191,4 @@ const attendance = async (req, res) => {
 
 
 
-module.exports = { generateqrcode, fetchqr, attendance }
+module.exports = { generateqrcode, fetchqr, attendance, generateqrforeventpass }

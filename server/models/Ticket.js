@@ -1,7 +1,12 @@
 const mongoose = require("mongoose")
 
 const TicketSchema = new mongoose.Schema({
-    eventid:
+    eventId:
+    {
+        type: String,
+        required: true
+    },
+    location:
     {
         type: String,
         required: true
@@ -31,13 +36,18 @@ const TicketSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
-    PlanName:
+    planName:
     {
         type: String,
         required: true
     },
     NoofTicket: {
         type: Number,
+        required: true
+    },
+    qrcode: {
+        type: String,
+        default: "N/A",
         required: true
     }
 

@@ -72,17 +72,21 @@ const createTopic = async (topicName) => {
             await admin.createTopics({
                 topics: [{ topic: topicName, numPartitions: 3, replicationFactor: 1 }],
             });
-            console.log(`✅ Topic ${topicName} created`);
+            console.log(` Topic ${topicName} created`);
         } else {
             console.log(`ℹ️ Topic ${topicName} already exists`);
         }
         await admin.disconnect();
     } catch (error) {
-        console.error("❌ Kafka Topic Creation Error:", error);
+        console.error("Kafka Topic Creation Error:", error);
     }
 };
 
-// createTopic("PaymentEntry"); 
+// createTopic("PaymentEntry");  
+// createTopic("Qrcode")
+// createTopic("TicketsMailing")
+// createTopic("UpdateStats")
+
 
 
 module.exports = { createTopic }

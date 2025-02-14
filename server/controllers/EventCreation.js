@@ -13,14 +13,6 @@ const addeventinredis = async (eventdetails, hashKey) => {
     const eventid = eventdetails._id;
     const existing = await redis.hget(hashKey, eventid)
     if (existing) {
-        console.log("already exists")
-        const parsedEvent = JSON.parse(existing);
-        const temp = parsedEvent.eventdetails?.plans
-        for (const tem of temp) {
-            if (tem.planName === "General Access") {
-                console.log(tem.ticketbooked)
-            }
-        }
         return
     }
     await redis.hset(hashKey, eventid, JSON.stringify({
@@ -142,7 +134,7 @@ function convertToIST(utcDateString) {
 // create event details -- to do 
 const createEventDetails = async (req, res) => {
     try {
-        const { eventName, venueid, eventDates, startTime, endTime, occurrence, eventCategory, role, venuetype } = req.body
+        const { academyname, eventName, venueid, eventDates, startTime, endTime, occurrence, eventCategory, role, venuetype } = req.body
 
         if (role !== "Admin") {
             return res.status(401).json({ error: "Unauthorized access" });
@@ -153,6 +145,7 @@ const createEventDetails = async (req, res) => {
         const formattedendtime = convertToIST(endTime)
 
         const newapplication = new Event({
+            academyname: academyname,
             eventname: eventName,
             eventcategory: eventCategory,
             occurancetype: occurrence,
