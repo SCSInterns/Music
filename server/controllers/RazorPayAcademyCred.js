@@ -117,8 +117,6 @@ const retrivemailcred = async (academyname) => {
         if (creds) {
             const mail = decrypt(creds.mail)
             const pwd = decrypt(creds.app_password)
-            console.log(mail)
-            console.log(pwd)
             return { mail, pwd }
         }
     } catch (error) {
@@ -231,7 +229,6 @@ function encrypt(text) {
 }
 
 function decrypt(text) {
-    console.log(text)
     const parts = text.split(':');
     if (parts.length !== 4 || parts.some(p => p.length === 0)) {
         throw new Error("Invalid encrypted format. Data may be corrupted.");

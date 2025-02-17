@@ -324,4 +324,37 @@ const StoreCreds = async (req, res) => {
 
 }
 
-module.exports = { generateAIDescription, createVenueDetails, getVenueDetails, eventcreds, createEventDetails, insertPricingPlans, createExtraDetails, getEventDetails, StoreCreds };
+// handle publish event 
+
+const publishEvent = async (req, res) => {
+    try {
+        const { role, id } = req.body
+
+        if (role !== "Admin") {
+            return res.status(401).json({ error: "Unauthorized access" });
+        }
+
+        const event = await Event.findOne({ _id: id })
+
+        if (!event) {
+            return res.status(404).json({ error: "Event not found" });
+        }
+
+        event.live = true
+
+        const result = await event.save()
+
+        if (result) {
+            addeventinredis(event, "events")
+            return res.status(200).json({ msg: "Event published successfully" })
+        } else {
+            return res.status(500).json({ error: "Error in publishing event" })
+        }
+
+    } catch (error) {
+        return res.status(500).json({ error: error.message });
+    }
+
+}
+
+module.exports = { generateAIDescription, createVenueDetails, getVenueDetails, eventcreds, createEventDetails, insertPricingPlans, createExtraDetails, getEventDetails, StoreCreds, publishEvent };

@@ -82,10 +82,13 @@ const createTopic = async (topicName) => {
     }
 };
 
-// createTopic("PaymentEntry");  
-// createTopic("Qrcode")
-// createTopic("TicketsMailing")
-// createTopic("UpdateStats")
+init()
+createTopic("PaymentEntry");
+createTopic("Qrcode")
+createTopic("TicketsMailing")
+createTopic("UpdateStats")
+availability()
+processpayment()
 
 
 

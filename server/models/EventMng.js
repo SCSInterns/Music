@@ -31,6 +31,11 @@ const EventMngSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    live:
+    {
+        type: Boolean,
+        default: false
+    },
     academyname: {
         type: String,
         required: true

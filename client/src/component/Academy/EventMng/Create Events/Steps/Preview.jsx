@@ -155,6 +155,10 @@ function Preview() {
 
         <Divider className="pt-5" />
       </div>
+
+      <div className="flex justify-end mt-8">
+        <Button variant="contained">Publish</Button>
+      </div>
     </div>
   );
 }

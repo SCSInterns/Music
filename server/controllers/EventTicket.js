@@ -5,8 +5,69 @@ const { Partitioners } = require("kafkajs")
 const { redis } = require("../RedisInitalitation")
 const Emailc = require("./emailc")
 const Qrcode = require("./QrcodeController")
+const cron = require("node-cron")
 
-// start from here
+const generateFutureTimestampInIST = (minutesToAdd) => {
+    const currentTimeUTC = new Date();
+    const ISTOffset = 5.5 * 60;
+    const currentTimeIST = new Date(currentTimeUTC.getTime() + ISTOffset * 60000);
+    currentTimeIST.setMinutes(currentTimeIST.getMinutes() + minutesToAdd);
+    return currentTimeIST;
+};
+
+const generateCurrentISTTimestamp = () => {
+    const currentTimeUTC = new Date();
+    const ISTOffset = 5.5 * 60;
+    return new Date(currentTimeUTC.getTime() + ISTOffset * 60000);
+};
+
+
+// cron job to remove the expired booking id from redis  
+
+
+cron.schedule('*/10 * * * *', () => {
+    console.log('Running cron job for expired booking id...');
+    removeExpiredBookingId();
+});
+
+
+const removeExpiredBookingId = async () => {
+    const allentries = await redis.hgetall("Temp-Payment-Entry");
+
+    if (!allentries || Object.keys(allentries).length === 0) {
+        console.log("No entries found");
+        return;
+    }
+
+    for (const [key, value] of Object.entries(allentries)) {
+        try {
+            const entry = JSON.parse(value);
+
+            if (new Date(entry.expirytime) < generateCurrentISTTimestamp()) {
+                console.log("hello");
+                console.log("Expired Entry:", entry);
+
+                // Free the slot
+                const eventdetails = await redis.hget("events", entry.eventId);
+                console.log("Event Details:", eventdetails);
+                const parsedEventDetails = JSON.parse(eventdetails);
+                const plans = parsedEventDetails.eventdetails.plans;
+                for (const plan of plans) {
+                    if (plan.planName === entry.planName) {
+                        plan.ticketbooked = Number(plan.ticketbooked) - Number(entry.NoofTicket);
+                        break;
+                    }
+                }
+                await redis.hset("events", entry.eventId, JSON.stringify(parsedEventDetails));
+                await redis.hdel("Temp-Payment-Entry", key);
+            }
+        } catch (error) {
+            console.error(`Error parsing JSON for key ${key}:`, error);
+        }
+    }
+};
+
+
 // kafka producer 
 
 const runProducer = async (topic, ticketData) => {
@@ -52,6 +113,11 @@ const availabilityConsumer = async (ticketRequest) => {
                 if (plan.maxSeats > bookedSeats) {
                     // Proceed with payment process
                     await runProducer("ProcessPayment", ticketRequest);
+
+                    // temp seat entry holding for 10 min  -- start from here
+
+
+
                     return { status: "Available", ticketRequest };
                 } else {
                     console.log("No tickets available.");
@@ -111,7 +177,7 @@ const booking = async (req, res) => {
 };
 
 
-// step 1 -- get payment creds and availabilty thriugh redis 
+// step 1 -- get payment creds and availabilty through redis 
 const getPaymentCreds = async (req, res) => {
     try {
         const ticketRequest = req.body;
@@ -123,9 +189,39 @@ const getPaymentCreds = async (req, res) => {
         if (!paymentResponse || !paymentResponse.paymentCreds) {
             return res.status(400).json({ message: "Payment credentials not found" });
         }
+
+        // generate six digit booking id 
+        const bookingid = Qrcode.generateAlphanumericCode()
+
+        // 10 min later time out for booking id  
+        const expirytime = generateFutureTimestampInIST(10);
+
+        const details = { bookingid, expirytime, ...ticketRequest };
+
+        // store the ticket in redis with key as bookingid  
+        const newTicket = await redis.hset("Temp-Payment-Entry", bookingid, JSON.stringify(details));
+
+        // decrease the seat limit 
+
+        const eventdetails = await redis.hget("events", ticketRequest.eventId)
+        const parsedEventDetails = JSON.parse(eventdetails);
+        const plans = parsedEventDetails.eventdetails.plans;
+        for (const plan of plans) {
+            if (plan.planName === ticketRequest.planName) {
+                plan.ticketbooked = Number(plan.ticketbooked) + Number(ticketRequest.NoofTicket);
+                break;
+            }
+        }
+        await redis.hset("events", ticketRequest.eventId, JSON.stringify(parsedEventDetails));
+
+        if (!newTicket) {
+            return res.status(400).json({ message: "Error storing ticket in Redis" });
+        }
         res.json({
             message: "Payment Credentials Retrieved",
+            bookingid: bookingid,
             paymentCreds: paymentResponse.paymentCreds,
+            expirytime: expirytime
         });
     } catch (error) {
         console.error("Payment Creds API Error:", error);
@@ -245,7 +341,7 @@ const generateTicketQr = async () => {
                 const eventdata = event.eventdetails
 
                 const sendData = {
-                    academyname: eventdata.academyname, email: entry.Email, bgcover: eventdata.banner, qrcode: entry.qrcode, eventname: eventdata.eventname, planname: entry.planName, attendene: entry.NoofTicket, eventdate: eventdata.eventSchedule[0].date, eventtime: eventdata.eventSchedule[0].date, eventvenue: "TownHall , Ahmedabad", amount: entry.Amount, bookingid: entry.bookingid, location: entry.location
+                    academyname: eventdata.academyname, email: entry.Email, bgcover: eventdata.banner, qrcode: entry.qrcode, eventname: eventdata.eventname, planname: entry.planName, attendene: entry.NoofTicket, eventdate: eventdata.eventSchedule[0].date, eventtime: eventdata.eventSchedule[0].startTime, eventvenue: "TownHall , Ahmedabad", amount: entry.Amount, bookingid: entry.bookingid, location: entry.location, eventid: eventid
                 }
 
                 setTimeout(() => {
@@ -275,10 +371,21 @@ const SendTicketEmail = async () => {
         await consumer.run({
             eachMessage: async ({ topic, partition, message }) => {
                 const parsedMessage = JSON.parse(message.value.toString());
+                const mailsending = await Emailc.sendeventpass(parsedMessage.academyname, parsedMessage.email, parsedMessage.bgcover, parsedMessage.qrcode, parsedMessage.eventname, parsedMessage.planname, parsedMessage.attendene, parsedMessage.eventdate, parsedMessage.eventtime, parsedMessage.eventvenue, parsedMessage.amount, parsedMessage.bookingid)
 
-                const mailsending = await Emailc.sendeventpass(message.academyname, message.email, message.bgcover, message.qrcode, message.eventname, message.planname, message.attendene, message.eventdate, message.eventtime, message.eventvenue, message.amount, message.bookingid)
+                const sendData = {
+                    eventid: parsedMessage.eventid,
+                    planname: parsedMessage.planname,
+                    location: parsedMessage.location
+                }
+
+                setTimeout(() => {
+                    runProducer("UpdateStats", sendData)
+                }, 1000);
+
             }
         })
+
 
     } catch (error) {
         console.error("Consumer Error:", error);
@@ -298,24 +405,42 @@ const UpdateStats = async () => {
         await consumer.run({
             eachMessage: async ({ topic, partition, message }) => {
                 const parsedMessage = JSON.parse(message.value.toString());
-                const evenetid = parsedMessage.eventid
-                const planname = parsedMessage.planname
-                const redisentry = await redis.hget("events", evenetid)
-                if (redisentry) {
-                    const plans = redisentry.eventdetails.plans
+                const eventid = parsedMessage.eventid;
+                const planname = parsedMessage.planname;
 
-                    for (const plan of plans) {
-                        if (plan.planName === planname) {
-                            plan.ticketbooked = plan.ticketbooked + 1
+                try {
+                    const redisentry = await redis.hget("events", eventid);
+                    const eventDetails = JSON.parse(redisentry);
+                    if (eventDetails && eventDetails.eventdetails && eventDetails.eventdetails.plans) {
+                        const plans = eventDetails.eventdetails.plans;
 
-                            return
+                        let updated = false;
+
+                        for (const plan of plans) {
+                            if (plan.planName === planname) {
+                                plan.ticketbooked = Number(plan.ticketbooked) + 1;
+                                updated = true;
+                                break;
+                            }
                         }
-                    }
 
-                } else {
-                    return "No entry found"
+                        if (updated) {
+                            await redis.hset("events", eventid, JSON.stringify(eventDetails));
+                            return { status: "success", updatedEvent: eventDetails };
+                        } else {
+                            console.log("Plan not found.");
+                            return { status: "error", message: "Plan not found." };
+                        }
+                    } else {
+                        console.log("No entry found or missing eventdetails/plans.");
+                        return { status: "error", message: "No entry found or missing eventdetails/plans." };
+                    }
+                } catch (error) {
+                    console.error("Error processing message:", error);
+                    return { status: "error", message: "Error processing message." };
                 }
             }
+
         })
 
     } catch (error) {
@@ -325,11 +450,11 @@ const UpdateStats = async () => {
 
 
 
-
+// connect consumer 
 paymentEntryConsumer()
 generateTicketQr()
 SendTicketEmail()
-
+UpdateStats()
 
 
 

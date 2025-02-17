@@ -191,4 +191,4 @@ const attendance = async (req, res) => {
 
 
 
-module.exports = { generateqrcode, fetchqr, attendance, generateqrforeventpass }
+module.exports = { generateqrcode, fetchqr, attendance, generateqrforeventpass, generateAlphanumericCode }

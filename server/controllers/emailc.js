@@ -6,21 +6,16 @@ const fs = require("fs/promises");
 const SocialLinks = require("../models/SocialLinks");
 const Credentials = require("./RazorPayAcademyCred")
 const SubscriptionR = require("./SubscriptionRecieptc")
+var inlineBase64 = require('nodemailer-plugin-inline-base64');
+
 
 dotenv.config();
 
 const retriveacademygooglecred = async (academyname) => {
-
-  console.log(academyname)
-
   const details = await Credentials.retrivemailcred(academyname)
-  console.log(details)
   if (details) {
     const mailid = details.mail
     const pwd = details.pwd
-
-    console.log(mailid)
-    console.log(pwd)
 
     const transporter = nodemailer.createTransport({
       service: "gmail",
@@ -29,6 +24,7 @@ const retriveacademygooglecred = async (academyname) => {
         pass: `${pwd}`,
       },
     });
+    transporter.use('compile', inlineBase64({ cidPrefix: 'somePrefix_' }));
     return { transporter, mailid, pwd }
   } else {
     throw new Error("Academy email credentials not found.");
@@ -840,229 +836,93 @@ const renewalreminderemail = async (
 
 }
 
-const sendeventpass = async (academyname, email, bgcover, qrcode, eventname, planname, attendene, eventdate, eventtime, eventvenue, amount, Ticketid) => {
+const sendeventpass = async (academyname, email, bgcover, qrcode, eventname, planname, attendees, eventdate, eventtime, eventvenue, amount, Ticketid) => {
   const googlecred = await retriveacademygooglecred(academyname)
-
-  // start from here 
 
   if (!googlecred) {
     console.error("Email credentials not found. Skipping email sending.");
+    return;
   }
 
   const frommail = googlecred.mailid
+
+  // Dynamic HTML content
+  const htmlContent = `
+  <!DOCTYPE html>
+  <html lang="en">
+  <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Event Pass</title>
+  </head>
+  <body style="background: #f8f9fa; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; font-family: 'Poppins', sans-serif;">
+
+      <div style="width: 100%; max-width: 380px; background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); position: relative; transition: transform 0.3s ease-in-out; margin: 0 auto;">
+          <!-- Event Banner -->
+          <div style="width: 100%; height: 280px; background: #4a90e2 center/cover no-repeat;">
+              <img src="${bgcover}" alt="Event Banner" style="width: 100%; height: 100%; object-fit: cover;">
+          </div>
+          
+          <!-- Header -->
+          <div style="background: #4a90e2; color: white; padding: 12px 20px; text-align: center; font-size: 18px; font-weight: bold;">
+              EVENT PASS
+          </div>
+
+          <!-- Event Details -->
+          <table style="width: 100%; padding: 20px; border-spacing: 15px;">
+              <tr>
+                  <td style="font-size: 12px; font-weight: 600; color: #6c757d; text-transform: uppercase;">Event</td>
+                  <td style="font-size: 15px; font-weight: bold; color: #333;">${eventname}</td>
+              </tr>
+              <tr>
+                  <td style="font-size: 12px; font-weight: 600; color: #6c757d; text-transform: uppercase;">Plan</td>
+                  <td style="font-size: 15px; font-weight: bold; color: #4a90e2;">${planname}</td>
+              </tr>
+              <tr>
+                  <td style="font-size: 12px; font-weight: 600; color: #6c757d; text-transform: uppercase;">Amount</td>
+                  <td style="font-size: 15px; font-weight: bold; color: #333;">₹ ${amount}</td>
+              </tr>
+              <tr>
+                  <td style="font-size: 12px; font-weight: 600; color: #6c757d; text-transform: uppercase;">Attendees</td>
+                  <td style="font-size: 15px; font-weight: bold; color: #333;">${attendees}</td>
+              </tr>
+              <tr>
+                  <td style="font-size: 12px; font-weight: 600; color: #6c757d; text-transform: uppercase;">Date & Time</td>
+                  <td style="font-size: 15px; font-weight: bold; color: #333;">
+                      ${eventdate}<br>
+                      <span style="font-size: 12px; color: #6c757d;">${eventtime} Onwards</span>
+                  </td>
+              </tr>
+          </table>
+
+          <div style="padding: 15px 20px; background: #eef5ff; border-top: 2px solid #4a90e2;">
+              <span style="font-size: 13px; font-weight: 600; color: #6c757d; text-transform: uppercase;">Venue</span>
+              <p style="font-size: 14px; font-weight: bold; color: #333; margin-top: 5px;">${eventvenue}</p>
+          </div>
+
+          <!-- Ticket Footer with QR -->
+          <div style="padding: 15px 20px; display: flex; align-items: center; justify-content: space-between; border-top: 1px dashed #dee2e6;">
+              <div>
+                  <span style="font-size: 12px; font-weight: 600; color: #6c757d; text-transform: uppercase;">Ticket ID : </span>
+                  <span style="font-size: 14px; font-weight: bold; font-family: 'Courier New', Courier, monospace; color: #333;">${Ticketid}</span>
+              </div>
+              <div style="width: 100%; text-align: right;">
+      <div style="display: inline-block; width: 70px; height: 70px; background: white; padding: 5px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+        <img src="${qrcode}" width="100%" height="100%" alt="QR Code">
+      </div>
+    </div>
+          </div>
+      </div>
+
+  </body>
+  </html>
+  `;
 
   const mailOptions = {
     from: frommail,
     to: email,
     subject: `Your Tickets`,
-    html: `
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Event Pass</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
-
-        :root {
-            --primary: #4a90e2;
-            --background: #f8f9fa;
-            --foreground: #333;
-            --muted: #6c757d;
-            --border: #dee2e6;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Poppins', sans-serif;
-        }
-
-        body {
-            background: var(--background);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 20px;
-        }
-
-        .event-card {
-            width: 100%;
-            max-width: 380px;
-            background: white;
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-            position: relative;
-            transition: transform 0.3s ease-in-out;
-        }
-
-        .event-card:hover {
-            transform: translateY(-5px);
-        }
-
-        /* Banner Section */
-        .event-banner {
-            position: relative;
-            height: 280px;
-            background: url`({ bgcover })` center/cover;
-        }
-
-        .gradient-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(to bottom, rgba(74, 144, 226, 0.4), rgba(0, 0, 0, 0.8));
-        }
-
-        /* Header */
-        .event-header {
-            background: var(--primary);
-            color: white;
-            padding: 12px 20px;
-            text-align: center;
-            font-size: 18px;
-            font-weight: bold;
-        }
-
-        /* Event Details */
-        .event-content {
-            padding: 20px;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-        }
-
-        .info-block {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .info-title {
-            font-size: 12px;
-            font-weight: 600;
-            color: var(--muted);
-            text-transform: uppercase;
-        }
-
-        .info-value {
-            font-size: 15px;
-            font-weight: bold;
-            color: var(--foreground);
-        }
-
-        .highlight {
-            color: var(--primary);
-        } 
-
-         .event-venue {
-            padding: 15px 20px;
-            background: #eef5ff;
-            border-top: 2px solid var(--primary);
-        }
-
-        .venue-title {
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--muted);
-            text-transform: uppercase;
-        }
-
-        .venue-details {
-            font-size: 14px;
-            font-weight: bold;
-            color: var(--foreground);
-            margin-top: 5px;
-        }
-
-        /* Ticket Footer */
-        .event-footer {
-            padding: 15px 20px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            border-top: 1px dashed var(--border);
-        }
-
-        .qr-container {
-            width: 70px;
-            height: 70px;
-            background: white;
-            padding: 5px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .ticket-id {
-            font-size: 14px;
-            font-weight: bold;
-            font-family: 'Courier New', Courier, monospace;
-            color: var(--foreground);
-        }
-    </style>
-</head>
-<body>
-
-    <div class="event-card">
-        <!-- Event Banner -->
-        <div class="event-banner">
-            <div class="gradient-overlay"></div>
-        </div>
-
-        <!-- Header -->
-        <div class="event-header">EVENT PASS</div>
-
-        <!-- Event Details -->
-        <div class="event-content">
-            <div class="info-block">
-                <span class="info-title">Event</span>
-                <span class="info-value">${eventname}</span>
-            </div>
-            <div class="info-block">
-                <span class="info-title">Plan</span>
-                <span class="info-value highlight">${planname}</span>
-            </div>
-            <div class="info-block">
-                <span class="info-title">Amount</span>
-                <span class="info-value">${amount}</span>
-            </div>
-            <div class="info-block">
-                <span class="info-title">Attendee's</span>
-                <span class="info-value">${attendene}</span>
-            </div>
-            <div class="info-block">
-                <span class="info-title">Date & Time</span>
-                <span class="info-value">${eventdate}</span>
-                <span class="info-value" style="font-size: 12px; color: var(--muted);">${eventtime}</span>
-            </div>
-        </div> 
-
-         <div class="event-venue">
-            <span class="venue-title">Venue</span>
-            <p class="venue-details">${eventvenue}</p>
-
-        </div>
-
-        <!-- Ticket Footer with QR -->
-        <div class="event-footer">
-            <div>
-                <span class="info-title">Ticket ID</span>
-                <span class="ticket-id">${Ticketid}</span>
-            </div>
-            <div class="qr-container">
-                <img src=${qrcode} width="100%" height="100%" alt="QR Code">
-            </div>
-        </div>
-    </div>
-
-</body>
-</html>
-        `,
+    html: htmlContent
   };
 
   try {
@@ -1072,7 +932,10 @@ const sendeventpass = async (academyname, email, bgcover, qrcode, eventname, pla
     console.error("Error sending email:", error);
     throw error;
   }
-}
+};
+
+
+
 
 module.exports = {
   sendMail,
