@@ -10,6 +10,28 @@ function Preview() {
   const [preview, setPreview] = useState(null);
   const [dialogOpen, setDialogOpen] = useState(false);
 
+  const handlesubmit = async () => {
+    const url = "http://localhost:5000/api/auth/publishevent";
+
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `${sessionStorage.getItem("accesstoken")}`,
+      },
+      body: JSON.stringify({
+        id: eventid,
+        role: `${sessionStorage.getItem("role")}`,
+      }),
+    });
+
+    if (response.ok) {
+      toast.success("Event published successfully");
+    } else {
+      toast.error("Error publishing event");
+    }
+  };
+
   const fetchEventDetails = async () => {
     if (!eventid) {
       toast.error("Please complete previous steps");
@@ -157,7 +179,9 @@ function Preview() {
       </div>
 
       <div className="flex justify-end mt-8">
-        <Button variant="contained">Publish</Button>
+        <Button onClick={() => handlesubmit()} variant="contained">
+          Publish
+        </Button>
       </div>
     </div>
   );

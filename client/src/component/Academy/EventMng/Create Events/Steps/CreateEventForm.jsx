@@ -62,6 +62,7 @@ function EventForm() {
     "Kids",
     "Performances",
     "Exhibitions",
+    "Sports Events",
     "Others",
   ];
 
@@ -103,7 +104,7 @@ function EventForm() {
           }
         : formData.times,
       role: sessionStorage.getItem("role"),
-      academyname : sessionStorage.getItem("academyname"),  
+      academyname: sessionStorage.getItem("academyname"),
     };
     console.log("Submitted Data:", formattedData);
     const url = "http://localhost:5000/api/auth/createeventdetails";

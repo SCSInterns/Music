@@ -42,7 +42,7 @@ import MarketplaceHome from './component/MarketPlace/Landingpage'
 import Aboutpage from './component/MarketPlace/Aboutpage';
 import AcademyList from './component/MarketPlace/Subcomponents/AcaemyList';
 import AcademyTypeForm from './component/Academy/Aacademytype';
-
+import Mainpage from "./component/MarketPlace/Subcomponents/Events/MainPage"
 
 function App() {
   const verified = sessionStorage.getItem("accesstoken");
@@ -114,6 +114,8 @@ function App() {
           <Route path="/" element={<MarketplaceHome />} />
           <Route path="/About" element={<Aboutpage />} />
           <Route path="/Academy" element={<AcademyList />} />
+          <Route path="/Event" element={<Mainpage />} />
+
 
         </Routes>
       </Router>

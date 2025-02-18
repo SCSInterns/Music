@@ -115,6 +115,7 @@ export default function Header({ onChange }) {
       {[
         { text: "Find Academy", href: "#findacademy" },
         { text: "Academy", href: "#academylist" },
+        { text: "Events", href: "/Event" },
         { text: "Pricing", href: "#pricing" },
         { text: "About Us", href: "/About" },
         { text: "Features", href: "#fetures" },
@@ -167,6 +168,12 @@ export default function Header({ onChange }) {
           className="text-sm font-medium hover:text-primary transition-colors"
         >
           Academy
+        </a>
+        <a
+          href="/Event"
+          className="text-sm font-medium hover:text-primary transition-colors"
+        >
+          Events
         </a>
         <a
           href="/About"
