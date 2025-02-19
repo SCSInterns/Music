@@ -6,7 +6,9 @@ const { GoogleGenerativeAI } = require("@google/generative-ai");
 const EventPaymentCreds = require("../models/EventPaymentCreds");
 const Event = require("../models/EventMng");
 const { redis } = require("../RedisInitalitation")
-
+const UserEmailsMarketing = require("../models/UserEmailsMarketing")
+const Emailc = require("../controllers/emailc");
+const EventLocations = require("../models/EventLocations");
 
 // call this at publish time of event 
 const addeventinredis = async (eventdetails, hashKey) => {
@@ -344,6 +346,20 @@ const publishEvent = async (req, res) => {
 
         const result = await event.save()
 
+        const venue = result?.eventSchedule[0]?.venueid
+        if (venue) {
+            const locationcity = await EventLocations.findOne({ _id: venue })
+            if (locationcity) {
+                const marketedusers = await UserEmailsMarketing.find({ location: locationcity.city })
+                for (const users of marketedusers) {
+                    const mail = await sendEmail(users.email)
+                }
+                const allusers = await UserEmailsMarketing.find({ location: "All" })
+                for (const users of allusers) {
+                    const mail = await sendEmail(users.email)
+                }
+            }
+        }
         if (result) {
             addeventinredis(event, "events")
             return res.status(200).json({ msg: "Event published successfully" })
@@ -357,4 +373,39 @@ const publishEvent = async (req, res) => {
 
 }
 
-module.exports = { generateAIDescription, createVenueDetails, getVenueDetails, eventcreds, createEventDetails, insertPricingPlans, createExtraDetails, getEventDetails, StoreCreds, publishEvent };
+// add email for marketing 
+
+const addEmail = async (req, res) => {
+    try {
+        const { email, location } = req.body;
+        if (!email || !location) {
+            return res.status(400).json({ error: "Please provide email and location" });
+        }
+        const newReq = new UserEmailsMarketing({
+            email: email,
+            location: location
+        })
+        const response = await newReq.save();
+        if (response) {
+            return res.status(201).json(response);
+        } else {
+            return res.status(500).json({ error: "Error in adding email" });
+        }
+    } catch (error) {
+        return res.status(500).json({ error: error.message });
+    }
+}
+
+
+// send marketing email 
+
+const sendEmail = async (mailc) => {
+    try {
+        const mail = await Emailc.sendsubscribemail(mailc)
+    } catch (error) {
+        return res.status(500).json({ error: error.message });
+    }
+
+}
+
+module.exports = { generateAIDescription, createVenueDetails, getVenueDetails, eventcreds, createEventDetails, insertPricingPlans, createExtraDetails, getEventDetails, StoreCreds, publishEvent, addEmail };

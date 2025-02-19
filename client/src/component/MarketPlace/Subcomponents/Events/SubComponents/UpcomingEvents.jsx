@@ -52,9 +52,11 @@ export default function UpcomingEvents() {
                 everyone.
               </p>
             </div>
-            <button className="hidden md:inline-flex border border-purple-500 px-4 py-2 rounded-lg hover:bg-purple-600 hover:text-white text-black">
-              SEE ALL UPCOMING EVENTS
-            </button>
+            <a href="/UpcomingEvents">
+              <button className="hidden md:inline-flex border border-purple-500 px-4 py-2 rounded-lg hover:bg-purple-600 hover:text-white text-black">
+                SEE ALL UPCOMING EVENTS
+              </button>
+            </a>
           </div>
 
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">

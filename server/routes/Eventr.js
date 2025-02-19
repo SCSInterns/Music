@@ -16,5 +16,6 @@ router.post("/createextradetails", authenticate.authenticatetoken, event.createE
 router.post("/geteventdetails", event.getEventDetails)
 router.post("/inserteventcreds", authenticate.authenticatetoken, Eventlocationc.StoreCreds)
 router.post("/publishevent", authenticate.authenticatetoken, event.publishEvent)
+router.post("/addsubscribemail", event.addEmail)
 
 module.exports = router;

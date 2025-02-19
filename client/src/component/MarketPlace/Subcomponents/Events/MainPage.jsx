@@ -4,7 +4,9 @@ import HeroSection from "./SubComponents/HeroSection";
 import UpcomingEvents from "./SubComponents/UpcomingEvents";
 import CategoriesSection from "./SubComponents/Categories";
 import PastEventsSection from "./SubComponents/PastEvents";
+import Cta from "./SubComponents/Cta";
 import Footer from "../Footer";
+import NewsletterSection from "./SubComponents/NewsLetter";
 
 function MainPage() {
   return (
@@ -27,6 +29,14 @@ function MainPage() {
           <PastEventsSection />{" "}
         </section>
         <section>
+          {" "}
+          <Cta />{" "}
+        </section>
+        <section>
+          {" "}
+          <NewsletterSection />{" "}
+        </section>
+        <section className="mt-3">
           {" "}
           <Footer />{" "}
         </section>

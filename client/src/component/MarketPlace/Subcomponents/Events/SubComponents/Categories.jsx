@@ -95,10 +95,12 @@ export default function CategoriesSection() {
                   <div className="absolute inset-0 bg-black opacity-40"></div>
                   <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-all duration-300"></div>
                 </div>
-                <div className="absolute inset-0 flex items-center justify-center z-10">
+                <div className="absolute inset-0 flex items-center justify-center px-4 md:px-0 z-10">
                   {category.icon}
                   <div className="p-4 text-center">
-                    <h3 className="text-xl font-semibold">{category.name}</h3>
+                    <h3 className="md:text-xl text-sm font-semibold">
+                      {category.name}
+                    </h3>
                   </div>
                 </div>
               </div>

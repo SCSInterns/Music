@@ -2,6 +2,8 @@ import { motion } from "framer-motion";
 import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { FaMapMarkerAlt } from "react-icons/fa";
+import { MdGroups } from "react-icons/md";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -84,9 +86,9 @@ function DomainSection() {
   return (
     <>
       <div className="flex items-center">
-        <h2 className="text-3xl font-bold tracking-tight float-left px-4">
+        <h2 className="text-3xl font-bold tracking-tight !float-left px-4">
           <span className="text-purple-600">| </span>
-          PAST EVENTS
+          Our Success Stories
         </h2>
       </div>
       <div className="max-w-7xl mx-auto">
@@ -105,7 +107,7 @@ function DomainSection() {
       >
         <div
           ref={scrollRef}
-          className="flex space-x-10 p-4 py-10 px-20 w-max h-full"
+          className="flex space-x-10 p-1 px-20 w-max h-full my-3"
           style={{ display: "flex" }}
         >
           {events.map((event, index) => (
@@ -122,6 +124,14 @@ function DomainSection() {
                 {/* Overlay */}
                 <div className="absolute inset-0 bg-black opacity-40 group-hover:opacity-50 transition-opacity duration-300"></div>
 
+                <p className="text-md opacity-90 absolute top-5 left-16 backdrop-blur-lg bg-black/20 border border-purple-600 rounded-lg px-4 py-1 shadow-lg">
+                  <div className="absolute inset-0 bg-black opacity-30 group-hover:opacity-20 transition-opacity duration-300 rounded-lg"></div>
+                  <div className="flex items-center space-x-5">
+                    <MdGroups className="mr-2" size={20} />
+                    {event.attendees}
+                  </div>
+                </p>
+
                 {/* Text Content */}
                 <div className="relative z-10">
                   <div className="">
@@ -131,12 +141,16 @@ function DomainSection() {
                     </h3>
                   </div>
                   <div className="absolute bottom-6 right-6">
-                    <p className="text-sm opacity-90">{event.location}</p>
+                    <p className="text-sm opacity-90">
+                      {" "}
+                      <div className="flex items-center space-x-5">
+                        <FaMapMarkerAlt className="mr-1" size={12} />
+                        {event.location}
+                      </div>
+                    </p>
+
                     <p className="text-sm opacity-90">{event.date}</p>
                   </div>
-                  <p className="text-md opacity-90 absolute bottom-0 right-6">
-                    {event.attendees}
-                  </p>
                 </div>
               </div>
             </motion.div>

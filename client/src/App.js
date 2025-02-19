@@ -43,6 +43,7 @@ import Aboutpage from './component/MarketPlace/Aboutpage';
 import AcademyList from './component/MarketPlace/Subcomponents/AcaemyList';
 import AcademyTypeForm from './component/Academy/Aacademytype';
 import Mainpage from "./component/MarketPlace/Subcomponents/Events/MainPage"
+import EventsListing from './component/MarketPlace/Subcomponents/Events/Listing/EventsListing';
 
 function App() {
   const verified = sessionStorage.getItem("accesstoken");
@@ -115,8 +116,7 @@ function App() {
           <Route path="/About" element={<Aboutpage />} />
           <Route path="/Academy" element={<AcademyList />} />
           <Route path="/Event" element={<Mainpage />} />
-
-
+          <Route path="/UpcomingEvents" element={<EventsListing />} />
         </Routes>
       </Router>
     </div>

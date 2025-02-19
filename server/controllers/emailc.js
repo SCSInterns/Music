@@ -934,7 +934,90 @@ const sendeventpass = async (academyname, email, bgcover, qrcode, eventname, pla
   }
 };
 
+const sendsubscribemail = async (email) => {
+  const pass = process.env.APP_PWD;
+  const user = process.env.MAIL;
 
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: `${user}`,
+      pass: `${pass}`,
+    },
+  });
+
+  const mailOptions = {
+    from: user,
+    to: email,
+    subject: `🔔 Guess What? A New Event is Live – Book Your Spot Now !`,
+    html: ` 
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Notification - Spectrum Annual Celebration</title>
+</head>
+
+<body style="font-family: 'Arial', sans-serif; background-color: #f4f4f4; margin: 0; padding: 0; color: #333;">
+    <div style="max-width: 700px; margin: 30px auto; background-color: #fff; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);">
+        <div style="background-color: #ff4d6d; color: white; text-align: center; padding: 40px 20px;">
+            <h1 style="font-size: 30px; margin-bottom: 10px;">🎉 Annual Celebration - Spectrum Family 🎶</h1>
+            <p style="font-size: 18px;">MusicBee Live @ HK Town Hall, Ahmedabad</p>
+        </div>
+
+        <div style="padding: 30px; line-height: 1.6;">
+            <img src="https://res.cloudinary.com/dipnrfd3h/image/upload/v1738918475/eventbanners/lumxjspnpnbp7rtqpauj.avif" alt="Event Banner" style="width: 100%; border-radius: 10px; margin-bottom: 20px;">
+
+            <p>Hey there! 🌟</p>
+            <p>We’re thrilled to announce our upcoming event <strong>"Annual Celebration - Spectrum Family"</strong> featuring <strong>MusicBee</strong>! Get ready for an electrifying evening filled with beats, lights, and unstoppable fun.</p>
+
+            <div style="background-color: #ffe6ea; padding: 15px; border-radius: 8px; margin-bottom: 20px; color: #ff4d6d; font-weight: bold; text-align: center;">
+                📅 <strong>Date:</strong> March 13th, 2025 | 🕔 <strong>Time:</strong> 5 PM – 9 PM <br>
+                📍 <strong>Venue:</strong> HK Town Hall, Ahmedabad | 🎟️ <strong>Entry:</strong> FREE!
+            </div>
+
+            <h3 style="font-size: 20px;">✨ Event Perks:</h3>
+            <ul style="padding-left: 20px;">
+                <li>🔥 Best DJ Set & Neon Lights</li>
+                <li>🍹 Complimentary Drinks & Free Wi-Fi</li>
+                <li>💃 Killer Dance Floor & Fun Photo Booths</li>
+                <li>🅿️ Free Parking</li>
+                <li>🎁 Special EarlyBird & Group Discounts Available!</li>
+            </ul>
+
+            <h3 style="font-size: 20px;">💺 Seating Plans:</h3>
+            <ul style="padding-left: 20px;">
+                <li><strong>Fan Pit 1 & 2:</strong> ₹2000/seat (200 seats each)</li>
+                <li><strong>Premium Seating:</strong> ₹3000/seat (100 seats)</li>
+                <li><strong>General Access:</strong> ₹1000/seat (500 seats)</li>
+            </ul>
+
+            <p>💡 <strong>Hurry!</strong> Get ₹50 off with <strong>EarlyBird</strong> offer for the first 100 tickets. Plus, enjoy ₹100 off when booking 10+ tickets. Don’t miss out!</p>
+
+            <a href="#" style="display: block; width: 80%; margin: 30px auto; padding: 15px; background-color: #ff4d6d; color: white; text-align: center; border-radius: 50px; text-decoration: none; font-size: 18px;">🎟️ Book Your Seat Now</a>
+        </div>
+
+        <div style="text-align: center; padding: 20px; font-size: 14px; background-color: #f9f9f9; color: #666;">
+            <p>See you there for an unforgettable night! ✨</p>
+            <p>— Team Spectrum 💖</p>
+        </div>
+    </div>
+</body>
+
+</html>
+    `
+
+  }
+  try {
+    let info = await transporter.sendMail(mailOptions);
+    return info;
+  } catch (error) {
+    console.error("Error sending email:", error);
+    throw error;
+  }
+
+}
 
 
 module.exports = {
@@ -949,5 +1032,6 @@ module.exports = {
   onboardingmail,
   sendsubscriptioninvoice,
   renewalreminderemail,
-  sendeventpass
+  sendeventpass,
+  sendsubscribemail
 };
