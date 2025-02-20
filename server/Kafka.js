@@ -3,7 +3,7 @@ const { Kafka } = require("kafkajs")
 
 const kafka = new Kafka({
     clientId: 'MusicVista-kafka',
-    brokers: ["192.168.1.9:9092"]
+    brokers: ["0.0.0.0:9092"]
 })
 
 

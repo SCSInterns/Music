@@ -10,6 +10,8 @@ import {
   ListItemText,
   Divider,
   Tooltip,
+  Menu,
+  MenuItem,
 } from "@mui/material";
 import { toast } from "react-toastify";
 import AddchartIcon from "@mui/icons-material/Addchart";
@@ -37,27 +39,31 @@ import AccountBalanceIcon from "@mui/icons-material/AccountBalance";
 import PaymentRequest from "./PaymentRequest";
 import { io } from "socket.io-client";
 import Billing from "./BillingMenu";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import DynamicFormMenu from "./DynamicForm/DynmaicFormMenu";
 import BatchMenuV2 from "./BatchManagement/BatchMenuV2";
-import { AddBusiness } from "@mui/icons-material";
+import { AccountCircleOutlined, AddBusiness } from "@mui/icons-material";
 import AccountMenu from "./AccountMng/AccountMenu";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import { Megaphone, Volume2 } from "lucide-react";
 import AdvretisingMenu from "./Advertising/AdvretisingMenu";
 import EventMenu from "./EventMng/EventMenu";
+import { LogOut, KeyRound } from "lucide-react";
+import ChangePasswordModal from "./ChangePwd";
 
 const Sidebar = () => {
   const academyname = sessionStorage.getItem("academyname");
   const role = sessionStorage.getItem("role");
   const socket = React.useRef(null);
+  const [open, setOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [loading, setloading] = useState(false);
   const [appdata, setappdata] = useState([]);
   const [toggleapplicants, settoggleapplicants] = useState(false);
   const [passpaymentdetails, setpasspaymentdetails] = useState([]);
   const [collapsed, setCollapsed] = useState(false);
+  const navigate = useNavigate();
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
@@ -66,6 +72,27 @@ const Sidebar = () => {
   const toggleCollapse = () => {
     setCollapsed(!collapsed);
   };
+
+  const handleCloseMenu = () => {
+    setOpenMenu(false);
+  };
+
+  const handleLogout = () => {
+    console.log("Logout clicked");
+    handleCloseMenu();
+    const keysToRemove = [
+      "academyid",
+      "academyname",
+      "refreshtoken",
+      "accesstoken",
+      "role",
+    ];
+    keysToRemove.forEach((key) => sessionStorage.removeItem(key));
+    navigate("/admin/login", { replace: true });
+  };
+
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
 
   const drawerWidth = collapsed ? 80 : 300;
 
@@ -165,7 +192,7 @@ const Sidebar = () => {
   const academyid = location.state?.academyid;
 
   const [activeComponent, setActiveComponent] = useState("");
-
+  const [openMenu, setOpenMenu] = useState(false);
   const [info, setinfo] = useState([]);
 
   const fetchlist = async (academyname, adminid) => {
@@ -193,6 +220,10 @@ const Sidebar = () => {
     } catch (error) {
       toast.error("Network error", error);
     }
+  };
+
+  const handleMenuClick = () => {
+    setOpenMenu(true);
   };
 
   useEffect(() => {
@@ -318,12 +349,16 @@ const Sidebar = () => {
         sx={{
           padding: 2,
           display: "flex",
+          alignItems: "center",
           justifyContent: "space-between",
           ml: collapsed ? 0 : 2,
         }}
       >
         {!collapsed && (
           <Typography variant="h6" sx={{ fontWeight: "bold", color: "#fff" }}>
+            <button onClick={() => handleMenuClick()}>
+              <AccountCircleOutlined className="mr-4" fontSize="medium" />
+            </button>
             Admin Dashboard
           </Typography>
         )}
@@ -388,6 +423,33 @@ const Sidebar = () => {
           </>
         </div>
       )}
+
+      <Menu
+        open={openMenu}
+        onClose={handleCloseMenu}
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "left",
+        }}
+        transformOrigin={{
+          vertical: "top",
+          horizontal: "right",
+        }}
+        sx={{
+          marginTop: "50px",
+          marginRight: "20px",
+        }}
+      >
+        {/* start from here  */}
+        <MenuItem onClick={handleOpen}>
+          {<KeyRound size={18} className="mr-2" />}
+          Change Credentials
+        </MenuItem>
+        <ChangePasswordModal open={open} handleClose={handleClose} />
+        <MenuItem onClick={handleLogout}>
+          {<LogOut size={18} className="mr-2" />}Logout
+        </MenuItem>
+      </Menu>
 
       <Box sx={{ display: "flex", backgroundColor: "#0d1b2a" }}>
         <div style={{ position: "relative" }}>

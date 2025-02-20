@@ -151,6 +151,33 @@ const academy_login = async (req, res) => {
     }
 };
 
+// change credentials of the academy 
+
+const changeCreds = async (req, res) => {
+    try {
+        const { email, oldpassword, password, role, academyname } = req.body
+        if (role !== "Admin") {
+            return res.status(403).json({ msg: "Not Allowed" })
+        }
+        const existing = await Admin.findOne({ academy_email: email, academy_name: academyname })
+        if (existing) {
+            const salt = await bcrypt.genSalt();
+            const hashedpwd = await bcrypt.hash(password, salt);
+            const hashedoldpwd = await bcrypt.compare(oldpassword, existing.academy_password);
+            if (!hashedoldpwd) {
+                return res.status(401).json({ msg: "Invalid Current Password" })
+            }
+            existing.academy_password = hashedpwd
+            await existing.save()
+            return res.status(200).json({ msg: "Password Changed" })
+        } else {
+            return res.status(404).json({ msg: "Pls Enter Admin Email" })
+        }
+    } catch (error) {
+        return res.status(500).json({ msg: "Internal Server Error", error })
+    }
+}
+
 // get details of the academy by name 
 
 const academybyname = async (req, res) => {
@@ -679,5 +706,6 @@ module.exports = {
     fetchfreelist,
     handlesubmitfreetrial,
     getTodayDate,
-    formatAddress
+    formatAddress,
+    changeCreds
 }; 

@@ -16,5 +16,7 @@ router.post('/cancelsubscription', authenticate.authenticatetoken, cancelsubscri
 router.post('/freetrialrequest', academyauth.freetrialrequest)
 router.post('/fetchfreelist', authenticate.authenticatetoken, academyauth.fetchfreelist)
 router.post('/freetrialsubmission', authenticate.authenticatetoken, academyauth.handlesubmitfreetrial)
+router.post('/changeadmincreds', authenticate.authenticatetoken, academyauth.changeCreds)
+
 
 module.exports = router;
