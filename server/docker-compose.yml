@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  zookeeper:
+    image: zookeeper
+    ports:
+      - "2181:2181"
+
+  kafka:
+    image: confluentinc/cp-kafka
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    depends_on:
+      - zookeeper
+
+  server:
+    build: ./Server
+    ports:
+      - "5000:5000"
+    environment:
+      KAFKA_BROKER: kafka:9092
+    depends_on:
+      - kafka
+
+  client:
+    build: ./Client
+    ports:
+      - "3000:80"
+    depends_on:
+      - server
