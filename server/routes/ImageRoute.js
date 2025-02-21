@@ -121,12 +121,8 @@ router.post('/uploadeventbannerimage', authenicate.authenticatetoken,
             );
 
             const path = result.secure_url
-
-            const event = await EventMng.findOne({ _id: eventid })
-            if (event) {
-                event.banner = path;
-                await event.save();
-                return res.json({ message: "Event banner updated successfully" });
+            if (path) {
+                return res.json(path);
             } else {
                 return res.status(404).json({ message: "Event not found" });
             }

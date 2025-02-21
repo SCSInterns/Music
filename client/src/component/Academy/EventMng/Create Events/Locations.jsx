@@ -202,6 +202,7 @@ const LocationForm = () => {
                 label="Map Link"
                 variant="outlined"
                 fullWidth
+                placeholder="Enter Embed Map Link"
                 required
                 name="maplink"
                 value={formData.maplink}

@@ -38,7 +38,7 @@ function EventForm() {
   const currentVenues = useSelector((state) => state.venues.venues);
   const token = Token();
   const eventDates = useSelector((state) => state.event.eventDates);
-
+  const [picture, setpicture] = useState("");
   const handleInputChange = (e) => {
     const { name, value, checked, type } = e.target;
     if (type === "checkbox") {
@@ -91,8 +91,7 @@ function EventForm() {
     dispatch(updateFormData({ eventDates: updatedDates }));
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = async () => {
     const formattedData = {
       ...formData,
       times: formData.timeSameAllDays
@@ -103,6 +102,7 @@ function EventForm() {
             },
           }
         : formData.times,
+      banner: picture,
       role: sessionStorage.getItem("role"),
       academyname: sessionStorage.getItem("academyname"),
     };
@@ -149,8 +149,6 @@ function EventForm() {
     const url = "http://localhost:5000/api/auth/uploadeventbannerimage";
     const formdata = new FormData();
     formdata.append("picture", file);
-    formdata.append("eventid", "67a3561e4fce44a72a65bbc0");
-
     const response = await fetch(url, {
       method: "POST",
       headers: {
@@ -159,6 +157,8 @@ function EventForm() {
       body: formdata,
     });
     if (response.ok) {
+      const data = await response.json();
+      setpicture(data);
       toast.success("Banner Image Uploaded Successfully");
     } else {
       toast.error("Banner Image Upload Failed");
@@ -523,6 +523,9 @@ function EventForm() {
               variant="contained"
               color="primary"
               sx={{ float: "right", my: 8 }}
+              onClick={() => {
+                handleSubmit();
+              }}
             >
               Next
             </Button>

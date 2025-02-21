@@ -1,32 +1,29 @@
 import React, { useState } from "react";
 import { ChevronDown, ChevronUp, X, Calendar } from "lucide-react";
 import Header from "../../Header";
+import { useNavigate } from "react-router-dom";
 
 const EventsPage = () => {
   // State for expandable sections
   const [dateExpanded, setDateExpanded] = useState(false);
-  const [languagesExpanded, setLanguagesExpanded] = useState(false);
   const [categoriesExpanded, setCategoriesExpanded] = useState(false);
-  const [moreFiltersExpanded, setMoreFiltersExpanded] = useState(false);
-
+  const navigate = useNavigate();
   // State for filters
   const [selectedDate, setSelectedDate] = useState("");
   const [selectedLanguages, setSelectedLanguages] = useState([]);
   const [selectedCategories, setSelectedCategories] = useState([]);
-  const [dateRange, setDateRange] = useState({ start: "", end: "" });
-
-  // Available options
-  const languages = ["English", "Hindi", "Gujarati"];
   const categories = [
-    "Comedy Shows",
-    "Workshops",
+    "WorkShops",
     "Music Shows",
     "Meetups",
     "Kids",
     "Performances",
     "Exhibitions",
-    "Holi Celebrations",
+    "Sports Events",
+    "Others",
   ];
+  const [selectedPriceRange, setSelectedPriceRange] = useState("");
+  const [priceExpanded, setPriceExpanded] = useState(false);
 
   // Sample events data
   const allEvents = [
@@ -34,7 +31,7 @@ const EventsPage = () => {
       id: 1,
       title: "Aditya Gadhvi Live in Concert",
       image:
-        "https://res.cloudinary.com/dipnrfd3h/image/upload/v1738918475/eventbanners/lumxjspnpnbp7rtqpauj.avif",
+        "https://assets-in.bmscdn.com/discovery-catalog/events/tr:w-400,h-600,bg-CCCCCC:w-400.0,h-660.0,cm-pad_resize,bg-000000,fo-top:l-text,ie-U2F0LCAyMiBNYXI%3D,fs-29,co-FFFFFF,ly-612,lx-24,pa-8_0_0_0,l-end/et00431579-zeezemlkqc-portrait.jpg",
       promoted: true,
       category: "Music Shows",
       language: "Gujarati",
@@ -78,6 +75,13 @@ const EventsPage = () => {
     return day === 0 || day === 6;
   };
 
+  const priceRanges = [
+    { label: "Free", value: "free", min: 0, max: 0 },
+    { label: "0-500", value: "low", min: 0, max: 500 },
+    { label: "501-2000", value: "medium", min: 501, max: 2000 },
+    { label: "2000+", value: "high", min: 2000, max: Infinity },
+  ];
+
   const currentLocation = localStorage.getItem("location");
 
   // Filter events based on selected filters
@@ -98,7 +102,13 @@ const EventsPage = () => {
       selectedCategories.length === 0 ||
       selectedCategories.includes(event.category);
 
-    return dateMatch && languageMatch && categoryMatch;
+    const priceMatch =
+      !selectedPriceRange ||
+      (() => {
+        const range = priceRanges.find((r) => r.value === selectedPriceRange);
+        return range && event.price >= range.min && event.price <= range.max;
+      })();
+    return dateMatch && languageMatch && categoryMatch && priceMatch;
   });
 
   // Handler for category selection in top bar
@@ -110,21 +120,16 @@ const EventsPage = () => {
     );
   };
 
-  // Handler for language selection
-  const handleLanguageClick = (language) => {
-    setSelectedLanguages((prev) =>
-      prev.includes(language)
-        ? prev.filter((l) => l !== language)
-        : [...prev, language]
-    );
-  };
-
   // Clear all filters
   const clearFilters = () => {
     setSelectedDate("");
     setSelectedLanguages([]);
     setSelectedCategories([]);
-    setDateRange({ start: "", end: "" });
+    setSelectedPriceRange("");
+  };
+
+  const handlebuttonclick = () => {
+    navigate("/EventBooking");
   };
 
   return (
@@ -138,7 +143,7 @@ const EventsPage = () => {
             <h2 className="text-2xl font-bold">Filters</h2>
             <button
               onClick={clearFilters}
-              className="text-sm text-red-500 hover:text-red-600"
+              className="text-sm text-purple-600 hover:text-purple-600"
             >
               Clear All
             </button>
@@ -150,7 +155,7 @@ const EventsPage = () => {
               <span className="font-medium">Date</span>
               <button
                 onClick={() => setDateExpanded(!dateExpanded)}
-                className="text-gray-500"
+                className="text-gray-600"
               >
                 {dateExpanded ? (
                   <ChevronUp size={20} />
@@ -166,8 +171,8 @@ const EventsPage = () => {
                   <button
                     className={`px-4 py-2 rounded-full border ${
                       selectedDate === "today"
-                        ? "bg-red-500 text-white"
-                        : "border-red-500 text-red-500"
+                        ? "bg-purple-600 text-white"
+                        : "border-purple-600 text-purple-600"
                     }`}
                     onClick={() =>
                       setSelectedDate((prev) =>
@@ -180,8 +185,8 @@ const EventsPage = () => {
                   <button
                     className={`px-4 py-2 rounded-full border ${
                       selectedDate === "tomorrow"
-                        ? "bg-red-500 text-white"
-                        : "border-red-500 text-red-500"
+                        ? "bg-purple-600 text-white"
+                        : "border-purple-600 text-purple-600"
                     }`}
                     onClick={() =>
                       setSelectedDate((prev) =>
@@ -194,8 +199,8 @@ const EventsPage = () => {
                   <button
                     className={`px-4 py-2 rounded-full border ${
                       selectedDate === "weekend"
-                        ? "bg-red-500 text-white"
-                        : "border-red-500 text-red-500"
+                        ? "bg-purple-600 text-white"
+                        : "border-purple-600 text-purple-600"
                     }`}
                     onClick={() =>
                       setSelectedDate((prev) =>
@@ -210,15 +215,14 @@ const EventsPage = () => {
             )}
           </div>
 
-          {/* Languages Filter */}
           <div className="bg-white rounded-lg shadow-sm mb-4 p-4">
             <div className="flex justify-between items-center mb-4">
-              <span className="font-medium">Languages</span>
+              <span className="font-medium">Price Range</span>
               <button
-                onClick={() => setLanguagesExpanded(!languagesExpanded)}
-                className="text-gray-500"
+                onClick={() => setPriceExpanded(!priceExpanded)}
+                className="text-gray-600"
               >
-                {languagesExpanded ? (
+                {priceExpanded ? (
                   <ChevronUp size={20} />
                 ) : (
                   <ChevronDown size={20} />
@@ -226,17 +230,18 @@ const EventsPage = () => {
               </button>
             </div>
 
-            {languagesExpanded && (
+            {priceExpanded && (
               <div className="space-y-2">
-                {languages.map((language) => (
-                  <label key={language} className="flex items-center gap-2">
+                {priceRanges.map((range) => (
+                  <label key={range.value} className="flex items-center gap-2">
                     <input
-                      type="checkbox"
-                      checked={selectedLanguages.includes(language)}
-                      onChange={() => handleLanguageClick(language)}
-                      className="rounded text-red-500 focus:ring-red-500"
+                      type="radio"
+                      name="priceRange"
+                      checked={selectedPriceRange === range.value}
+                      onChange={() => setSelectedPriceRange(range.value)}
+                      className="text-purple-600 focus:ring-purple-600"
                     />
-                    {language}
+                    <span>₹{range.label}</span>
                   </label>
                 ))}
               </div>
@@ -249,7 +254,7 @@ const EventsPage = () => {
               <span className="font-medium">Categories</span>
               <button
                 onClick={() => setCategoriesExpanded(!categoriesExpanded)}
-                className="text-gray-500"
+                className="text-gray-600"
               >
                 {categoriesExpanded ? (
                   <ChevronUp size={20} />
@@ -267,7 +272,7 @@ const EventsPage = () => {
                       type="checkbox"
                       checked={selectedCategories.includes(category)}
                       onChange={() => handleCategoryClick(category)}
-                      className="rounded text-red-500 focus:ring-red-500"
+                      className="rounded text-purple-600 focus:ring-purple-600"
                     />
                     {category}
                   </label>
@@ -291,8 +296,8 @@ const EventsPage = () => {
                 onClick={() => handleCategoryClick(category)}
                 className={`px-4 py-2 rounded-full border transition-colors ${
                   selectedCategories.includes(category)
-                    ? "bg-red-500 text-white border-red-500"
-                    : "border-red-500 text-red-500 hover:bg-red-50"
+                    ? "bg-purple-600 text-white border-purple-600"
+                    : "border-purple-600 text-purple-600 hover:bg-purple-50"
                 }`}
               >
                 {category}
@@ -303,36 +308,36 @@ const EventsPage = () => {
           {/* Events Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {filteredEvents.map((event) => (
-              <div
-                key={event.id}
-                className="relative bg-white rounded-lg overflow-hidden shadow-md"
-              >
-                {event.promoted && (
-                  <div className="absolute top-4 right-4 bg-red-500 text-white px-3 py-1 rounded-full text-sm">
-                    PROMOTED
-                  </div>
-                )}
-                <img
-                  src={event.image}
-                  alt={event.title}
-                  className="w-full h-64 object-cover"
-                />
-                <div className="p-4">
-                  <h3 className="font-semibold text-lg">{event.title}</h3>
-                  <div className="flex gap-2 mt-2">
-                    <span className="text-sm text-gray-600">
-                      {event.category}
-                    </span>
-                    <span className="text-sm text-gray-600">•</span>
-                    <span className="text-sm text-gray-600">
-                      {event.language}
-                    </span>
-                  </div>
-                  <div className="text-sm text-gray-600 mt-1">
-                    {new Date(event.date).toLocaleDateString()}
+              <button onClick={() => handlebuttonclick()}>
+                <div key={event.id} className="cursor-pointer">
+                  <div className="relative bg-white rounded-lg overflow-hidden shadow-md h-full flex flex-col">
+                    {event.promoted && (
+                      <div className="absolute top-4 right-4 bg-purple-600 text-white px-3 py-1 rounded-full text-sm">
+                        PROMOTED
+                      </div>
+                    )}
+                    <img
+                      src={event.image}
+                      alt={event.title}
+                      className="w-full !h-68 object-cover"
+                    />
+                    <div className="p-4 flex flex-col flex-grow">
+                      <h3 className="font-semibold text-lg text-left">
+                        {event.title}
+                      </h3>
+                      <div className="flex gap-2 mt-2">
+                        <span className="text-sm text-gray-600">
+                          {event.category}
+                        </span>
+                        <span className="text-sm text-gray-600">•</span>
+                        <span className="text-sm text-gray-600">
+                          {event.language}
+                        </span>
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
+              </button>
             ))}
           </div>
         </div>

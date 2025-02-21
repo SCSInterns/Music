@@ -38,6 +38,9 @@ function CreateExtraDetails() {
   });
   const [age, setage] = useState("");
   const [sponsers, setsponsers] = useState("");
+  const eventid = formData.eventid;
+
+  console.log(eventid);
 
   const addCoupon = () => {
     setCoupons([
@@ -74,6 +77,9 @@ function CreateExtraDetails() {
         "Content-Type": "application/json",
         Authorization: `${token}`,
       },
+      body: JSON.stringify({
+        eventid: eventid,
+      }),
     });
 
     if (response.ok) {
@@ -98,7 +104,7 @@ function CreateExtraDetails() {
       },
       body: JSON.stringify({
         role: sessionStorage.getItem("role"),
-        id: "67a3561e4fce44a72a65bbc0",
+        id: eventid,
         Sponsers: sponsers,
         Coupon: coupons,
         Group: groupdiscount,
@@ -181,7 +187,11 @@ function CreateExtraDetails() {
             onChange={(e) => {
               seteventtermscond(e.target.value);
             }}
-            inputProps={{ whiteSpace: "pre-wrap" }}
+            sx={{
+              "& .MuiInputBase-input": {
+                whiteSpace: "pre-wrap",
+              },
+            }}
           />
         </div>
 

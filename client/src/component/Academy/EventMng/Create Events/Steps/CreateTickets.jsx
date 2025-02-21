@@ -43,6 +43,7 @@ function CreateTickets() {
   const eventid = formData.eventid;
 
   console.log(plans);
+  console.log(eventid);
 
   const getlayout = async () => {
     if (eventid === "") {
@@ -58,7 +59,7 @@ function CreateTickets() {
         Authorization: `${Token()}`,
       },
       body: JSON.stringify({
-        eventid: "123",
+        eventid: eventid,
       }),
     });
 
@@ -147,7 +148,7 @@ function CreateTickets() {
         Authorization: `${Token()}`,
       },
       body: JSON.stringify({
-        eventid: "67a3561e4fce44a72a65bbc0",
+        eventid: eventid,
         plans: plans,
       }),
     });

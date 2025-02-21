@@ -1,39 +1,44 @@
 const dotenv = require("dotenv");
 dotenv.config();
-const Location = require("../models/EventLocations")
-const PaymentCreds = require("./RazorPayAcademyCred")
+const Location = require("../models/EventLocations");
+const PaymentCreds = require("./RazorPayAcademyCred");
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 const EventPaymentCreds = require("../models/EventPaymentCreds");
 const Event = require("../models/EventMng");
-const { redis } = require("../RedisInitalitation")
-const UserEmailsMarketing = require("../models/UserEmailsMarketing")
+const { redis } = require("../RedisInitalitation");
+const UserEmailsMarketing = require("../models/UserEmailsMarketing");
 const Emailc = require("../controllers/emailc");
 const EventLocations = require("../models/EventLocations");
 
-// call this at publish time of event 
+// call this at publish time of event
 const addeventinredis = async (eventdetails, hashKey) => {
     const eventid = eventdetails._id;
-    const existing = await redis.hget(hashKey, eventid)
+    const existing = await redis.hget(hashKey, eventid);
     if (existing) {
-        return
+        const parsedExisting = JSON.parse(existing);
+        parsedExisting.eventdetails.live = true;
+        await redis.hset(hashKey, eventid, JSON.stringify(parsedExisting));
+        return;
     }
-    await redis.hset(hashKey, eventid, JSON.stringify({
-        eventdetails
-    }));
-}
+    await redis.hset(
+        hashKey,
+        eventid,
+        JSON.stringify({
+            eventdetails,
+        })
+    );
+};
 
-
-// add the event at time of publishing by admin 
+// add the event at time of publishing by admin
 const geteventinredis = async () => {
-    const hashkey = "events"
-    const events = await Event.find()
+    const hashkey = "events";
+    const events = await Event.find();
     for (const event of events) {
-        addeventinredis(event, hashkey)
+        addeventinredis(event, hashkey);
     }
-}
+};
 
-geteventinredis()
-
+geteventinredis();
 
 const token = process.env.googleapi;
 
@@ -42,19 +47,39 @@ const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
 const generateAIDescription = async (req, res) => {
     try {
-        const { eventName, venue, eventDates, time, occurrence, highlights, audience } = req.body;
+        const {
+            eventid
+        } = req.body;
 
+        const eventdetails = await Event.findOne({ _id: eventid });
+        const venuedetails = await EventLocations.findOne({
+            _id: eventdetails.eventSchedule[0].venueid,
+        });
         const prompt = `
-      Write a compelling and engaging description of an event for potential users in 200 words. 
+      Write a compelling and engaging description of an event for potential users in 200 words.     
       The description should include the following details:
 
-      Event Name: ${eventName || "MusicBee"}
-      Venue: ${venue || "Hk Town Hall , Ahmedabad"}
-      Date(s): ${eventDates || "13th March 2025"}
-      Time: ${time || "5pm to 9pm"}
-      Occurrence Type: ${occurrence || "Single Day"}
-      Event Highlights: ${highlights || " - Best DJ set for event - In the heart of Ahmedabad - Free drinks - Free WiFi - Dance floor - Free parking -Neon lights -Photo booths"}
-      Audience: ${audience || "All above 10+ years old"}
+      Event Name: ${eventdetails.eventname || "MusicBee"}
+      Venue: ${venuedetails.venuename || "Hk Town Hall , Ahmedabad"}
+      Date(s): ${eventdetails.eventSchedule[0].date || "13th March 2025"}
+      Time: ${`${eventdetails.eventSchedule[0].startTime} to ${eventdetails.eventSchedule[0].endTime}` ||
+            "5pm to 9pm"
+            }
+      Occurrence Type: ${eventdetails.occurancetype || "Single Day"}
+      Event Highlights: ${`- Live ${eventdetails.eventcategory || "performance"
+            } by ${eventdetails.eventname || "a renowned artist"}
+- ${eventdetails.venuetype || "Auditorium"} seating with ${eventdetails.plans
+                .map((plan) => plan.planName)
+                .join(", ")} options
+- Comfortable seating for up to ${eventdetails.totalSeats || "N/A"} attendees
+- Exclusive ${eventdetails.eventSchedule[0].startTime} to ${eventdetails.eventSchedule[0].endTime
+            } performance on ${eventdetails.eventSchedule[0].date}
+- Perfect ${eventdetails.eventcategory
+                ? eventdetails.eventcategory.toLowerCase()
+                : "event"
+            } experience in ${venuedetails.venuename || "Ahmedabad's prime location"
+            }`}
+      Audience: ${"Suitable for all ages"}
       
       Registration or Attendance Details: Mention if registration is required, tickets are needed, or if it's free.
 
@@ -63,9 +88,29 @@ const generateAIDescription = async (req, res) => {
       Make the description concise but engaging enough to captivate the audience.
 
       Example Output:
-      'Join us for ${eventName || "[Event Name]"}, an unforgettable experience at ${venue || "[Venue]"}. 
-      Happening on ${eventDates || "[Date(s)]"} from ${time || "[Time]"}, this ${occurrence || "[Occurrence]"} event is perfect for ${audience || "[Audience]"}. 
-      Don’t miss out on ${highlights || "[Highlights]"}. Register now!'
+      'Join us for ${eventdetails.eventname || "MusicBee"
+            }, an unforgettable experience at ${venuedetails.venuename || "HK Town Hall, Ahmedabad"
+            }. 
+Happening on ${eventdetails.eventSchedule[0].date || "13th March 2025"} from ${eventdetails.eventSchedule[0].startTime || "5pm"
+            } to ${eventdetails.eventSchedule[0].endTime || "9pm"}, 
+this ${eventdetails.occurancetype || "Single Day"} event is perfect for ${"Suitable for all ages"
+            }. 
+
+Don’t miss out on:
+- Live ${eventdetails.eventcategory || "performance"} by ${eventdetails.eventname || "a renowned artist"
+            }
+- ${eventdetails.venuetype || "Auditorium"} seating with ${eventdetails.plans
+                .map((plan) => plan.planName)
+                .join(", ")} options
+- Comfortable seating for up to ${eventdetails.totalSeats || "N/A"} attendees
+- Exclusive ${eventdetails.eventSchedule[0].startTime} to ${eventdetails.eventSchedule[0].endTime
+            } performance on ${eventdetails.eventSchedule[0].date}
+- Perfect ${eventdetails.eventcategory
+                ? eventdetails.eventcategory.toLowerCase()
+                : "event"
+            } experience in ${venuedetails.venuename || "Ahmedabad's prime location"}.
+
+Register now and be part of an unforgettable evening!
     `;
 
         const result = await model.generateContent(prompt);
@@ -79,11 +124,10 @@ const generateAIDescription = async (req, res) => {
     }
 };
 
-// set venue details  
+// set venue details
 const createVenueDetails = async (req, res) => {
     try {
-
-        const { venuename, city, state, pincode, maplink, role } = req.body
+        const { venuename, city, state, pincode, maplink, role } = req.body;
 
         if (role !== "Admin") {
             return res.status(401).json({ error: "Unauthorized access" });
@@ -95,23 +139,21 @@ const createVenueDetails = async (req, res) => {
             state: state,
             pincode: pincode,
             maplink: maplink,
-        })
+        });
 
         const response = await newvenue.save();
 
         return res.status(201).json(response);
-
     } catch (error) {
         return res.status(500).json({ error: error.message });
     }
-}
+};
 
-// get venue details  
+// get venue details
 
 const getVenueDetails = async (req, res) => {
     try {
-
-        const { role } = req.body
+        const { role } = req.body;
 
         if (role !== "Admin") {
             return res.status(401).json({ error: "Unauthorized access" });
@@ -119,32 +161,47 @@ const getVenueDetails = async (req, res) => {
 
         const venues = await Location.find();
         return res.status(200).json(venues);
-
     } catch (error) {
         return res.status(500).json({ error: error.message });
     }
-}
+};
 
-
-// time conversion 
+// time conversion
 function convertToIST(utcDateString) {
     const date = new Date(utcDateString);
-    const options = { timeZone: "Asia/Kolkata", hour12: false, hour: "2-digit", minute: "2-digit" };
+    const options = {
+        timeZone: "Asia/Kolkata",
+        hour12: false,
+        hour: "2-digit",
+        minute: "2-digit",
+    };
     return date.toLocaleTimeString("en-IN", options);
 }
 
-// create event details -- to do 
+// create event details -- to do
 const createEventDetails = async (req, res) => {
     try {
-        const { academyname, eventName, venueid, eventDates, startTime, endTime, occurrence, eventCategory, role, venuetype } = req.body
+        const {
+            academyname,
+            eventName,
+            venueid,
+            eventDates,
+            startTime,
+            endTime,
+            occurrence,
+            eventCategory,
+            role,
+            venuetype,
+            banner,
+        } = req.body;
 
         if (role !== "Admin") {
             return res.status(401).json({ error: "Unauthorized access" });
         }
 
-        const formatteddate = eventDates[0].split("-").reverse().join("-")
-        const formattedstarttime = convertToIST(startTime)
-        const formattedendtime = convertToIST(endTime)
+        const formatteddate = eventDates[0].split("-").reverse().join("-");
+        const formattedstarttime = convertToIST(startTime);
+        const formattedendtime = convertToIST(endTime);
 
         const newapplication = new Event({
             academyname: academyname,
@@ -155,28 +212,39 @@ const createEventDetails = async (req, res) => {
             seatlayoutid: "N/A",
             ticketid: "N/A",
             venuetype: venuetype,
-            eventSchedule: [{ date: formatteddate, startTime: formattedstarttime, endTime: formattedendtime, venueid: venueid }]
-
-        })
+            eventSchedule: [
+                {
+                    date: formatteddate,
+                    startTime: formattedstarttime,
+                    endTime: formattedendtime,
+                    venueid: venueid,
+                },
+            ],
+            banner: banner,
+        });
         const response = await newapplication.save();
         if (response) {
             return res.status(201).json(response);
-        }
-        else {
+        } else {
             return res.status(500).json({ error: "Error in creating event" });
         }
-
     } catch (error) {
         return res.status(500).json({ error: error.message });
     }
+};
 
-}
-
-const eventcreds = async (razorpaykey, razorpayid, qrcodeurl, academyid, eventid, type) => {
+const eventcreds = async (
+    razorpaykey,
+    razorpayid,
+    qrcodeurl,
+    academyid,
+    eventid,
+    type
+) => {
     if (type === "Both" || type === "Razorpay") {
-        const ekey = PaymentCreds.encrypt(razorpaykey)
+        const ekey = PaymentCreds.encrypt(razorpaykey);
 
-        const eid = PaymentCreds.encrypt(razorpayid)
+        const eid = PaymentCreds.encrypt(razorpayid);
 
         if (type === "Razorpay") {
             const newcreds = new EventPaymentCreds({
@@ -186,9 +254,9 @@ const eventcreds = async (razorpaykey, razorpayid, qrcodeurl, academyid, eventid
                 qrcode: "none",
                 type: "razorpay",
                 academyId: academyid,
-            })
-            await newcreds.save()
-            return newcreds
+            });
+            await newcreds.save();
+            return newcreds;
         } else {
             const newcreds = new EventPaymentCreds({
                 eventId: eventid,
@@ -197,9 +265,9 @@ const eventcreds = async (razorpaykey, razorpayid, qrcodeurl, academyid, eventid
                 qrcode: qrcodeurl,
                 type: "both",
                 academyId: academyid,
-            })
-            await newcreds.save()
-            return newcreds
+            });
+            await newcreds.save();
+            return newcreds;
         }
     } else {
         const newcreds = new EventPaymentCreds({
@@ -209,46 +277,57 @@ const eventcreds = async (razorpaykey, razorpayid, qrcodeurl, academyid, eventid
             qrcode: qrcodeurl,
             type: "manual",
             academyId: academyid,
-        })
-        await newcreds.save()
-        return newcreds
+        });
+        await newcreds.save();
+        return newcreds;
     }
-}
+};
 
-// insert pricing plans in case of event creation using layout 
+// insert pricing plans in case of event creation using layout
 
 const insertPricingPlans = async (req, res) => {
     try {
-        const { plans, eventid } = req.body
-        const event = await Event.findOne({ _id: eventid })
+        const { plans, eventid } = req.body;
+        const event = await Event.findOne({ _id: eventid });
 
-        var totalseats = 0
+        var totalseats = 0;
 
-        plans.forEach(plan => {
-            totalseats += Number(plan.maxSeats)
-        })
+        plans.forEach((plan) => {
+            totalseats += Number(plan.maxSeats);
+        });
 
         if (event) {
-            event.plans = plans
-            event.totalSeats = totalseats
-            const response = await event.save()
+            event.plans = plans;
+            event.totalSeats = totalseats;
+            const response = await event.save();
             if (response) {
-                return res.status(201).json(response)
+                return res.status(201).json(response);
             } else {
-                return res.status(500).json({ error: "Error in inserting pricing plans" })
+                return res
+                    .status(500)
+                    .json({ error: "Error in inserting pricing plans" });
             }
         } else {
-            return res.status(404).json({ error: "Event not found" })
+            return res.status(404).json({ error: "Event not found" });
         }
     } catch (error) {
-        return res.status(500).json({ error: error.message })
+        return res.status(500).json({ error: error.message });
     }
-
-}
+};
 
 const createExtraDetails = async (req, res) => {
     try {
-        const { role, id, Sponsers, Coupon, Group, TermsAndConditions, ContactInformation, description, agefree } = req.body;
+        const {
+            role,
+            id,
+            Sponsers,
+            Coupon,
+            Group,
+            TermsAndConditions,
+            ContactInformation,
+            description,
+            agefree,
+        } = req.body;
 
         if (role !== "Admin") {
             return res.status(401).json({ error: "Unauthorized access" });
@@ -270,7 +349,6 @@ const createExtraDetails = async (req, res) => {
         event.agefreetickets = agefree;
         const updatedEvent = await event.save();
         return res.status(200).json(updatedEvent);
-
     } catch (error) {
         return res.status(500).json({ error: error.message });
     }
@@ -278,8 +356,7 @@ const createExtraDetails = async (req, res) => {
 
 const getEventDetails = async (req, res) => {
     try {
-
-        const { id } = req.body
+        const { id } = req.body;
 
         const event = await Event.findOne({ _id: id });
 
@@ -287,23 +364,22 @@ const getEventDetails = async (req, res) => {
             return res.status(404).json({ error: "Event not found" });
         }
 
-        return res.status(200).json(event)
+        const venuedetails = await EventLocations.findOne({ _id: event.eventSchedule[0].venueid })
 
-
+        return res.status(200).json({ event, venuedetails });
     } catch (error) {
         return res.status(500).json({ error: error.message });
     }
-}
-
+};
 
 const StoreCreds = async (req, res) => {
-    const { role, id, rid, rkey, qrurl, type } = req.body
+    const { role, id, rid, rkey, qrurl, type } = req.body;
 
     if (role !== "Admin") {
         return res.status(401).json({ error: "Unauthorized access" });
     }
 
-    const event = await Event.findOne({ _id: id })
+    const event = await Event.findOne({ _id: id });
 
     if (!event) {
         return res.status(404).json({ error: "Event not found" });
@@ -313,78 +389,83 @@ const StoreCreds = async (req, res) => {
         razorpayId: rid,
         razorpayKey: rkey,
         qrcode: qrurl,
-        type: type
+        type: type,
     };
 
-    const result = await event.save()
+    const result = await event.save();
 
     if (result) {
-        return res.status(200).json({ msg: "Payment credentials stored successfully" })
+        return res
+            .status(200)
+            .json({ msg: "Payment credentials stored successfully" });
     } else {
-        return res.status(500).json({ error: "Error in storing payment credentials" })
+        return res
+            .status(500)
+            .json({ error: "Error in storing payment credentials" });
     }
+};
 
-}
-
-// handle publish event 
+// handle publish event
 
 const publishEvent = async (req, res) => {
     try {
-        const { role, id } = req.body
+        const { role, id } = req.body;
 
         if (role !== "Admin") {
             return res.status(401).json({ error: "Unauthorized access" });
         }
 
-        const event = await Event.findOne({ _id: id })
+        const event = await Event.findOne({ _id: id });
 
         if (!event) {
             return res.status(404).json({ error: "Event not found" });
         }
 
-        event.live = true
+        event.live = true;
 
-        const result = await event.save()
+        const result = await event.save();
 
-        const venue = result?.eventSchedule[0]?.venueid
+        const venue = result?.eventSchedule[0]?.venueid;
         if (venue) {
-            const locationcity = await EventLocations.findOne({ _id: venue })
+            const locationcity = await EventLocations.findOne({ _id: venue });
             if (locationcity) {
-                const marketedusers = await UserEmailsMarketing.find({ location: locationcity.city })
+                const marketedusers = await UserEmailsMarketing.find({
+                    location: locationcity.city,
+                });
                 for (const users of marketedusers) {
-                    const mail = await sendEmail(users.email)
+                    const mail = await sendEmail(users.email);
                 }
-                const allusers = await UserEmailsMarketing.find({ location: "All" })
+                const allusers = await UserEmailsMarketing.find({ location: "All" });
                 for (const users of allusers) {
-                    const mail = await sendEmail(users.email)
+                    const mail = await sendEmail(users.email);
                 }
             }
         }
         if (result) {
-            addeventinredis(event, "events")
-            return res.status(200).json({ msg: "Event published successfully" })
+            addeventinredis(event, "events");
+            return res.status(200).json({ msg: "Event published successfully" });
         } else {
-            return res.status(500).json({ error: "Error in publishing event" })
+            return res.status(500).json({ error: "Error in publishing event" });
         }
-
     } catch (error) {
         return res.status(500).json({ error: error.message });
     }
+};
 
-}
-
-// add email for marketing 
+// add email for marketing
 
 const addEmail = async (req, res) => {
     try {
         const { email, location } = req.body;
         if (!email || !location) {
-            return res.status(400).json({ error: "Please provide email and location" });
+            return res
+                .status(400)
+                .json({ error: "Please provide email and location" });
         }
         const newReq = new UserEmailsMarketing({
             email: email,
-            location: location
-        })
+            location: location,
+        });
         const response = await newReq.save();
         if (response) {
             return res.status(201).json(response);
@@ -394,18 +475,28 @@ const addEmail = async (req, res) => {
     } catch (error) {
         return res.status(500).json({ error: error.message });
     }
-}
+};
 
-
-// send marketing email 
+// send marketing email
 
 const sendEmail = async (mailc) => {
     try {
-        const mail = await Emailc.sendsubscribemail(mailc)
+        const mail = await Emailc.sendsubscribemail(mailc);
     } catch (error) {
         return res.status(500).json({ error: error.message });
     }
+};
 
-}
-
-module.exports = { generateAIDescription, createVenueDetails, getVenueDetails, eventcreds, createEventDetails, insertPricingPlans, createExtraDetails, getEventDetails, StoreCreds, publishEvent, addEmail };
+module.exports = {
+    generateAIDescription,
+    createVenueDetails,
+    getVenueDetails,
+    eventcreds,
+    createEventDetails,
+    insertPricingPlans,
+    createExtraDetails,
+    getEventDetails,
+    StoreCreds,
+    publishEvent,
+    addEmail,
+};

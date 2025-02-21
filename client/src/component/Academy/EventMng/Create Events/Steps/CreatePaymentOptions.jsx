@@ -35,7 +35,7 @@ function CreatePaymentOptions() {
   const [url, seturl] = useState("");
   const dispatch = useDispatch();
   const formData = useSelector((state) => state.event);
-  const eventid = formData.eventid || "67a3561e4fce44a72a65bbc0";
+  const eventid = formData.eventid;
 
   const ENCRYPTION_KEY = process.env.REACT_APP_AES_KEY;
   async function decrypt(text, key) {
@@ -159,9 +159,6 @@ function CreatePaymentOptions() {
       setQrPreview(URL.createObjectURL(file));
     }
   };
-
-  // https://res.cloudinary.com/dipnrfd3h/image/upload/v1738735682/EventQrcode/download%20%282%29.png
-
   const toggleEdit = () => {
     setEditMode(!editMode);
   };
@@ -173,7 +170,7 @@ function CreatePaymentOptions() {
   const handleQrUpload = async () => {
     const data = new FormData();
     data.append("picture", qrCode);
-
+    setLoading(true);
     const url = "http://localhost:5000/api/auth/uploadeventqrcode";
 
     const response = await fetch(url, {
@@ -184,9 +181,11 @@ function CreatePaymentOptions() {
       body: data,
     });
     if (response.ok) {
+      setLoading(false);
       const final = await response.json();
       seturl(final.imageUrl);
     }
+    setLoading(false);
   };
 
   async function encrypt(text) {
@@ -247,6 +246,8 @@ function CreatePaymentOptions() {
       tag
     ).toString("hex")}:${hmacGenerated}`;
   }
+
+  console.log(url);
 
   const handleFinalSubmit = async () => {
     if (selectedTab === "Both" || selectedTab === "Manual") {
