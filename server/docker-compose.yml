@@ -21,7 +21,8 @@ services:
   server:
     build: .
     ports:
-      - "5000:5000"
+      - "5000:5000" 
+    command: npm start   
     environment:
       KAFKA_BROKER: kafka:9092
     depends_on:
