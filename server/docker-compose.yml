@@ -19,17 +19,10 @@ services:
       - zookeeper
 
   server:
-    build: ./Server
+    build: .
     ports:
       - "5000:5000"
     environment:
       KAFKA_BROKER: kafka:9092
     depends_on:
       - kafka
-
-  client:
-    build: ./Client
-    ports:
-      - "3000:80"
-    depends_on:
-      - server
