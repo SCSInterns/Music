@@ -1,53 +1,47 @@
 services:
-  - type: private_service
-    name: zookeeper
-    env: docker
-    plan: starter
-    dockerfilePath: ""
-    image: wurstmeister/zookeeper
-    autoDeploy: false
-    ports:
-      - port: 2181
-
-  - type: private_service
-    name: kafka
-    env: docker
-    plan: starter
-    dockerfilePath: ""
-    image: wurstmeister/kafka
-    autoDeploy: false
-    dependsOn:
-      - name: zookeeper
-    environment:
-      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
-      - KAFKA_LISTENERS=PLAINTEXT://0.0.0.0:9092
-      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092
-      - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=PLAINTEXT:PLAINTEXT
-    ports:
-      - port: 9092
-
-  - type: private_service
-    name: redis
-    env: docker
-    plan: starter
-    dockerfilePath: ""
-    image: redis
-    autoDeploy: false
-    ports:
-      - port: 6379
-
   - type: web
-    name: server
-    env: docker
-    plan: starter
+    name: nodejs-express-app
+    runtime: node
+    buildCommand: "npm install"
+    startCommand: "npm run start"
+    plan: free
+    envVars:
+      - key: REDIS_HOST
+        value: redis
+      - key: REDIS_PORT
+        value: "6379"
+      - key: REDIS_PASSWORD
+        value: "your-redis-password"
+      - key: NODE_ENV
+        value: production
+      - key: KAFKA_BROKER
+        value: kafka:9092
+
+  - type: redis
+    name: redis
+    plan: free
+    envVars:
+      - key: REDIS_PASSWORD
+        value: "your-redis-password"
+
+  - type: pserv
+    name: zookeeper
+    plan: free
     dockerfilePath: ./Dockerfile
-    autoDeploy: true
-    ports:
-      - port: 5000
-    dependsOn:
-      - name: kafka
-      - name: redis
-    environment:
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
-      - KAFKA_BROKER=kafka:9092
+    envVars:
+      - key: ZOOKEEPER_CLIENT_PORT
+        value: "2181"
+
+  - type: pserv
+    name: kafka
+    plan: free
+    dockerfilePath: ./Dockerfile
+    envVars:
+      - key: KAFKA_ZOOKEEPER_CONNECT
+        value: zookeeper:2181
+      - key: KAFKA_LISTENERS
+        value: PLAINTEXT://0.0.0.0:9092
+      - key: KAFKA_ADVERTISED_LISTENERS
+        value: PLAINTEXT://kafka:9092
+      - key: KAFKA_LISTENER_SECURITY_PROTOCOL_MAP
+        value: PLAINTEXT:PLAINTEXT
