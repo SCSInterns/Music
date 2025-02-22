@@ -1,0 +1,53 @@
+services:
+  - type: private_service
+    name: zookeeper
+    env: docker
+    plan: starter
+    dockerfilePath: ""
+    image: wurstmeister/zookeeper
+    autoDeploy: false
+    ports:
+      - port: 2181
+
+  - type: private_service
+    name: kafka
+    env: docker
+    plan: starter
+    dockerfilePath: ""
+    image: wurstmeister/kafka
+    autoDeploy: false
+    dependsOn:
+      - name: zookeeper
+    environment:
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+      - KAFKA_LISTENERS=PLAINTEXT://0.0.0.0:9092
+      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092
+      - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=PLAINTEXT:PLAINTEXT
+    ports:
+      - port: 9092
+
+  - type: private_service
+    name: redis
+    env: docker
+    plan: starter
+    dockerfilePath: ""
+    image: redis
+    autoDeploy: false
+    ports:
+      - port: 6379
+
+  - type: web
+    name: server
+    env: docker
+    plan: starter
+    dockerfilePath: ./Dockerfile
+    autoDeploy: true
+    ports:
+      - port: 5000
+    dependsOn:
+      - name: kafka
+      - name: redis
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - KAFKA_BROKER=kafka:9092
