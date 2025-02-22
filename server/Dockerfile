@@ -1,18 +1,21 @@
-# Use Node.js base image
 FROM node:18
 
-# Set working directory
+# Install dependencies for canvas
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    libcairo2-dev \
+    libpango1.0-dev \
+    libjpeg-dev \
+    libgif-dev \
+    librsvg2-dev
+
 WORKDIR /usr/src/app
 
-# Install dependencies
 COPY package*.json ./
+
 RUN npm install
 
-# Add app source
 COPY . .
 
-# Expose backend port
 EXPOSE 5000
-
-# Start the server
-CMD ["npm", "start"]
+CMD ["node", "index.js"]
