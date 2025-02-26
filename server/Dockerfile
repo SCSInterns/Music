@@ -1,32 +1,20 @@
-# --------- Build Stage ---------
-FROM node:18-slim AS builder
+# Use official Node.js image
+FROM node:18
 
-# Install build dependencies for canvas
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    build-essential \
-    libcairo2-dev \
-    libpango1.0-dev \
-    libjpeg-dev \
-    libgif-dev \
-    librsvg2-dev \
-    && apt-get clean && rm -rf /var/lib/apt/lists/*
+# Set working directory
+WORKDIR /app
 
-WORKDIR /usr/src/app
-
+# Copy package.json and package-lock.json
 COPY package*.json ./
 
-# Use npm ci for faster, clean installs (if package-lock.json exists)
-RUN npm ci --only=production
+# Install dependencies
+RUN npm install --production
 
+# Copy application source code
 COPY . .
 
-# --------- Runtime Stage ---------
-FROM node:18-slim
+# Expose the port that the application runs on
+EXPOSE 5001
 
-WORKDIR /usr/src/app
-
-# Copy only necessary files from the builder stage
-COPY --from=builder /usr/src/app /usr/src/app
-
-EXPOSE 5000
-CMD ["node", "index.js"]
+# Use the environment variable PORT (required for Dokku)
+CMD ["sh", "-c", "PORT=${PORT:-5001} node server.js"]
