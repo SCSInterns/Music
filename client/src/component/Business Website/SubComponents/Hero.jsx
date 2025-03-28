@@ -30,7 +30,7 @@ export default function Hero() {
                 }}
               >
                 <a
-                  href="/academyregform"
+                  href="/onboarding"
                   target="_blank"
                   style={{ textDecoration: "none" }}
                 >

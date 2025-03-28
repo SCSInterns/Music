@@ -72,7 +72,7 @@ export default function PricingDetails({ id, admin }) {
     }
   };
 
-  const rkey = process.env.REACT_APP_RKEY;
+  const rkey = import.meta.env.VITE_RKEY;
 
   const handlePayment = async (orderdata) => {
     const options = {

@@ -3,7 +3,7 @@ require('dotenv').config();
 
 const kafka = new Kafka({
     clientId: 'MusicVista-kafka',
-    brokers: ['localhost:9092'],
+    brokers: ['192.168.31.26:9092'],
 })
 
 

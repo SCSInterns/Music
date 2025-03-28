@@ -41,6 +41,9 @@ function CreateTickets() {
   const [seatlayoutpopup, setseatlayoutpopup] = useState(false);
   const formData = useSelector((state) => state.event);
   const eventid = formData.eventid;
+  const seatid = formData.seatlayoutid;
+
+  console.log(seatid);
 
   console.log(plans);
   console.log(eventid);

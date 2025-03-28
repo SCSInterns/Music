@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Table,
   TableBody,
@@ -18,44 +18,17 @@ import {
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import PreviewIcon from "@mui/icons-material/Preview";
-
-const eventData = [
-  {
-    _id: "67b82ab41aceba6650c63d9a",
-    eventname: "Kisi Ko Batana Mat Ft. Anubhav Singh Bassi",
-    live: true,
-    academyname: "Spectrum",
-    banner:
-      "https://res.cloudinary.com/dipnrfd3h/image/upload/v1740122576/eventbanners/eaj3vymud6igxfstun3f.avif",
-    eventcategory: "Performances",
-    occurancetype: "Single",
-    venuetype: "Auditorium",
-    eventdescription:
-      "Get ready for an unforgettable evening of laughter and entertainment!...",
-    seatlayouturl:
-      "https://res.cloudinary.com/dipnrfd3h/image/upload/v1740123250/EventLayout/canvas_image.png",
-    totalSeats: 500,
-    eventSchedule: [
-      {
-        date: "02-03-2025",
-        startTime: "18:00",
-        endTime: "20:00",
-        venueid: "6798c4242892b4dc4bd89c21",
-      },
-    ],
-    plans: [
-      { planName: "Premium Seating", pricePerSeat: 1500, maxSeats: 100 },
-      { planName: "Gold Seating", pricePerSeat: 1000, maxSeats: 100 },
-      { planName: "Silver Seating", pricePerSeat: 500, maxSeats: 300 },
-    ],
-  },
-];
-
-// start from here -- data dynamic
+import Token from "../../../Token/Token";
+import { toast } from "react-toastify";
+import { MaterialReactTable } from "material-react-table";
 
 export default function EventTableWithPreview() {
+  const token = Token();
+  const role = sessionStorage.getItem("role");
+  const academyname = sessionStorage.getItem("academyname");
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
+  const [eventData, seteventData] = useState({});
 
   const handlePreviewClick = (event) => {
     setSelectedEvent(event);
@@ -67,38 +40,67 @@ export default function EventTableWithPreview() {
     setSelectedEvent(null);
   };
 
+  const fetchEventDetails = async () => {
+    const url = "http://localhost:5000/api/auth/geteventslistforacademy";
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `${token}`,
+      },
+      body: JSON.stringify({ role: role, academyname: academyname }),
+    });
+    const data = await response.json();
+    if (response.ok) {
+      seteventData(data);
+    } else {
+      const message = data.message;
+      toast.error(message);
+    }
+  };
+
+  useEffect(() => {
+    fetchEventDetails();
+  }, []);
+
+  const columns = [
+    {
+      header: "Sr. No",
+      accessorKey: "srNo",
+      Cell: ({ row }) => row.index + 1,
+      size: 80,
+    },
+    {
+      accessorKey: "eventname",
+      header: "Event Name",
+      size: 300,
+    },
+    {
+      accessorKey: "eventcategory",
+      header: "Category",
+    },
+    {
+      accessorKey: "venuetype",
+      header: "Venue Type",
+    },
+    {
+      accessorKey: "preview",
+      header: "Preview",
+      Cell: ({ row }) => (
+        <IconButton
+          color="primary"
+          onClick={() => handlePreviewClick(row.original)}
+        >
+          <PreviewIcon />
+        </IconButton>
+      ),
+    },
+  ];
+
   return (
     <div className="p-4">
       <TableContainer component={Paper}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>Event Name</TableCell>
-              <TableCell>Academy Name</TableCell>
-              <TableCell>Category</TableCell>
-              <TableCell>Venue Type</TableCell>
-              <TableCell>Preview</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {eventData.map((event) => (
-              <TableRow key={event._id}>
-                <TableCell>{event.eventname}</TableCell>
-                <TableCell>{event.academyname}</TableCell>
-                <TableCell>{event.eventcategory}</TableCell>
-                <TableCell>{event.venuetype}</TableCell>
-                <TableCell>
-                  <IconButton
-                    color="primary"
-                    onClick={() => handlePreviewClick(event)}
-                  >
-                    <PreviewIcon />
-                  </IconButton>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+        <MaterialReactTable columns={columns} data={eventData} />
       </TableContainer>
 
       {/* Preview Dialog */}
@@ -130,7 +132,10 @@ export default function EventTableWithPreview() {
               </Grid>
               <Grid item xs={12} md={6}>
                 <Typography variant="h6">Event Details</Typography>
-                <Typography variant="body" className="text-gray-600">
+                <Typography
+                  variant="body"
+                  className="text-gray-600 line-clamp-4"
+                >
                   {selectedEvent.eventdescription}
                 </Typography>
                 <Typography variant="subtitle1" className="mt-4 font-semibold">
@@ -151,7 +156,7 @@ export default function EventTableWithPreview() {
 
               <Grid item xs={12}>
                 <Typography variant="h6" className="font-semibold">
-                  Seating Plans
+                  Ticket Plans
                 </Typography>
                 <Table size="small">
                   <TableHead>

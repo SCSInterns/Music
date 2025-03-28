@@ -85,7 +85,7 @@ const PaymentDialog = ({ open, onClose, data, onUpdate }) => {
       await generateorder();
       setIsPopupOpen(true);
 
-      const rkey = process.env.REACT_APP_RKEY;
+      const rkey = import.meta.env.VITE_RKEY;
 
       const handlePayment = async (orderdata) => {
         const options = {

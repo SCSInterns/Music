@@ -135,7 +135,6 @@ function ApplicantsTable({ users, handleapplicantslist }) {
       headers: {
         "Content-Type": "application/json",
         Authorization: `${token}`,
-        "Content-Type": "application/json",
       },
       body: JSON.stringify({
         academyname: academyname,

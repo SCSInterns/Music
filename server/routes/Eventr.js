@@ -4,6 +4,7 @@ const event = require('../controllers/EventCreation');
 const authenticate = require("../controllers/Authenticate")
 const Eventlocationc = require("../controllers/EventCreation")
 const SeatC = require("../controllers/SeatLayoutC")
+const AcademyMngC = require("../controllers/AcademyEventMng")
 
 router.post('/generateeventdescwithai', authenticate.authenticatetoken, event.generateAIDescription)
 router.post('/createvenuedetails', authenticate.authenticatetoken, Eventlocationc.createVenueDetails)
@@ -17,5 +18,7 @@ router.post("/geteventdetails", event.getEventDetails)
 router.post("/inserteventcreds", authenticate.authenticatetoken, Eventlocationc.StoreCreds)
 router.post("/publishevent", authenticate.authenticatetoken, event.publishEvent)
 router.post("/addsubscribemail", event.addEmail)
+router.post("/geteventslistforacademy", authenticate.authenticatetoken, AcademyMngC.getEventDetailsAcademy)
+
 
 module.exports = router;

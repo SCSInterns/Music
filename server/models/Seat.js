@@ -1,5 +1,14 @@
 const mongoose = require('mongoose');
 
+const PlanType = new mongoose.Schema({
+    planname: {
+        type: String,
+    },
+    planprice: {
+        type: Number
+    }
+})
+
 const SeatSchema = new mongoose.Schema({
     academyid: {
         type: String,
@@ -58,7 +67,8 @@ const SeatSchema = new mongoose.Schema({
     {
         type: String,
         required: true
-    }
+    },
+    planlayout: [PlanType]
 })
 
 const SeatLayout = mongoose.model('Seat Layout', SeatSchema);

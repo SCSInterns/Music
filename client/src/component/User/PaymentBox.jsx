@@ -21,7 +21,7 @@ export default function PaymentForm({ data }) {
   const [razorid, setrazorid] = useState("");
   const rkey = razorid;
 
-  const ENCRYPTION_KEY = process.env.REACT_APP_AES_KEY;
+  const ENCRYPTION_KEY = import.meta.env.VITE_AES_KEY;
 
   async function decrypt(text, key) {
     const parts = text.split(":");
@@ -35,7 +35,7 @@ export default function PaymentForm({ data }) {
     const hmacReceived = parts[3];
 
     // 🔹 Compute HMAC using Buffer.concat (same as server)
-    const hmacKey = process.env.REACT_APP_HMAC_KEY;
+    const hmacKey = import.meta.env.VITE_HMAC_KEY;
     if (!hmacKey) {
       throw new Error("HMAC key is missing in .env.");
     }

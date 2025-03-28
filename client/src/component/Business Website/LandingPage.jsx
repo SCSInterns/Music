@@ -8,10 +8,11 @@ import About from "./SubComponents/About";
 import CtaSection from "./SubComponents/Cta";
 import Footer from "./SubComponents/Footer";
 import Demo from "./SubComponents/Demo";
+import Signup from "../Business Website/GoogleSignup/Signup";
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen ">
       <Header />
       <main>
         <section id="hero">

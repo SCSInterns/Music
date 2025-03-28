@@ -11,6 +11,7 @@ const initialState = {
   description: "",
   eventCategory: "",
   eventDates: [],
+  seatlayoutid: "",
   venue: {
     venueName: "",
     venueCity: "",

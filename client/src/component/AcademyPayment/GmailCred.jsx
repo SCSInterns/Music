@@ -75,7 +75,9 @@ const GmailCred = () => {
       setOtpVerified(false);
       toast.success("Credentials saved successfully.");
     } else {
-      toast.error("Failed to save credentials.");
+      const datae = await response.json();
+      const msg = datae.msg;
+      toast.error(msg);
     }
   };
 

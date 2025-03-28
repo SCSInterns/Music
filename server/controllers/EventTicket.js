@@ -457,6 +457,26 @@ SendTicketEmail()
 UpdateStats()
 
 
+// fetch all events for ticket booking 
+
+const fetchallevents = async (req, res) => {
+    try {
+        const eventdetails = await redis.hgetall("events")
+        let parsedData = {};
+
+        for (let key in eventdetails) {
+            try {
+                parsedData[key] = JSON.parse(eventdetails[key]);
+            } catch (error) {
+                console.error(`Error parsing JSON for key ${key}:`, error);
+            }
+        }
+        return res.status(200).json(parsedData)
+    } catch (error) {
+        return res.status(500).json({ msg: "Server Error" })
+    }
+}
 
 
-module.exports = { booking, getPaymentCreds }
+
+module.exports = { booking, getPaymentCreds, fetchallevents }

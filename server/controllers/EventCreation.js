@@ -203,6 +203,13 @@ const createEventDetails = async (req, res) => {
         const formattedstarttime = convertToIST(startTime);
         const formattedendtime = convertToIST(endTime);
 
+
+        // add full venue details in that 
+
+        const venuedetails = await Location.findOne({ _id: venueid })
+
+
+
         const newapplication = new Event({
             academyname: academyname,
             eventname: eventName,
@@ -218,6 +225,7 @@ const createEventDetails = async (req, res) => {
                     startTime: formattedstarttime,
                     endTime: formattedendtime,
                     venueid: venueid,
+                    venuedetails: venuedetails
                 },
             ],
             banner: banner,
@@ -486,6 +494,7 @@ const sendEmail = async (mailc) => {
         return res.status(500).json({ error: error.message });
     }
 };
+
 
 module.exports = {
     generateAIDescription,

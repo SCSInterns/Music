@@ -4,12 +4,15 @@ const rateLimit = require("express-rate-limit")
 const cors = require("cors");
 const dotenv = require("dotenv");
 const http = require('http');
+const session = require("express-session");
 const { socketIOFactory } = require("./socket-factory.js")
 const { redis } = require("./RedisInitalitation.js")
+const passport = require("passport");
 
 // for cron job  
 
 require("./controllers/SubscriptionReminder.js")
+require("./controllers/GoogleSignup.js")
 
 dotenv.config();
 const port = process.env.PORT || 5000;
@@ -49,7 +52,25 @@ redis.on("error", (err) => console.error("Redis connection error:", err));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use(cors());
+app.use(
+    cors({
+        origin: "http://localhost:3000", // Allow frontend origin
+        credentials: true,               // Allow cookies & authentication headers
+        methods: ["GET", "POST", "PUT", "DELETE"],
+        allowedHeaders: ["Content-Type", "Authorization"],
+    })
+);
+app.options("*", cors());
+app.use(
+    session({
+        secret: process.env.SECRET_KEY,
+        resave: false,
+        saveUninitialized: true,
+        cookie: { secure: false },
+    })
+);
+app.use(passport.initialize());
+app.use(passport.session());
 
 
 // For limiting the too many request 
@@ -123,6 +144,8 @@ app.use('/api/auth', eventr)
 const ticketr = require('./routes/Ticketr.js')
 app.use('/api/auth', ticketr)
 
+const googler = require("./routes/GoogleAuth.js")
+app.use('/api/auth', googler)
 
 app.get('/', (req, res) => {
     res.send("Hello World");

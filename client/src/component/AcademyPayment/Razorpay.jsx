@@ -65,6 +65,7 @@ const Razorpay = () => {
         role: role,
         id: id,
         key: key,
+        email: email,
       }),
     });
 
@@ -77,7 +78,9 @@ const Razorpay = () => {
       setOtpVerified(false);
       toast.success("Credentials saved successfully.");
     } else {
-      toast.error("Failed to save credentials.");
+      const msg = await response.json();
+      const datamsg = msg.msg;
+      toast.error(datamsg);
     }
   };
 

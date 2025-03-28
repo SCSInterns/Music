@@ -37,7 +37,7 @@ function CreatePaymentOptions() {
   const formData = useSelector((state) => state.event);
   const eventid = formData.eventid;
 
-  const ENCRYPTION_KEY = process.env.REACT_APP_AES_KEY;
+  const ENCRYPTION_KEY = import.meta.env.VITE_AES_KEY;
   async function decrypt(text, key) {
     const parts = text.split(":");
     if (parts.length !== 4) {
@@ -50,7 +50,7 @@ function CreatePaymentOptions() {
     const hmacReceived = parts[3];
 
     // 🔹 Compute HMAC using Buffer.concat (same as server)
-    const hmacKey = process.env.REACT_APP_HMAC_KEY;
+    const hmacKey = import.meta.env.VITE_HMAC_KEY;
     if (!hmacKey) {
       throw new Error("HMAC key is missing in .env.");
     }
@@ -190,7 +190,7 @@ function CreatePaymentOptions() {
 
   async function encrypt(text) {
     const IV_LENGTH = 16;
-    const HMAC_KEY = process.env.REACT_APP_HMAC_KEY;
+    const HMAC_KEY = import.meta.env.VITE_HMAC_KEY;
 
     if (!HMAC_KEY || !ENCRYPTION_KEY) {
       throw new Error("HMAC_KEY or ENCRYPTION_KEY is missing in .env.");

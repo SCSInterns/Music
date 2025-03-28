@@ -107,6 +107,10 @@ const EventMngSchema = new mongoose.Schema({
             venueid: {
                 type: String,
                 required: true
+            },
+            venuedetails:
+            {
+                type: Object,
             }
         }
     ]

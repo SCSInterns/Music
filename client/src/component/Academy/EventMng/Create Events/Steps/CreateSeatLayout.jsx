@@ -23,6 +23,7 @@ import { nextStep } from "../../../../Features/StepperSlice";
 import { useDispatch, useSelector } from "react-redux";
 import DrawingCanvas from "../CreateLayout/DrwaingCanvas";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { updateFormData } from "../../../../Features/EventsSlice";
 
 const SeatForm = () => {
   const [formData, setFormData] = useState({
@@ -36,6 +37,7 @@ const SeatForm = () => {
   const [seatLayout, setSeatLayout] = useState("no");
   const token = Token();
   const dispatch = useDispatch();
+  const StoredformData = useSelector((state) => state.event);
   const [layout, setlayout] = useState(null);
   const [layoutpreview, setlayoutpreview] = useState(null);
 
@@ -145,6 +147,11 @@ const SeatForm = () => {
     const data = await response.json();
     const message = await data.message;
     if (response.ok) {
+      dispatch(
+        updateFormData({
+          seatlayoutid: response._id,
+        })
+      );
       toast.success(message);
       formData.noofrows = "";
       formData.noofpartition = "";

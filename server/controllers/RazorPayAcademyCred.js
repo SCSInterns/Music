@@ -1,6 +1,7 @@
 const Cred = require("../models/RazorPayCred")
 const crypto = require('crypto');
 const MCred = require("../models/GoogleAppCred")
+const Admin = require("../models/Admin")
 
 const aes_key = process.env.AES_KEY
 const hmac_key = process.env.HMAC_KEY
@@ -8,9 +9,16 @@ const hmac_key = process.env.HMAC_KEY
 const storecred = async (req, res) => {
     try {
 
-        const { academyname, role, id, key } = req.body
+        const { academyname, role, id, key, email } = req.body
 
         if (role === "Admin") {
+
+
+            const correctemail = await Admin.findOne({ academy_name: academyname })
+
+            if (correctemail.academy_email !== email) {
+                return res.status(401).json({ msg: "Only Admin Can Update Creds" })
+            }
 
             const existing = await Cred.findOne({ academyname: academyname })
 
@@ -64,6 +72,11 @@ const storemailcred = async (req, res) => {
         const { academyname, role, mail, password } = req.body
 
         if (role === "Admin") {
+
+            const admin = await Admin.findOne({ academy_name: academyname })
+            if (admin.academy_email !== mail) {
+                return res.status(401).json({ msg: "Only Admin Can Add Creds" })
+            }
 
             const existing = await MCred.findOne({ academyname: academyname })
 

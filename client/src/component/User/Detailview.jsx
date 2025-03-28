@@ -97,7 +97,6 @@ function Detailview() {
                 fontSize: "16px",
                 textAlign: "justify",
                 marginLeft: "20px",
-                marginTop: "40px",
                 margin: "50px",
               }}
             >

@@ -5,5 +5,6 @@ const Event = require("../controllers/EventTicket")
 
 router.post("/bookticket", Event.getPaymentCreds)
 router.post("/confirmbooking", Event.booking)
+router.post("/fetcheventdetailsforusers", Event.fetchallevents)
 
 module.exports = router
