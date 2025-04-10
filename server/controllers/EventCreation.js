@@ -9,6 +9,7 @@ const { redis } = require("../RedisInitalitation");
 const UserEmailsMarketing = require("../models/UserEmailsMarketing");
 const Emailc = require("../controllers/emailc");
 const EventLocations = require("../models/EventLocations");
+const { SeatLayout } = require("../models/Seat");
 
 // call this at publish time of event
 const addeventinredis = async (eventdetails, hashKey) => {
@@ -16,8 +17,12 @@ const addeventinredis = async (eventdetails, hashKey) => {
     const existing = await redis.hget(hashKey, eventid);
     if (existing) {
         const parsedExisting = JSON.parse(existing);
+        if (!parsedExisting.eventdetails) {
+            parsedExisting.eventdetails = {};
+        }
         parsedExisting.eventdetails.live = true;
-        await redis.hset(hashKey, eventid, JSON.stringify(parsedExisting));
+        parsedExisting.eventdetails.live = true;
+        await redis.hset(hashKey, eventid, JSON.stringify(eventdetails));
         return;
     }
     await redis.hset(
@@ -323,6 +328,44 @@ const insertPricingPlans = async (req, res) => {
     }
 };
 
+// inserting plans in case of event creation using seat layout 
+
+const insertPricingPlansLayout = async (req, res) => {
+    try {
+
+        const { seatlayoutid, eventid, role, plan } = req.body;
+        if (role !== "Admin") {
+            return res.status(401).json({ error: "Unauthorized access" });
+        }
+        if (!seatlayoutid && !eventid) {
+            return res.status(400).json({ error: "Please provide seat layout and event id" });
+        }
+        const seatlayout = await SeatLayout.findOne({ _id: seatlayoutid });
+        if (!seatlayout) {
+            return res.status(404).json({ error: "Seat layout not found" });
+        }
+        seatlayout.planlayout.push(...plan.map(p => ({
+            planName: p.planName.trim(),
+            pricePerSeat: Number(p.pricePerSeat)
+        })));
+        const updatedlayout = await seatlayout.save();
+        const eventdetails = await Event.findOne({ _id: eventid });
+        if (!eventdetails) {
+            return res.status(404).json({ error: "Event not found" });
+        }
+        eventdetails.seatlayoutid = seatlayout._id;
+        eventdetails.plans = updatedlayout.planlayout;
+        await eventdetails.save();
+        return res.status(200).json({ updatedlayout, eventdetails });
+
+    } catch (error) {
+        return res.status(500).json({ error: error.message });
+
+    }
+
+}
+
+
 const createExtraDetails = async (req, res) => {
     try {
         const {
@@ -367,14 +410,16 @@ const getEventDetails = async (req, res) => {
         const { id } = req.body;
 
         const event = await Event.findOne({ _id: id });
-
         if (!event) {
             return res.status(404).json({ error: "Event not found" });
         }
-
         const venuedetails = await EventLocations.findOne({ _id: event.eventSchedule[0].venueid })
-
-        return res.status(200).json({ event, venuedetails });
+        if (!event.seatlayouturl) {
+            const seatlayout = await SeatLayout.findOne({ _id: event.seatlayoutid });
+            return res.status(200).json({ event, venuedetails, seatlayout });
+        } else {
+            return res.status(200).json({ event, venuedetails });
+        }
     } catch (error) {
         return res.status(500).json({ error: error.message });
     }
@@ -508,4 +553,5 @@ module.exports = {
     StoreCreds,
     publishEvent,
     addEmail,
+    insertPricingPlansLayout
 };

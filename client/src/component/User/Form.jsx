@@ -15,7 +15,7 @@ function Form() {
   const navigate = useNavigate();
 
   const handleclick = async () => {
-    navigate(`/${academyname}/login`);
+    navigate(`/${academyname}/userlogin`);
   };
 
   return (

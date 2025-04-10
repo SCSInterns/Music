@@ -44,7 +44,7 @@ function CreateTickets() {
   const seatid = formData.seatlayoutid;
 
   console.log(seatid);
-
+  console.log(formData);
   console.log(plans);
   console.log(eventid);
 
@@ -161,6 +161,36 @@ function CreateTickets() {
       dispatch(nextStep());
     } else {
       toast.error("Error adding plans!");
+    }
+  };
+
+  const handleseatplansubmit = async () => {
+    try {
+      const url = "http://localhost:5000/api/auth/setseatlayoutticket";
+
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `${Token()}`,
+        },
+        body: JSON.stringify({
+          eventid: formdata.eventid,
+          seatlayoutid: formdata._id,
+          plan: formdata.plansPerRow,
+          role: sessionStorage.getItem("role"),
+        }),
+      });
+
+      if (response.ok) {
+        toast.success("Seat layout plans submitted successfully!");
+        dispatch(nextStep());
+      } else {
+        toast.error("Error submitting seat layout plans!");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      toast.error("Error submitting seat layout plans!");
     }
   };
 
@@ -497,6 +527,19 @@ function CreateTickets() {
                     ))}
                 </div>
               ))}
+
+            <div className="my-10 mx-5 p-6">
+              <Button
+                variant="contained"
+                sx={{ width: "200px", float: "right" }}
+                disabled={formdata.plansPerRow.length === 0}
+                onClick={() => {
+                  handleseatplansubmit();
+                }}
+              >
+                Submit and Next
+              </Button>
+            </div>
           </Grid>
         </>
       )}

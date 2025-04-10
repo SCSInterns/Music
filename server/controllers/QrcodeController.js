@@ -14,6 +14,17 @@ function getInitials(str) {
 }
 
 
+// temp 
+    const generatefilmqr = async (req, res) => {
+        try {
+            const { link } = req.body; // Get the link from request body
+            const qrCodeData = await QR.toDataURL(link); // Generate QR with raw link
+            return res.status(200).json({ qrCodeData }); // Send as JSON response
+        } catch (error) {
+            return res.status(500).json({ msg: "Error generating QR code" });
+        }
+    }
+
 
 const generateqrcode = async (req, res) => {
 
@@ -191,4 +202,4 @@ const attendance = async (req, res) => {
 
 
 
-module.exports = { generateqrcode, fetchqr, attendance, generateqrforeventpass, generateAlphanumericCode }
+module.exports = { generateqrcode, fetchqr, attendance, generateqrforeventpass, generateAlphanumericCode, generatefilmqr }

@@ -205,7 +205,7 @@ const welcome = async (email, username, academyname, password, role) => {
             </table>
             
             <p style="text-align: center; margin-top: 20px;">
-                <a href=${`http://localhost:3000/${academyname}/login`} style="display: inline-block; padding: 10px 20px; background-color: #004b87; color: white; text-decoration: none; border-radius: 5px;">Login Now</a>
+                <a href=${`http://localhost:3000/${academyname}/userlogin`} style="display: inline-block; padding: 10px 20px; background-color: #004b87; color: white; text-decoration: none; border-radius: 5px;">Login Now</a>
             </p>
             
             <p>If you have any questions, feel free to reach out to us. We're here to help you succeed!</p>
@@ -283,7 +283,7 @@ const paymentfailed = async (academyname, email, paymentdate, amount) => {
   const academylogo = await Logo.findOne({ academyname: academyname });
   const logolink = academylogo.link;
   const altname = `${academyname} Music Academy`;
-  const retrypayment = `http://localhost:3000/${academyname}/login`;
+  const retrypayment = `http://localhost:3000/${academyname}/userlogin`;
 
   const googlecred = await retriveacademygooglecred(academyname)
 

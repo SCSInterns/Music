@@ -29,8 +29,6 @@ function ProfilePreview({
 }) {
   const [activeTab, setActiveTab] = useState("Payment History");
 
-  console.log(updatepaymentstats);
-
   const switchToPaymentHistory = () => {
     setActiveTab("Payment History");
   };
@@ -73,8 +71,6 @@ function ProfilePreview({
   const handleClose = () => {
     onClose();
   };
-
-  console.log(paymentstats.previousdue);
 
   return (
     <Dialog
@@ -221,10 +217,6 @@ function ProfilePreview({
                             value: paymentstats.outstandingamount,
                           },
                           { label: "Fees", value: paymentstats.fees },
-                          {
-                            label: "Total Amount Collected",
-                            value: data.additionalFields.fees,
-                          },
                         ].map(({ label, value }) => (
                           <tr key={label}>
                             <td

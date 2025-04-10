@@ -138,7 +138,7 @@ function App() {
           <Route path="/:academyname/registrationform" element={<Form />} />
           <Route path="/:academyname/instrument" element={<Instrument />} />
           <Route path="/:academyname/event/:id" element={<Detailview />} />
-          <Route path="/:academyname/login" element={<UserLogin />} />
+          <Route path="/:academyname/userlogin" element={<UserLogin />} />
           <Route path="/:academyname/resetcred" element={<SetPassword />} />
           <Route path="/:academyname/userprofile" element={<Profile />} />
 

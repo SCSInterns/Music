@@ -140,7 +140,6 @@ const SeatForm = () => {
         eventid: SeatData.eventid,
         planname: "Default",
         priceperseat: 100,
-        venueid: "123",
       }),
     });
 

@@ -56,9 +56,9 @@ export default function LoginModal() {
                     MusicVista
                   </span>
                 </a>
-                <h1 className="text-3xl md:text-4xl font-bold mb-4">
+                {/* <h1 className="text-3xl md:text-4xl font-bold mb-4">
                   Log in or sign up
-                </h1>
+                </h1> */}
                 <p className="text-gray-600 mb-6">
                   Use your email or Google to continue.
                 </p>

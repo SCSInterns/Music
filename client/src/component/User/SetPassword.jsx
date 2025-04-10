@@ -17,7 +17,7 @@ function ForgotPassword() {
 
   const academyname = sessionStorage.getItem("Academy");
 
-  const loginlink = `/${academyname}/login`;
+  const loginlink = `/${academyname}/userlogin`;
 
   // Function to handle sending OTP
   const handleSendOtp = async (e) => {

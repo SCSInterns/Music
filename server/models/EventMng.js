@@ -90,6 +90,7 @@ const EventMngSchema = new mongoose.Schema({
         type: { type: String },
     },
     plans: [PlanSchema],
+    bookedticket: [Number],
     eventSchedule: [
         {
             date: {

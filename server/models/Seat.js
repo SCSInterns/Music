@@ -1,10 +1,10 @@
 const mongoose = require('mongoose');
 
 const PlanType = new mongoose.Schema({
-    planname: {
+    planName: {
         type: String,
     },
-    planprice: {
+    pricePerSeat: {
         type: Number
     }
 })
@@ -62,11 +62,6 @@ const SeatSchema = new mongoose.Schema({
     seatbooked:
     {
         type: Number
-    },
-    venueid:
-    {
-        type: String,
-        required: true
     },
     planlayout: [PlanType]
 })

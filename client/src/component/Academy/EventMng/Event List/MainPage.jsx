@@ -31,6 +31,11 @@ export default function EventTableWithPreview() {
   const [eventData, seteventData] = useState({});
 
   const handlePreviewClick = (event) => {
+    console.log(event);
+    if (!event.seatlayouturl) {
+      console.log(event.seatlayoutid[0]);
+    }
+
     setSelectedEvent(event);
     setOpenDialog(true);
   };

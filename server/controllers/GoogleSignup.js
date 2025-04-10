@@ -16,10 +16,17 @@ passport.use(
         async (accessToken, refreshToken, profile, done) => {
             try {
                 let user = await User.findOne({ googleId: profile.id });
+
+                let existingadmin = await Admin.findOne({ academy_email: profile.emails[0].value });
+
+                if (existingadmin) {
+                    return done(null, false, { message: "User already registered. Please log in." });
+
+                }
                 if (user) {
                     return done(null, false, { message: "User already registered. Please log in." });
                 }
-                if (!user) {
+                if (!user && !existingadmin) {
                     user = new User({
                         googleId: profile.id,
                         name: profile.displayName,

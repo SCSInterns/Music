@@ -17,7 +17,9 @@ export default function UpcomingEvents() {
 
     if (response.ok) {
       const data = await response.json();
-      const event = Object.values(data).map((item) => item.eventdetails);
+      console.log(data);
+      const event = Object.values(data).map((item) => item);
+      console.log(event);
       seteventdata(event);
     } else {
       toast.error("Error Fetching Details");
@@ -53,51 +55,53 @@ export default function UpcomingEvents() {
             </a>
           </div>
 
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {eventdata.length > 0 &&
-              eventdata?.map((event) => (
-                <div
-                  key={event.id}
-                  className="overflow-hidden rounded-lg shadow-lg"
-                >
-                  <div className="relative h-48 md:h-64">
-                    <img
-                      src={event.banner}
-                      alt={event.eventname}
-                      className="object-contain w-full h-full"
-                    />
+          {eventdata?.length > 0 && (
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {eventdata?.length > 0 &&
+                eventdata?.map((event) => (
+                  <div
+                    key={event.id}
+                    className="overflow-hidden rounded-lg shadow-lg"
+                  >
+                    <div className="relative h-48 md:h-64">
+                      <img
+                        src={event.banner}
+                        alt={event.eventname}
+                        className="object-contain w-full h-full"
+                      />
 
-                    {/* {event.price && (
+                      {/* {event.price && (
                       <div className="absolute top-4 right-4 bg-black/60 p-2 rounded-lg backdrop-blur-sm">
                         <div className="text-lg font-bold text-white">
                           {event.price}
                         </div>
                       </div>
                     )} */}
-                  </div>
-                  <div className="p-4 min-h-32">
-                    <h3 className="text-lg font-bold mb-2 line-clamp-1 text-left">
-                      {event.eventname}
-                    </h3>
-                    <div className="text-md font-semibold text-left flex items-center gap-3">
-                      <Calendar size={16} />
-                      {event.eventSchedule[0].date}
                     </div>
-                    {/* <p className="text-muted-foreground text-sm">
+                    <div className="p-4 min-h-32">
+                      <h3 className="text-lg font-bold mb-2 line-clamp-1 text-left">
+                        {event.eventname}
+                      </h3>
+                      <div className="text-md font-semibold text-left flex items-center gap-3">
+                        <Calendar size={16} />
+                        {event.eventSchedule[0].date}
+                      </div>
+                      {/* <p className="text-muted-foreground text-sm">
                       {event.location}
                     </p> */}
+                    </div>
+                    <div className="p-5 pt-0">
+                      <button
+                        className={`inline-flex w-full justify-center border border-purple-500 px-4 py-2 rounded-lg hover:bg-purple-600 hover:text-white text-black`}
+                        disabled={event.buttonDisabled}
+                      >
+                        Get Tickets
+                      </button>
+                    </div>
                   </div>
-                  <div className="p-5 pt-0">
-                    <button
-                      className={`inline-flex w-full justify-center border border-purple-500 px-4 py-2 rounded-lg hover:bg-purple-600 hover:text-white text-black`}
-                      disabled={event.buttonDisabled}
-                    >
-                      Get Tickets
-                    </button>
-                  </div>
-                </div>
-              ))}
-          </div>
+                ))}
+            </div>
+          )}
         </div>
         <button className="md:hidden inline-flex my-7 border border-purple-500 px-4 py-2 rounded-lg hover:bg-purple-600 hover:text-white text-black">
           SEE ALL UPCOMING EVENTS

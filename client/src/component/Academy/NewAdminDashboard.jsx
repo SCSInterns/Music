@@ -88,7 +88,7 @@ const Sidebar = () => {
       "role",
     ];
     keysToRemove.forEach((key) => sessionStorage.removeItem(key));
-    navigate("/admin/login", { replace: true });
+    navigate("/Business", { replace: true });
   };
 
   const handleOpen = () => setOpen(true);
@@ -355,7 +355,7 @@ const Sidebar = () => {
         }}
       >
         {!collapsed && (
-          <Typography variant="h6" sx={{ fontWeight: "bold", color: "#fff" }}>
+          <Typography variant="h8" sx={{ fontWeight: "bold", color: "#fff" }}>
             <button onClick={() => handleMenuClick()}>
               <AccountCircleOutlined className="mr-4" fontSize="medium" />
             </button>
